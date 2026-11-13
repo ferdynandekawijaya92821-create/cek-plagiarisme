@@ -50,6 +50,9 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+img { max-width: 100%; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body); -webkit-text-size-adjust: 100%; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--surface); }
 h1, h2, h3 { font-family: var(--f-display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
@@ -195,6 +198,36 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
 @media (max-width: 420px) { .editor { min-height: 240px; } .score-val { font-size: 34px; } }
 
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 40; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; max-width: calc(100vw - 32px); }
+/* internet & unduhan */
+.net { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; border: 1px solid var(--line); border-radius: 99px; padding: 2px 9px; color: var(--muted); }
+.net i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+.net.on i { background: var(--ok); } .net.off i { background: var(--warn); }
+.checks { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.checks label { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; }
+.checks input { width: 17px; height: 17px; accent-color: var(--accent); }
+.progress { height: 4px; background: var(--surface-2); border-radius: 9px; overflow: hidden; border: 1px solid var(--line); }
+.progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s ease; }
+.weblist { display: grid; gap: 8px; }
+.weblist:empty { display: none; }
+.webitem { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); }
+.webitem a { color: var(--accent); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+.webitem a:hover { text-decoration: underline; }
+.webitem small { color: var(--muted); font-size: 12px; grid-column: 1 / -1; overflow-wrap: anywhere; }
+.tag { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.qlinks { display: grid; gap: 6px; margin: 0; padding-left: 18px; font-size: 13px; }
+.qlinks a { color: var(--accent); overflow-wrap: anywhere; }
+.dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.dl .btn.primary { grid-column: 1 / -1; }
+.note { font-size: 13px; color: var(--muted); background: var(--surface-2); border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; }
+.field { display: grid; gap: 4px; font-size: 13.5px; }
+.field input { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--surface); font-size: 14px; min-width: 0; }
+td a { color: var(--accent); text-decoration: none; } td a:hover { text-decoration: underline; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+@media print {
+  .top, .livebar, .tools, .seg, .dl, #view-periksa .col:first-child > .card:first-child, #netCard, .toast { display: none !important; }
+  body { background: #fff; } .card { box-shadow: none; break-inside: avoid; } .sticky { position: static; }
+  .grid { grid-template-columns: 1fr; } .hl { max-height: none; overflow: visible; }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 
@@ -205,7 +238,7 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
         <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="var(--surface)"/><path d="M11 14h8M11 17h6M11 20h4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="3.3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M23 23l2.6 2.6" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
         <b>Cek<span>Teks</span></b>
       </div>
-      <div class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">Analisis langsung</span><span class="lbl muted">· diproses di perangkat Anda</span></div>
+      <div class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">Analisis langsung</span><span class="lbl muted">· diproses di perangkat Anda</span><span class="net" id="net"><i></i><span id="netText">Online</span></span></div>
     </div>
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" id="tab-periksa" aria-selected="true" data-view="periksa">Periksa</button>
@@ -226,7 +259,7 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
             <h2>Naskah</h2>
             <div class="tools">
               <label class="btn" for="mainFile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Unggah</label>
-              <input type="file" id="mainFile" accept=".txt,.md,.docx,.pdf,text/plain">
+              <input type="file" id="mainFile" accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,.csv,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
               <button class="btn" id="pasteBtn" type="button">Tempel</button>
               <button class="btn" id="sampleBtn" type="button">Contoh</button>
               <button class="btn" id="clearBtn" type="button">Kosongkan</button>
@@ -238,6 +271,34 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
             <span><span class="num" id="cSents">0</span> kalimat</span>
             <span><span class="num" id="cChars">0</span> karakter</span>
             <span class="sample-note" id="sampleNote" hidden>Teks contoh</span>
+          </div>
+        </div>
+
+        <div class="card" id="netCard">
+          <div class="card-h">
+            <h2>Cek di internet</h2>
+            <span class="muted" style="font-size:12.5px">butuh koneksi internet</span>
+          </div>
+          <div class="card-b stack">
+            <p class="muted" style="margin:0;font-size:13.5px">Kalimat paling khas dari naskah dicari di internet. Halaman yang ditemukan ikut dibandingkan dan muncul di tabel sumber beserta tautannya.</p>
+            <div class="checks">
+              <label><input type="checkbox" id="wWikiId" checked> Wikipedia Indonesia</label>
+              <label><input type="checkbox" id="wWikiEn" checked> Wikipedia Inggris</label>
+              <label><input type="checkbox" id="wOpenAlex" checked> Jurnal ilmiah (OpenAlex)</label>
+              <label><input type="checkbox" id="wGoogle"> Google <span class="muted" id="gHint">(atur API di tab Sumber)</span></label>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="webBtn" type="button">Cari di internet</button>
+              <button class="btn" id="webClear" type="button" hidden>Hapus hasil internet</button>
+              <span class="muted" style="font-size:13px" id="webStatus"></span>
+            </div>
+            <div class="progress" id="webProg" hidden><i></i></div>
+            <div class="weblist" id="webList"></div>
+            <details id="qBox" hidden>
+              <summary style="cursor:pointer;font-size:13.5px;font-weight:600">Periksa manual di Google</summary>
+              <p class="muted" style="font-size:12.5px;margin:6px 0">Ketuk kalimat untuk mencarinya persis di Google pada tab baru.</p>
+              <ol class="qlinks" id="qLinks"></ol>
+            </details>
           </div>
         </div>
 
@@ -285,7 +346,14 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
               <div class="sub" id="aiSub">—</div>
             </div>
             <div id="warns" class="stack"></div>
-            <button class="btn primary" id="copyReport" type="button">Salin laporan</button>
+            <div class="dl">
+              <button class="btn primary" id="dlPdf" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>Unduh laporan PDF</button>
+              <button class="btn" id="dlDoc" type="button">Unduh Word</button>
+              <button class="btn" id="dlTxt" type="button">Unduh TXT</button>
+              <button class="btn" id="copyReport" type="button">Salin laporan</button>
+              <button class="btn" id="printBtn" type="button">Cetak</button>
+            </div>
+            <div class="note" id="frameNote" hidden>Unduhan dan cek internet hanya berfungsi di versi aplikasi (file CekTeks.html atau situs Anda sendiri), tidak di pratinjau Claude ini.</div>
           </div>
         </div>
 
@@ -320,7 +388,7 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
             <div class="tools">
               <button class="btn" id="addSrc" type="button">+ Tambah teks</button>
               <label class="btn" for="srcFiles">Unggah berkas</label>
-              <input type="file" id="srcFiles" multiple accept=".txt,.md,.docx,.pdf,text/plain">
+              <input type="file" id="srcFiles" multiple accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,.csv,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
             </div>
           </div>
           <div class="card-b stack" id="srcList"></div>
@@ -344,6 +412,15 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
           </div>
         </div>
         <div class="card">
+          <div class="card-h"><h2>Pencarian Google (opsional)</h2></div>
+          <div class="card-b stack">
+            <p class="muted" style="margin:0;font-size:13px">Untuk menjangkau seluruh web, isi API key Google Programmable Search milik Anda sendiri. Gratis 100 pencarian per hari. Kunci hanya disimpan di perangkat ini.</p>
+            <label class="field" for="gKey">API key<input type="text" id="gKey" autocomplete="off" spellcheck="false" placeholder="AIza…"></label>
+            <label class="field" for="gCx">Search engine ID (cx)<input type="text" id="gCx" autocomplete="off" spellcheck="false" placeholder="mis. 0123456789abcdef"></label>
+            <p class="muted" style="margin:0;font-size:12.5px">Cara mendapatkannya: buat mesin pencari "Search the entire web" di programmablesearchengine.google.com, lalu buat API key di console.cloud.google.com (aktifkan Custom Search API).</p>
+          </div>
+        </div>
+        <div class="card">
           <div class="card-h"><h2>Korpus bawaan</h2><span class="muted num" style="font-size:12px" id="corpCount"></span></div>
           <div class="card-b" id="corpList"></div>
         </div>
@@ -361,9 +438,9 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
             <p class="muted" style="margin:0">Untuk guru dan dosen: masukkan beberapa tugas sekaligus untuk menemukan pasangan yang saling mirip.</p>
             <label class="drop" id="drop" for="cmpFiles">
               <strong>Pilih atau seret berkas</strong>
-              <span style="font-size:13px">.txt · .md · .docx · .pdf</span>
+              <span style="font-size:13px">PDF · Word · ODT · PPTX · RTF · HTML · TXT</span>
             </label>
-            <input type="file" id="cmpFiles" multiple accept=".txt,.md,.docx,.pdf,text/plain">
+            <input type="file" id="cmpFiles" multiple accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,.csv,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
             <div class="row"><button class="btn" id="cmpAddText" type="button">+ Tambah teks manual</button></div>
             <div class="stack" id="cmpList"></div>
           </div>
@@ -388,7 +465,7 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
     <div class="card"><div class="card-b prose">
       <div class="eyebrow">Cara kerja</div>
       <h2 style="font-size:24px;margin-top:4px">Apa yang diukur CekTeks</h2>
-      <p>Semua analisis berjalan di browser Anda. Teks tidak dikirim ke server mana pun, jadi aman untuk naskah yang belum diterbitkan.</p>
+      <p>Semua analisis berjalan di browser Anda. Naskah tidak dikirim ke server mana pun. Hanya saat Anda menekan "Cari di internet", kata kunci dari beberapa kalimat dikirim ke mesin pencari yang Anda pilih.</p>
 
       <h3>Indeks kesamaan (plagiarisme)</h3>
       <ul>
@@ -407,10 +484,27 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
       </ul>
       <div class="formula">0–35% cenderung manusia · 35–65% campuran · 65–100% cenderung AI</div>
 
+      <h3>Cek di internet</h3>
+      <ul>
+        <li>Kalimat paling khas (yang paling banyak kata kuncinya) dicari di Wikipedia Indonesia dan Inggris, abstrak jurnal ilmiah OpenAlex, dan Google bila API key diisi.</li>
+        <li>Halaman yang ditemukan diambil teksnya, lalu dibandingkan dengan n-gram seperti sumber lain.</li>
+        <li>Tanpa API key Google, pencarian tidak menjangkau blog, situs berita, atau repositori kampus. Gunakan daftar "Periksa manual di Google" untuk itu.</li>
+      </ul>
+
+      <h3>Pakai offline dan selamanya</h3>
+      <ul>
+        <li>File <b>CekTeks.html</b> berisi seluruh aplikasi, termasuk pembaca PDF dan Word serta pembuat laporan PDF. Simpan di HP atau komputer, lalu buka dengan browser. Tidak perlu akun, langganan, atau internet.</li>
+        <li>Tanpa internet, semua fitur tetap jalan kecuali "Cek di internet".</li>
+        <li>Untuk alamat web sendiri yang bisa dipasang di layar utama HP, unggah isi folder <code>docs/</code> ke GitHub Pages, Netlify, atau hosting gratis lain.</li>
+      </ul>
+
+      <h3>Format berkas</h3>
+      <p>PDF, Word (.docx, dan .doc lama secara terbatas), OpenDocument (.odt), PowerPoint (.pptx), RTF, HTML, Markdown, dan teks biasa. PDF hasil pindaian (gambar) tidak berisi teks sehingga tidak bisa dibaca.</p>
+
       <h3>Batasan</h3>
       <ul>
         <li>Tidak ada detektor AI yang 100% akurat. Tulisan manusia yang sangat formal bisa mendapat skor sedang. Gunakan hasil sebagai indikasi awal, bukan bukti tunggal.</li>
-        <li>Cek plagiarisme tidak mencari di internet. Naskah hanya dibandingkan dengan sumber yang Anda tambahkan dan korpus bawaan.</li>
+        <li>Cek internet hanya menjangkau sumber yang dipilih. Ini bukan pengganti layanan berbayar seperti Turnitin yang punya basis data tugas dan jurnal tertutup.</li>
         <li>Parafrase berat atau terjemahan sulit terdeteksi oleh pencocokan n-gram.</li>
         <li>Teks di bawah 80 kata memberi hasil deteksi AI yang kurang andal.</li>
       </ul>
@@ -510,14 +604,14 @@ function checkPlagiarism(text, sources, n) {
     });
     var nc = 0;
     for (var i = 0; i < N; i++) if (cov[i]) { nc++; covAny[i] = true; if (wsrc[i] < 0) wsrc[i] = si; }
-    r.sources.push({ name: src.name, overlap: +(100 * nc / N).toFixed(2), shingle: +(100 * hits / totalSh).toFixed(2),
+    r.sources.push({ name: src.name, url: src.url || "", kind: src.kind || "", overlap: +(100 * nc / N).toFixed(2), shingle: +(100 * hits / totalSh).toFixed(2),
       cosine: +(100 * tfidfCosine(cwText, srcCw[si], df, nDocs)).toFixed(2), words: nc });
   });
   for (var i = 0; i < N;) {
     if (!covAny[i]) { i++; continue; }
     var j = i, s = wsrc[i];
     while (j + 1 < N && covAny[j + 1] && wsrc[j + 1] === s) j++;
-    r.matches.push({ start: tok[i][1], end: tok[j][2], source: sources[s].name });
+    r.matches.push({ start: tok[i][1], end: tok[j][2], source: sources[s].name, url: sources[s].url || "" });
     i = j + 1;
   }
   r.score = +(100 * covAny.filter(Boolean).length / N).toFixed(1);
@@ -631,7 +725,7 @@ function lvl(v) { return v < 35 ? "var(--ok)" : v < 65 ? "var(--warn)" : "var(--
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
-var S = { userSources: [], cmpDocs: [], hl: "plag", plag: null, ai: null, text: "", sample: false };
+var S = { userSources: [], webSources: [], docName: "", cmpDocs: [], hl: "plag", plag: null, ai: null, text: "", sample: false };
 try { S.userSources = JSON.parse(store("ct_sources") || "[]"); } catch (e) { S.userSources = []; }
 
 /* ---- tabs ---- */
@@ -655,28 +749,88 @@ function loadScript(src) {
     document.head.appendChild(s);
   }));
 }
-var PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+var CDN = "https://cdnjs.cloudflare.com/ajax/libs/";
+// Versi aplikasi offline sudah membawa pustaka di dalam file; CDN hanya cadangan.
+function need(globalName, src) { return window[globalName] ? Promise.resolve() : loadScript(CDN + src); }
+function decodeText(buf) {
+  var u = new Uint8Array(buf);
+  if (u[0] === 0xFF && u[1] === 0xFE) return new TextDecoder("utf-16le").decode(u);
+  if (u[0] === 0xFE && u[1] === 0xFF) return new TextDecoder("utf-16be").decode(u);
+  try { return new TextDecoder("utf-8", { fatal: true }).decode(u); } catch (e) { return new TextDecoder("windows-1252").decode(u); }
+}
+function htmlToText(html) {
+  var d = new DOMParser().parseFromString(html, "text/html");
+  d.querySelectorAll("script,style,noscript").forEach(function (n) { n.remove(); });
+  d.querySelectorAll("p,div,br,li,h1,h2,h3,h4,h5,h6,tr,section,article").forEach(function (n) { n.insertAdjacentText("afterend", "\n"); });
+  return (d.body ? d.body.textContent : "").replace(/\n{3,}/g, "\n\n").trim();
+}
+function xmlText(xml, paraTag, textTag) {
+  var d = new DOMParser().parseFromString(xml, "application/xml"), out = [];
+  var paras = d.getElementsByTagName(paraTag);
+  for (var i = 0; i < paras.length; i++) {
+    var ts = textTag ? paras[i].getElementsByTagName(textTag) : [paras[i]], line = "";
+    for (var j = 0; j < ts.length; j++) line += ts[j].textContent;
+    if (line.trim()) out.push(line.trim());
+  }
+  return out.join("\n\n");
+}
+function rtfToText(rtf) {
+  return rtf.replace(/\\par[d]?/g, "\n").replace(/\\'([0-9a-f]{2})/gi, function (_, h) { return String.fromCharCode(parseInt(h, 16)); })
+    .replace(/\\u(-?\d+)\??/g, function (_, n) { n = +n; return String.fromCharCode(n < 0 ? n + 65536 : n); })
+    .replace(/\{\\\*[^{}]*\}/g, "").replace(/\\[a-z]+-?\d* ?/gi, "").replace(/[{}]/g, "").replace(/\n{3,}/g, "\n\n").trim();
+}
+function legacyDocText(buf) {
+  // Word 97-2003: ambil rangkaian teks UTF-16 yang terbaca (terbatas, tetapi cukup untuk dicek).
+  var u = new Uint8Array(buf), runs = [], cur = "";
+  for (var i = 0; i + 1 < u.length; i += 2) {
+    var c = u[i] | (u[i + 1] << 8);
+    if ((c >= 32 && c < 0xD800 && c !== 0xFFFF) || c === 13 || c === 10 || c === 9) cur += c === 13 ? "\n" : String.fromCharCode(c);
+    else { if (cur.length > 40) runs.push(cur); cur = ""; }
+  }
+  if (cur.length > 40) runs.push(cur);
+  var best = runs.filter(function (r) { return /[a-zA-Z]{3,}\s+[a-zA-Z]{3,}/.test(r); }).join("\n\n");
+  if (words(best).length < 5) throw new Error("Berkas .doc lama tidak terbaca. Simpan ulang sebagai .docx lalu unggah lagi.");
+  return best;
+}
 function readFile(file) {
   var ext = (file.name.split(".").pop() || "").toLowerCase();
-  if (ext === "docx") {
-    return loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js")
-      .then(function () { return file.arrayBuffer(); })
-      .then(function (buf) { return window.mammoth.extractRawText({ arrayBuffer: buf }); })
-      .then(function (r) { return r.value; });
-  }
-  if (ext === "pdf") {
-    return loadScript(PDFJS + "pdf.min.js").then(function () { return loadScript(PDFJS + "pdf.worker.min.js"); })
-      .then(function () { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js"; return file.arrayBuffer(); })
-      .then(function (buf) { return window.pdfjsLib.getDocument({ data: buf }).promise; })
-      .then(function (pdf) {
-        var jobs = []; for (var i = 1; i <= pdf.numPages; i++) jobs.push(pdf.getPage(i).then(function (p) { return p.getTextContent(); }));
-        return Promise.all(jobs).then(function (cs) {
-          return cs.map(function (c) { return c.items.map(function (it) { return it.str + (it.hasEOL ? "\n" : " "); }).join(""); }).join("\n\n");
+  return file.arrayBuffer().then(function (buf) {
+    if (ext === "docx") {
+      return need("mammoth", "mammoth/1.6.0/mammoth.browser.min.js")
+        .then(function () { return window.mammoth.extractRawText({ arrayBuffer: buf }); }).then(function (r) { return r.value; });
+    }
+    if (ext === "pdf") {
+      return need("pdfjsLib", "pdf.js/3.11.174/pdf.min.js")
+        .then(function () { return window.pdfjsWorker ? null : loadScript(CDN + "pdf.js/3.11.174/pdf.worker.min.js"); })
+        .then(function () {
+          if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) window.pdfjsLib.GlobalWorkerOptions.workerSrc = CDN + "pdf.js/3.11.174/pdf.worker.min.js";
+          return window.pdfjsLib.getDocument({ data: new Uint8Array(buf), isEvalSupported: false }).promise;
+        })
+        .then(function (pdf) {
+          var jobs = []; for (var i = 1; i <= pdf.numPages; i++) jobs.push(pdf.getPage(i).then(function (pg) { return pg.getTextContent(); }));
+          return Promise.all(jobs).then(function (cs) {
+            var t = cs.map(function (c) { return c.items.map(function (it) { return it.str + (it.hasEOL ? "\n" : " "); }).join(""); }).join("\n\n");
+            if (words(t).length < 3) throw new Error("PDF ini tidak berisi teks (kemungkinan hasil pindaian/gambar).");
+            return t;
+          });
         });
+    }
+    if (ext === "odt" || ext === "pptx") {
+      return need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () { return window.JSZip.loadAsync(buf); }).then(function (zip) {
+        if (ext === "odt") return zip.file("content.xml").async("string").then(function (x) { return xmlText(x, "text:p"); });
+        var slides = Object.keys(zip.files).filter(function (n) { return /^ppt\/slides\/slide\d+\.xml$/.test(n); })
+          .sort(function (a, b) { return parseInt(a.match(/\d+/)[0], 10) - parseInt(b.match(/\d+/)[0], 10); });
+        return Promise.all(slides.map(function (n) { return zip.file(n).async("string"); }))
+          .then(function (xs) { return xs.map(function (x) { return xmlText(x, "a:p", "a:t"); }).join("\n\n"); });
       });
-  }
-  if (["txt", "md", "text", "csv"].indexOf(ext) >= 0 || (file.type || "").indexOf("text/") === 0) return file.text();
-  return Promise.reject(new Error("Format ." + ext + " belum didukung. Gunakan .txt, .md, .docx, atau .pdf."));
+    }
+    if (ext === "doc") return legacyDocText(buf);
+    var txt = decodeText(buf);
+    if (ext === "html" || ext === "htm") return htmlToText(txt);
+    if (ext === "rtf") return rtfToText(txt);
+    if (["txt", "md", "markdown", "csv", "text", "json", "xml", "tex"].indexOf(ext) >= 0 || (file.type || "").indexOf("text/") === 0) return txt;
+    throw new Error("Format ." + ext + " belum didukung. Gunakan PDF, Word, ODT, PPTX, RTF, HTML, atau TXT.");
+  });
 }
 
 /* ---- editor ---- */
@@ -689,8 +843,8 @@ function schedule(ms) {
   $("#statusDot").classList.add("busy"); $("#statusText").textContent = "Menganalisis…";
   clearTimeout(timer); timer = setTimeout(run, ms == null ? 250 : ms);
 }
-$("#sampleBtn").onclick = function () { setText(SAMPLE, true); };
-$("#clearBtn").onclick = function () { setText("", false); editor.focus(); };
+$("#sampleBtn").onclick = function () { setText(SAMPLE, true); S.docName = ""; };
+$("#clearBtn").onclick = function () { setText("", false); S.docName = ""; editor.focus(); };
 $("#pasteBtn").onclick = function () {
   if (navigator.clipboard && navigator.clipboard.readText) {
     navigator.clipboard.readText().then(function (t) { if (t) setText(t); else editor.focus(); }, function () { editor.focus(); toast("Tekan lama di kotak naskah lalu pilih Tempel."); });
@@ -699,12 +853,12 @@ $("#pasteBtn").onclick = function () {
 $("#mainFile").onchange = function (e) {
   var f = e.target.files[0]; e.target.value = ""; if (!f) return;
   toast("Membaca " + f.name + "…");
-  readFile(f).then(function (t) { setText(t); toast(f.name + " dimuat."); }, function (err) { toast(err.message); });
+  readFile(f).then(function (t) { setText(t); S.docName = f.name; toast(f.name + " dimuat."); }, function (err) { toast(err.message); });
 };
 
 /* ---- sources ---- */
 function allSources() {
-  var list = S.userSources.filter(function (s) { return s.text && s.text.trim(); });
+  var list = S.userSources.filter(function (s) { return s.text && s.text.trim(); }).concat(S.webSources);
   return $("#useCorpus").checked ? list.concat(CORPUS) : list;
 }
 function saveSources() { store("ct_sources", JSON.stringify(S.userSources.map(function (s) { return { name: s.name, text: s.text }; }))); }
@@ -777,7 +931,7 @@ function run() {
     (srcs.length ? p.matches.length + " bagian cocok · dibandingkan dengan " + srcs.length + " sumber · n-gram " + p.ngram : "Belum ada sumber pembanding. Tambahkan di tab Sumber.");
   var rows = p.sources.filter(function (s) { return s.overlap > 0 || s.cosine >= 20; }).slice(0, 12);
   $("#srcRows").innerHTML = rows.length ? rows.map(function (s) {
-    return '<tr><td class="name">' + esc(s.name) + '<div class="bar" style="margin-top:6px"><i style="width:' + s.overlap + '%;background:' + lvl(s.overlap) + '"></i></div></td>' +
+    return '<tr><td class="name">' + (s.url ? '<span class="tag">' + esc(s.kind) + '</span><br><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>" : esc(s.name)) + '<div class="bar" style="margin-top:6px"><i style="width:' + s.overlap + '%;background:' + lvl(s.overlap) + '"></i></div></td>' +
       '<td class="r num" style="color:' + lvl(s.overlap) + '">' + s.overlap.toFixed(1).replace(".", ",") + '%</td><td class="r num">' + s.cosine.toFixed(0) + "%</td></tr>";
   }).join("") : '<tr><td colspan="3" class="empty">Tidak ada sumber yang cocok.</td></tr>';
 
@@ -802,6 +956,7 @@ function run() {
   $("#lbAi").textContent = Math.round(av) + "%"; $("#lbAiDot").style.background = lvl(av);
 
   renderHL();
+  if (S.webSources.length && typeof renderWebList === "function") renderWebList();
   $("#statusDot").classList.remove("busy"); $("#statusText").textContent = "Analisis langsung";
 }
 
@@ -831,19 +986,174 @@ $("#hlPlag").onclick = function () { setHL("plag"); };
 $("#hlAi").onclick = function () { setHL("ai"); };
 $("#lbDetail").onclick = function () { document.querySelector(".sticky").scrollIntoView({ behavior: "smooth" }); };
 
-/* ---- report ---- */
-function reportText() {
-  var p = S.plag, a = S.ai, d = new Date().toLocaleString("id-ID");
-  if (!a) return "";
-  var lines = ["LAPORAN CEKTEKS", "Tanggal: " + d, "Panjang: " + a.word_count + " kata, " + a.sentence_count + " kalimat", "",
-    "INDEKS KESAMAAN: " + p.score + "% (" + $("#plagVerdict").textContent + ")", "Sumber pembanding: " + p.source_count + ", n-gram " + p.ngram];
-  p.sources.filter(function (s) { return s.overlap > 0; }).slice(0, 10).forEach(function (s) { lines.push("  - " + s.name + ": " + s.overlap + "% (kosinus " + s.cosine + "%)"); });
-  lines.push("", "KEMUNGKINAN AI: " + a.score + "% (" + $("#aiVerdict").textContent + ")");
-  Object.keys(SIG).forEach(function (k) { lines.push("  - " + SIG[k][0] + ": " + a.signals[k] + "%"); });
-  var ph = Object.keys(a.phrases); if (ph.length) lines.push("  Frasa khas AI: " + ph.join(", "));
-  lines.push("", "Catatan: deteksi AI bersifat perkiraan dan bisa keliru. Jangan dijadikan satu-satunya dasar keputusan.");
-  return lines.join("\n");
+/* ---- laporan & unduhan ---- */
+var IN_FRAME = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+if (IN_FRAME) $("#frameNote").hidden = false;
+
+function verdictText(v, labels) { return labels[v < 35 ? 0 : v < 65 ? 1 : 2]; }
+function pctId(v) { return String(v).replace(".", ","); }
+function buildReport() {
+  var p = S.plag, a = S.ai, t = S.text;
+  if (!a) return null;
+  var used = p.sources.filter(function (s) { return s.overlap > 0 || s.cosine >= 20; });
+  var matches = p.matches.map(function (m) { return { text: t.slice(m.start, m.end), source: m.source, url: m.url }; });
+  var aiSents = a.sentences.filter(function (s) { return s.score >= 55; }).map(function (s) { return { text: t.slice(s.start, s.end), score: s.score }; });
+  return {
+    date: new Date().toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" }),
+    doc: S.docName || (S.sample ? "Teks contoh" : "Teks yang ditempel"),
+    words: a.word_count, sentences: a.sentence_count,
+    plag: p.score, plagLabel: verdictText(p.score, ["Orisinal", "Ada kemiripan", "Kemiripan tinggi"]),
+    ngram: p.ngram, sourceCount: p.source_count, webCount: S.webSources.length,
+    ai: a.score, aiLabel: verdictText(a.score, ["Cenderung ditulis manusia", "Campuran / tidak pasti", "Cenderung dibuat AI"]),
+    sources: used, matches: matches, aiSents: aiSents,
+    signals: Object.keys(SIG).map(function (k) { return { name: SIG[k][0], value: a.signals[k] }; }),
+    phrases: Object.keys(a.phrases).map(function (k) { return k + " (" + a.phrases[k] + "x)"; }),
+    warnings: a.warnings
+  };
 }
+var DISCLAIMER = "Deteksi AI bersifat perkiraan berdasarkan gaya tulisan dan bisa keliru. Cek plagiarisme hanya membandingkan dengan sumber yang dipilih. Jangan jadikan laporan ini satu-satunya dasar keputusan.";
+function fileBase() { return "Laporan-CekTeks-" + (S.docName ? S.docName.replace(/\.[^.]+$/, "").replace(/[^\w\-]+/g, "_").slice(0, 40) + "-" : "") + new Date().toISOString().slice(0, 10); }
+function download(blob, name) {
+  try {
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.rel = "noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    toast(IN_FRAME ? "Unduhan diblokir di pratinjau Claude. Pakai file CekTeks.html." : "Mengunduh " + name);
+  } catch (e) { toast("Browser menolak unduhan: " + e.message); }
+}
+function needReport() { var r = buildReport(); if (!r) toast("Masukkan naskah terlebih dahulu."); return r; }
+
+function reportText(r) {
+  r = r || buildReport(); if (!r) return "";
+  var L = ["LAPORAN PEMERIKSAAN CEKTEKS", "=".repeat(28), "Dokumen : " + r.doc, "Tanggal : " + r.date, "Panjang : " + r.words + " kata, " + r.sentences + " kalimat", "",
+    "INDEKS KESAMAAN : " + pctId(r.plag) + "%  (" + r.plagLabel + ")",
+    "Dibandingkan dengan " + r.sourceCount + " sumber (" + r.webCount + " dari internet), n-gram " + r.ngram + " kata", ""];
+  if (r.sources.length) { L.push("Sumber yang cocok:"); r.sources.forEach(function (s) { L.push("  - " + s.name + ": " + pctId(s.overlap) + "% sama, kosinus " + pctId(s.cosine) + "%" + (s.url ? "\n    " + s.url : "")); }); L.push(""); }
+  if (r.matches.length) { L.push("Bagian yang sama:"); r.matches.forEach(function (m, i) { L.push("  " + (i + 1) + ". \"" + m.text.replace(/\s+/g, " ") + "\"\n     -> " + m.source + (m.url ? " (" + m.url + ")" : "")); }); L.push(""); }
+  L.push("KEMUNGKINAN AI : " + pctId(r.ai) + "%  (" + r.aiLabel + ")");
+  r.signals.forEach(function (g) { L.push("  - " + g.name + ": " + Math.round(g.value) + "%"); });
+  if (r.phrases.length) L.push("  Frasa khas AI: " + r.phrases.join(", "));
+  if (r.aiSents.length) { L.push("", "Kalimat dengan skor AI tinggi:"); r.aiSents.forEach(function (s) { L.push("  [" + Math.round(s.score) + "%] " + s.text.replace(/\s+/g, " ")); }); }
+  if (r.warnings.length) L.push("", "Catatan: " + r.warnings.join(" "));
+  L.push("", DISCLAIMER, "", "Dibuat dengan CekTeks");
+  return L.join("\n");
+}
+
+function highlightedHTML(inline) {
+  // Naskah lengkap dengan sorotan plagiarisme (merah) dan kalimat AI (kuning/oranye).
+  var t = S.text, marks = [];
+  S.plag.matches.forEach(function (m) { marks.push({ s: m.start, e: m.end, bg: "#f8c9c3", u: true, title: m.source }); });
+  if (S.ai) S.ai.sentences.forEach(function (s) { if (s.score >= 55) marks.push({ s: s.start, e: s.end, bg: s.score >= 70 ? "#fbdcb4" : "#fdf0c8" }); });
+  var pts = [0, t.length]; marks.forEach(function (m) { pts.push(m.s, m.e); });
+  pts = Array.from(new Set(pts)).sort(function (a, b) { return a - b; });
+  var html = "";
+  for (var i = 0; i + 1 < pts.length; i++) {
+    var a = pts[i], b = pts[i + 1], seg = esc(t.slice(a, b)).replace(/\n/g, "<br>");
+    var plag = marks.find(function (m) { return m.u && m.s <= a && m.e >= b; });
+    var ai = marks.find(function (m) { return !m.u && m.s <= a && m.e >= b; });
+    if (plag) seg = '<span style="background:#f8c9c3;text-decoration:underline;text-decoration-color:#c2392e">' + seg + "</span>";
+    else if (ai) seg = '<span style="background:' + ai.bg + '">' + seg + "</span>";
+    html += seg;
+  }
+  return html;
+}
+
+function reportDoc(r) {
+  function row(k, v) { return "<tr><td style='padding:4px 10px 4px 0;color:#5a6577'>" + k + "</td><td style='padding:4px 0'><b>" + v + "</b></td></tr>"; }
+  function col(v) { return v < 35 ? "#1d7f55" : v < 65 ? "#b5700c" : "#c2392e"; }
+  var h = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'><title>Laporan CekTeks</title>" +
+    "<style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#0f1b2a}h1{font-size:20pt;margin:0 0 4pt}h2{font-size:13pt;margin:16pt 0 6pt;border-bottom:1px solid #d9e0e9;padding-bottom:3pt}" +
+    "table{border-collapse:collapse}th,td{font-size:10pt;text-align:left;vertical-align:top}th{color:#5a6577;border-bottom:1px solid #d9e0e9;padding:4pt}.t td{border-bottom:1px solid #eef2f6;padding:4pt}.big{font-size:26pt;font-weight:bold}.small{font-size:9pt;color:#5a6577}</style></head><body>";
+  h += "<h1>Laporan Pemeriksaan CekTeks</h1><table>" + row("Dokumen", esc(r.doc)) + row("Tanggal", r.date) + row("Panjang", r.words + " kata, " + r.sentences + " kalimat") + "</table>";
+  h += "<table style='margin-top:12pt;width:100%'><tr><td style='width:50%'><div class='small'>INDEKS KESAMAAN</div><div class='big' style='color:" + col(r.plag) + "'>" + pctId(r.plag) + "%</div><div>" + r.plagLabel + "</div></td>" +
+    "<td><div class='small'>KEMUNGKINAN AI</div><div class='big' style='color:" + col(r.ai) + "'>" + pctId(r.ai) + "%</div><div>" + r.aiLabel + "</div></td></tr></table>";
+  h += "<p class='small'>Dibandingkan dengan " + r.sourceCount + " sumber (" + r.webCount + " dari internet), n-gram " + r.ngram + " kata.</p>";
+  h += "<h2>Sumber yang cocok</h2>" + (r.sources.length ? "<table class='t' style='width:100%'><tr><th>Sumber</th><th>Sama</th><th>Kosinus</th></tr>" + r.sources.map(function (s) {
+    return "<tr><td>" + (s.url ? "<a href='" + esc(s.url) + "'>" + esc(s.name) + "</a><br><span class='small'>" + esc(s.url) + "</span>" : esc(s.name)) + "</td><td style='color:" + col(s.overlap) + "'><b>" + pctId(s.overlap) + "%</b></td><td>" + pctId(s.cosine) + "%</td></tr>";
+  }).join("") + "</table>" : "<p>Tidak ada sumber yang cocok.</p>");
+  h += "<h2>Sinyal deteksi AI</h2><table class='t'>" + r.signals.map(function (g) { return "<tr><td>" + g.name + "</td><td><b>" + Math.round(g.value) + "%</b></td></tr>"; }).join("") + "</table>";
+  if (r.phrases.length) h += "<p><b>Frasa khas AI:</b> " + esc(r.phrases.join(", ")) + "</p>";
+  h += "<h2>Naskah dengan sorotan</h2><p class='small'><span style='background:#f8c9c3;text-decoration:underline'>&nbsp;merah&nbsp;</span> sama dengan sumber &nbsp; <span style='background:#fbdcb4'>&nbsp;oranye&nbsp;</span> skor AI 70%+ &nbsp; <span style='background:#fdf0c8'>&nbsp;kuning&nbsp;</span> skor AI 55–70%</p>";
+  h += "<div style='line-height:1.6'>" + highlightedHTML() + "</div>";
+  h += "<p class='small' style='margin-top:18pt'>" + DISCLAIMER + "</p></body></html>";
+  return h;
+}
+
+function pdfSafe(s) {
+  return String(s).replace(/[“”„]/g, '"').replace(/[‘’‚]/g, "'").replace(/[–—]/g, "-").replace(/…/g, "...").replace(/[↔→]/g, "->")
+    .replace(/×/g, "x").replace(/ /g, " ").normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g, "?");
+}
+function reportPdf(r) {
+  var J = window.jspdf && window.jspdf.jsPDF;
+  if (!J) return need("jspdf", "jspdf/2.5.1/jspdf.umd.min.js").then(function () { return reportPdf(r); });
+  var doc = new J({ unit: "pt", format: "a4" }), W = 595.28, H = 841.89, M = 48, y = M, CW = W - 2 * M;
+  var INK = [15, 27, 42], MUTED = [90, 101, 119], ACC = [14, 106, 134];
+  function col(v) { return v < 35 ? [29, 127, 85] : v < 65 ? [181, 112, 12] : [194, 57, 46]; }
+  function ensure(h) { if (y + h > H - M) { doc.addPage(); y = M; } }
+  function text(str, size, style, color, x, width) {
+    doc.setFont("helvetica", style || "normal"); doc.setFontSize(size); doc.setTextColor.apply(doc, color || INK);
+    var lines = doc.splitTextToSize(pdfSafe(str), width || CW), lh = size * 1.4;
+    lines.forEach(function (ln) { ensure(lh); doc.text(ln, x || M, y + size); y += lh; });
+  }
+  function heading(str) { y += 10; ensure(40); text(str, 13, "bold", INK); doc.setDrawColor(217, 224, 233); doc.line(M, y + 2, W - M, y + 2); y += 10; }
+  // header band
+  doc.setFillColor.apply(doc, ACC); doc.rect(0, 0, W, 6, "F");
+  text("Laporan Pemeriksaan CekTeks", 20, "bold", INK); y += 4;
+  text("Dokumen: " + r.doc, 10, "normal", MUTED); text("Tanggal: " + r.date + "   |   " + r.words + " kata, " + r.sentences + " kalimat", 10, "normal", MUTED);
+  y += 12;
+  // score boxes
+  [[r.plag, "INDEKS KESAMAAN", r.plagLabel], [r.ai, "KEMUNGKINAN AI", r.aiLabel]].forEach(function (b, i) {
+    var x = M + i * (CW / 2 + 6), w = CW / 2 - 6, top = y;
+    doc.setDrawColor(217, 224, 233); doc.setFillColor(245, 247, 250); doc.roundedRect(x, top, w, 92, 8, 8, "FD");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor.apply(doc, MUTED); doc.text(b[1], x + 14, top + 20);
+    doc.setFontSize(30); doc.setTextColor.apply(doc, col(b[0])); doc.text(pctId(b[0]) + "%", x + 14, top + 54);
+    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor.apply(doc, INK); doc.text(pdfSafe(b[2]), x + 14, top + 72);
+    doc.setFillColor(229, 233, 239); doc.rect(x + 14, top + 80, w - 28, 4, "F");
+    doc.setFillColor.apply(doc, col(b[0])); doc.rect(x + 14, top + 80, (w - 28) * Math.min(100, b[0]) / 100, 4, "F");
+  });
+  y += 104;
+  text("Dibandingkan dengan " + r.sourceCount + " sumber (" + r.webCount + " dari internet), n-gram " + r.ngram + " kata.", 9, "normal", MUTED);
+
+  heading("Sumber yang cocok");
+  if (!r.sources.length) text("Tidak ada sumber yang cocok.", 10);
+  r.sources.forEach(function (s) {
+    ensure(30); var top = y;
+    doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor.apply(doc, col(s.overlap)); doc.text(pctId(s.overlap) + "%", W - M, top + 10, { align: "right" });
+    text(s.name, 10, "bold", INK, M, CW - 70);
+    if (s.url) { doc.setTextColor.apply(doc, ACC); doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); var u = doc.splitTextToSize(pdfSafe(s.url), CW - 70); u.forEach(function (ln) { ensure(12); doc.textWithLink(ln, M, y + 8.5, { url: s.url }); y += 12; }); }
+    text("Kosinus " + pctId(s.cosine) + "%", 8.5, "normal", MUTED); y += 4;
+  });
+  if (r.matches.length) {
+    heading("Bagian yang sama dengan sumber");
+    r.matches.forEach(function (m, i) { text((i + 1) + '. "' + m.text.replace(/\s+/g, " ") + '"', 9.5, "normal", INK); text("   Sumber: " + m.source + (m.url ? "  " + m.url : ""), 8.5, "italic", MUTED); y += 3; });
+  }
+  heading("Sinyal deteksi AI");
+  r.signals.forEach(function (g) {
+    ensure(18); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor.apply(doc, INK); doc.text(pdfSafe(g.name), M, y + 10);
+    var bx = M + 250, bw = CW - 300; doc.setFillColor(229, 233, 239); doc.rect(bx, y + 4, bw, 6, "F");
+    doc.setFillColor.apply(doc, g.name.indexOf("informal") >= 0 ? [29, 127, 85] : col(g.value)); doc.rect(bx, y + 4, bw * g.value / 100, 6, "F");
+    doc.text(Math.round(g.value) + "%", W - M, y + 10, { align: "right" }); y += 18;
+  });
+  if (r.phrases.length) { y += 4; text("Frasa khas AI: " + r.phrases.join(", "), 9.5, "normal", INK); }
+  if (r.aiSents.length) {
+    heading("Kalimat dengan skor AI tinggi");
+    r.aiSents.forEach(function (s) { text("[" + Math.round(s.score) + "%] " + s.text.replace(/\s+/g, " "), 9.5, "normal", INK); y += 2; });
+  }
+  heading("Naskah lengkap");
+  S.text.split(/\n{2,}/).forEach(function (para) { if (para.trim()) { text(para.replace(/\s+/g, " ").trim(), 9.5, "normal", INK); y += 5; } });
+  y += 8; text(DISCLAIMER, 8.5, "italic", MUTED);
+  var n = doc.getNumberOfPages();
+  for (var i = 1; i <= n; i++) { doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor.apply(doc, MUTED); doc.text("CekTeks  |  halaman " + i + " dari " + n, W / 2, H - 22, { align: "center" }); }
+  return Promise.resolve(doc.output("blob"));
+}
+
+$("#dlPdf").onclick = function () {
+  var r = needReport(); if (!r) return;
+  reportPdf(r).then(function (b) { download(b, fileBase() + ".pdf"); }, function (e) { toast("Gagal membuat PDF: " + e.message); });
+};
+$("#dlDoc").onclick = function () { var r = needReport(); if (r) download(new Blob(["﻿" + reportDoc(r)], { type: "application/msword" }), fileBase() + ".doc"); };
+$("#dlTxt").onclick = function () { var r = needReport(); if (r) download(new Blob([reportText(r)], { type: "text/plain;charset=utf-8" }), fileBase() + ".txt"); };
+$("#printBtn").onclick = function () { try { window.print(); } catch (e) {} if (IN_FRAME) toast("Cetak hanya berfungsi di versi aplikasi."); };
 $("#copyReport").onclick = function () {
   var t = reportText(); if (!t) return toast("Masukkan naskah terlebih dahulu.");
   function fallback() {
@@ -898,6 +1208,151 @@ S.cmpDocs = [
   { name: "Contoh – Tugas Sari", text: "Pemanasan global adalah peningkatan suhu rata-rata permukaan bumi yang terutama disebabkan oleh aktivitas manusia. " + CORPUS[0].text.split("\n\n")[1] },
   { name: "Contoh – Tugas Budi", text: "Bumi makin panas karena kita terlalu banyak membakar batu bara dan minyak. Di kampung saya, musim hujan sekarang datangnya tidak menentu, jadi petani sering gagal tanam." }
 ];
+
+/* ---- cek internet ---- */
+function setNet() {
+  var on = navigator.onLine !== false;
+  $("#net").className = "net " + (on ? "on" : "off"); $("#netText").textContent = on ? "Online" : "Offline";
+  $("#webBtn").disabled = !on; if (!on) $("#webStatus").textContent = "Sedang offline. Fitur lain tetap berjalan.";
+  else if ($("#webStatus").textContent.indexOf("offline") >= 0) $("#webStatus").textContent = "";
+}
+window.addEventListener("online", setNet); window.addEventListener("offline", setNet);
+
+function fetchJSON(url, ms) {
+  var ctl = window.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ctl) ctl.abort(); }, ms || 15000);
+  return fetch(url, ctl ? { signal: ctl.signal } : {}).then(function (r) {
+    clearTimeout(tm); if (!r.ok) throw new Error("HTTP " + r.status); return r.json();
+  }, function (e) { clearTimeout(tm); throw e; });
+}
+function keyTerms(sentence, k) {
+  var seen = new Set(), out = [];
+  contentWords(sentence).forEach(function (w) { if (!seen.has(w) && !/^\d+$/.test(w)) { seen.add(w); out.push(w); } });
+  return out.sort(function (a, b) { return b.length - a.length; }).slice(0, k);
+}
+function pickSentences(text, max) {
+  var ss = splitSentences(text).map(function (s, i) { return { t: s[0], i: i, n: words(s[0]).length, c: new Set(contentWords(s[0])).size }; })
+    .filter(function (s) { return s.n >= 8 && s.c >= 4; });
+  return ss.sort(function (a, b) { return b.c - a.c; }).slice(0, max).sort(function (a, b) { return a.i - b.i; }).map(function (s) { return s.t; });
+}
+function wikiSearch(lang, terms) {
+  var u = "https://" + lang + ".wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=3&srsearch=" + encodeURIComponent(terms.join(" "));
+  return fetchJSON(u).then(function (d) { return (d.query && d.query.search || []).map(function (x) { return x.title; }); });
+}
+function wikiPage(lang, title) {
+  var u = "https://" + lang + ".wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&format=json&origin=*&titles=" + encodeURIComponent(title);
+  return fetchJSON(u).then(function (d) {
+    var pages = d.query && d.query.pages || {}, pg = pages[Object.keys(pages)[0]] || {};
+    return { name: "Wikipedia (" + lang.toUpperCase() + "): " + (pg.title || title), kind: "Wikipedia " + lang.toUpperCase(),
+      url: "https://" + lang + ".wikipedia.org/wiki/" + encodeURIComponent((pg.title || title).replace(/ /g, "_")), text: pg.extract || "" };
+  });
+}
+function openAlex(terms) {
+  var u = "https://api.openalex.org/works?per_page=3&select=id,doi,display_name,publication_year,abstract_inverted_index&search=" + encodeURIComponent(terms.join(" "));
+  return fetchJSON(u).then(function (d) {
+    return (d.results || []).filter(function (w) { return w.abstract_inverted_index; }).map(function (w) {
+      var pos = []; Object.keys(w.abstract_inverted_index).forEach(function (word) { w.abstract_inverted_index[word].forEach(function (i) { pos[i] = word; }); });
+      return { name: (w.display_name || "Artikel ilmiah") + (w.publication_year ? " (" + w.publication_year + ")" : ""), kind: "Jurnal ilmiah",
+        url: w.doi || w.id, text: (w.display_name || "") + ". " + pos.filter(Boolean).join(" ") };
+    });
+  });
+}
+function googleSearch(sentence) {
+  var key = store("ct_gkey"), cx = store("ct_gcx");
+  var q = '"' + words(sentence).slice(0, 14).join(" ") + '"';
+  var u = "https://www.googleapis.com/customsearch/v1?num=5&key=" + encodeURIComponent(key) + "&cx=" + encodeURIComponent(cx) + "&q=" + encodeURIComponent(q);
+  return fetchJSON(u).then(function (d) {
+    return (d.items || []).map(function (it) { return { name: it.title, kind: "Google", url: it.link, text: it.title + ". " + (it.snippet || "").replace(/\s*\.\.\.\s*/g, " ") + " " + sentence }; });
+  });
+}
+// Hasil Google hanya berupa cuplikan; kalimat yang dicari ditambahkan ke teks sumber hanya bila
+// cuplikannya memang memuat kalimat tersebut, supaya tidak memunculkan kecocokan palsu.
+function snippetConfirms(src, sentence) {
+  var snip = src.text.slice(0, src.text.length - sentence.length - 1);
+  var sw = words(snip).join(" "), qw = words(sentence);
+  for (var i = 0; i + 5 <= qw.length; i++) if (sw.indexOf(qw.slice(i, i + 5).join(" ")) >= 0) return true;
+  return false;
+}
+
+function runWebSearch() {
+  var text = normalize(editor.value);
+  if (words(text).length < 15) return toast("Naskah terlalu pendek untuk dicari di internet (minimal 15 kata).");
+  var useG = $("#wGoogle").checked && store("ct_gkey") && store("ct_gcx");
+  if ($("#wGoogle").checked && !useG) toast("Google dilewati: isi API key dan cx di tab Sumber.");
+  var langs = []; if ($("#wWikiId").checked) langs.push("id"); if ($("#wWikiEn").checked) langs.push("en");
+  var useOA = $("#wOpenAlex").checked;
+  if (!langs.length && !useOA && !useG) return toast("Pilih minimal satu sumber pencarian.");
+  var sents = pickSentences(text, 6);
+  if (!sents.length) return toast("Tidak menemukan kalimat yang cukup panjang untuk dicari.");
+
+  var btn = $("#webBtn"), prog = $("#webProg"), bar = prog.querySelector("i"), errors = 0;
+  btn.disabled = true; prog.hidden = false; bar.style.width = "5%";
+  var tasks = [], done = 0, found = new Map(), titles = new Map();
+  function tick(label) { done++; bar.style.width = Math.min(95, 5 + 90 * done / Math.max(tasks.length, 1)) + "%"; $("#webStatus").textContent = label; }
+  function add(src) { if (src && src.text && words(src.text).length > 5 && !found.has(src.url)) found.set(src.url, src); }
+  function fail() { errors++; }
+
+  sents.forEach(function (s) {
+    var terms = keyTerms(s, 6);
+    langs.forEach(function (lang) {
+      tasks.push(function () {
+        return wikiSearch(lang, terms).then(function (ts) { return ts.length ? ts : wikiSearch(lang, terms.slice(0, 3)); })
+          .then(function (ts) { ts.slice(0, 2).forEach(function (t) { titles.set(lang + "|" + t, [lang, t]); }); }, fail)
+          .then(function () { tick("Mencari di Wikipedia…"); });
+      });
+    });
+    if (useOA) tasks.push(function () { return openAlex(terms.slice(0, 5)).then(function (rs) { rs.forEach(add); }, fail).then(function () { tick("Mencari di jurnal ilmiah…"); }); });
+    if (useG) tasks.push(function () {
+      return googleSearch(s).then(function (rs) { rs.forEach(function (r) { if (!snippetConfirms(r, s)) r.text = r.text.slice(0, r.text.length - s.length - 1); add(r); }); }, fail)
+        .then(function () { tick("Mencari di Google…"); });
+    });
+  });
+  function runAll(list, limit) {
+    var i = 0;
+    function next() { if (i >= list.length) return Promise.resolve(); var f = list[i++]; return f().then(next); }
+    var workers = []; for (var k = 0; k < limit; k++) workers.push(next());
+    return Promise.all(workers);
+  }
+  runAll(tasks, 3).then(function () {
+    var pages = Array.from(titles.values()).slice(0, 14);
+    tasks = tasks.concat(pages.map(function () { return null; }));
+    return runAll(pages.map(function (lt) { return function () { return wikiPage(lt[0], lt[1]).then(add, fail).then(function () { tick("Mengunduh artikel…"); }); }; }), 4);
+  }).then(function () {
+    S.webSources = Array.from(found.values());
+    bar.style.width = "100%"; setTimeout(function () { prog.hidden = true; }, 600);
+    btn.disabled = navigator.onLine === false;
+    $("#webStatus").textContent = S.webSources.length ? S.webSources.length + " halaman ditemukan dan dibandingkan." : (errors ? "Pencarian gagal. Periksa koneksi internet." : "Tidak ada halaman relevan yang ditemukan.");
+    if (errors && IN_FRAME) $("#webStatus").textContent = "Pencarian internet diblokir di pratinjau Claude. Pakai file CekTeks.html.";
+    $("#webClear").hidden = !S.webSources.length;
+    renderQLinks(sents);
+    run(); renderWebList();
+  });
+}
+function renderWebList() {
+  var bySrc = {}; S.plag.sources.forEach(function (s) { if (s.url) bySrc[s.url] = s; });
+  var list = S.webSources.slice().sort(function (a, b) { return ((bySrc[b.url] || {}).overlap || 0) - ((bySrc[a.url] || {}).overlap || 0); });
+  $("#webList").innerHTML = list.slice(0, 8).map(function (w) {
+    var r = bySrc[w.url] || { overlap: 0, cosine: 0 };
+    return '<div class="webitem"><div><span class="tag">' + esc(w.kind) + '</span><br><a href="' + esc(w.url) + '" target="_blank" rel="noopener">' + esc(w.name) + '</a></div>' +
+      '<span class="num" style="color:' + lvl(r.overlap) + '">' + pctId(r.overlap) + '%</span><small>' + esc(w.url) + " · kosinus " + pctId(r.cosine) + "%</small></div>";
+  }).join("");
+}
+function renderQLinks(sents) {
+  $("#qBox").hidden = !sents.length;
+  $("#qLinks").innerHTML = sents.map(function (s) {
+    var q = '"' + words(s).slice(0, 14).join(" ") + '"';
+    return '<li><a href="https://www.google.com/search?q=' + encodeURIComponent(q) + '" target="_blank" rel="noopener">' + esc(s.length > 140 ? s.slice(0, 137) + "…" : s) + "</a></li>";
+  }).join("");
+}
+$("#webBtn").onclick = runWebSearch;
+$("#webClear").onclick = function () { S.webSources = []; $("#webList").innerHTML = ""; $("#webClear").hidden = true; $("#webStatus").textContent = ""; run(); };
+["gKey", "gCx"].forEach(function (id) {
+  var el = $("#" + id), k = id === "gKey" ? "ct_gkey" : "ct_gcx"; el.value = store(k) || "";
+  el.oninput = function () { store(k, el.value.trim()); updGHint(); };
+});
+function updGHint() { var ok = store("ct_gkey") && store("ct_gcx"); $("#gHint").textContent = ok ? "(API siap)" : "(atur API di tab Sumber)"; if (ok && !$("#wGoogle").dataset.touched) $("#wGoogle").checked = true; }
+$("#wGoogle").onchange = function () { this.dataset.touched = "1"; };
+updGHint(); setNet();
+if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !IN_FRAME) navigator.serviceWorker.register("sw.js").catch(function () {});
 
 /* ---- boot ---- */
 renderSources(); renderCmp();

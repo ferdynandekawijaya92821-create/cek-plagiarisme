@@ -10,6 +10,24 @@ Website + aplikasi (PWA yang bisa dipasang & CLI) untuk:
 
 Mendukung berkas `.txt`, `.md`, `.docx`, `.pdf`. Semua diproses secara lokal, tanpa API pihak ketiga.
 
+## ⭐ Aplikasi mandiri (offline, gratis selamanya)
+
+**[`dist/CekTeks.html`](dist/CekTeks.html)** adalah satu file berisi seluruh aplikasi. Simpan di HP atau komputer,
+lalu buka dengan browser apa pun (Chrome, Safari, Edge, Firefox). Tidak butuh server, akun, langganan, atau internet.
+
+- Analisis langsung saat mengetik: indeks kesamaan dan kemungkinan AI
+- Unggah PDF, Word (.docx/.doc), ODT, PPTX, RTF, HTML, TXT
+- **Cek di internet** (saat online): Wikipedia Indonesia & Inggris, jurnal ilmiah OpenAlex, dan Google (opsional, API key gratis 100 pencarian/hari)
+- **Unduh laporan** PDF, Word, atau TXT, lengkap dengan naskah yang disorot
+- Bandingkan banyak dokumen sekaligus
+
+**Situs sendiri yang bisa dipasang di HP:** folder [`docs/`](../docs) siap untuk GitHub Pages
+(Settings → Pages → Branch `main`, folder `/docs`) atau Netlify (seret folder `docs`). Setelah dibuka
+sekali, situs tetap jalan offline dan bisa dipasang lewat menu browser "Tambahkan ke layar utama".
+
+Kode sumber halaman ada di `web/src/app.html`; jalankan `python web/build.py` untuk membangun ulang.
+Pustaka pihak ketiga di `web/vendor/`: pdf.js (Apache-2.0), mammoth (BSD-2), JSZip (MIT), jsPDF (MIT).
+
 ## Instalasi
 
 ```bash
