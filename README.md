@@ -105,3 +105,9 @@ Panduan Perintah Cepat
 | Tambah / update makanan      | `python kalori_cli_manager.py add-food ...`    | Makanan ditambahkan/update   |
 | Lokasi penyimpanan log       | *otomatis dibuat* `kalori_log.txt`             | Riwayat setiap session       |
 | Edit database manual         | Edit file `makanan.csv`                        | Update nilai kalori          |
+
+---
+
+## 🔍 Proyek tambahan: CekTeks (Cek Plagiarisme & AI)
+
+Website + aplikasi untuk cek plagiarisme dan deteksi teks buatan AI ada di folder [`cekteks/`](cekteks/README.md).

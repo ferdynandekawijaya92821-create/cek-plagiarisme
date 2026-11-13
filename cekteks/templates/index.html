@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CekTeks — Cek Plagiarisme & AI</title>
+  <meta name="description" content="Periksa plagiarisme dan deteksi teks buatan AI secara cepat dan privat.">
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <link rel="icon" href="{{ url_for('static', filename='icon.svg') }}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icon.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="{{ url_for('static', filename='icon.svg') }}" alt="" width="32" height="32">
+    <span>Cek<b>Teks</b></span>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="check" role="tab">Periksa Teks</button>
+    <button class="tab" data-tab="compare" role="tab">Bandingkan Dokumen</button>
+    <button class="tab" data-tab="about" role="tab">Tentang</button>
+  </nav>
+  <button id="installBtn" class="btn ghost small" hidden>⬇ Pasang Aplikasi</button>
+</header>
+
+<main>
+  <!-- ============ PERIKSA ============ -->
+  <section id="tab-check" class="panel active">
+    <div class="card">
+      <div class="card-head">
+        <h2>Teks yang diperiksa</h2>
+        <div class="row gap">
+          <label class="btn ghost small">📄 Unggah berkas
+            <input type="file" id="mainFile" accept=".txt,.md,.docx,.pdf" hidden>
+          </label>
+          <button class="btn ghost small" id="sampleBtn">Contoh</button>
+          <button class="btn ghost small" id="clearBtn">Bersihkan</button>
+        </div>
+      </div>
+      <textarea id="mainText" placeholder="Tempel atau ketik teks di sini (esai, artikel, tugas)…"></textarea>
+      <div class="meta"><span id="wordCount">0 kata</span> · <span id="charCount">0 karakter</span></div>
+
+      <details class="sources" id="sourcesBox">
+        <summary>Sumber pembanding untuk plagiarisme <span class="pill" id="srcCount">0</span></summary>
+        <p class="hint">Tambahkan teks/berkas pembanding (mis. artikel asli, tugas teman, referensi).
+          Korpus bawaan di folder <code>corpus/</code> juga bisa ikut diperiksa.</p>
+        <div id="sourceList"></div>
+        <div class="row gap wrap">
+          <button class="btn ghost small" id="addSourceBtn">＋ Tambah teks sumber</button>
+          <label class="btn ghost small">📁 Unggah berkas sumber
+            <input type="file" id="sourceFiles" accept=".txt,.md,.docx,.pdf" multiple hidden>
+          </label>
+          <label class="check"><input type="checkbox" id="useCorpus" checked> Gunakan korpus bawaan</label>
+          <label class="check">Panjang n-gram
+            <select id="ngram">
+              <option value="3">3 (sensitif)</option><option value="4">4</option>
+              <option value="5" selected>5 (standar)</option><option value="6">6</option>
+              <option value="8">8 (ketat)</option>
+            </select>
+          </label>
+        </div>
+      </details>
+
+      <div class="actions">
+        <div class="seg" id="modeSeg">
+          <button data-mode="both" class="active">Keduanya</button>
+          <button data-mode="plagiarism">Plagiarisme</button>
+          <button data-mode="ai">Deteksi AI</button>
+        </div>
+        <button class="btn primary" id="checkBtn">Periksa Sekarang</button>
+      </div>
+    </div>
+
+    <div id="results" hidden>
+      <div class="scores">
+        <div class="card score" id="plagCard">
+          <div class="ring" id="plagRing"><span id="plagScore">0%</span></div>
+          <div>
+            <h3>Plagiarisme</h3>
+            <p id="plagLabel" class="muted"></p>
+          </div>
+        </div>
+        <div class="card score" id="aiCard">
+          <div class="ring" id="aiRing"><span id="aiScore">0%</span></div>
+          <div>
+            <h3>Kemungkinan AI</h3>
+            <p id="aiLabel" class="muted"></p>
+          </div>
+        </div>
+      </div>
+
+      <div id="warnings"></div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Sorotan teks</h2>
+          <div class="seg small" id="hlSeg">
+            <button data-hl="plagiarism" class="active">Plagiarisme</button>
+            <button data-hl="ai">AI per kalimat</button>
+          </div>
+        </div>
+        <div class="legend" id="legend"></div>
+        <div id="highlight" class="highlight"></div>
+      </div>
+
+      <div class="grid2">
+        <div class="card" id="sourcesCard">
+          <h2>Sumber yang cocok</h2>
+          <div class="table-wrap"><table id="srcTable">
+            <thead><tr><th>Sumber</th><th>Kesamaan</th><th>Kosinus</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+        <div class="card" id="signalsCard">
+          <h2>Sinyal deteksi AI</h2>
+          <div id="signals"></div>
+          <h3 class="mt">Frasa khas AI ditemukan</h3>
+          <div id="phrases" class="chips"></div>
+          <p class="disclaimer" id="disclaimer"></p>
+        </div>
+      </div>
+      <div class="row gap end">
+        <button class="btn ghost small" id="exportJson">Unduh laporan (JSON)</button>
+        <button class="btn ghost small" onclick="window.print()">Cetak / PDF</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BANDINGKAN ============ -->
+  <section id="tab-compare" class="panel">
+    <div class="card">
+      <h2>Bandingkan banyak dokumen</h2>
+      <p class="hint">Cocok untuk guru/dosen: unggah beberapa tugas sekaligus untuk menemukan pasangan yang mirip.</p>
+      <label class="dropzone" id="dropzone">
+        <input type="file" id="compareFiles" accept=".txt,.md,.docx,.pdf" multiple hidden>
+        <span>📂 Seret berkas ke sini atau klik untuk memilih (.txt, .md, .docx, .pdf)</span>
+      </label>
+      <ul id="compareList" class="filelist"></ul>
+      <div class="actions"><span></span><button class="btn primary" id="compareBtn" disabled>Bandingkan</button></div>
+    </div>
+    <div class="card" id="compareResult" hidden>
+      <h2>Hasil perbandingan</h2>
+      <div class="table-wrap"><table id="cmpTable">
+        <thead><tr><th>Dokumen A</th><th>Dokumen B</th><th>A ada di B</th><th>B ada di A</th><th>Kosinus</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- ============ TENTANG ============ -->
+  <section id="tab-about" class="panel">
+    <div class="card prose">
+      <h2>Tentang CekTeks</h2>
+      <p>CekTeks memeriksa dua hal: <b>plagiarisme</b> dan <b>kemungkinan teks dibuat AI</b>.
+        Semua pemrosesan berjalan di server Anda sendiri — teks tidak dikirim ke layanan pihak ketiga.</p>
+      <h3>Cara kerja cek plagiarisme</h3>
+      <ul>
+        <li>Teks dipecah menjadi rangkaian <i>n</i> kata berturut-turut (n-gram/shingle).</li>
+        <li>Rangkaian yang juga muncul di sumber pembanding ditandai sebagai bagian yang cocok.</li>
+        <li>Skor = persentase kata dalam teks yang termasuk bagian cocok.</li>
+        <li>Kemiripan kosinus TF-IDF menunjukkan kesamaan topik/kosakata (membantu menangkap parafrase ringan).</li>
+      </ul>
+      <h3>Cara kerja deteksi AI</h3>
+      <ul>
+        <li><b>Burstiness</b> — tulisan manusia punya panjang kalimat yang lebih bervariasi.</li>
+        <li><b>Frasa khas AI</b> — mis. "penting untuk dicatat", "di era digital", "delve", "furthermore".</li>
+        <li><b>Konektor di awal kalimat</b>, keseragaman paragraf, repetisi pembuka kalimat, keragaman kosakata.</li>
+        <li><b>Informalitas</b> (bahasa gaul, tanda seru) menurunkan skor.</li>
+      </ul>
+      <p class="disclaimer">⚠️ Tidak ada detektor AI yang 100% akurat. Gunakan hasil sebagai indikasi awal,
+        bukan bukti tunggal. Cek plagiarisme hanya membandingkan dengan sumber yang Anda berikan dan korpus lokal
+        (tidak mencari di internet).</p>
+      <p class="muted">Versi {{ version }} · API: <code>POST /api/check</code>, <code>POST /api/compare</code>, <code>POST /api/extract</code></p>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast" hidden></div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
