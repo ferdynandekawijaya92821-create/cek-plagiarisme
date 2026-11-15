@@ -1,0 +1,13 @@
+{
+  "name": "cekteks-web",
+  "private": true,
+  "description": "Website CekTeks: cek plagiarisme dan deteksi tulisan AI",
+  "scripts": {
+    "build": "python3 build.py",
+    "test": "node tests/e2e.js"
+  },
+  "devDependencies": {
+    "axe-core": "4.10.2",
+    "playwright": "1.49.1"
+  }
+}

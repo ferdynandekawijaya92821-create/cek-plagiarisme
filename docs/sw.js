@@ -1,9 +1,13 @@
-// Service worker CekTeks: simpan aplikasi di perangkat agar tetap bisa dibuka tanpa internet.
-const CACHE = "cekteks-v3";
-const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png", "./icon-180.png"];
+// Service worker CekTeks: menyimpan aplikasi di perangkat agar tetap bisa dibuka tanpa internet.
+const CACHE = "cekteks-v4";
+const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png", "./icon-180.png"];
+const VENDOR = ["./vendor/pdf.min.js", "./vendor/pdf.worker.min.js", "./vendor/mammoth.browser.min.js", "./vendor/jszip.min.js", "./vendor/jspdf.umd.min.js"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // Halaman utama wajib tersimpan; pustaka besar disimpan sebisanya agar unggah PDF/Word tetap jalan offline.
+  e.waitUntil(caches.open(CACHE)
+    .then((c) => c.addAll(CORE).then(() => Promise.all(VENDOR.map((u) => c.add(u).catch(() => null)))))
+    .then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil(caches.keys()
@@ -12,7 +16,14 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
-  if (e.request.method !== "GET" || url.origin !== location.origin) return; // pencarian internet tidak di-cache
+  if (e.request.method !== "GET" || url.origin !== location.origin) return; // pencarian internet tidak disimpan
+  if (url.pathname.includes("/vendor/")) {
+    // Pustaka tidak berubah antarversi: ambil dari simpanan dulu.
+    e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request).then((res) => {
+      const copy = res.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)); return res;
+    })));
+    return;
+  }
   e.respondWith(
     fetch(e.request)
       .then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)); return res; })

@@ -1,0 +1,46 @@
+# Pemeriksaan otomatis untuk setiap pull request dan perubahan di main.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Pasang dependensi Python
+        run: pip install -r cekteks/requirements.txt pytest
+      - name: Uji mesin Python
+        run: python -m pytest -q cekteks/tests
+
+      - name: Hasil build harus sudah di-commit
+        run: |
+          python cekteks/web/build.py
+          if ! git diff --quiet -- docs cekteks/dist; then
+            echo "::error::Hasil build berbeda. Jalankan 'python cekteks/web/build.py' lalu commit folder docs/ dan cekteks/dist/."
+            git diff --stat -- docs cekteks/dist
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Pasang Playwright dan axe-core
+        working-directory: cekteks/web
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Uji ujung-ke-ujung di browser
+        working-directory: cekteks/web
+        run: npm test
