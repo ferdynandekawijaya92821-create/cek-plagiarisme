@@ -361,7 +361,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 .ms-i i { width: 8px; height: 8px; border-radius: 50%; align-self: center; background: var(--muted); }
 .ms-i b { font: 600 14px var(--f-mono); }
 .ms-i small { font-size: 11px; color: var(--muted); }
-.panel { top: calc(env(safe-area-inset-top, 0px) + 80px); max-height: calc(100vh - 96px); }
+@media (min-width: 1001px) { .panel { top: calc(env(safe-area-inset-top, 0px) + 80px); max-height: calc(100vh - 96px); } }
 #panel, #docCard { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 78px); }
 
 .pagehead { margin: 4px 0 20px; max-width: 70ch; }
@@ -549,6 +549,29 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
 .toast { display: flex; align-items: center; gap: 10px; border-radius: 12px; padding: 11px 16px; box-shadow: 0 10px 30px rgba(15, 27, 42, .25); }
 .toast::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 .empty-drop { background: var(--paper); }
+/* ===== v5: tab Naskah/Hasil di HP, rincian dilipat ===== */
+.mswitch { display: none; }
+.more summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer;
+  font-weight: 600; font-size: 13.5px; color: var(--accent); padding: 10px 0 4px; border-top: 1px solid var(--line); margin-top: 4px; }
+.more summary::-webkit-details-marker { display: none; }
+.more .chev { width: 18px; height: 18px; transition: transform .2s; }
+.more[open] .chev { transform: rotate(180deg); }
+.more[open] summary { margin-bottom: 4px; }
+@media (max-width: 1000px) {
+  .mswitch { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: -4px 0 14px; position: sticky; z-index: 15;
+    top: calc(env(safe-area-inset-top, 0px) + 64px); border-radius: 12px; border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--surface) 88%, transparent); -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%);
+    box-shadow: 0 4px 16px rgba(15, 27, 42, .06); }
+  .mswitch button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; border: 0; border-radius: 9px;
+    background: transparent; color: var(--muted); font-weight: 600; font-size: 14px; }
+  .mswitch button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+  .mschip { font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; background: color-mix(in srgb, currentColor 16%, transparent); }
+  .work[data-pane="doc"] .panel { display: none; }
+  .work[data-pane="res"] .doc { display: none; }
+  .miniscore { display: none; }
+  .tip { margin-bottom: 12px; }
+}
+@media (max-width: 560px) { .lhint { display: none; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -590,7 +613,11 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       <div><b>Baru pertama kali?</b> Unggah dokumen atau coba teks contoh, tekan <b>Cari</b> untuk mengecek ke internet, lalu unduh laporan PDF. <button class="linkbtn" type="button" id="tipGuide">Buka panduan</button></div>
       <button class="tipx" type="button" id="tipClose" aria-label="Tutup petunjuk">×</button>
     </div>
-    <div class="work">
+    <div class="mswitch" role="tablist" aria-label="Tampilan halaman periksa">
+      <button type="button" role="tab" id="msDoc" aria-selected="true" aria-controls="docCard">Naskah</button>
+      <button type="button" role="tab" id="msRes" aria-selected="false" aria-controls="panel">Hasil <span class="mschip num" id="msChip">0%</span></button>
+    </div>
+    <div class="work" data-pane="doc">
       <!-- ===== Ruang kerja dokumen ===== -->
       <div class="doc card" id="docCard">
         <div class="doc-h">
@@ -715,9 +742,12 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
           <div class="card-b">
             <p class="aiexplain" id="aiSub">—</p>
             <div id="warns" class="stack"></div>
-            <div id="signals"></div>
-            <div class="eyebrow" style="margin:14px 0 8px">Frasa khas AI ditemukan</div>
-            <div class="chips" id="phrases"></div>
+            <details class="more" id="sigMore">
+              <summary>Rincian sinyal dan frasa <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+              <div id="signals"></div>
+              <div class="eyebrow" style="margin:14px 0 8px">Frasa khas AI ditemukan</div>
+              <div class="chips" id="phrases"></div>
+            </details>
           </div>
         </div>
       </section>
@@ -1682,7 +1712,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "2.2.0";
+var APP_VERSION = "2.3.0";
 function setBusy(msg) {
   var b = $("#busy");
   if (!msg) { b.hidden = true; return; }
@@ -2069,6 +2099,7 @@ function run() {
   $("#phrases").innerHTML = ph.length ? ph.map(function (k) { return '<span class="chip">' + esc(k) + '<span class="num">×' + a.phrases[k] + "</span></span>"; }).join("") : '<span class="muted" style="font-size:13px">Tidak ada.</span>';
 
   // live bar
+  $("#msChip").textContent = pctLabel(pv) + " · AI " + Math.round(av) + "%";
   $("#lbPlag").textContent = Math.round(pv) + "%"; $("#lbPlagDot").style.background = lvl(pv);
   $("#lbAi").textContent = Math.round(av) + "%"; $("#lbAiDot").style.background = lvl(av);
 
@@ -2089,7 +2120,7 @@ function renderHL() {
     spans = S.plag.matches.map(function (m) { return { s: m.start, e: m.end, no: m.no, t: "Sumber " + m.no + ": " + m.source }; });
     $("#legend").innerHTML = S.plag.matched.length ? S.plag.matched.slice(0, 10).map(function (s) {
       return '<span><span class="bdg sm" style="background:' + srcColor(s.no)[0] + '">' + s.no + "</span> " + esc(s.domain) + "</span>";
-    }).join("") + '<span>· ketuk sorotan untuk nama sumber</span>' : '<span>Belum ada bagian yang sama dengan sumber.</span>';
+    }).join("") + '<span class="lhint">· ketuk sorotan untuk nama sumber</span>' : '<span>Belum ada bagian yang sama dengan sumber.</span>';
   } else if (S.ai) {
     spans = S.ai.sentences.filter(function (s) { return s.score >= 40; }).map(function (s) {
       return { s: s.start, e: s.end, c: s.score >= 70 ? "a3" : s.score >= 55 ? "a2" : "a1", t: "Skor AI kalimat: " + s.score + "%" };
@@ -2153,6 +2184,7 @@ $("#srcRows").addEventListener("click", function (e) {
   if (S.mode !== "review") setMode("review");
   if (S.hl !== "plag") setHL("plag");
   run();
+  if (MOBILE.matches) setPane("doc");
   if (S.focusNo) {
     var m = document.querySelector('#hl mark[data-no="' + no + '"]');
     if (m) {
@@ -2204,7 +2236,21 @@ $("#tipGuide").onclick = function () { showView("metode"); };
 })();
 $("#hlPlag").onclick = function () { setHL("plag"); };
 $("#hlAi").onclick = function () { setHL("ai"); };
-$("#lbDetail").onclick = function () { if (!$("#view-periksa").classList.contains("on")) showView("periksa"); $("#panel").scrollIntoView({ behavior: "smooth" }); };
+var MOBILE = window.matchMedia ? matchMedia("(max-width: 1000px)") : { matches: false };
+function setPane(p) {
+  // Di HP halaman Periksa dibagi dua: Naskah dan Hasil, agar hasil tidak tertimbun di bawah naskah panjang.
+  $(".work").dataset.pane = p;
+  $("#msDoc").setAttribute("aria-selected", p === "doc"); $("#msRes").setAttribute("aria-selected", p === "res");
+  if (MOBILE.matches) window.scrollTo(0, 0);
+  scheduleGutter();
+}
+$("#msDoc").onclick = function () { setPane("doc"); };
+$("#msRes").onclick = function () { setPane("res"); };
+$("#lbDetail").onclick = function () {
+  if (!$("#view-periksa").classList.contains("on")) showView("periksa");
+  if (MOBILE.matches) setPane("res"); else $("#panel").scrollIntoView({ behavior: "smooth" });
+};
+if (window.innerWidth > 1000) $("#sigMore").open = true;
 
 /* ---- laporan & unduhan ---- */
 var IN_FRAME = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
