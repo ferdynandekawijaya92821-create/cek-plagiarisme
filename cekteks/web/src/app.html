@@ -17,7 +17,7 @@
   --accent-ink: #ffffff;
   --accent-soft: #e1f1f6;
   --ok: #1d7f55;
-  --warn: #b5700c;
+  --warn: #9a5c00;
   --bad: #c2392e;
   --hl-plag: #fbd5d1;
   --hl-plag-line: #c2392e;
@@ -252,7 +252,9 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 .ficon { flex: none; width: 38px; height: 44px; border-radius: 6px; display: grid; place-items: end center; padding-bottom: 6px;
   font: 700 9.5px/1 var(--f-mono); letter-spacing: .04em; color: #fff; background: var(--accent); position: relative; }
 .ficon::after { content: ""; position: absolute; top: 0; right: 0; width: 11px; height: 11px; background: linear-gradient(225deg, var(--surface) 50%, rgba(255,255,255,.35) 50%); border-bottom-left-radius: 3px; }
-.ficon.pdf { background: #c2392e; } .ficon.docx, .ficon.doc, .ficon.odt { background: #2f5fd0; } .ficon.pptx { background: #d9480f; }
+.ficon.pdf { background: #c2392e; } .ficon.docx, .ficon.doc, .ficon.odt { background: #2f5fd0; } .ficon.pptx { background: #b8400c; }
+.ficon:not(.pdf):not(.docx):not(.doc):not(.odt):not(.pptx) { color: var(--accent-ink); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .doc-sub { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
 .doc-b { position: relative; min-height: 420px; }
 .review { padding: 18px 22px 22px; }
@@ -417,7 +419,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 @media (max-width: 900px) { .steps { grid-template-columns: 1fr 1fr; } .step:nth-child(3) { border-left: 0; } .step:nth-child(n+3) { border-top: 1px solid var(--line); } }
 @media (max-width: 520px) { .steps { grid-template-columns: 1fr; } .step + .step { border-left: 0; border-top: 1px solid var(--line); } }
 .guide { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
-.gcard { padding: 18px 20px; }
+.gcard { padding: 18px 20px; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 80px); }
 .gcard h2 { font-size: 17px; margin-bottom: 8px; }
 .gcard p { margin: 0 0 10px; line-height: 1.6; }
 .gcard p.muted { font-size: 13.5px; margin-bottom: 0; }
@@ -476,6 +478,18 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 .stack, .doclist, #srcList, .pairs, .weblist { grid-template-columns: minmax(0, 1fr); }
 .card.dragging { outline: 2px dashed var(--accent); outline-offset: 3px; }
 
+/* indikator proses, footer */
+.busy { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 74px); transform: translateX(-50%); z-index: 45; display: flex; align-items: center; gap: 10px;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow), 0 8px 28px rgba(15,27,42,.14); border-radius: 99px; padding: 8px 16px; font-size: 13.5px; max-width: calc(100vw - 32px); }
+.spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); animation: spin .8s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.foot b { color: var(--ink); font-family: var(--f-display); }
+.foot-links { display: flex; gap: 16px; }
+.foot-links a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.foot-links a:hover { text-decoration: underline; }
+.btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
+@media (max-width: 1000px) { .busy { top: calc(env(safe-area-inset-top, 0px) + 64px); } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 
@@ -508,6 +522,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 <main>
   <!-- ================= PERIKSA ================= -->
   <section class="view on" id="view-periksa">
+    <h1 class="sr-only">Periksa plagiarisme dan tulisan AI</h1>
     <div class="tip" id="tipBar" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
       <div><b>Baru pertama kali?</b> Unggah dokumen atau coba teks contoh, tekan <b>Cari</b> untuk mengecek ke internet, lalu unduh laporan PDF. <button class="linkbtn" type="button" id="tipGuide">Buka panduan</button></div>
@@ -568,7 +583,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
       </div>
 
       <!-- ===== Panel hasil ===== -->
-      <aside class="panel" id="panel">
+      <section class="panel" id="panel" aria-label="Hasil pemeriksaan">
         <div class="card">
           <div class="scores2">
             <div class="score-tile">
@@ -642,7 +657,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
             <div class="chips" id="phrases"></div>
           </div>
         </div>
-      </aside>
+      </section>
     </div>
   </section>
 
@@ -788,9 +803,18 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
         <p>Kalimat paling khas dicari di Wikipedia Indonesia dan Inggris, abstrak jurnal ilmiah OpenAlex, dan Google bila API key diisi. Halaman yang ditemukan diambil teksnya lalu dibandingkan.</p>
         <p class="muted">Tanpa Google, blog, situs berita, dan repositori kampus tidak terjangkau. Gunakan daftar "Periksa manual di Google" untuk itu.</p>
       </article>
+      <article class="card gcard" id="privasi">
+        <h2>Privasi</h2>
+        <ul>
+          <li>Naskah dan berkas diproses di perangkat Anda. CekTeks tidak punya server dan tidak mengumpulkan data.</li>
+          <li>Saat Anda menekan "Cari", kata kunci dari beberapa kalimat dikirim ke mesin pencari yang Anda centang (Wikipedia, OpenAlex, Google).</li>
+          <li>Draf naskah, sumber, kunci API Google, dan pilihan tema disimpan di browser perangkat ini saja.</li>
+        </ul>
+        <button class="btn" type="button" id="wipeBtn" style="margin-top:12px">Hapus data tersimpan</button>
+      </article>
       <article class="card gcard">
-        <h2>Privasi dan pemakaian offline</h2>
-        <p>Semua analisis berjalan di perangkat Anda dan naskah tidak dikirim ke server. Hanya kata kunci beberapa kalimat yang dikirim ke mesin pencari saat Anda menekan "Cari".</p>
+        <h2>Pakai offline</h2>
+        <p>Setelah situs dibuka sekali, CekTeks tetap berjalan tanpa internet, kecuali fitur Cek di internet. Pasang ke layar utama lewat menu browser agar terasa seperti aplikasi.</p>
         <p class="muted">File CekTeks.html berisi seluruh aplikasi. Simpan, lalu buka dengan browser kapan saja tanpa akun, langganan, atau internet.</p>
       </article>
       <article class="card gcard">
@@ -809,9 +833,19 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
       </article>
     </div>
   </section>
+
+  <footer class="foot">
+    <div><b>CekTeks</b> <span class="num" id="appVersion"></span> · Analisis berjalan di perangkat Anda. Naskah tidak dikirim ke server.</div>
+    <nav class="foot-links" aria-label="Tautan bawah">
+      <button class="linkbtn" type="button" data-goto="metode">Panduan</button>
+      <button class="linkbtn" type="button" data-goto="metode" data-anchor="privasi">Privasi</button>
+      <a href="https://github.com/ferdynandekawijaya92821-create/kalori-cli" target="_blank" rel="noopener">Kode sumber</a>
+    </nav>
+  </footer>
 </main>
 
-<div class="toast" id="toast" hidden></div>
+<div class="busy" id="busy" role="status" aria-live="polite" hidden><span class="spin" aria-hidden="true"></span><span id="busyText">Memproses…</span></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
 "use strict";
@@ -1097,6 +1131,20 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
+var APP_VERSION = "2.1.0";
+function setBusy(msg) {
+  var b = $("#busy");
+  if (!msg) { b.hidden = true; return; }
+  $("#busyText").textContent = msg; b.hidden = false;
+}
+window.addEventListener("error", function (e) {
+  if (!e.message || /ResizeObserver|^Script error/.test(e.message)) return;
+  setBusy(null); toast("Terjadi kesalahan: " + e.message + " Coba muat ulang halaman.");
+});
+window.addEventListener("unhandledrejection", function (e) {
+  var m = e.reason && e.reason.message ? e.reason.message : String(e.reason || "");
+  setBusy(null); toast("Terjadi kesalahan: " + m);
+});
 var S = { userSources: [], webSources: [], doc: null, mode: "review", focusNo: 0, cmpDocs: [], hl: "plag", plag: null, ai: null, text: "", sample: false };
 try { S.userSources = JSON.parse(store("ct_sources") || "[]"); } catch (e) { S.userSources = []; }
 
@@ -1122,8 +1170,13 @@ function loadScript(src) {
   }));
 }
 var CDN = "https://cdnjs.cloudflare.com/ajax/libs/";
-// Versi aplikasi offline sudah membawa pustaka di dalam file; CDN hanya cadangan.
-function need(globalName, src) { return window[globalName] ? Promise.resolve() : loadScript(CDN + src); }
+// Tiga cara pustaka (pdf.js, mammoth, JSZip, jsPDF) tersedia:
+// 1. File CekTeks.html: sudah tertanam di dalam file (offline penuh).
+// 2. Situs web: dimuat dari folder vendor/ milik situs saat dibutuhkan, lalu disimpan service worker.
+// 3. Selain itu (pratinjau): dari CDN.
+var VENDOR = window.CEKTEKS_VENDOR || "";
+function libUrl(src) { return VENDOR ? VENDOR + src.split("/").pop() : CDN + src; }
+function need(globalName, src) { return window[globalName] ? Promise.resolve() : loadScript(libUrl(src)); }
 function decodeText(buf) {
   var u = new Uint8Array(buf);
   if (u[0] === 0xFF && u[1] === 0xFE) return new TextDecoder("utf-16le").decode(u);
@@ -1166,14 +1219,18 @@ function legacyDocText(buf) {
 }
 /* ---- PDF: teks + posisi di halaman (untuk laporan bersorot di atas halaman asli) ---- */
 function loadPdfLib() {
-  return need("pdfjsLib", "pdf.js/3.11.174/pdf.min.js")
-    .then(function () { return window.pdfjsWorker ? null : loadScript(CDN + "pdf.js/3.11.174/pdf.worker.min.js"); })
-    .then(function () { if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) window.pdfjsLib.GlobalWorkerOptions.workerSrc = CDN + "pdf.js/3.11.174/pdf.worker.min.js"; });
+  return need("pdfjsLib", "pdf.js/3.11.174/pdf.min.js").then(function () {
+    var opts = window.pdfjsLib.GlobalWorkerOptions, w = libUrl("pdf.js/3.11.174/pdf.worker.min.js");
+    if (opts.workerSrc) return;
+    // Situs web: worker dari asal yang sama berjalan di latar belakang sehingga layar tetap responsif.
+    if (VENDOR || window.pdfjsWorker) { opts.workerSrc = w; return; }
+    return loadScript(w).then(function () { opts.workerSrc = w; });
+  });
 }
 function openPdf(buf) {
   return loadPdfLib().then(function () { return window.pdfjsLib.getDocument({ data: new Uint8Array(buf.slice(0)), isEvalSupported: false }).promise; });
 }
-function pdfExtract(buf) {
+function pdfExtract(buf, onProgress) {
   return openPdf(buf).then(function (pdf) {
     var parts = [], pos = 0, pages = [], chain = Promise.resolve();
     function push(s) { parts.push(s); pos += s.length; }
@@ -1201,6 +1258,7 @@ function pdfExtract(buf) {
             if (it.hasEOL) { push("\n"); if (prev) prev.eol = true; }
           });
           pages.push({ w: vp.width, h: vp.height, items: items });
+          if (onProgress) onProgress(i, pdf.numPages);
         });
       });
     }
@@ -1214,8 +1272,11 @@ function pdfExtract(buf) {
 }
 
 function readFile(file) { return readFileFull(file).then(function (r) { return r.text; }); }
-function readFileFull(file) {
+var MAX_FILE_MB = 50;
+function readFileFull(file, onProgress) {
   var ext = (file.name.split(".").pop() || "").toLowerCase();
+  if (file.size > MAX_FILE_MB * 1048576) return Promise.reject(new Error("Berkas " + file.name + " terlalu besar (" + fmtSize(file.size) + "). Batasnya " + MAX_FILE_MB + " MB."));
+  if (!file.size) return Promise.reject(new Error("Berkas " + file.name + " kosong."));
   return file.arrayBuffer().then(function (buf) {
     if (ext === "docx") {
       var pages = null;
@@ -1226,7 +1287,7 @@ function readFileFull(file) {
         .then(function () { return window.mammoth.extractRawText({ arrayBuffer: buf }); })
         .then(function (r) { return { text: r.value, pages: pages }; });
     }
-    if (ext === "pdf") return pdfExtract(buf);
+    if (ext === "pdf") return pdfExtract(buf, onProgress);
     if (ext === "odt" || ext === "pptx") {
       return need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () { return window.JSZip.loadAsync(buf); }).then(function (zip) {
         if (ext === "odt") return zip.file("content.xml").async("string").then(function (x) { return xmlText(x, "text:p"); });
@@ -1266,11 +1327,12 @@ $("#pasteBtn").onclick = function () {
 };
 $("#mainFile").onchange = function (e) { var f = e.target.files[0]; e.target.value = ""; if (f) loadMainFile(f); };
 function loadMainFile(f) {
-  toast("Membaca " + f.name + "…");
-  readFileFull(f).then(function (r) {
+  setBusy("Membaca " + f.name + "…");
+  readFileFull(f, function (i, n) { setBusy("Membaca halaman " + i + " dari " + n + "…"); }).then(function (r) {
+    setBusy(null);
     S.doc = { name: f.name, size: f.size, pages: r.pages || null, layout: r.layout || null, pdfBuf: r.pdfBuf || null };
     S.focusNo = 0; setText(r.text); setMode("review"); toast(f.name + " dimuat" + (r.pages ? " (" + r.pages + " halaman)." : "."));
-  }, function (err) { toast(err.message); });
+  }, function (err) { setBusy(null); toast(err.message); });
 }
 
 /* ---- sources ---- */
@@ -1512,6 +1574,25 @@ $("#srcRows").addEventListener("click", function (e) {
   card.addEventListener("dragover", function (e) { if (hasFiles(e)) e.preventDefault(); });
   card.addEventListener("dragleave", function () { if (--depth <= 0) { depth = 0; $("#dragOver").hidden = true; } });
   card.addEventListener("drop", function (e) { if (!hasFiles(e)) return; e.preventDefault(); depth = 0; $("#dragOver").hidden = true; if (e.dataTransfer.files[0]) loadMainFile(e.dataTransfer.files[0]); });
+})();
+/* footer, privasi, hapus data */
+$("#appVersion").textContent = "v" + APP_VERSION;
+document.querySelectorAll("[data-goto]").forEach(function (b) {
+  b.addEventListener("click", function () {
+    showView(b.dataset.goto);
+    if (b.dataset.anchor) setTimeout(function () { var t = document.getElementById(b.dataset.anchor); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
+  });
+});
+(function () {
+  var btn = $("#wipeBtn"), armed = false, tm;
+  btn.onclick = function () {
+    if (!armed) { armed = true; btn.textContent = "Tekan sekali lagi untuk menghapus"; btn.classList.add("danger"); tm = setTimeout(function () { armed = false; btn.textContent = "Hapus data tersimpan"; btn.classList.remove("danger"); }, 4000); return; }
+    clearTimeout(tm);
+    try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("ct_") === 0) localStorage.removeItem(k); }); } catch (e) {}
+    S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = "";
+    setText("", false); setMode("review");
+    armed = false; btn.textContent = "Data dihapus"; btn.classList.remove("danger"); toast("Draf, sumber, kunci API, dan pengaturan di perangkat ini sudah dihapus.");
+  };
 })();
 /* petunjuk pertama kali */
 if (!store("ct_tip")) $("#tipBar").hidden = false;

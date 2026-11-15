@@ -46,11 +46,16 @@ def build_standalone(app, pwa):
     if pwa:
         head = head.replace("<title>CekTeks</title>", f"<title>{SITE_TITLE}</title>", 1)
         head = re.sub(r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{SITE_DESC}">', head, count=1)
-    vendor = ""
-    for name in VENDOR:
-        js = read(os.path.join(HERE, "vendor", name))
-        assert "</script" not in js.lower(), name
-        vendor += f"<script>/* {name} */\n{js}\n</script>\n"
+    if pwa:
+        # Situs web: pustaka besar dimuat dari vendor/ hanya saat dibutuhkan (halaman pertama jauh lebih ringan),
+        # lalu disimpan service worker untuk pemakaian offline.
+        vendor = '<script>window.CEKTEKS_VENDOR = "vendor/";</script>\n'
+    else:
+        vendor = ""
+        for name in VENDOR:
+            js = read(os.path.join(HERE, "vendor", name))
+            assert "</script" not in js.lower(), name
+            vendor += f"<script>/* {name} */\n{js}\n</script>\n"
     marker = '<script>\n"use strict";'
     assert body.count(marker) == 1
     body = body.replace(marker, vendor + marker)
@@ -103,7 +108,12 @@ def main():
             {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"},
         ],
     }, indent=2, ensure_ascii=False))
-    write(os.path.join(docs, "sw.js"), read(os.path.join(HERE, "src", "sw.js")))
+    sw = read(os.path.join(HERE, "src", "sw.js")).replace("/*VENDOR_FILES*/", ", ".join(f'"./vendor/{n}"' for n in VENDOR))
+    write(os.path.join(docs, "sw.js"), sw)
+    os.makedirs(os.path.join(docs, "vendor"), exist_ok=True)
+    for name in VENDOR:
+        shutil.copyfile(os.path.join(HERE, "vendor", name), os.path.join(docs, "vendor", name))
+    print(f"  docs/vendor/  ({len(VENDOR)} pustaka)")
     write(os.path.join(docs, ".nojekyll"), "")
     for name in ("og-image.png", "icon-180.png", "icon-192.png", "icon-512.png"):
         shutil.copyfile(os.path.join(HERE, "assets", name), os.path.join(docs, name))

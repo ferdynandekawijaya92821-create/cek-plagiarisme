@@ -102,3 +102,29 @@ kalimat, keragaman kosakata, dan tingkat informalitas (menurunkan skor).
 ```bash
 pip install pytest && python -m pytest -q tests
 ```
+
+## Pengembangan
+
+| Bagian | Lokasi |
+|---|---|
+| Kode sumber halaman (satu berkas HTML/CSS/JS) | `web/src/app.html` |
+| Service worker situs | `web/src/sw.js` |
+| Pustaka pihak ketiga (versi terkunci) | `web/vendor/` |
+| Gambar pratinjau tautan & ikon | `web/assets/` |
+| Skrip build | `web/build.py` |
+| Hasil build: situs web (GitHub Pages) | `../docs/` |
+| Hasil build: file mandiri offline | `dist/CekTeks.html` |
+| Uji ujung-ke-ujung | `web/tests/e2e.js` |
+
+Alur kerja:
+
+```bash
+# 1. ubah web/src/app.html
+python cekteks/web/build.py          # 2. bangun ulang docs/ dan dist/
+cd cekteks/web && npm install && npx playwright install chromium
+npm test                             # 3. uji di browser (fungsi, offline, tampilan HP, WCAG)
+```
+
+Setiap pull request diperiksa otomatis oleh GitHub Actions (`.github/workflows/ci.yml`): uji Python, memastikan hasil
+build sudah di-commit, lalu uji ujung-ke-ujung. Setelah di-merge ke `main`, situs diterbitkan otomatis
+(`.github/workflows/pages.yml`). Versi aplikasi ada di `APP_VERSION` pada `web/src/app.html`; catat perubahan di `CHANGELOG.md`.

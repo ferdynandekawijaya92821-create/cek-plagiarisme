@@ -12,3 +12,6 @@ env/
 # Ignore system files
 .DS_Store
 Thumbs.db
+
+# Dependensi pengembangan
+node_modules/
