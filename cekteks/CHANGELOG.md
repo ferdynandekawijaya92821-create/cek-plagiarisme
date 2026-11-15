@@ -2,6 +2,19 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [2.3.0] - 2026-11-15
+### Diperbaiki
+- Di HP, footer menimpa kartu "Cek di internet" dan panel hasil. Penyebabnya aturan tinggi maksimum panel
+  yang seharusnya hanya untuk desktop ikut berlaku di HP.
+
+### Ditambahkan
+- Di HP, halaman Periksa dibagi dua tab: Naskah dan Hasil (skor tampil di tombol tab).
+- Mengetuk sumber di tab Hasil langsung membuka naskah dan menggulir ke bagian yang disorot.
+- Uji otomatis baru: footer tidak boleh menimpa kartu, di setiap halaman dan kedua tab HP.
+
+### Diubah
+- Rincian sinyal AI dan frasa dilipat di HP (terbuka otomatis di desktop).
+
 ## [2.2.0] - 2026-11-15
 ### Diubah
 - Naskah di mode Tinjau tampil sebagai lembar kertas di atas meja, dengan huruf serif yang nyaman dibaca.

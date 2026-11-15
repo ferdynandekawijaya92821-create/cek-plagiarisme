@@ -123,13 +123,31 @@ async function download(page, selector) {
 
   console.log("Tampilan & aksesibilitas");
   for (const [name, opts] of [["HP 320px", devices["Galaxy S9+"]], ["iPhone", devices["iPhone 13"]], ["desktop gelap", { viewport: { width: 1366, height: 900 }, colorScheme: "dark" }]]) {
-    await test(name + ": tanpa scroll horizontal di semua halaman" + (AXE ? " dan lolos audit WCAG" : ""), async () => {
+    await test(name + ": tanpa scroll horizontal dan tumpang-tindih di semua halaman" + (AXE ? " dan lolos audit WCAG" : ""), async () => {
       const { ctx: c, page: p } = await newPage(browser, opts);
       await p.goto(SITE); await ready(p);
       for (const v of ["periksa", "sumber", "bandingkan", "metode"]) {
         await p.evaluate((v) => showView(v), v); await p.waitForTimeout(100);
         const w = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
         ok(w[0] <= w[1], v + ": lebar " + w[0] + " > layar " + w[1]);
+        const panes = v === "periksa" && (await p.isVisible("#msRes")) ? ["doc", "res"] : [null];
+        for (const pane of panes) {
+          if (pane) await p.evaluate((x) => setPane(x), pane);
+          // Footer harus berada di bawah semua kartu yang tampil (bug v2.2.0: footer menimpa panel hasil di HP).
+          const o = await p.evaluate(() => {
+            const f = document.querySelector(".foot").getBoundingClientRect(); let bottom = 0;
+            document.querySelectorAll(".view.on .card").forEach((c) => {
+              const r = c.getBoundingClientRect(); if (!r.height) return;
+              // Kartu di dalam panel yang bisa digulir sendiri (desktop) hanya terlihat sampai batas panel itu.
+              const sc = c.closest(".panel"); let b = r.bottom;
+              if (sc && getComputedStyle(sc).overflowY !== "visible") b = Math.min(b, sc.getBoundingClientRect().bottom);
+              bottom = Math.max(bottom, b);
+            });
+            return [f.top, bottom];
+          });
+          ok(o[0] >= o[1] - 1, v + (pane ? "/" + pane : "") + ": footer menimpa kartu");
+        }
+        if (panes[0]) await p.evaluate(() => setPane("doc"));
         if (AXE) {
           await p.addScriptTag({ path: AXE });
           const r = await p.evaluate(() => axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"] } }));
