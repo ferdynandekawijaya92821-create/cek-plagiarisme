@@ -1,0 +1,14 @@
+{
+  "name": "CekTeks — Cek Plagiarisme & AI",
+  "short_name": "CekTeks",
+  "description": "Periksa plagiarisme dan deteksi teks buatan AI.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f6fb",
+  "theme_color": "#4f46e5",
+  "lang": "id",
+  "icons": [
+    { "src": "/static/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
