@@ -335,31 +335,184 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 .themebtn { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
 .themebtn svg { width: 17px; height: 17px; }
 
+/* ===== v3: kepala halaman satu baris, navigasi bawah di HP, halaman lain ===== */
+.top-in { display: flex; align-items: center; gap: 28px; min-height: 62px; }
+.top .tabs { flex: 1; align-self: stretch; margin: 0; gap: 4px; overflow: visible; }
+.top .tab { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; height: 100%; border-bottom: 2px solid transparent; border-top: 2px solid transparent; font-size: 14px; }
+.top .tab svg { width: 18px; height: 18px; flex: none; }
+.top .tab:hover { color: var(--ink); }
+.top .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.top .tab[aria-selected="true"] svg { color: var(--accent); }
+.top-r { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.top-r .status { margin: 0; }
+.miniscore { display: none; }
+.miniscore button { display: flex; gap: 4px; align-items: center; border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 4px 8px; }
+.ms-i { display: inline-flex; align-items: baseline; gap: 4px; padding: 0 4px; }
+.ms-i + .ms-i { border-left: 1px solid var(--line); padding-left: 8px; }
+.ms-i i { width: 8px; height: 8px; border-radius: 50%; align-self: center; background: var(--muted); }
+.ms-i b { font: 600 14px var(--f-mono); }
+.ms-i small { font-size: 11px; color: var(--muted); }
+.panel { top: calc(env(safe-area-inset-top, 0px) + 80px); max-height: calc(100vh - 96px); }
+#panel, #docCard { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 78px); }
+
+.pagehead { margin: 4px 0 20px; max-width: 70ch; }
+.pagehead h1 { font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
+.pagehead p { margin: 6px 0 0; color: var(--muted); }
+.hint { color: var(--muted); font-size: 13px; margin: 0; line-height: 1.5; }
+.card-h .count, h2 .count { font: 500 11.5px var(--f-mono); background: var(--surface-2); border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; color: var(--muted); }
+.field select { width: 100%; padding: 8px 10px; }
+
+/* sakelar */
+.toggle { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; user-select: none; }
+.toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.toggle .tr { position: relative; flex: none; width: 36px; height: 20px; border-radius: 99px; background: var(--line); transition: background .2s; }
+.toggle .tr::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .2s; }
+.toggle input:checked + .tr { background: var(--accent); }
+.toggle input:checked + .tr::after { transform: translateX(16px); }
+.toggle input:focus-visible + .tr { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* akordeon */
+.acc summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px; cursor: pointer; }
+.acc summary::-webkit-details-marker { display: none; }
+.acc summary > span { display: grid; gap: 2px; }
+.acc summary b { font-family: var(--f-display); font-size: 15.5px; }
+.acc summary .muted { font-size: 12.5px; }
+.acc .chev { width: 18px; height: 18px; color: var(--muted); transition: transform .2s; flex: none; }
+.acc[open] .chev { transform: rotate(180deg); }
+.acc[open] summary { border-bottom: 1px solid var(--line); }
+.howto { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+
+/* daftar dokumen (sumber & bandingkan) */
+.doclist, #srcList { display: grid; gap: 8px; }
+.docitem { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.docitem-h { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+.docitem-h input { flex: 1; min-width: 0; border: 1px solid transparent; background: transparent; border-radius: 7px; padding: 6px 8px; font-weight: 600; font-size: 14px; }
+.docitem-h input:hover, .docitem-h input:focus { border-color: var(--line); background: var(--surface-2); outline: none; }
+.docitem-h .wc { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.docitem textarea { display: block; width: calc(100% - 20px); margin: 0 10px 10px; min-height: 110px; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: var(--surface-2); font-size: 14px; line-height: 1.55; }
+.docitem:not(.open) textarea { display: none; }
+.ficon.sm { width: 28px; height: 34px; font-size: 8px; padding-bottom: 4px; border-radius: 5px; }
+.ficon.sm::after { width: 8px; height: 8px; }
+.drop { display: grid; justify-items: center; gap: 4px; text-align: center; padding: 26px 16px; }
+.drop svg { color: var(--muted); margin-bottom: 4px; }
+.drop.over svg { color: var(--accent); }
+@media (max-width: 560px) { .docitem-h .wc { display: none; } }
+
+/* pasangan mirip */
+.pairs { display: grid; gap: 10px; }
+.pair { display: grid; gap: 6px; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.pair-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pair-h .pct { font: 700 22px var(--f-display); letter-spacing: -.02em; }
+.pair-n { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-size: 14px; }
+.pair-n b { overflow-wrap: anywhere; }
+.pair small { color: var(--muted); font-size: 12px; }
+
+/* panduan */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-bottom: 20px; }
+.step { display: flex; gap: 12px; padding: 18px; }
+.step + .step { border-left: 1px solid var(--line); }
+.step b { font-family: var(--f-display); font-size: 15px; }
+.step p { margin: 4px 0 0; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+.stepno { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font: 700 14px var(--f-display); }
+@media (max-width: 900px) { .steps { grid-template-columns: 1fr 1fr; } .step:nth-child(3) { border-left: 0; } .step:nth-child(n+3) { border-top: 1px solid var(--line); } }
+@media (max-width: 520px) { .steps { grid-template-columns: 1fr; } .step + .step { border-left: 0; border-top: 1px solid var(--line); } }
+.guide { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.gcard { padding: 18px 20px; }
+.gcard h2 { font-size: 17px; margin-bottom: 8px; }
+.gcard p { margin: 0 0 10px; line-height: 1.6; }
+.gcard p.muted { font-size: 13.5px; margin-bottom: 0; }
+.gcard ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; line-height: 1.5; }
+.gcard .formula { margin-bottom: 10px; white-space: normal; }
+.scale { display: grid; gap: 6px; margin-bottom: 10px; }
+.scale span { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.scale span::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--c); }
+
+/* petunjuk pertama kali */
+.tip { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 16px; border-radius: var(--r); background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); font-size: 14px; }
+.tip > svg { flex: none; width: 20px; height: 20px; color: var(--accent); }
+.tip > div { flex: 1; min-width: 0; }
+.tipx { flex: none; width: 30px; height: 30px; border-radius: 8px; border: 0; background: transparent; color: var(--muted); font-size: 20px; line-height: 1; }
+.tipx:hover { background: var(--surface); }
+
+/* HP & tablet */
+@media (max-width: 1000px) {
+  .top-in { gap: 10px; min-height: 56px; }
+  .top-r .status, .top-r .net .netlbl { display: none; }
+  .miniscore { display: block; }
+  .top .tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
+    background: var(--surface); border-top: 1px solid var(--line); box-shadow: 0 -4px 18px rgba(15, 27, 42, .07);
+    padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+  .top .tab { flex-direction: column; justify-content: center; gap: 3px; height: auto; min-height: 58px; padding: 7px 2px 8px; font-size: 11.5px; border-bottom: 0; border-top: 2px solid transparent; }
+  .top .tab svg { width: 22px; height: 22px; }
+  .top .tab[aria-selected="true"] { color: var(--accent); border-top-color: var(--accent); }
+  .top .tab .count { position: absolute; top: 5px; left: calc(50% + 7px); margin: 0; font-size: 10px; padding: 0 5px; }
+  main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .toast { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  .livebar { display: none !important; }
+  .review .hl { max-height: none; }
+  .editor { max-height: none; height: 60vh; }
+  #panel, #docCard { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 66px); }
+  .pagehead h1 { font-size: 22px; }
+}
+@media (min-width: 1001px) { .toast { bottom: 24px; } }
+@media (max-width: 560px) {
+  .tools .btn span { display: inline; }
+  .tools { gap: 6px; }
+  .doc-h .tools .btn { padding: 6px 9px; font-size: 12.5px; min-height: 34px; }
+  .doc-h .tools .btn svg { width: 15px; height: 15px; }
+  .net { padding: 2px 7px; }
+  .logo b { font-size: 18px; }
+  .tip { font-size: 13px; align-items: flex-start; }
+}
+@media (max-width: 1000px) { .top .tab span:not(.count) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+@media (max-width: 440px) {
+  .top-in { gap: 8px; } .top-r { gap: 6px; }
+  .net { display: none; }
+  .themebtn { width: 32px; height: 32px; }
+  .ms-i b { font-size: 13px; } .ms-i small { font-size: 10.5px; }
+  .miniscore button { padding: 4px 6px; }
+}
+@media (max-width: 340px) { .ms-i small { display: none; } .logo b { font-size: 16px; } }
+.stack, .doclist, #srcList, .pairs, .weblist { grid-template-columns: minmax(0, 1fr); }
+.card.dragging { outline: 2px dashed var(--accent); outline-offset: 3px; }
+
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 
 <header class="top">
   <div class="top-in">
-    <div class="brandrow">
-      <div class="logo">
-        <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="var(--surface)"/><path d="M11 14h8M11 17h6M11 20h4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="3.3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M23 23l2.6 2.6" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <b>Cek<span>Teks</span></b>
-      </div>
-      <div class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">Analisis langsung</span><span class="lbl muted">· diproses di perangkat Anda</span><span class="net" id="net"><i></i><span id="netText">Online</span></span>
-        <button class="themebtn" id="themeBtn" type="button" aria-label="Ganti tema terang/gelap" title="Ganti tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button></div>
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="var(--surface)"/><path d="M11 14h8M11 17h6M11 20h4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="3.3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M23 23l2.6 2.6" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <b>Cek<span>Teks</span></b>
     </div>
-    <nav class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-periksa" aria-selected="true" data-view="periksa">Periksa</button>
-      <button class="tab" role="tab" id="tab-sumber" aria-selected="false" data-view="sumber">Sumber <span class="count" id="srcBadge">0</span></button>
-      <button class="tab" role="tab" id="tab-bandingkan" aria-selected="false" data-view="bandingkan">Bandingkan Dokumen</button>
-      <button class="tab" role="tab" id="tab-metode" aria-selected="false" data-view="metode">Metode</button>
+    <nav class="tabs" role="tablist" aria-label="Menu utama">
+      <button class="tab" role="tab" id="tab-periksa" aria-selected="true" data-view="periksa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg><span>Periksa</span></button>
+      <button class="tab" role="tab" id="tab-sumber" aria-selected="false" data-view="sumber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h12v14H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 0 2 2h12v-4"/><path d="M9 7h6M9 11h4"/></svg><span>Sumber</span><span class="count" id="srcBadge">0</span></button>
+      <button class="tab" role="tab" id="tab-bandingkan" aria-selected="false" data-view="bandingkan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg><span>Bandingkan</span></button>
+      <button class="tab" role="tab" id="tab-metode" aria-selected="false" data-view="metode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.3 2-2.3 3.5"/><path d="M12 17.5h.01"/></svg><span>Panduan</span></button>
     </nav>
+    <div class="top-r">
+      <div class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">Analisis langsung</span></div>
+      <div class="miniscore" id="livebar">
+        <button type="button" id="lbDetail" aria-label="Lihat rincian hasil">
+          <span class="ms-i"><i id="lbPlagDot"></i><b id="lbPlag">0%</b><small>sama</small></span>
+          <span class="ms-i"><i id="lbAiDot"></i><b id="lbAi">0%</b><small>AI</small></span>
+        </button>
+      </div>
+      <span class="net" id="net" title="Status koneksi"><i></i><span id="netText">Online</span></span>
+      <button class="themebtn" id="themeBtn" type="button" aria-label="Ganti tema terang/gelap" title="Ganti tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
+    </div>
   </div>
 </header>
 
 <main>
   <!-- ================= PERIKSA ================= -->
   <section class="view on" id="view-periksa">
+    <div class="tip" id="tipBar" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+      <div><b>Baru pertama kali?</b> Unggah dokumen atau coba teks contoh, tekan <b>Cari</b> untuk mengecek ke internet, lalu unduh laporan PDF. <button class="linkbtn" type="button" id="tipGuide">Buka panduan</button></div>
+      <button class="tipx" type="button" id="tipClose" aria-label="Tutup petunjuk">×</button>
+    </div>
     <div class="work">
       <!-- ===== Ruang kerja dokumen ===== -->
       <div class="doc card" id="docCard">
@@ -495,64 +648,73 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 
   <!-- ================= SUMBER ================= -->
   <section class="view" id="view-sumber">
+    <div class="pagehead">
+      <h1>Sumber pembanding</h1>
+      <p>Naskah dibandingkan dengan semua sumber di halaman ini, ditambah halaman yang ditemukan lewat cek internet.</p>
+    </div>
     <div class="grid">
       <div class="col">
-        <div class="card">
-          <div class="card-h"><h2>Sumber pembanding Anda</h2>
+        <div class="card" id="srcCard">
+          <div class="card-h"><h2>Sumber Anda</h2>
             <div class="tools">
-              <button class="btn" id="addSrc" type="button">+ Tambah teks</button>
-              <label class="btn" for="srcFiles">Unggah berkas</label>
+              <button class="btn" id="addSrc" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Tambah teks</button>
+              <label class="btn" for="srcFiles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 15V4M7 9l5-5 5 5M5 20h14"/></svg>Unggah berkas</label>
               <input type="file" id="srcFiles" multiple accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,.csv,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
             </div>
           </div>
           <div class="card-b stack" id="srcList"></div>
         </div>
+        <div class="card">
+          <div class="card-h">
+            <div><h2>Korpus bawaan</h2><span class="muted" style="font-size:12.5px" id="corpCount"></span></div>
+            <label class="toggle" for="useCorpus"><input type="checkbox" id="useCorpus" checked><span class="tr" aria-hidden="true"></span>Sertakan</label>
+          </div>
+          <div class="card-b" id="corpList"></div>
+        </div>
       </div>
       <div class="col">
         <div class="card">
-          <div class="card-h"><h2>Pengaturan</h2></div>
+          <div class="card-h"><h2>Pengaturan pencocokan</h2></div>
           <div class="card-b stack">
-            <label class="switch"><input type="checkbox" id="useCorpus" checked> Sertakan korpus bawaan</label>
-            <label class="row" for="ngram" style="font-size:14px">Panjang n-gram
+            <label class="field" for="ngram">Kepekaan pencocokan
               <select id="ngram">
-                <option value="3">3 kata · sangat sensitif</option>
-                <option value="4">4 kata · sensitif</option>
-                <option value="5" selected>5 kata · standar</option>
-                <option value="6">6 kata · ketat</option>
-                <option value="8">8 kata · sangat ketat</option>
+                <option value="3">Sangat sensitif · 3 kata berurutan</option>
+                <option value="4">Sensitif · 4 kata berurutan</option>
+                <option value="5" selected>Standar · 5 kata berurutan</option>
+                <option value="6">Ketat · 6 kata berurutan</option>
+                <option value="8">Sangat ketat · 8 kata berurutan</option>
               </select>
             </label>
-            <p class="muted" style="margin:0;font-size:13px">Semakin pendek n-gram, semakin banyak kecocokan kecil yang tertangkap, tetapi frasa umum juga ikut terhitung.</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-h"><h2>Opsi filter</h2></div>
-          <div class="card-b stack">
-            <label class="switch"><input type="checkbox" id="fBib" checked> Abaikan daftar pustaka</label>
-            <label class="switch"><input type="checkbox" id="fQuote" checked> Abaikan teks kutipan (di dalam tanda petik)</label>
-            <label class="row" for="fMin" style="font-size:14px">Abaikan kecocokan kecil
+            <p class="hint">Bagian naskah dihitung sama bila sejumlah kata berurutan juga muncul di sumber. Semakin sensitif, semakin banyak frasa umum ikut terhitung.</p>
+            <hr class="sep">
+            <div class="eyebrow">Opsi filter</div>
+            <label class="toggle" for="fBib"><input type="checkbox" id="fBib" checked><span class="tr" aria-hidden="true"></span>Abaikan daftar pustaka</label>
+            <label class="toggle" for="fQuote"><input type="checkbox" id="fQuote" checked><span class="tr" aria-hidden="true"></span>Abaikan teks kutipan (dalam tanda petik)</label>
+            <label class="field" for="fMin">Abaikan kecocokan kecil
               <select id="fMin">
                 <option value="0" selected>Tidak</option>
-                <option value="8">di bawah 8 kata</option>
-                <option value="12">di bawah 12 kata</option>
-                <option value="20">di bawah 20 kata</option>
+                <option value="8">Di bawah 8 kata</option>
+                <option value="12">Di bawah 12 kata</option>
+                <option value="20">Di bawah 20 kata</option>
               </select>
             </label>
-            <p class="muted" style="margin:0;font-size:13px">Opsi ini ikut dicantumkan di laporan. Daftar pustaka dikenali dari judul seperti DAFTAR PUSTAKA, REFERENSI, atau REFERENCES.</p>
+            <p class="hint">Opsi filter ikut dicantumkan di sampul laporan. Daftar pustaka dikenali dari judul seperti DAFTAR PUSTAKA, REFERENSI, atau REFERENCES.</p>
           </div>
         </div>
         <div class="card">
-          <div class="card-h"><h2>Pencarian Google (opsional)</h2></div>
-          <div class="card-b stack">
-            <p class="muted" style="margin:0;font-size:13px">Untuk menjangkau seluruh web, isi API key Google Programmable Search milik Anda sendiri. Gratis 100 pencarian per hari. Kunci hanya disimpan di perangkat ini.</p>
-            <label class="field" for="gKey">API key<input type="text" id="gKey" autocomplete="off" spellcheck="false" placeholder="AIza…"></label>
-            <label class="field" for="gCx">Search engine ID (cx)<input type="text" id="gCx" autocomplete="off" spellcheck="false" placeholder="mis. 0123456789abcdef"></label>
-            <p class="muted" style="margin:0;font-size:12.5px">Cara mendapatkannya: buat mesin pencari "Search the entire web" di programmablesearchengine.google.com, lalu buat API key di console.cloud.google.com (aktifkan Custom Search API).</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-h"><h2>Korpus bawaan</h2><span class="muted num" style="font-size:12px" id="corpCount"></span></div>
-          <div class="card-b" id="corpList"></div>
+          <details class="acc">
+            <summary><span><b>Pencarian Google</b><span class="muted">opsional · menjangkau seluruh web</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="card-b stack">
+              <p class="hint" style="margin:0">Isi API key Google Programmable Search milik Anda sendiri. Gratis 100 pencarian per hari. Kunci hanya disimpan di perangkat ini.</p>
+              <label class="field" for="gKey">API key<input type="text" id="gKey" autocomplete="off" spellcheck="false" placeholder="AIza…"></label>
+              <label class="field" for="gCx">Search engine ID (cx)<input type="text" id="gCx" autocomplete="off" spellcheck="false" placeholder="mis. 0123456789abcdef"></label>
+              <ol class="howto">
+                <li>Buka programmablesearchengine.google.com, buat mesin pencari baru, dan pilih "Search the entire web". Salin ID-nya (cx).</li>
+                <li>Buka console.cloud.google.com, aktifkan Custom Search API, lalu buat API key.</li>
+                <li>Tempel keduanya di atas, lalu centang "Google" di panel Cek di internet.</li>
+              </ol>
+            </div>
+          </details>
         </div>
       </div>
     </div>
@@ -560,93 +722,95 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 
   <!-- ================= BANDINGKAN ================= -->
   <section class="view" id="view-bandingkan">
+    <div class="pagehead">
+      <h1>Bandingkan dokumen</h1>
+      <p>Masukkan beberapa tugas sekaligus untuk menemukan pasangan yang saling mirip. Hasil diperbarui otomatis.</p>
+    </div>
     <div class="grid">
       <div class="col">
         <div class="card">
-          <div class="card-h"><h2>Bandingkan banyak dokumen</h2></div>
+          <div class="card-h"><h2>Dokumen <span class="count" id="cmpCount">0</span></h2>
+            <div class="tools">
+              <button class="btn" id="cmpAddText" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Tambah teks</button>
+              <button class="btn" id="cmpClear" type="button">Hapus semua</button>
+            </div>
+          </div>
           <div class="card-b stack">
-            <p class="muted" style="margin:0">Untuk guru dan dosen: masukkan beberapa tugas sekaligus untuk menemukan pasangan yang saling mirip.</p>
             <label class="drop" id="drop" for="cmpFiles">
-              <strong>Pilih atau seret berkas</strong>
-              <span style="font-size:13px">PDF · Word · ODT · PPTX · RTF · HTML · TXT</span>
+              <svg viewBox="0 0 48 48" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6h14l10 10v24a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M28 6v10h10"/><path d="M25 34V22M20 27l5-5 5 5"/></svg>
+              <strong>Seret beberapa berkas ke sini</strong>
+              <span>atau ketuk untuk memilih · PDF, Word, ODT, PPTX, RTF, TXT</span>
             </label>
             <input type="file" id="cmpFiles" multiple accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,.csv,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-            <div class="row"><button class="btn" id="cmpAddText" type="button">+ Tambah teks manual</button></div>
-            <div class="stack" id="cmpList"></div>
+            <div class="doclist" id="cmpList"></div>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card">
-          <div class="card-h"><h2>Hasil perbandingan</h2><span class="muted" style="font-size:12.5px">diperbarui otomatis</span></div>
-          <div class="card-b" style="padding-top:6px">
-            <div class="tbl-wrap"><table>
-              <thead><tr><th>Pasangan</th><th class="r">A→B</th><th class="r">B→A</th><th class="r">Kosinus</th></tr></thead>
-              <tbody id="cmpRows"></tbody>
-            </table></div>
+          <div class="card-h"><h2>Pasangan paling mirip</h2></div>
+          <div class="card-b">
+            <p class="hint" style="margin:0 0 12px">Persentase menunjukkan seberapa banyak isi satu dokumen juga ada di dokumen pasangannya.</p>
+            <div class="pairs" id="cmpRows"></div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= METODE ================= -->
+  <!-- ================= PANDUAN ================= -->
   <section class="view" id="view-metode">
-    <div class="card"><div class="card-b prose">
-      <div class="eyebrow">Cara kerja</div>
-      <h2 style="font-size:24px;margin-top:4px">Apa yang diukur CekTeks</h2>
-      <p>Semua analisis berjalan di browser Anda. Naskah tidak dikirim ke server mana pun. Hanya saat Anda menekan "Cari di internet", kata kunci dari beberapa kalimat dikirim ke mesin pencari yang Anda pilih.</p>
-
-      <h3>Indeks kesamaan (plagiarisme)</h3>
-      <ul>
-        <li>Naskah dipecah menjadi rangkaian <i>n</i> kata berturut-turut (n-gram, standar 5 kata).</li>
-        <li>Rangkaian yang juga ada di sumber pembanding ditandai sebagai bagian yang cocok dan disorot merah.</li>
-        <li>Kemiripan kosinus TF-IDF mengukur kesamaan kosakata dan topik, berguna untuk parafrase ringan.</li>
-      </ul>
-      <div class="formula">indeks = kata yang tertutup n-gram cocok ÷ total kata × 100%</div>
-
-      <h3>Kemungkinan AI</h3>
-      <ul>
-        <li><b>Keseragaman kalimat</b>: tulisan manusia punya panjang kalimat yang naik-turun; teks AI cenderung rata. Diukur dengan koefisien variasi panjang kalimat.</li>
-        <li><b>Frasa khas AI</b>: misalnya "penting untuk dicatat", "di era digital", "secara keseluruhan", "delve", "furthermore".</li>
-        <li><b>Konektor di awal kalimat</b>, keseragaman panjang paragraf, pengulangan kata pembuka, dan keragaman kosakata (MATTR).</li>
-        <li><b>Informalitas</b> seperti bahasa gaul, singkatan, dan tanda seru menurunkan skor.</li>
-      </ul>
-      <div class="formula">0–35% cenderung manusia · 35–65% campuran · 65–100% cenderung AI</div>
-
-      <h3>Cek di internet</h3>
-      <ul>
-        <li>Kalimat paling khas (yang paling banyak kata kuncinya) dicari di Wikipedia Indonesia dan Inggris, abstrak jurnal ilmiah OpenAlex, dan Google bila API key diisi.</li>
-        <li>Halaman yang ditemukan diambil teksnya, lalu dibandingkan dengan n-gram seperti sumber lain.</li>
-        <li>Tanpa API key Google, pencarian tidak menjangkau blog, situs berita, atau repositori kampus. Gunakan daftar "Periksa manual di Google" untuk itu.</li>
-      </ul>
-
-      <h3>Pakai offline dan selamanya</h3>
-      <ul>
-        <li>File <b>CekTeks.html</b> berisi seluruh aplikasi, termasuk pembaca PDF dan Word serta pembuat laporan PDF. Simpan di HP atau komputer, lalu buka dengan browser. Tidak perlu akun, langganan, atau internet.</li>
-        <li>Tanpa internet, semua fitur tetap jalan kecuali "Cek di internet".</li>
-        <li>Untuk alamat web sendiri yang bisa dipasang di layar utama HP, unggah isi folder <code>docs/</code> ke GitHub Pages, Netlify, atau hosting gratis lain.</li>
-      </ul>
-
-      <h3>Format berkas</h3>
-      <p>PDF, Word (.docx, dan .doc lama secara terbatas), OpenDocument (.odt), PowerPoint (.pptx), RTF, HTML, Markdown, dan teks biasa. PDF hasil pindaian (gambar) tidak berisi teks sehingga tidak bisa dibaca.</p>
-
-      <h3>Batasan</h3>
-      <ul>
-        <li>Tidak ada detektor AI yang 100% akurat. Tulisan manusia yang sangat formal bisa mendapat skor sedang. Gunakan hasil sebagai indikasi awal, bukan bukti tunggal.</li>
-        <li>Cek internet hanya menjangkau sumber yang dipilih. Ini bukan pengganti layanan berbayar seperti Turnitin yang punya basis data tugas dan jurnal tertutup.</li>
-        <li>Parafrase berat atau terjemahan sulit terdeteksi oleh pencocokan n-gram.</li>
-        <li>Teks di bawah 80 kata memberi hasil deteksi AI yang kurang andal.</li>
-      </ul>
-    </div></div>
+    <div class="pagehead">
+      <h1>Panduan</h1>
+      <p>Cara memakai CekTeks dan cara membaca hasilnya.</p>
+    </div>
+    <div class="card steps">
+      <div class="step"><span class="stepno">1</span><div><b>Masukkan naskah</b><p>Unggah PDF atau Word, atau tempel teks di halaman Periksa. Hasil langsung muncul.</p></div></div>
+      <div class="step"><span class="stepno">2</span><div><b>Tambah pembanding</b><p>Tekan "Cari" di Cek di internet, atau tambahkan tugas dan artikel di halaman Sumber.</p></div></div>
+      <div class="step"><span class="stepno">3</span><div><b>Tinjau sorotan</b><p>Ketuk kartu sumber untuk melihat bagian naskah yang sama dengan sumber itu.</p></div></div>
+      <div class="step"><span class="stepno">4</span><div><b>Unduh laporan</b><p>Laporan PDF berisi ringkasan, daftar sumber, analisis AI, dan halaman dokumen bersorot.</p></div></div>
+    </div>
+    <div class="guide">
+      <article class="card gcard">
+        <h2>Indeks kesamaan</h2>
+        <p>Naskah dipecah menjadi rangkaian kata berurutan (standar 5 kata). Rangkaian yang juga ada di sumber ditandai sama dan diberi warna serta nomor sesuai sumbernya.</p>
+        <div class="formula">kesamaan = kata yang sama dengan sumber ÷ total kata</div>
+        <p class="muted">Setiap kata hanya dihitung untuk satu sumber, sehingga persentase per sumber menjumlah ke total. "Topik" menunjukkan kemiripan kosakata, berguna untuk melihat parafrase ringan.</p>
+      </article>
+      <article class="card gcard">
+        <h2>Kemungkinan AI</h2>
+        <p>Dinilai dari gaya tulisan: keseragaman panjang kalimat, frasa klise khas AI, kata sambung di awal kalimat, keseragaman paragraf, pengulangan kata pembuka, dan keragaman kosakata. Gaya tidak baku menurunkan skor.</p>
+        <div class="scale"><span style="--c:var(--ok)">0–35% cenderung manusia</span><span style="--c:var(--warn)">35–65% campuran</span><span style="--c:var(--bad)">65–100% cenderung AI</span></div>
+        <p class="muted">Setiap sinyal punya bobot. Sinyal berbobot kecil hanya sedikit memengaruhi skor.</p>
+      </article>
+      <article class="card gcard">
+        <h2>Cek di internet</h2>
+        <p>Kalimat paling khas dicari di Wikipedia Indonesia dan Inggris, abstrak jurnal ilmiah OpenAlex, dan Google bila API key diisi. Halaman yang ditemukan diambil teksnya lalu dibandingkan.</p>
+        <p class="muted">Tanpa Google, blog, situs berita, dan repositori kampus tidak terjangkau. Gunakan daftar "Periksa manual di Google" untuk itu.</p>
+      </article>
+      <article class="card gcard">
+        <h2>Privasi dan pemakaian offline</h2>
+        <p>Semua analisis berjalan di perangkat Anda dan naskah tidak dikirim ke server. Hanya kata kunci beberapa kalimat yang dikirim ke mesin pencari saat Anda menekan "Cari".</p>
+        <p class="muted">File CekTeks.html berisi seluruh aplikasi. Simpan, lalu buka dengan browser kapan saja tanpa akun, langganan, atau internet.</p>
+      </article>
+      <article class="card gcard">
+        <h2>Format berkas</h2>
+        <p>PDF, Word (.docx, dan .doc lama secara terbatas), OpenDocument (.odt), PowerPoint (.pptx), RTF, HTML, Markdown, dan teks biasa.</p>
+        <p class="muted">PDF hasil pindaian berupa gambar tidak berisi teks sehingga tidak bisa dibaca.</p>
+      </article>
+      <article class="card gcard">
+        <h2>Batasan</h2>
+        <ul>
+          <li>Deteksi AI adalah perkiraan. Tulisan manusia yang sangat formal bisa mendapat skor sedang.</li>
+          <li>CekTeks tidak memiliki basis data tugas dan jurnal tertutup seperti Turnitin.</li>
+          <li>Parafrase berat dan terjemahan sulit terdeteksi.</li>
+          <li>Teks di bawah 80 kata memberi hasil AI yang kurang andal.</li>
+        </ul>
+      </article>
+    </div>
   </section>
 </main>
 
-<div class="livebar" id="livebar">
-  <div class="lb"><span class="lb-dot" id="lbPlagDot"></span><div><div class="num" id="lbPlag">0%</div><small>Kesamaan</small></div></div>
-  <div class="lb"><span class="lb-dot" id="lbAiDot"></span><div><div class="num" id="lbAi">0%</div><small>Kemungkinan AI</small></div></div>
-  <button class="btn" type="button" id="lbDetail">Rincian</button>
-</div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -1115,29 +1279,53 @@ function allSources() {
   return $("#useCorpus").checked ? list.concat(CORPUS) : list;
 }
 function saveSources() { store("ct_sources", JSON.stringify(S.userSources.map(function (s) { return { name: s.name, text: s.text }; }))); }
+var TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+function docItem(d, prefix, i, onChange, onDelete) {
+  var ext = /\.([a-z0-9]{2,4})$/i.exec(d.name || ""), e = ext ? ext[1].toLowerCase() : "txt";
+  var open = d._open || !d.text.trim();
+  var el = document.createElement("div"); el.className = "docitem" + (open ? " open" : "");
+  el.innerHTML = '<div class="docitem-h"><span class="ficon sm ' + e + '">' + esc((EXT_LABEL[e] || e.toUpperCase()).slice(0, 4)) + '</span>' +
+    '<input type="text" id="' + prefix + 'Name' + i + '" aria-label="Nama dokumen" placeholder="Nama dokumen">' +
+    '<span class="wc num"></span><button class="btn sm" type="button" data-act="edit"></button>' +
+    '<button class="btn sm icon-only" type="button" data-act="del" aria-label="Hapus" title="Hapus">' + TRASH + "</button></div>" +
+    '<textarea id="' + prefix + 'Text' + i + '" aria-label="Isi dokumen" placeholder="Tempel isi dokumen di sini"></textarea>';
+  var nm = el.querySelector("input"), tx = el.querySelector("textarea"), wc = el.querySelector(".wc"), eb = el.querySelector('[data-act="edit"]');
+  function sync() { wc.textContent = fmtNum(words(d.text).length) + " kata"; eb.textContent = el.classList.contains("open") ? "Tutup" : "Lihat teks"; }
+  nm.value = d.name; tx.value = d.text; sync();
+  nm.oninput = function () { d.name = nm.value; onChange(false); };
+  tx.oninput = function () { d.text = tx.value; d._words = d._sh = null; sync(); onChange(true); };
+  eb.onclick = function () { el.classList.toggle("open"); d._open = el.classList.contains("open"); sync(); if (d._open) tx.focus(); };
+  el.querySelector('[data-act="del"]').onclick = onDelete;
+  return el;
+}
+var UPLOAD_SVG = '<svg viewBox="0 0 48 48" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6h14l10 10v24a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M28 6v10h10"/><path d="M25 34V22M20 27l5-5 5 5"/></svg>';
 function renderSources() {
   var box = $("#srcList");
   $("#srcBadge").textContent = allSources().length;
   if (!S.userSources.length) {
-    box.innerHTML = '<div class="empty">Belum ada sumber tambahan. Tambahkan artikel asli, tugas teman, atau referensi yang ingin dibandingkan.</div>';
+    box.innerHTML = '<label class="drop" for="srcFiles">' + UPLOAD_SVG + '<strong>Belum ada sumber Anda</strong><span>Unggah tugas lama, artikel rujukan, atau karya teman. Berkas juga bisa diseret ke sini.</span></label>';
     return;
   }
   box.innerHTML = "";
   S.userSources.forEach(function (s, i) {
-    var d = document.createElement("div"); d.className = "src";
-    d.innerHTML = '<div class="src-h"><input type="text" id="srcName' + i + '" aria-label="Nama sumber" placeholder="Nama sumber"><button class="btn" type="button" aria-label="Hapus sumber">Hapus</button></div>' +
-      '<textarea id="srcText' + i + '" aria-label="Teks sumber" placeholder="Tempel teks sumber di sini"></textarea>';
-    var nm = d.querySelector("input"), tx = d.querySelector("textarea");
-    nm.value = s.name; tx.value = s.text;
-    nm.oninput = function () { s.name = nm.value || "Sumber " + (i + 1); saveSources(); schedule(); };
-    tx.oninput = function () { s.text = tx.value; s._words = s._sh = null; saveSources(); $("#srcBadge").textContent = allSources().length; schedule(); };
-    d.querySelector("button").onclick = function () { S.userSources.splice(i, 1); saveSources(); renderSources(); schedule(0); };
-    box.appendChild(d);
+    box.appendChild(docItem(s, "src", i, function (textChanged) {
+      if (!s.name) s.name = "Sumber " + (i + 1);
+      saveSources(); if (textChanged) $("#srcBadge").textContent = allSources().length; schedule();
+    }, function () { S.userSources.splice(i, 1); saveSources(); renderSources(); schedule(0); }));
   });
 }
-$("#addSrc").onclick = function () { S.userSources.push({ name: "Sumber " + (S.userSources.length + 1), text: "" }); renderSources(); var t = document.querySelectorAll("#srcList textarea"); t[t.length - 1].focus(); };
-$("#srcFiles").onchange = function (e) {
-  var files = [].slice.call(e.target.files); e.target.value = "";
+$("#addSrc").onclick = function () { S.userSources.push({ name: "Sumber " + (S.userSources.length + 1), text: "", _open: true }); renderSources(); var t = document.querySelectorAll("#srcList textarea"); t[t.length - 1].focus(); };
+$("#srcFiles").onchange = function (e) { var files = [].slice.call(e.target.files); e.target.value = ""; addSourceFiles(files); };
+dropTarget($("#srcCard"), function (files) { addSourceFiles([].slice.call(files)); });
+function dropTarget(el, cb) {
+  var depth = 0;
+  function hasFiles(e) { return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], "Files") >= 0; }
+  el.addEventListener("dragenter", function (e) { if (!hasFiles(e)) return; e.preventDefault(); depth++; el.classList.add("dragging"); });
+  el.addEventListener("dragover", function (e) { if (hasFiles(e)) e.preventDefault(); });
+  el.addEventListener("dragleave", function () { if (--depth <= 0) { depth = 0; el.classList.remove("dragging"); } });
+  el.addEventListener("drop", function (e) { if (!hasFiles(e)) return; e.preventDefault(); depth = 0; el.classList.remove("dragging"); cb(e.dataTransfer.files); });
+}
+function addSourceFiles(files) {
   Promise.all(files.map(function (f) { return readFile(f).then(function (t) { S.userSources.push({ name: f.name, text: t }); }, function (err) { toast(f.name + ": " + err.message); }); }))
     .then(function () { saveSources(); renderSources(); schedule(0); });
 };
@@ -1325,6 +1513,10 @@ $("#srcRows").addEventListener("click", function (e) {
   card.addEventListener("dragleave", function () { if (--depth <= 0) { depth = 0; $("#dragOver").hidden = true; } });
   card.addEventListener("drop", function (e) { if (!hasFiles(e)) return; e.preventDefault(); depth = 0; $("#dragOver").hidden = true; if (e.dataTransfer.files[0]) loadMainFile(e.dataTransfer.files[0]); });
 })();
+/* petunjuk pertama kali */
+if (!store("ct_tip")) $("#tipBar").hidden = false;
+$("#tipClose").onclick = function () { $("#tipBar").hidden = true; store("ct_tip", "1"); };
+$("#tipGuide").onclick = function () { showView("metode"); };
 /* tema terang/gelap */
 (function () {
   var saved = store("ct_theme"); if (saved === "light" || saved === "dark") document.documentElement.setAttribute("data-theme", saved);
@@ -1335,7 +1527,7 @@ $("#srcRows").addEventListener("click", function (e) {
 })();
 $("#hlPlag").onclick = function () { setHL("plag"); };
 $("#hlAi").onclick = function () { setHL("ai"); };
-$("#lbDetail").onclick = function () { $("#panel").scrollIntoView({ behavior: "smooth" }); };
+$("#lbDetail").onclick = function () { if (!$("#view-periksa").classList.contains("on")) showView("periksa"); $("#panel").scrollIntoView({ behavior: "smooth" }); };
 
 /* ---- laporan & unduhan ---- */
 var IN_FRAME = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
@@ -1738,37 +1930,39 @@ $("#copyReport").onclick = function () {
 /* ---- compare ---- */
 function renderCmp() {
   var box = $("#cmpList"); box.innerHTML = "";
+  $("#cmpCount").textContent = S.cmpDocs.length;
+  $("#cmpClear").hidden = !S.cmpDocs.length;
   S.cmpDocs.forEach(function (d, i) {
-    var el = document.createElement("div"); el.className = "src";
-    el.innerHTML = '<div class="src-h"><input type="text" id="cmpName' + i + '" aria-label="Nama dokumen"><span class="muted num" style="font-size:12px;white-space:nowrap"></span><button class="btn" type="button">Hapus</button></div>' +
-      '<textarea id="cmpText' + i + '" aria-label="Isi dokumen" placeholder="Tempel isi dokumen"></textarea>';
-    var nm = el.querySelector("input"), tx = el.querySelector("textarea"), wc = el.querySelector(".num");
-    nm.value = d.name; tx.value = d.text; wc.textContent = words(d.text).length + " kata";
-    nm.oninput = function () { d.name = nm.value; runCmp(); };
-    tx.oninput = function () { d.text = tx.value; wc.textContent = words(d.text).length + " kata"; clearTimeout(renderCmp.t); renderCmp.t = setTimeout(runCmp, 300); };
-    el.querySelector("button").onclick = function () { S.cmpDocs.splice(i, 1); renderCmp(); };
-    box.appendChild(el);
+    box.appendChild(docItem(d, "cmp", i, function (textChanged) {
+      if (textChanged) { clearTimeout(renderCmp.t); renderCmp.t = setTimeout(runCmp, 300); } else runCmp();
+    }, function () { S.cmpDocs.splice(i, 1); renderCmp(); }));
   });
   runCmp();
 }
+function pairLabel(v) { return v < 15 ? ["Berbeda", "var(--ok)"] : v < 40 ? ["Agak mirip", "var(--warn)"] : ["Sangat mirip", "var(--bad)"]; }
 function runCmp() {
   var docs = S.cmpDocs.filter(function (d) { return d.text.trim(); }), rows = [];
-  if (docs.length < 2) { $("#cmpRows").innerHTML = '<tr><td colspan="4" class="empty">Masukkan minimal dua dokumen.</td></tr>'; return; }
+  if (docs.length < 2) { $("#cmpRows").innerHTML = '<div class="empty">Masukkan minimal dua dokumen untuk melihat pasangan yang mirip.</div>'; return; }
   for (var i = 0; i < docs.length; i++) for (var j = i + 1; j < docs.length; j++) {
-    var A = { name: docs[i].name, text: docs[i].text }, B = { name: docs[j].name, text: docs[j].text };
+    var A = { name: docs[i].name || "Dokumen " + (i + 1), text: docs[i].text }, B = { name: docs[j].name || "Dokumen " + (j + 1), text: docs[j].text };
     var r1 = checkPlagiarism(A.text, [B], 5), r2 = checkPlagiarism(B.text, [A], 5);
     rows.push({ a: A.name, b: B.name, ab: r1.score, ba: r2.score, cos: r1.sources[0] ? r1.sources[0].cosine : 0 });
   }
-  rows.sort(function (x, y) { return Math.max(y.ab, y.ba) - Math.max(x.ab, x.ba); });
+  rows.sort(function (x, y) { return Math.max(y.ab, y.ba) - Math.max(x.ab, x.ba) || y.cos - x.cos; });
   $("#cmpRows").innerHTML = rows.map(function (r) {
-    return '<tr><td class="name">' + esc(r.a) + ' <span class="muted">↔</span> ' + esc(r.b) + '</td><td class="r num" style="color:' + lvl(r.ab) + '">' + String(r.ab).replace(".", ",") + '%</td><td class="r num" style="color:' + lvl(r.ba) + '">' + String(r.ba).replace(".", ",") + '%</td><td class="r num">' + r.cos.toFixed(0) + "%</td></tr>";
+    var hi = Math.max(r.ab, r.ba), lb = pairLabel(hi);
+    return '<div class="pair"><div class="pair-h"><span class="pct" style="color:' + lb[1] + '">' + pctLabel(hi) + '</span><span class="verdict" style="color:' + lb[1] + '">' + lb[0] + "</span></div>" +
+      '<div class="pair-n"><b>' + esc(r.a) + '</b><span class="muted">dan</span><b>' + esc(r.b) + "</b></div>" +
+      '<div class="bar"><i style="width:' + hi + "%;background:" + lb[1] + '"></i></div>' +
+      "<small>" + pctLabel(r.ab) + " isi " + esc(r.a) + " ada di " + esc(r.b) + " · " + pctLabel(r.ba) + " sebaliknya · kemiripan topik " + Math.round(r.cos) + "%</small></div>";
   }).join("");
 }
 function addCmpFiles(files) {
   Promise.all([].slice.call(files).map(function (f) { return readFile(f).then(function (t) { S.cmpDocs.push({ name: f.name, text: t }); }, function (e) { toast(f.name + ": " + e.message); }); })).then(renderCmp);
 }
 $("#cmpFiles").onchange = function (e) { addCmpFiles(e.target.files); e.target.value = ""; };
-$("#cmpAddText").onclick = function () { S.cmpDocs.push({ name: "Dokumen " + (S.cmpDocs.length + 1), text: "" }); renderCmp(); };
+$("#cmpAddText").onclick = function () { S.cmpDocs.push({ name: "Dokumen " + (S.cmpDocs.length + 1), text: "", _open: true }); renderCmp(); var t = document.querySelectorAll("#cmpList textarea"); t[t.length - 1].focus(); };
+$("#cmpClear").onclick = function () { S.cmpDocs = []; renderCmp(); };
 var drop = $("#drop");
 ["dragenter", "dragover"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); }); });
 ["dragleave", "drop"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); }); });
