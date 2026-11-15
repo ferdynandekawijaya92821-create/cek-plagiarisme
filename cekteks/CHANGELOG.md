@@ -2,6 +2,17 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [2.4.0] - 2026-11-15
+### Ditambahkan
+- Ikon di setiap judul kartu (Cek di internet, Sumber, Analisis gaya tulisan, Pengaturan, dan lainnya).
+- Berkas bisa dijatuhkan di mana saja pada halaman Periksa, dengan lapisan "Lepaskan untuk memeriksa".
+- Bilah progres saat membaca PDF per halaman.
+- Kartu "Laporan kesamaan" dengan ikon PDF dan ringkasan isi laporan.
+- Ilustrasi baru pada area unggah yang masih kosong.
+
+### Diubah
+- Angka skor berhitung naik bersama animasi cincinnya.
+
 ## [2.3.0] - 2026-11-15
 ### Diperbaiki
 - Di HP, footer menimpa kartu "Cek di internet" dan panel hasil. Penyebabnya aturan tinggi maksimum panel
