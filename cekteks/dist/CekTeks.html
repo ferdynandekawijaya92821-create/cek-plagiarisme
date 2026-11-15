@@ -205,6 +205,13 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
 @media (max-width: 420px) { .editor { min-height: 240px; } .score-val { font-size: 34px; } }
 
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 40; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; max-width: calc(100vw - 32px); }
+/* lencana sumber */
+.bdg { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 20px; padding: 0 8px; border-radius: 99px; color: #fff; font: 700 11.5px/1 var(--f-body); }
+.bdg.sm { min-width: 20px; height: 16px; padding: 0 5px; font-size: 10px; vertical-align: 1px; margin-right: 2px; }
+.srow { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
+.kind { font-size: 11.5px; font-weight: 600; border-radius: 99px; padding: 2px 10px; }
+.sname { font-size: 12px; overflow-wrap: anywhere; }
+td a b { color: var(--accent); }
 /* internet & unduhan */
 .net { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; border: 1px solid var(--line); border-radius: 99px; padding: 2px 9px; color: var(--muted); }
 .net i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
@@ -371,7 +378,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
           <div class="card-h"><h2>Sumber yang cocok</h2><button class="btn" type="button" id="goSources">Kelola sumber</button></div>
           <div class="card-b" style="padding-top:6px">
             <div class="tbl-wrap"><table>
-              <thead><tr><th>Sumber</th><th class="r">Sama</th><th class="r">Kosinus</th></tr></thead>
+              <thead><tr><th>Sumber</th><th class="r">Kesamaan</th><th class="r">Topik</th></tr></thead>
               <tbody id="srcRows"></tbody>
             </table></div>
           </div>
@@ -419,6 +426,22 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
               </select>
             </label>
             <p class="muted" style="margin:0;font-size:13px">Semakin pendek n-gram, semakin banyak kecocokan kecil yang tertangkap, tetapi frasa umum juga ikut terhitung.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h2>Opsi filter</h2></div>
+          <div class="card-b stack">
+            <label class="switch"><input type="checkbox" id="fBib" checked> Abaikan daftar pustaka</label>
+            <label class="switch"><input type="checkbox" id="fQuote" checked> Abaikan teks kutipan (di dalam tanda petik)</label>
+            <label class="row" for="fMin" style="font-size:14px">Abaikan kecocokan kecil
+              <select id="fMin">
+                <option value="0" selected>Tidak</option>
+                <option value="8">di bawah 8 kata</option>
+                <option value="12">di bawah 12 kata</option>
+                <option value="20">di bawah 20 kata</option>
+              </select>
+            </label>
+            <p class="muted" style="margin:0;font-size:13px">Opsi ini ikut dicantumkan di laporan. Daftar pustaka dikenali dari judul seperti DAFTAR PUSTAKA, REFERENSI, atau REFERENCES.</p>
           </div>
         </div>
         <div class="card">
@@ -1083,37 +1106,114 @@ function tfidfCosine(a, b, df, nDocs) {
   vb.forEach(function (x) { nb += x * x; });
   return na && nb ? dot / Math.sqrt(na * nb) : 0;
 }
-function checkPlagiarism(text, sources, n) {
+// Warna per sumber (nomor 1, 2, 3, ...): [warna lencana, warna sorotan terang]
+var SRC_COLORS = [["#c2185b", "#f9d3e3"], ["#2f5fd0", "#d6e2fb"], ["#13795b", "#cdeee0"], ["#7b3fe4", "#e5d9fc"],
+  ["#d9480f", "#fddcc8"], ["#0b7a8f", "#cdeef4"], ["#8a6d00", "#f4e9b8"], ["#a61e4d", "#f5d0dd"],
+  ["#2b8a3e", "#d8f2dc"], ["#5f3dc4", "#e2dbfa"]];
+function srcColor(no) { return SRC_COLORS[(Math.max(1, no) - 1) % SRC_COLORS.length]; }
+function hexA(hex, a) { var n = parseInt(hex.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
+var GROUPS = { internet: "Sumber internet", publikasi: "Publikasi", pengguna: "Karya pengguna" };
+var KIND_LABEL = { internet: "Internet", publikasi: "Publikasi", pengguna: "Karya pengguna" };
+function groupOf(src) {
+  if (src.group) return src.group;
+  if (src.corpus || /jurnal/i.test(src.kind || "")) return "publikasi";
+  return src.url ? "internet" : "pengguna";
+}
+function domainOf(src) {
+  if (!src.url) return src.name;
+  try { var u = new URL(src.url); return u.hostname.replace(/^www\./, "") === "doi.org" ? "doi.org" + u.pathname.slice(0, 30) : u.hostname.replace(/^www\./, ""); } catch (e) { return src.name; }
+}
+function pctLabel(v) { return v > 0 && v < 1 ? "<1%" : Math.round(v) + "%"; }
+
+var BIB_RE = /^[ \t]*(?:\d+[.)]?\s*|[IVX]+\.\s*|BAB\s+\w+\s*)?(DAFTAR\s+PUSTAKA|DAFTAR\s+REFERENSI|DAFTAR\s+RUJUKAN|REFERENSI|KEPUSTAKAAN|BIBLIOGRAFI|REFERENCES|BIBLIOGRAPHY|WORKS\s+CITED)[ \t]*:?[ \t]*$/gim;
+function findBibStart(text) {
+  var m, last = -1; BIB_RE.lastIndex = 0;
+  while ((m = BIB_RE.exec(text))) if (m.index > text.length * 0.3) last = m.index;
+  return last;
+}
+function quoteSpans(text) {
+  var out = [], re = /“[^”\n]{3,600}”|"[^"\n]{3,600}"|«[^»\n]{3,600}»/g, m;
+  while ((m = re.exec(text))) out.push([m.index, m.index + m[0].length]);
+  return out;
+}
+
+function checkPlagiarism(text, sources, n, opts) {
+  opts = opts || {};
   text = normalize(text); n = Math.max(2, n | 0 || 5);
-  var tok = tokenize(text), w = tok.map(function (x) { return x[0]; }), N = w.length;
-  var r = { word_count: N, ngram: n, score: 0, sources: [], matches: [], source_count: sources.length };
+  var tok = tokenize(text);
+  var bib = opts.excludeBib ? findBibStart(text) : -1;
+  if (bib >= 0) tok = tok.filter(function (t) { return t[1] < bib; });
+  var w = tok.map(function (x) { return x[0]; }), N = w.length;
+  var r = { word_count: N, ngram: n, score: 0, sources: [], matches: [], matched: [], source_count: sources.length,
+    groups: { internet: 0, publikasi: 0, pengguna: 0 }, bibStart: bib, excluded: { bib: bib >= 0, quoteWords: 0 } };
   if (N < n || !sources.length) return r;
-  var ts = shingles(w, n), covAny = new Array(N).fill(false), wsrc = new Array(N).fill(-1);
+
+  var blocked = new Uint8Array(N);
+  if (opts.excludeQuotes) {
+    var qs = quoteSpans(text), qi = 0;
+    for (var i = 0; i < N && qs.length; i++) {
+      while (qi < qs.length && qs[qi][1] <= tok[i][1]) qi++;
+      if (qi < qs.length && tok[i][1] >= qs[qi][0] && tok[i][2] <= qs[qi][1]) { blocked[i] = 1; r.excluded.quoteWords++; }
+    }
+  }
+  var ts = shingles(w, n);
   var cwText = contentWords(text), srcCw = sources.map(function (s) { return contentWords(normalize(s.text)); });
   var df = new Map();
   [cwText].concat(srcCw).forEach(function (d) { new Set(d).forEach(function (t) { df.set(t, (df.get(t) || 0) + 1); }); });
-  var nDocs = sources.length + 1, totalSh = Math.max(1, N - n + 1);
-  sources.forEach(function (src, si) {
+  var nDocs = sources.length + 1;
+
+  var covs = sources.map(function (src) {
     var sw = src._words || (src._words = words(normalize(src.text)));
     var sset = src._sh && src._shN === n ? src._sh : (src._sh = new Set(shingles(sw, n).keys()), src._shN = n, src._sh);
-    var cov = new Array(N).fill(false), hits = 0;
+    var cov = new Uint8Array(N);
     ts.forEach(function (starts, k) {
-      if (sset.has(k)) { hits += starts.length; starts.forEach(function (st) { for (var j = st; j < st + n; j++) cov[j] = true; }); }
+      if (!sset.has(k)) return;
+      starts.forEach(function (st) {
+        for (var j = st; j < st + n; j++) if (blocked[j]) return;   // n-gram yang menyentuh kutipan diabaikan
+        for (j = st; j < st + n; j++) cov[j] = 1;
+      });
     });
-    var nc = 0;
-    for (var i = 0; i < N; i++) if (cov[i]) { nc++; covAny[i] = true; if (wsrc[i] < 0) wsrc[i] = si; }
-    r.sources.push({ name: src.name, url: src.url || "", kind: src.kind || "", overlap: +(100 * nc / N).toFixed(2), shingle: +(100 * hits / totalSh).toFixed(2),
-      cosine: +(100 * tfidfCosine(cwText, srcCw[si], df, nDocs)).toFixed(2), words: nc });
+    return cov;
   });
+  var covAny = new Uint8Array(N);
+  covs.forEach(function (c) { for (var i = 0; i < N; i++) if (c[i]) covAny[i] = 1; });
+  // Abaikan kecocokan yang terlalu pendek.
+  var minW = opts.minWords | 0;
+  if (minW > n) {
+    for (var i = 0; i < N;) {
+      if (!covAny[i]) { i++; continue; }
+      var j = i; while (j + 1 < N && covAny[j + 1]) j++;
+      if (j - i + 1 < minW) for (var k = i; k <= j; k++) { covAny[k] = 0; covs.forEach(function (c) { c[k] = 0; }); }
+      i = j + 1;
+    }
+  }
+  // Tiap kata dikaitkan ke satu sumber saja (sumber dengan cakupan terbesar lebih dulu), seperti laporan kesamaan pada umumnya.
+  var totals = covs.map(function (c) { var t = 0; for (var i = 0; i < N; i++) t += c[i]; return t; });
+  var order = sources.map(function (_, i) { return i; }).sort(function (a, b) { return totals[b] - totals[a]; });
+  var owner = new Int16Array(N).fill(-1), owned = new Array(sources.length).fill(0);
+  for (var i = 0; i < N; i++) if (covAny[i]) for (var o = 0; o < order.length; o++) if (covs[order[o]][i]) { owner[i] = order[o]; owned[order[o]]++; break; }
+
+  var list = sources.map(function (src, si) {
+    var g = groupOf(src);
+    return { si: si, name: src.name, url: src.url || "", kind: src.kind || "", group: g, domain: domainOf(src),
+      overlap: +(100 * totals[si] / N).toFixed(2), share: +(100 * owned[si] / N).toFixed(2), words: owned[si],
+      cosine: +(100 * tfidfCosine(cwText, srcCw[si], df, nDocs)).toFixed(2), no: 0 };
+  });
+  list.sort(function (a, b) { return b.share - a.share || b.overlap - a.overlap || b.cosine - a.cosine; });
+  var noOf = new Array(sources.length).fill(0), no = 0;
+  list.forEach(function (s) { if (s.words > 0) { s.no = ++no; noOf[s.si] = s.no; r.groups[s.group] += s.share; } });
+  Object.keys(r.groups).forEach(function (k) { r.groups[k] = +r.groups[k].toFixed(2); });
+  r.sources = list;
+  r.matched = list.filter(function (s) { return s.no; });
   for (var i = 0; i < N;) {
-    if (!covAny[i]) { i++; continue; }
-    var j = i, s = wsrc[i];
-    while (j + 1 < N && covAny[j + 1] && wsrc[j + 1] === s) j++;
-    r.matches.push({ start: tok[i][1], end: tok[j][2], source: sources[s].name, url: sources[s].url || "" });
+    if (owner[i] < 0) { i++; continue; }
+    var j = i, s = owner[i];
+    while (j + 1 < N && owner[j + 1] === s && tok[j + 1][1] - tok[j][2] < 40) j++;
+    r.matches.push({ start: tok[i][1], end: tok[j][2], no: noOf[s], source: sources[s].name, url: sources[s].url || "" });
     i = j + 1;
   }
-  r.score = +(100 * covAny.filter(Boolean).length / N).toFixed(1);
-  r.sources.sort(function (a, b) { return b.overlap - a.overlap || b.cosine - a.cosine; });
+  var nc = 0; for (var i = 0; i < N; i++) nc += covAny[i];
+  r.score = +(100 * nc / N).toFixed(1);
   return r;
 }
 
@@ -1223,7 +1323,8 @@ function lvl(v) { return v < 35 ? "var(--ok)" : v < 65 ? "var(--warn)" : "var(--
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
-var S = { userSources: [], webSources: [], docName: "", cmpDocs: [], hl: "plag", plag: null, ai: null, text: "", sample: false };
+CORPUS.forEach(function (c) { c.corpus = true; });
+var S = { userSources: [], webSources: [], doc: null, cmpDocs: [], hl: "plag", plag: null, ai: null, text: "", sample: false };
 try { S.userSources = JSON.parse(store("ct_sources") || "[]"); } catch (e) { S.userSources = []; }
 
 /* ---- tabs ---- */
@@ -1290,32 +1391,73 @@ function legacyDocText(buf) {
   if (words(best).length < 5) throw new Error("Berkas .doc lama tidak terbaca. Simpan ulang sebagai .docx lalu unggah lagi.");
   return best;
 }
-function readFile(file) {
+/* ---- PDF: teks + posisi di halaman (untuk laporan bersorot di atas halaman asli) ---- */
+function loadPdfLib() {
+  return need("pdfjsLib", "pdf.js/3.11.174/pdf.min.js")
+    .then(function () { return window.pdfjsWorker ? null : loadScript(CDN + "pdf.js/3.11.174/pdf.worker.min.js"); })
+    .then(function () { if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) window.pdfjsLib.GlobalWorkerOptions.workerSrc = CDN + "pdf.js/3.11.174/pdf.worker.min.js"; });
+}
+function openPdf(buf) {
+  return loadPdfLib().then(function () { return window.pdfjsLib.getDocument({ data: new Uint8Array(buf.slice(0)), isEvalSupported: false }).promise; });
+}
+function pdfExtract(buf) {
+  return openPdf(buf).then(function (pdf) {
+    var parts = [], pos = 0, pages = [], chain = Promise.resolve();
+    function push(s) { parts.push(s); pos += s.length; }
+    function doPage(i) {
+      return pdf.getPage(i).then(function (pg) {
+        var vp = pg.getViewport({ scale: 1 });
+        return pg.getTextContent().then(function (tc) {
+          var items = [], prev = null;
+          if (i > 1) push("\n\n");
+          tc.items.forEach(function (it) {
+            if (typeof it.str !== "string") return;
+            var str = it.str.normalize("NFKC").replace(/\r?\n/g, " ");
+            if (str) {
+              var tx = window.pdfjsLib.Util.transform(vp.transform, it.transform);
+              var fh = Math.hypot(tx[2], tx[3]) || 10, x = tx[4], yb = tx[5];
+              if (prev && !prev.eol) {
+                var sameLine = Math.abs(yb - prev.yb) < fh * 0.5, gap = x - (prev.x + prev.w);
+                if (!sameLine) push("\n");
+                else if (gap > fh * 0.12 && !/\s$/.test(prev.str) && !/^\s/.test(str)) push(" ");
+              }
+              items.push({ s: pos, e: pos + str.length, x: x, y: yb - fh * 0.86, w: it.width, h: fh * 1.16 });
+              push(str);
+              prev = { x: x, w: it.width, yb: yb, str: str, eol: false };
+            }
+            if (it.hasEOL) { push("\n"); if (prev) prev.eol = true; }
+          });
+          pages.push({ w: vp.width, h: vp.height, items: items });
+        });
+      });
+    }
+    for (var i = 1; i <= pdf.numPages; i++) chain = chain.then(doPage.bind(null, i));
+    return chain.then(function () {
+      var text = parts.join("");
+      if (words(text).length < 3) throw new Error("PDF ini tidak berisi teks (kemungkinan hasil pindaian/gambar).");
+      return { text: text, pages: pdf.numPages, layout: { pages: pages, text: text }, pdfBuf: buf };
+    });
+  });
+}
+
+function readFile(file) { return readFileFull(file).then(function (r) { return r.text; }); }
+function readFileFull(file) {
   var ext = (file.name.split(".").pop() || "").toLowerCase();
   return file.arrayBuffer().then(function (buf) {
     if (ext === "docx") {
-      return need("mammoth", "mammoth/1.6.0/mammoth.browser.min.js")
-        .then(function () { return window.mammoth.extractRawText({ arrayBuffer: buf }); }).then(function (r) { return r.value; });
+      var pages = null;
+      return need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () { return window.JSZip.loadAsync(buf); })
+        .then(function (zip) { var f = zip.file("docProps/app.xml"); return f ? f.async("string") : ""; })
+        .then(function (x) { var m = /<Pages>(\d+)<\/Pages>/.exec(x); pages = m ? +m[1] : null; }, function () {})
+        .then(function () { return need("mammoth", "mammoth/1.6.0/mammoth.browser.min.js"); })
+        .then(function () { return window.mammoth.extractRawText({ arrayBuffer: buf }); })
+        .then(function (r) { return { text: r.value, pages: pages }; });
     }
-    if (ext === "pdf") {
-      return need("pdfjsLib", "pdf.js/3.11.174/pdf.min.js")
-        .then(function () { return window.pdfjsWorker ? null : loadScript(CDN + "pdf.js/3.11.174/pdf.worker.min.js"); })
-        .then(function () {
-          if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) window.pdfjsLib.GlobalWorkerOptions.workerSrc = CDN + "pdf.js/3.11.174/pdf.worker.min.js";
-          return window.pdfjsLib.getDocument({ data: new Uint8Array(buf), isEvalSupported: false }).promise;
-        })
-        .then(function (pdf) {
-          var jobs = []; for (var i = 1; i <= pdf.numPages; i++) jobs.push(pdf.getPage(i).then(function (pg) { return pg.getTextContent(); }));
-          return Promise.all(jobs).then(function (cs) {
-            var t = cs.map(function (c) { return c.items.map(function (it) { return it.str + (it.hasEOL ? "\n" : " "); }).join(""); }).join("\n\n");
-            if (words(t).length < 3) throw new Error("PDF ini tidak berisi teks (kemungkinan hasil pindaian/gambar).");
-            return t;
-          });
-        });
-    }
+    if (ext === "pdf") return pdfExtract(buf);
     if (ext === "odt" || ext === "pptx") {
       return need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () { return window.JSZip.loadAsync(buf); }).then(function (zip) {
         if (ext === "odt") return zip.file("content.xml").async("string").then(function (x) { return xmlText(x, "text:p"); });
+        // pptx: satu slide dihitung satu halaman
         var slides = Object.keys(zip.files).filter(function (n) { return /^ppt\/slides\/slide\d+\.xml$/.test(n); })
           .sort(function (a, b) { return parseInt(a.match(/\d+/)[0], 10) - parseInt(b.match(/\d+/)[0], 10); });
         return Promise.all(slides.map(function (n) { return zip.file(n).async("string"); }))
@@ -1328,7 +1470,7 @@ function readFile(file) {
     if (ext === "rtf") return rtfToText(txt);
     if (["txt", "md", "markdown", "csv", "text", "json", "xml", "tex"].indexOf(ext) >= 0 || (file.type || "").indexOf("text/") === 0) return txt;
     throw new Error("Format ." + ext + " belum didukung. Gunakan PDF, Word, ODT, PPTX, RTF, HTML, atau TXT.");
-  });
+  }).then(function (res) { return typeof res === "string" ? { text: res } : res; });
 }
 
 /* ---- editor ---- */
@@ -1341,8 +1483,8 @@ function schedule(ms) {
   $("#statusDot").classList.add("busy"); $("#statusText").textContent = "Menganalisis…";
   clearTimeout(timer); timer = setTimeout(run, ms == null ? 250 : ms);
 }
-$("#sampleBtn").onclick = function () { setText(SAMPLE, true); S.docName = ""; };
-$("#clearBtn").onclick = function () { setText("", false); S.docName = ""; editor.focus(); };
+$("#sampleBtn").onclick = function () { S.doc = null; setText(SAMPLE, true); };
+$("#clearBtn").onclick = function () { S.doc = null; setText("", false); editor.focus(); };
 $("#pasteBtn").onclick = function () {
   if (navigator.clipboard && navigator.clipboard.readText) {
     navigator.clipboard.readText().then(function (t) { if (t) setText(t); else editor.focus(); }, function () { editor.focus(); toast("Tekan lama di kotak naskah lalu pilih Tempel."); });
@@ -1351,7 +1493,10 @@ $("#pasteBtn").onclick = function () {
 $("#mainFile").onchange = function (e) {
   var f = e.target.files[0]; e.target.value = ""; if (!f) return;
   toast("Membaca " + f.name + "…");
-  readFile(f).then(function (t) { setText(t); S.docName = f.name; toast(f.name + " dimuat."); }, function (err) { toast(err.message); });
+  readFileFull(f).then(function (r) {
+    S.doc = { name: f.name, size: f.size, pages: r.pages || null, layout: r.layout || null, pdfBuf: r.pdfBuf || null };
+    setText(r.text); toast(f.name + " dimuat" + (r.pages ? " (" + r.pages + " halaman)." : "."));
+  }, function (err) { toast(err.message); });
 };
 
 /* ---- sources ---- */
@@ -1388,6 +1533,7 @@ $("#srcFiles").onchange = function (e) {
 };
 $("#useCorpus").onchange = function () { $("#srcBadge").textContent = allSources().length; schedule(0); };
 $("#ngram").onchange = function () { schedule(0); };
+["fBib", "fQuote", "fMin"].forEach(function (id) { $("#" + id).onchange = function () { schedule(0); }; });
 $("#corpCount").textContent = CORPUS.length + " dokumen";
 $("#corpList").innerHTML = CORPUS.map(function (c) { return '<div class="corp-item"><span>' + esc(c.name) + '</span><span class="muted num">' + words(c.text).length + " kata</span></div>"; }).join("");
 
@@ -1415,7 +1561,7 @@ function run() {
   $("#cSents").textContent = text.trim() ? splitSentences(text).length.toLocaleString("id-ID") : "0";
 
   var srcs = allSources();
-  S.plag = checkPlagiarism(text, srcs, +$("#ngram").value);
+  S.plag = checkPlagiarism(text, srcs, +$("#ngram").value, { excludeBib: $("#fBib").checked, excludeQuotes: $("#fQuote").checked, minWords: +$("#fMin").value });
   S.ai = nWords ? detectAI(text) : null;
   var p = S.plag, a = S.ai;
 
@@ -1426,11 +1572,14 @@ function run() {
   verdict($("#plagVerdict"), pv, ["Orisinal", "Ada kemiripan", "Kemiripan tinggi"]);
   if (!nWords) $("#plagVerdict").textContent = "Menunggu teks";
   $("#plagSub").textContent = !nWords ? "Ketik atau tempel naskah untuk mulai." :
-    (srcs.length ? p.matches.length + " bagian cocok · dibandingkan dengan " + srcs.length + " sumber · n-gram " + p.ngram : "Belum ada sumber pembanding. Tambahkan di tab Sumber.");
-  var rows = p.sources.filter(function (s) { return s.overlap > 0 || s.cosine >= 20; }).slice(0, 12);
+    (srcs.length ? p.matched.length + " sumber cocok · " + pctLabel(p.groups.internet) + " internet · " + pctLabel(p.groups.publikasi) + " publikasi · " + pctLabel(p.groups.pengguna) + " karya pengguna" +
+      (p.excluded.bib ? " · daftar pustaka diabaikan" : "") : "Belum ada sumber pembanding. Tambahkan di tab Sumber.");
+  var rows = p.matched.slice(0, 15);
   $("#srcRows").innerHTML = rows.length ? rows.map(function (s) {
-    return '<tr><td class="name">' + (s.url ? '<span class="tag">' + esc(s.kind) + '</span><br><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>" : esc(s.name)) + '<div class="bar" style="margin-top:6px"><i style="width:' + s.overlap + '%;background:' + lvl(s.overlap) + '"></i></div></td>' +
-      '<td class="r num" style="color:' + lvl(s.overlap) + '">' + s.overlap.toFixed(1).replace(".", ",") + '%</td><td class="r num">' + s.cosine.toFixed(0) + "%</td></tr>";
+    var c = srcColor(s.no);
+    return '<tr><td class="name"><div class="srow"><span class="bdg" style="background:' + c[0] + '">' + s.no + '</span><span class="kind" style="background:' + hexA(c[0], .16) + '">' + KIND_LABEL[s.group] + '</span></div>' +
+      (s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener"><b>' + esc(s.domain) + "</b></a><div class=\"muted sname\">" + esc(s.name) + "</div>" : "<b>" + esc(s.domain) + "</b>") + "</td>" +
+      '<td class="r num">' + pctLabel(s.share) + '</td><td class="r num">' + s.cosine.toFixed(0) + "%</td></tr>";
   }).join("") : '<tr><td colspan="3" class="empty">Tidak ada sumber yang cocok.</td></tr>';
 
   // AI
@@ -1462,8 +1611,10 @@ function renderHL() {
   var t = S.text, spans = [];
   if (!t.trim()) { $("#hl").innerHTML = '<div class="empty">Sorotan akan muncul di sini.</div>'; $("#legend").innerHTML = ""; return; }
   if (S.hl === "plag") {
-    spans = S.plag.matches.map(function (m) { return { s: m.start, e: m.end, c: "p", t: "Cocok dengan: " + m.source }; });
-    $("#legend").innerHTML = '<span><i style="background:var(--hl-plag)"></i>Sama dengan sumber (ketuk untuk melihat nama sumber)</span>';
+    spans = S.plag.matches.map(function (m) { return { s: m.start, e: m.end, no: m.no, t: "Sumber " + m.no + ": " + m.source }; });
+    $("#legend").innerHTML = S.plag.matched.length ? S.plag.matched.slice(0, 10).map(function (s) {
+      return '<span><span class="bdg sm" style="background:' + srcColor(s.no)[0] + '">' + s.no + "</span> " + esc(s.domain) + "</span>";
+    }).join("") + '<span>· ketuk sorotan untuk nama sumber</span>' : '<span>Belum ada bagian yang sama dengan sumber.</span>';
   } else if (S.ai) {
     spans = S.ai.sentences.filter(function (s) { return s.score >= 40; }).map(function (s) {
       return { s: s.start, e: s.end, c: s.score >= 70 ? "a3" : s.score >= 55 ? "a2" : "a1", t: "Skor AI kalimat: " + s.score + "%" };
@@ -1473,7 +1624,10 @@ function renderHL() {
   var html = "", pos = 0;
   spans.sort(function (x, y) { return x.s - y.s; }).forEach(function (sp) {
     if (sp.s < pos) return;
-    html += esc(t.slice(pos, sp.s)) + '<mark class="' + sp.c + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">' + esc(t.slice(sp.s, sp.e)) + "</mark>";
+    var open = sp.no ? '<mark style="background:' + hexA(srcColor(sp.no)[0], .22) + ';box-shadow:inset 0 -2px 0 ' + srcColor(sp.no)[0] + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">' +
+      (sp.s === 0 || !spans.some(function (o) { return o.no === sp.no && o.e >= sp.s - 2 && o.s < sp.s; }) ? '<span class="bdg sm" style="background:' + srcColor(sp.no)[0] + '">' + sp.no + "</span>" : "")
+      : '<mark class="' + sp.c + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">';
+    html += esc(t.slice(pos, sp.s)) + open + esc(t.slice(sp.s, sp.e)) + "</mark>";
     pos = sp.e;
   });
   $("#hl").innerHTML = html + esc(t.slice(pos));
@@ -1490,164 +1644,379 @@ if (IN_FRAME) $("#frameNote").hidden = false;
 
 function verdictText(v, labels) { return labels[v < 35 ? 0 : v < 65 ? 1 : 2]; }
 function pctId(v) { return String(v).replace(".", ","); }
+function newId() {
+  var a = new Uint8Array(12);
+  if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(a); else for (var i = 0; i < 12; i++) a[i] = Math.random() * 256;
+  return Array.prototype.map.call(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+}
+function fmtDate(d) {
+  var off = -d.getTimezoneOffset() / 60;
+  var date = d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+  var time = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+  return date + ", " + time + " GMT" + (off >= 0 ? "+" : "") + off;
+}
+function fmtSize(b) { return b >= 1048576 ? (b / 1048576).toFixed(1).replace(".", ",") + " MB" : Math.max(1, Math.round(b / 1024)) + " KB"; }
+function fmtNum(n) { return Number(n).toLocaleString("id-ID"); }
+function filterList() {
+  var f = [];
+  if ($("#fBib").checked) f.push("Abaikan daftar pustaka" + (S.plag.excluded.bib ? "" : " (tidak ditemukan di naskah)"));
+  if ($("#fQuote").checked) f.push("Abaikan teks kutipan");
+  var m = +$("#fMin").value; if (m) f.push("Abaikan kecocokan kurang dari " + m + " kata");
+  f.push("Panjang n-gram " + S.plag.ngram + " kata");
+  f.push("Sumber: " + S.plag.source_count + " dokumen (" + S.webSources.length + " dari internet)");
+  return f;
+}
 function buildReport() {
   var p = S.plag, a = S.ai, t = S.text;
   if (!a) return null;
-  var used = p.sources.filter(function (s) { return s.overlap > 0 || s.cosine >= 20; });
-  var matches = p.matches.map(function (m) { return { text: t.slice(m.start, m.end), source: m.source, url: m.url }; });
-  var aiSents = a.sentences.filter(function (s) { return s.score >= 55; }).map(function (s) { return { text: t.slice(s.start, s.end), score: s.score }; });
+  var d = S.doc || null;
+  var layoutOk = !!(d && d.layout && d.layout.text === t && d.pdfBuf);
   return {
-    date: new Date().toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" }),
-    doc: S.docName || (S.sample ? "Teks contoh" : "Teks yang ditempel"),
-    words: a.word_count, sentences: a.sentence_count,
-    plag: p.score, plagLabel: verdictText(p.score, ["Orisinal", "Ada kemiripan", "Kemiripan tinggi"]),
-    ngram: p.ngram, sourceCount: p.source_count, webCount: S.webSources.length,
-    ai: a.score, aiLabel: verdictText(a.score, ["Cenderung ditulis manusia", "Campuran / tidak pasti", "Cenderung dibuat AI"]),
-    sources: used, matches: matches, aiSents: aiSents,
-    signals: Object.keys(SIG).map(function (k) { return { name: SIG[k][0], value: a.signals[k] }; }),
+    id: newId(), date: new Date(), text: t,
+    doc: d ? d.name : (S.sample ? "Teks contoh" : "Teks yang ditempel"),
+    size: d ? d.size : new Blob([t]).size, pages: d && d.pages ? d.pages : null,
+    words: words(t).length, chars: t.length,
+    plag: p, plagLabel: verdictText(p.score, ["Orisinal", "Ada kemiripan", "Kemiripan tinggi"]),
+    ai: a, aiLabel: verdictText(a.score, ["Cenderung ditulis manusia", "Campuran / tidak pasti", "Cenderung dibuat AI"]),
+    aiSents: a.sentences.filter(function (s) { return s.score >= 55; }).map(function (s) { return { text: t.slice(s.start, s.end), score: s.score }; }),
+    signals: Object.keys(SIG).map(function (k) { return { name: SIG[k][0], value: a.signals[k], human: k === "informalitas" }; }),
     phrases: Object.keys(a.phrases).map(function (k) { return k + " (" + a.phrases[k] + "x)"; }),
-    warnings: a.warnings
+    filters: filterList(), layout: layoutOk ? d.layout : null, pdfBuf: layoutOk ? d.pdfBuf : null
   };
 }
 var DISCLAIMER = "Deteksi AI bersifat perkiraan berdasarkan gaya tulisan dan bisa keliru. Cek plagiarisme hanya membandingkan dengan sumber yang dipilih. Jangan jadikan laporan ini satu-satunya dasar keputusan.";
-function fileBase() { return "Laporan-CekTeks-" + (S.docName ? S.docName.replace(/\.[^.]+$/, "").replace(/[^\w\-]+/g, "_").slice(0, 40) + "-" : "") + new Date().toISOString().slice(0, 10); }
+function fileBase() { return "Laporan-CekTeks-" + (S.doc ? S.doc.name.replace(/\.[^.]+$/, "").replace(/[^\w\-]+/g, "_").slice(0, 40) + "-" : "") + new Date().toISOString().slice(0, 10); }
 function download(blob, name) {
   try {
     var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.rel = "noopener";
     document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
-    toast(IN_FRAME ? "Unduhan diblokir di pratinjau Claude. Pakai file CekTeks.html." : "Mengunduh " + name);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 10000);
+    toast(IN_FRAME ? "Unduhan diblokir di pratinjau Claude. Pakai situs atau file CekTeks.html." : "Mengunduh " + name);
   } catch (e) { toast("Browser menolak unduhan: " + e.message); }
 }
 function needReport() { var r = buildReport(); if (!r) toast("Masukkan naskah terlebih dahulu."); return r; }
+function charSources(r) {
+  var cs = new Int16Array(r.text.length);
+  r.plag.matches.forEach(function (m) { cs.fill(m.no, m.start, m.end); });
+  return cs;
+}
 
+/* ---------- TXT ---------- */
 function reportText(r) {
   r = r || buildReport(); if (!r) return "";
-  var L = ["LAPORAN PEMERIKSAAN CEKTEKS", "=".repeat(28), "Dokumen : " + r.doc, "Tanggal : " + r.date, "Panjang : " + r.words + " kata, " + r.sentences + " kalimat", "",
-    "INDEKS KESAMAAN : " + pctId(r.plag) + "%  (" + r.plagLabel + ")",
-    "Dibandingkan dengan " + r.sourceCount + " sumber (" + r.webCount + " dari internet), n-gram " + r.ngram + " kata", ""];
-  if (r.sources.length) { L.push("Sumber yang cocok:"); r.sources.forEach(function (s) { L.push("  - " + s.name + ": " + pctId(s.overlap) + "% sama, kosinus " + pctId(s.cosine) + "%" + (s.url ? "\n    " + s.url : "")); }); L.push(""); }
-  if (r.matches.length) { L.push("Bagian yang sama:"); r.matches.forEach(function (m, i) { L.push("  " + (i + 1) + ". \"" + m.text.replace(/\s+/g, " ") + "\"\n     -> " + m.source + (m.url ? " (" + m.url + ")" : "")); }); L.push(""); }
-  L.push("KEMUNGKINAN AI : " + pctId(r.ai) + "%  (" + r.aiLabel + ")");
+  var p = r.plag;
+  var L = ["LAPORAN PLAGIARISME CEKTEKS", "=".repeat(27), "ID Pemeriksaan : " + r.id, "Dokumen        : " + r.doc, "Tanggal        : " + fmtDate(r.date),
+    "Panjang        : " + fmtNum(r.words) + " kata, " + fmtNum(r.chars) + " karakter" + (r.pages ? ", " + r.pages + " halaman" : ""), "",
+    "KESAMAAN       : " + pctLabel(p.score) + " (" + r.plagLabel + ")", "Sumber cocok   : " + p.matched.length,
+    "  " + pctLabel(p.groups.internet) + " sumber internet, " + pctLabel(p.groups.publikasi) + " publikasi, " + pctLabel(p.groups.pengguna) + " karya pengguna", ""];
+  if (p.matched.length) {
+    L.push("Sumber teratas:");
+    p.matched.forEach(function (s) { L.push("  [" + s.no + "] " + pctLabel(s.share) + "  " + KIND_LABEL[s.group] + " - " + s.domain + (s.url ? "\n       " + s.name + "\n       " + s.url : "")); });
+    L.push("");
+    L.push("Bagian yang sama:");
+    p.matches.forEach(function (m) { L.push("  [" + m.no + "] \"" + r.text.slice(m.start, m.end).replace(/\s+/g, " ") + "\""); });
+    L.push("");
+  }
+  L.push("KEMUNGKINAN AI : " + pctId(r.ai.score) + "% (" + r.aiLabel + ")");
   r.signals.forEach(function (g) { L.push("  - " + g.name + ": " + Math.round(g.value) + "%"); });
   if (r.phrases.length) L.push("  Frasa khas AI: " + r.phrases.join(", "));
   if (r.aiSents.length) { L.push("", "Kalimat dengan skor AI tinggi:"); r.aiSents.forEach(function (s) { L.push("  [" + Math.round(s.score) + "%] " + s.text.replace(/\s+/g, " ")); }); }
-  if (r.warnings.length) L.push("", "Catatan: " + r.warnings.join(" "));
-  L.push("", DISCLAIMER, "", "Dibuat dengan CekTeks");
+  L.push("", "Opsi filter: " + r.filters.join("; "), "", DISCLAIMER, "", "Dibuat dengan CekTeks");
   return L.join("\n");
 }
 
-function highlightedHTML(inline) {
-  // Naskah lengkap dengan sorotan plagiarisme (merah) dan kalimat AI (kuning/oranye).
-  var t = S.text, marks = [];
-  S.plag.matches.forEach(function (m) { marks.push({ s: m.start, e: m.end, bg: "#f8c9c3", u: true, title: m.source }); });
-  if (S.ai) S.ai.sentences.forEach(function (s) { if (s.score >= 55) marks.push({ s: s.start, e: s.end, bg: s.score >= 70 ? "#fbdcb4" : "#fdf0c8" }); });
-  var pts = [0, t.length]; marks.forEach(function (m) { pts.push(m.s, m.e); });
-  pts = Array.from(new Set(pts)).sort(function (a, b) { return a - b; });
-  var html = "";
-  for (var i = 0; i + 1 < pts.length; i++) {
-    var a = pts[i], b = pts[i + 1], seg = esc(t.slice(a, b)).replace(/\n/g, "<br>");
-    var plag = marks.find(function (m) { return m.u && m.s <= a && m.e >= b; });
-    var ai = marks.find(function (m) { return !m.u && m.s <= a && m.e >= b; });
-    if (plag) seg = '<span style="background:#f8c9c3;text-decoration:underline;text-decoration-color:#c2392e">' + seg + "</span>";
-    else if (ai) seg = '<span style="background:' + ai.bg + '">' + seg + "</span>";
-    html += seg;
+/* ---------- Word ---------- */
+function highlightedHTML(r) {
+  var t = r.text, cs = charSources(r), html = "", i = 0;
+  var starts = {}; r.plag.matches.forEach(function (m) { starts[m.start] = m.no; });
+  while (i < t.length) {
+    var c = cs[i], j = i + 1;
+    while (j < t.length && cs[j] === c && !starts[j]) j++;
+    var seg = esc(t.slice(i, j)).replace(/\n/g, "<br>");
+    if (c) {
+      var col = srcColor(c);
+      if (starts[i]) seg = "<sup style='background:" + col[0] + ";color:#ffffff;font-size:7.5pt;font-weight:bold;padding:0 4px'>&nbsp;" + c + "&nbsp;</sup>" + seg;
+      seg = "<span style='background:" + col[1] + "'>" + seg + "</span>";
+    }
+    html += seg; i = j;
   }
   return html;
 }
-
 function reportDoc(r) {
-  function row(k, v) { return "<tr><td style='padding:4px 10px 4px 0;color:#5a6577'>" + k + "</td><td style='padding:4px 0'><b>" + v + "</b></td></tr>"; }
-  function col(v) { return v < 35 ? "#1d7f55" : v < 65 ? "#b5700c" : "#c2392e"; }
-  var h = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'><title>Laporan CekTeks</title>" +
-    "<style>body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#0f1b2a}h1{font-size:20pt;margin:0 0 4pt}h2{font-size:13pt;margin:16pt 0 6pt;border-bottom:1px solid #d9e0e9;padding-bottom:3pt}" +
-    "table{border-collapse:collapse}th,td{font-size:10pt;text-align:left;vertical-align:top}th{color:#5a6577;border-bottom:1px solid #d9e0e9;padding:4pt}.t td{border-bottom:1px solid #eef2f6;padding:4pt}.big{font-size:26pt;font-weight:bold}.small{font-size:9pt;color:#5a6577}</style></head><body>";
-  h += "<h1>Laporan Pemeriksaan CekTeks</h1><table>" + row("Dokumen", esc(r.doc)) + row("Tanggal", r.date) + row("Panjang", r.words + " kata, " + r.sentences + " kalimat") + "</table>";
-  h += "<table style='margin-top:12pt;width:100%'><tr><td style='width:50%'><div class='small'>INDEKS KESAMAAN</div><div class='big' style='color:" + col(r.plag) + "'>" + pctId(r.plag) + "%</div><div>" + r.plagLabel + "</div></td>" +
-    "<td><div class='small'>KEMUNGKINAN AI</div><div class='big' style='color:" + col(r.ai) + "'>" + pctId(r.ai) + "%</div><div>" + r.aiLabel + "</div></td></tr></table>";
-  h += "<p class='small'>Dibandingkan dengan " + r.sourceCount + " sumber (" + r.webCount + " dari internet), n-gram " + r.ngram + " kata.</p>";
-  h += "<h2>Sumber yang cocok</h2>" + (r.sources.length ? "<table class='t' style='width:100%'><tr><th>Sumber</th><th>Sama</th><th>Kosinus</th></tr>" + r.sources.map(function (s) {
-    return "<tr><td>" + (s.url ? "<a href='" + esc(s.url) + "'>" + esc(s.name) + "</a><br><span class='small'>" + esc(s.url) + "</span>" : esc(s.name)) + "</td><td style='color:" + col(s.overlap) + "'><b>" + pctId(s.overlap) + "%</b></td><td>" + pctId(s.cosine) + "%</td></tr>";
+  var p = r.plag;
+  function cell(k, v) { return "<td style='padding:3pt 18pt 6pt 0;vertical-align:top'><div style='font-size:8.5pt;color:#787e87'>" + k + "</div><div style='font-size:9.5pt'><b>" + v + "</b></div></td>"; }
+  var h = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'><title>Laporan Plagiarisme</title>" +
+    "<style>body{font-family:Arial,sans-serif;font-size:10.5pt;color:#212529}h1{font-size:20pt;margin:0}h2{font-size:13pt;font-weight:normal;margin:18pt 0 6pt}" +
+    "table{border-collapse:collapse}.src td{border-bottom:1px solid #dee2e6;padding:6pt 6pt 6pt 0;vertical-align:middle}.muted{color:#787e87;font-size:9pt}</style></head><body>";
+  h += "<p class='muted'><b style='color:#0e6a86'>CekTeks</b> &nbsp; Laporan Plagiarisme &nbsp; · &nbsp; ID Pemeriksaan " + r.id + "</p>";
+  h += "<h1>Laporan Plagiarisme</h1><p style='font-size:14pt;margin:4pt 0 12pt'>" + esc(r.doc) + "</p><hr>";
+  h += "<h2>Detail Dokumen</h2><table><tr>" + cell("ID Pemeriksaan", r.id) + cell("Ukuran File", fmtSize(r.size)) + "</tr><tr>" + cell("Nama File", esc(r.doc)) + cell("Total Halaman", r.pages ? r.pages + " Halaman" : "-") +
+    "</tr><tr>" + cell("Diperiksa dengan", "CekTeks") + cell("Total Kata", fmtNum(r.words) + " Kata") + "</tr><tr>" + cell("Tanggal Pemeriksaan", fmtDate(r.date)) + cell("Total Karakter", fmtNum(r.chars) + " Karakter") + "</tr></table>";
+  h += "<h2>Opsi Filter</h2><ul>" + r.filters.map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul><hr>";
+  h += "<table style='width:100%;margin-top:10pt'><tr><td><div style='font-size:30pt;font-weight:bold'>" + pctLabel(p.score) + "</div><div style='font-size:13pt'>Kesamaan</div></td>" +
+    "<td><div style='font-size:30pt;font-weight:bold'>" + p.matched.length + "</div><div style='font-size:13pt'>Sumber Cocok</div></td>" +
+    "<td class='muted'><b style='font-size:11pt;color:#212529'>Kelompok Kecocokan</b><br>" + pctLabel(p.groups.internet) + " &nbsp; Sumber internet<br>" + pctLabel(p.groups.publikasi) + " &nbsp; Publikasi<br>" + pctLabel(p.groups.pengguna) + " &nbsp; Karya pengguna</td></tr></table>";
+  h += "<h2>Sumber Teratas</h2>" + (p.matched.length ? "<table class='src' style='width:100%'>" + p.matched.map(function (s) {
+    var c = srcColor(s.no);
+    return "<tr><td style='width:28pt'><span style='background:" + c[0] + ";color:#fff;font-weight:bold;padding:2pt 9pt'>" + s.no + "</span></td><td><span style='background:" + c[1] + ";padding:1pt 8pt;font-size:8.5pt'>" + KIND_LABEL[s.group] + "</span><br><b>" + esc(s.domain) + "</b>" +
+      (s.url ? "<br><a class='muted' href='" + esc(s.url) + "'>" + esc(s.name) + "</a>" : "") + "</td><td style='text-align:right'>" + pctLabel(s.share) + "</td></tr>";
   }).join("") + "</table>" : "<p>Tidak ada sumber yang cocok.</p>");
-  h += "<h2>Sinyal deteksi AI</h2><table class='t'>" + r.signals.map(function (g) { return "<tr><td>" + g.name + "</td><td><b>" + Math.round(g.value) + "%</b></td></tr>"; }).join("") + "</table>";
-  if (r.phrases.length) h += "<p><b>Frasa khas AI:</b> " + esc(r.phrases.join(", ")) + "</p>";
-  h += "<h2>Naskah dengan sorotan</h2><p class='small'><span style='background:#f8c9c3;text-decoration:underline'>&nbsp;merah&nbsp;</span> sama dengan sumber &nbsp; <span style='background:#fbdcb4'>&nbsp;oranye&nbsp;</span> skor AI 70%+ &nbsp; <span style='background:#fdf0c8'>&nbsp;kuning&nbsp;</span> skor AI 55–70%</p>";
-  h += "<div style='line-height:1.6'>" + highlightedHTML() + "</div>";
-  h += "<p class='small' style='margin-top:18pt'>" + DISCLAIMER + "</p></body></html>";
+  h += "<h2>Kemungkinan Tulisan AI: <b>" + pctId(r.ai.score) + "%</b> (" + r.aiLabel + ")</h2><table>" + r.signals.map(function (g) { return "<tr><td style='padding:2pt 14pt 2pt 0'>" + g.name + "</td><td><b>" + Math.round(g.value) + "%</b></td></tr>"; }).join("") + "</table>";
+  if (r.phrases.length) h += "<p class='muted'>Frasa khas AI: " + esc(r.phrases.join(", ")) + "</p>";
+  h += "<br style='page-break-before:always'><h2>Naskah dengan sorotan sumber</h2><div style='line-height:1.7;font-family:\"Times New Roman\",serif;font-size:12pt'>" + highlightedHTML(r) + "</div>";
+  h += "<p class='muted' style='margin-top:18pt'>" + DISCLAIMER + "</p></body></html>";
   return h;
 }
 
+/* ---------- PDF ---------- */
+var PDF_MAP = { "Ω": "Ohm", "≥": ">=", "≤": "<=", "≈": "~", "≠": "!=", "→": "->", "←": "<-", "↔": "<->", "×": "x", "−": "-", "•": "-", "·": "-", "π": "pi", "√": "akar ", "∞": "inf", "Δ": "delta ", "δ": "delta", "θ": "theta", "λ": "lambda", "α": "alfa", "β": "beta", "ω": "omega", "Σ": "sigma", "∑": "sigma" };
 function pdfSafe(s) {
-  return String(s).replace(/[“”„]/g, '"').replace(/[‘’‚]/g, "'").replace(/[–—]/g, "-").replace(/…/g, "...").replace(/[↔→]/g, "->")
-    .replace(/×/g, "x").replace(/ /g, " ").normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g, "?");
+  return String(s).replace(/[“”„″]/g, '"').replace(/[‘’‚′]/g, "'").replace(/[–—‒]/g, "-").replace(/…/g, "...")
+    .replace(/[ΩΔΣ≥≤≈≠→←↔×−•·π√∞δθλαβω∑]/g, function (c) { return PDF_MAP[c]; })
+    .replace(/[   ]/g, " ").normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g, "?");
 }
-function reportPdf(r) {
+function rgbOf(hex) { var n = parseInt(hex.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
+
+function renderPdfPages(r, cs, onPage) {
+  // Halaman asli PDF digambar ulang, lalu bagian yang cocok diwarnai sesuai nomor sumbernya.
+  return openPdf(r.pdfBuf).then(function (pdf) {
+    var out = [], chain = Promise.resolve();
+    var pageOfMatch = []; // lencana: halaman & posisi y awal tiap kecocokan
+    r.layout.pages.forEach(function (pg, pi) {
+      var it = 0;
+      r.plag.matches.forEach(function (m) {
+        while (it < pg.items.length && pg.items[it].e <= m.start) it++;
+        if (it < pg.items.length && pg.items[it].s <= m.start + 3 && pageOfMatch[r.plag.matches.indexOf(m)] == null) pageOfMatch[r.plag.matches.indexOf(m)] = { p: pi, y: pg.items[it].y, no: m.no };
+      });
+    });
+    function doPage(i) {
+      return pdf.getPage(i + 1).then(function (page) {
+        var base = page.getViewport({ scale: 1 }), scale = Math.min(2, 1240 / base.width), vp = page.getViewport({ scale: scale });
+        var cv = document.createElement("canvas"); cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
+        var ctx = cv.getContext("2d"); ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, cv.width, cv.height);
+        return page.render({ canvasContext: ctx, viewport: vp }).promise.then(function () {
+          var lay = r.layout.pages[i], last = null;
+          ctx.globalCompositeOperation = "multiply";
+          lay.items.forEach(function (it) {
+            var len = it.e - it.s, k = it.s; if (!len) return;
+            while (k < it.e) {
+              var c = cs[k], a = k; while (k < it.e && cs[k] === c) k++;
+              if (!c) { last = null; continue; }
+              var x0 = it.x + it.w * (a - it.s) / len, x1 = it.x + it.w * (k - it.s) / len;
+              ctx.fillStyle = srcColor(c)[1];
+              if (last && last.c === c && Math.abs(last.y - it.y) < it.h * 0.4 && x0 > last.x1 && x0 - last.x1 < it.h * 1.5) ctx.fillRect(last.x1 * scale, it.y * scale, (x0 - last.x1) * scale, it.h * scale);
+              ctx.fillRect(x0 * scale, it.y * scale, Math.max(1, x1 - x0) * scale, it.h * scale);
+              last = { c: c, x1: x1, y: it.y };
+            }
+          });
+          ctx.globalCompositeOperation = "source-over";
+          var badges = pageOfMatch.filter(function (b) { return b && b.p === i; }).sort(function (a, b) { return a.y - b.y; });
+          var shown = [], prevY = -99;
+          badges.forEach(function (b) {
+            if (shown.some(function (s) { return s.no === b.no && b.y - s.y < 70; })) return;
+            var y = Math.max(b.y, prevY + 20); shown.push({ no: b.no, y: b.y }); prevY = y;
+            var bx = 12 * scale, bw = 26 * scale, bh = 14 * scale, by = y * scale, rr = bh / 2;
+            ctx.fillStyle = srcColor(b.no)[0];
+            ctx.beginPath(); ctx.moveTo(bx + rr, by); ctx.lineTo(bx + bw - rr, by); ctx.arc(bx + bw - rr, by + rr, rr, -Math.PI / 2, Math.PI / 2);
+            ctx.lineTo(bx + rr, by + bh); ctx.arc(bx + rr, by + rr, rr, Math.PI / 2, Math.PI * 1.5); ctx.fill();
+            ctx.fillStyle = "#ffffff"; ctx.font = "bold " + Math.round(8.5 * scale) + "px Helvetica, Arial, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText(String(b.no), bx + bw / 2, by + bh / 2 + 0.5);
+          });
+          out.push({ img: cv.toDataURL("image/jpeg", 0.8), w: base.width, h: base.height });
+          cv.width = cv.height = 1;
+          if (onPage) onPage(i + 1, pdf.numPages);
+        });
+      });
+    }
+    for (var i = 0; i < pdf.numPages; i++) chain = chain.then(doPage.bind(null, i));
+    return chain.then(function () { return out; });
+  });
+}
+
+function reportPdf(r, onProgress) {
   var J = window.jspdf && window.jspdf.jsPDF;
-  if (!J) return need("jspdf", "jspdf/2.5.1/jspdf.umd.min.js").then(function () { return reportPdf(r); });
-  var doc = new J({ unit: "pt", format: "a4" }), W = 595.28, H = 841.89, M = 48, y = M, CW = W - 2 * M;
-  var INK = [15, 27, 42], MUTED = [90, 101, 119], ACC = [14, 106, 134];
-  function col(v) { return v < 35 ? [29, 127, 85] : v < 65 ? [181, 112, 12] : [194, 57, 46]; }
-  function ensure(h) { if (y + h > H - M) { doc.addPage(); y = M; } }
-  function text(str, size, style, color, x, width) {
-    doc.setFont("helvetica", style || "normal"); doc.setFontSize(size); doc.setTextColor.apply(doc, color || INK);
-    var lines = doc.splitTextToSize(pdfSafe(str), width || CW), lh = size * 1.4;
-    lines.forEach(function (ln) { ensure(lh); doc.text(ln, x || M, y + size); y += lh; });
+  if (!J) return need("jspdf", "jspdf/2.5.1/jspdf.umd.min.js").then(function () { return reportPdf(r, onProgress); });
+  var doc = new J({ unit: "pt", format: "a4", compress: true }), W = 595.28, H = 841.89, M = 40, y = 0;
+  var INK = [33, 37, 41], MUTED = [120, 126, 135], LINE = [222, 226, 230], ACC = [14, 106, 134], p = r.plag;
+  var reportPages = [];
+  function fnt(sz, st, c) { doc.setFont("helvetica", st || "normal"); doc.setFontSize(sz); c = c || INK; doc.setTextColor(c[0], c[1], c[2]); }
+  function logo(yy) {
+    doc.setFillColor(ACC[0], ACC[1], ACC[2]); doc.roundedRect(M, yy - 13, 18, 18, 4, 4, "F");
+    doc.setFillColor(255, 255, 255); doc.rect(M + 5, yy - 9, 8, 10.5, "F");
+    doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.8); doc.line(M + 6.5, yy - 5.5, M + 11.5, yy - 5.5); doc.line(M + 6.5, yy - 3, M + 10.5, yy - 3);
+    fnt(13, "bold", INK); doc.text("CekTeks", M + 24, yy + 0.5);
+    fnt(8.5, "normal", MUTED); doc.text("Laporan Plagiarisme", M + 92, yy);
+    doc.text("ID Pemeriksaan  " + r.id, W - M, yy, { align: "right" });
   }
-  function heading(str) { y += 10; ensure(40); text(str, 13, "bold", INK); doc.setDrawColor(217, 224, 233); doc.line(M, y + 2, W - M, y + 2); y += 10; }
-  // header band
-  doc.setFillColor.apply(doc, ACC); doc.rect(0, 0, W, 6, "F");
-  text("Laporan Pemeriksaan CekTeks", 20, "bold", INK); y += 4;
-  text("Dokumen: " + r.doc, 10, "normal", MUTED); text("Tanggal: " + r.date + "   |   " + r.words + " kata, " + r.sentences + " kalimat", 10, "normal", MUTED);
-  y += 12;
-  // score boxes
-  [[r.plag, "INDEKS KESAMAAN", r.plagLabel], [r.ai, "KEMUNGKINAN AI", r.aiLabel]].forEach(function (b, i) {
-    var x = M + i * (CW / 2 + 6), w = CW / 2 - 6, top = y;
-    doc.setDrawColor(217, 224, 233); doc.setFillColor(245, 247, 250); doc.roundedRect(x, top, w, 92, 8, 8, "FD");
-    doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor.apply(doc, MUTED); doc.text(b[1], x + 14, top + 20);
-    doc.setFontSize(30); doc.setTextColor.apply(doc, col(b[0])); doc.text(pctId(b[0]) + "%", x + 14, top + 54);
-    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor.apply(doc, INK); doc.text(pdfSafe(b[2]), x + 14, top + 72);
-    doc.setFillColor(229, 233, 239); doc.rect(x + 14, top + 80, w - 28, 4, "F");
-    doc.setFillColor.apply(doc, col(b[0])); doc.rect(x + 14, top + 80, (w - 28) * Math.min(100, b[0]) / 100, 4, "F");
-  });
-  y += 104;
-  text("Dibandingkan dengan " + r.sourceCount + " sumber (" + r.webCount + " dari internet), n-gram " + r.ngram + " kata.", 9, "normal", MUTED);
+  function newReportPage(first) { if (!first) doc.addPage("a4", "p"); reportPages.push(doc.getNumberOfPages()); logo(40); y = 90; }
+  function rule(yy) { doc.setDrawColor(LINE[0], LINE[1], LINE[2]); doc.setLineWidth(0.8); doc.line(M, yy, W - M, yy); }
+  function wrap(str, width) { return doc.splitTextToSize(pdfSafe(str), width); }
+  function ensure(h) { if (y + h > H - 70) newReportPage(); }
 
-  heading("Sumber yang cocok");
-  if (!r.sources.length) text("Tidak ada sumber yang cocok.", 10);
-  r.sources.forEach(function (s) {
-    ensure(30); var top = y;
-    doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor.apply(doc, col(s.overlap)); doc.text(pctId(s.overlap) + "%", W - M, top + 10, { align: "right" });
-    text(s.name, 10, "bold", INK, M, CW - 70);
-    if (s.url) { doc.setTextColor.apply(doc, ACC); doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); var u = doc.splitTextToSize(pdfSafe(s.url), CW - 70); u.forEach(function (ln) { ensure(12); doc.textWithLink(ln, M, y + 8.5, { url: s.url }); y += 12; }); }
-    text("Kosinus " + pctId(s.cosine) + "%", 8.5, "normal", MUTED); y += 4;
+  // 1. Sampul
+  newReportPage(true);
+  y = 300; fnt(22, "bold"); doc.text("Laporan Plagiarisme", M, y);
+  fnt(16, "normal"); var tl = wrap(r.doc, W - 2 * M); doc.text(tl, M, y + 30); y += 30 + tl.length * 19;
+  rule(y + 8); y += 44;
+  fnt(13); doc.text("Detail Dokumen", M, y); y += 30;
+  var left = [["ID Pemeriksaan", r.id], ["Nama File", r.doc], ["Diperiksa dengan", "CekTeks"], ["Tanggal Pemeriksaan", fmtDate(r.date)], ["Tanggal Laporan", fmtDate(new Date())]];
+  var right = [["Ukuran File", fmtSize(r.size)], ["Total Halaman", r.pages ? r.pages + " Halaman" : "-"], ["Total Kata", fmtNum(r.words) + " Kata"], ["Total Karakter", fmtNum(r.chars) + " Karakter"]];
+  var top = y, bottom = y;
+  [left, right].forEach(function (col, ci) {
+    var x = ci ? W / 2 + 20 : M, yy = top;
+    col.forEach(function (kv) {
+      fnt(8.5, "normal", MUTED); doc.text(kv[0], x, yy);
+      fnt(9, "bold", INK); var v = wrap(kv[1], W / 2 - M - 30); doc.text(v, x, yy + 15); yy += 37 + (v.length - 1) * 11;
+    });
+    bottom = Math.max(bottom, yy);
   });
-  if (r.matches.length) {
-    heading("Bagian yang sama dengan sumber");
-    r.matches.forEach(function (m, i) { text((i + 1) + '. "' + m.text.replace(/\s+/g, " ") + '"', 9.5, "normal", INK); text("   Sumber: " + m.source + (m.url ? "  " + m.url : ""), 8.5, "italic", MUTED); y += 3; });
-  }
-  heading("Sinyal deteksi AI");
+  y = bottom; rule(y); y += 34;
+  fnt(13); doc.text("Opsi Filter", M, y); y += 15;
+  fnt(8.5, "normal", MUTED); doc.text("Pengaturan filter yang dipakai dalam laporan ini.", M, y); y += 22;
+  r.filters.forEach(function (f) { fnt(8.5, "normal", INK); doc.text("• " + pdfSafe(f), M + 10, y); y += 17; });
+  rule(y + 10);
+
+  // 2. Ringkasan & sumber teratas
+  newReportPage();
+  fnt(34, "bold"); doc.text(pctLabel(p.score), M, 126);
+  fnt(17); doc.text("Kesamaan", M, 160);
+  fnt(34, "bold"); doc.text(String(p.matched.length), M + 175, 126);
+  fnt(17); doc.text("Sumber Cocok", M + 175, 160);
+  var gx = 360; fnt(12); doc.text("Kelompok Kecocokan", gx, 104);
+  [["internet", "Sumber internet"], ["publikasi", "Publikasi"], ["pengguna", "Karya pengguna"]].forEach(function (g, i) {
+    fnt(8.5, "normal", MUTED); doc.text(pctLabel(p.groups[g[0]]), gx, 124 + i * 15); doc.text(g[1], gx + 30, 124 + i * 15);
+  });
+  rule(196); y = 230;
+  fnt(13); doc.text("Sumber Teratas", M, y); y += 18;
+  fnt(8.5, "normal", MUTED); doc.text("Sumber dengan jumlah kecocokan terbanyak di dalam naskah.", M, y); y += 18;
+  if (!p.matched.length) { fnt(10, "normal", INK); doc.text("Tidak ada sumber yang cocok dengan naskah ini.", M, y + 16); y += 30; }
+  p.matched.forEach(function (s) {
+    var sub = s.url ? wrap(s.name, W - 2 * M - 70) : [], hgt = 52 + Math.min(sub.length, 2) * 11;
+    ensure(hgt);
+    var c = srcColor(s.no), solid = rgbOf(c[0]), tint = rgbOf(c[1]);
+    doc.setFillColor(solid[0], solid[1], solid[2]); doc.roundedRect(M, y + 4, 56, 19, 9.5, 9.5, "F");
+    fnt(9, "bold", [255, 255, 255]); doc.text(String(s.no), M + 28, y + 16.5, { align: "center" });
+    doc.setFillColor(tint[0], tint[1], tint[2]); doc.roundedRect(M + 66, y + 4, 142, 19, 9.5, 9.5, "F");
+    fnt(9, "bold", INK); doc.text(KIND_LABEL[s.group], M + 137, y + 16.5, { align: "center" });
+    fnt(9, "bold", INK); doc.text(pdfSafe(s.domain), M, y + 40);
+    if (s.url) doc.link(M, y + 31, doc.getTextWidth(pdfSafe(s.domain)), 12, { url: s.url });
+    fnt(11, "normal", INK); doc.text(pctLabel(s.share), W - M, y + 26, { align: "right" });
+    if (sub.length) { fnt(8, "normal", MUTED); doc.text(sub.slice(0, 2), M, y + 52); }
+    y += hgt; rule(y); y += 6;
+  });
+
+  // 3. Kemungkinan tulisan AI
+  newReportPage();
+  fnt(34, "bold"); doc.text(pctId(r.ai.score) + "%", M, 126);
+  fnt(17); doc.text("Kemungkinan Tulisan AI", M, 160);
+  fnt(10, "normal", MUTED); doc.text(pdfSafe(r.aiLabel) + "  |  " + r.ai.sentence_count + " kalimat dianalisis", M, 180);
+  rule(196); y = 230;
+  fnt(13); doc.text("Sinyal Gaya Tulisan", M, y); y += 22;
   r.signals.forEach(function (g) {
-    ensure(18); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor.apply(doc, INK); doc.text(pdfSafe(g.name), M, y + 10);
-    var bx = M + 250, bw = CW - 300; doc.setFillColor(229, 233, 239); doc.rect(bx, y + 4, bw, 6, "F");
-    doc.setFillColor.apply(doc, g.name.indexOf("informal") >= 0 ? [29, 127, 85] : col(g.value)); doc.rect(bx, y + 4, bw * g.value / 100, 6, "F");
-    doc.text(Math.round(g.value) + "%", W - M, y + 10, { align: "right" }); y += 18;
+    fnt(9.5, "normal", INK); doc.text(pdfSafe(g.name), M, y + 9);
+    var bx = M + 250, bw = W - 2 * M - 300, col = g.human ? [29, 127, 85] : (g.value < 35 ? [29, 127, 85] : g.value < 65 ? [181, 112, 12] : [194, 57, 46]);
+    doc.setFillColor(233, 236, 239); doc.roundedRect(bx, y + 3, bw, 7, 3.5, 3.5, "F");
+    if (g.value > 0) { doc.setFillColor(col[0], col[1], col[2]); doc.roundedRect(bx, y + 3, Math.max(7, bw * g.value / 100), 7, 3.5, 3.5, "F"); }
+    doc.text(Math.round(g.value) + "%", W - M, y + 9, { align: "right" }); y += 21;
   });
-  if (r.phrases.length) { y += 4; text("Frasa khas AI: " + r.phrases.join(", "), 9.5, "normal", INK); }
-  if (r.aiSents.length) {
-    heading("Kalimat dengan skor AI tinggi");
-    r.aiSents.forEach(function (s) { text("[" + Math.round(s.score) + "%] " + s.text.replace(/\s+/g, " "), 9.5, "normal", INK); y += 2; });
-  }
-  heading("Naskah lengkap");
-  S.text.split(/\n{2,}/).forEach(function (para) { if (para.trim()) { text(para.replace(/\s+/g, " ").trim(), 9.5, "normal", INK); y += 5; } });
-  y += 8; text(DISCLAIMER, 8.5, "italic", MUTED);
-  var n = doc.getNumberOfPages();
-  for (var i = 1; i <= n; i++) { doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor.apply(doc, MUTED); doc.text("CekTeks  |  halaman " + i + " dari " + n, W / 2, H - 22, { align: "center" }); }
-  return Promise.resolve(doc.output("blob"));
+  if (r.phrases.length) { y += 8; fnt(9, "normal", MUTED); var ph = wrap("Frasa khas AI: " + r.phrases.join(", "), W - 2 * M); ensure(ph.length * 12); doc.text(ph, M, y); y += ph.length * 12; }
+  y += 14; ensure(40); rule(y); y += 28;
+  fnt(13); doc.text("Kalimat dengan Skor AI Tinggi", M, y); y += 20;
+  if (!r.aiSents.length) { fnt(9.5, "normal", MUTED); doc.text("Tidak ada kalimat dengan skor AI di atas 55%.", M, y); y += 16; }
+  r.aiSents.slice(0, 40).forEach(function (s) {
+    var ln = wrap(s.text.replace(/\s+/g, " "), W - 2 * M - 50); ensure(ln.length * 12.5 + 8);
+    fnt(9, "bold", s.score >= 70 ? [194, 57, 46] : [181, 112, 12]); doc.text(Math.round(s.score) + "%", M, y);
+    fnt(9, "normal", INK); doc.text(ln, M + 42, y); y += ln.length * 12.5 + 7;
+  });
+  y += 10; var dl = wrap(DISCLAIMER, W - 2 * M); ensure(dl.length * 11); fnt(8, "italic", MUTED); doc.text(dl, M, y);
+
+  // 4. Halaman dokumen bersorot
+  var cs = charSources(r);
+  var docPages = r.layout ? renderPdfPages(r, cs, function (i, n) { if (onProgress) onProgress("Menggambar halaman " + i + " dari " + n + "…"); }).then(function (imgs) {
+    imgs.forEach(function (pg) { doc.addPage([pg.w, pg.h], pg.w > pg.h ? "l" : "p"); doc.addImage(pg.img, "JPEG", 0, 0, pg.w, pg.h, undefined, "FAST"); });
+  }) : Promise.resolve(typesetDocument(doc, r, cs));
+
+  return docPages.then(function () {
+    var total = doc.getNumberOfPages();
+    reportPages.forEach(function (pn) {
+      doc.setPage(pn);
+      var yy = H - 32;
+      doc.setFillColor(ACC[0], ACC[1], ACC[2]); doc.roundedRect(M, yy - 13, 18, 18, 4, 4, "F");
+      doc.setFillColor(255, 255, 255); doc.rect(M + 5, yy - 9, 8, 10.5, "F");
+      fnt(13, "bold", INK); doc.text("CekTeks", M + 24, yy + 0.5);
+      fnt(8.5, "normal", MUTED); doc.text("Laporan Plagiarisme", M + 92, yy);
+      doc.text("Halaman " + pn + " dari " + total + "   |   ID " + r.id, W - M, yy, { align: "right" });
+    });
+    return doc.output("blob");
+  });
 }
 
+function typesetDocument(doc, r, cs) {
+  // Untuk Word/teks: naskah disusun ulang di halaman A4 dengan sorotan & nomor sumber di margin kiri.
+  var W = 595.28, H = 841.89, L = 84, R = W - 66, T = 70, B = H - 64, FS = 11.5, LH = 18.5, t = r.text;
+  var starts = {}; r.plag.matches.forEach(function (m) { starts[m.start] = m.no; });
+  var y, badges, pageNo = 0;
+  function newPage() {
+    flushBadges(); doc.addPage("a4", "p"); pageNo++; y = T; badges = [];
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(150, 150, 150);
+    doc.text(String(pageNo), W / 2, H - 34, { align: "center" });
+    doc.setFont("times", "normal"); doc.setFontSize(FS); doc.setTextColor(20, 20, 20);
+  }
+  function flushBadges() {
+    if (!badges) return;
+    var prev = -99, shown = [];
+    badges.forEach(function (b) {
+      if (shown.some(function (s) { return s.no === b.no && b.y - s.y < 70; })) return;
+      var yy = Math.max(b.y, prev + 20); prev = yy; shown.push(b);
+      var c = rgbOf(srcColor(b.no)[0]); doc.setFillColor(c[0], c[1], c[2]); doc.roundedRect(22, yy, 28, 15, 7.5, 7.5, "F");
+      doc.setFont("helvetica", "bold"); doc.setFontSize(8.5); doc.setTextColor(255, 255, 255); doc.text(String(b.no), 36, yy + 10.5, { align: "center" });
+    });
+    doc.setFont("times", "normal"); doc.setFontSize(FS); doc.setTextColor(20, 20, 20);
+  }
+  newPage();
+  var re = /[^\n]*\n?/g, m;
+  while ((m = re.exec(t)) && m[0].length) {
+    var para = m[0].replace(/\n$/, ""), off = m.index;
+    if (!para.trim()) { y += LH * 0.45; continue; }
+    var toks = [], tm, tre = /\S+/g;
+    while ((tm = tre.exec(para))) toks.push({ s: off + tm.index, e: off + tm.index + tm[0].length, str: pdfSafe(tm[0]) });
+    doc.setFont("times", "normal"); doc.setFontSize(FS);
+    var sp = doc.getTextWidth(" "), lines = [], cur = [], wsum = 0;
+    toks.forEach(function (k) {
+      k.w = doc.getTextWidth(k.str);
+      if (cur.length && wsum + sp + k.w > R - L) { lines.push(cur); cur = []; wsum = 0; }
+      wsum += (cur.length ? sp : 0) + k.w; cur.push(k);
+    });
+    if (cur.length) lines.push(cur);
+    lines.forEach(function (line) {
+      if (y + LH > B) newPage();
+      var x = L;
+      line.forEach(function (k, i) {
+        var c = 0; for (var q = k.s; q < k.e; q++) if (cs[q]) { c = cs[q]; break; }
+        k.x = x; k.c = c; x += k.w + sp;
+        for (var q2 = k.s; q2 < k.e; q2++) if (starts[q2]) { badges.push({ no: starts[q2], y: y + 1 }); break; }
+      });
+      line.forEach(function (k, i) {
+        if (!k.c) return;
+        var nx = line[i + 1], w = k.w + (nx && nx.c === k.c ? sp : 0), col = rgbOf(srcColor(k.c)[1]);
+        doc.setFillColor(col[0], col[1], col[2]); doc.rect(k.x, y + 2, w + 0.3, LH - 2, "F");
+      });
+      doc.setTextColor(20, 20, 20);
+      line.forEach(function (k) { doc.text(k.str, k.x, y + FS + 1.5); });
+      y += LH;
+    });
+    y += LH * 0.35;
+  }
+  flushBadges();
+}
+
+var busy = false;
 $("#dlPdf").onclick = function () {
-  var r = needReport(); if (!r) return;
-  reportPdf(r).then(function (b) { download(b, fileBase() + ".pdf"); }, function (e) { toast("Gagal membuat PDF: " + e.message); });
+  var r = needReport(); if (!r || busy) return;
+  busy = true; var btn = $("#dlPdf"), old = btn.innerHTML; btn.disabled = true; btn.textContent = "Menyiapkan laporan…";
+  reportPdf(r, function (msg) { btn.textContent = msg; })
+    .then(function (b) { download(b, fileBase() + ".pdf"); }, function (e) { toast("Gagal membuat PDF: " + e.message); })
+    .then(function () { busy = false; btn.disabled = false; btn.innerHTML = old; });
 };
 $("#dlDoc").onclick = function () { var r = needReport(); if (r) download(new Blob(["﻿" + reportDoc(r)], { type: "application/msword" }), fileBase() + ".doc"); };
 $("#dlTxt").onclick = function () { var r = needReport(); if (r) download(new Blob([reportText(r)], { type: "text/plain;charset=utf-8" }), fileBase() + ".txt"); };
@@ -1827,11 +2196,11 @@ function runWebSearch() {
 }
 function renderWebList() {
   var bySrc = {}; S.plag.sources.forEach(function (s) { if (s.url) bySrc[s.url] = s; });
-  var list = S.webSources.slice().sort(function (a, b) { return ((bySrc[b.url] || {}).overlap || 0) - ((bySrc[a.url] || {}).overlap || 0); });
+  var list = S.webSources.slice().sort(function (a, b) { return ((bySrc[b.url] || {}).share || 0) - ((bySrc[a.url] || {}).share || 0) || ((bySrc[b.url] || {}).cosine || 0) - ((bySrc[a.url] || {}).cosine || 0); });
   $("#webList").innerHTML = list.slice(0, 8).map(function (w) {
-    var r = bySrc[w.url] || { overlap: 0, cosine: 0 };
-    return '<div class="webitem"><div><span class="tag">' + esc(w.kind) + '</span><br><a href="' + esc(w.url) + '" target="_blank" rel="noopener">' + esc(w.name) + '</a></div>' +
-      '<span class="num" style="color:' + lvl(r.overlap) + '">' + pctId(r.overlap) + '%</span><small>' + esc(w.url) + " · kosinus " + pctId(r.cosine) + "%</small></div>";
+    var r = bySrc[w.url] || { share: 0, cosine: 0, no: 0 };
+    return '<div class="webitem"><div>' + (r.no ? '<span class="bdg sm" style="background:' + srcColor(r.no)[0] + '">' + r.no + "</span> " : "") + '<span class="tag">' + esc(w.kind) + '</span><br><a href="' + esc(w.url) + '" target="_blank" rel="noopener">' + esc(w.name) + '</a></div>' +
+      '<span class="num">' + pctLabel(r.share) + '</span><small>' + esc(w.url) + " · kemiripan topik " + Math.round(r.cosine) + "%</small></div>";
   }).join("");
 }
 function renderQLinks(sents) {
