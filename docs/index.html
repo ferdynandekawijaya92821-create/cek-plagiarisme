@@ -29,7 +29,7 @@
 <meta name="description" content="Cek plagiarisme dan deteksi tulisan AI gratis. Unggah PDF atau Word, lihat bagian yang mirip dengan sumbernya, lalu unduh laporan PDF. Bisa offline, naskah tetap privat.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <style>
 /* Layout: alat dua kolom — editor naskah di kiri, panel hasil "laporan pemeriksaan" lengket di kanan; satu kolom + bilah skor bawah di HP */
 :root {
@@ -516,6 +516,58 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 .foot-links a:hover { text-decoration: underline; }
 .btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
 @media (max-width: 1000px) { .busy { top: calc(env(safe-area-inset-top, 0px) + 64px); } }
+/* ===== v4: lembar naskah, ringkasan, kaca, interaksi ===== */
+:root { --f-serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, "Times New Roman", serif; --paper: #ffffff; --desk: #e6ecf2; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper: #152030; --desk: #0b121b; } }
+:root[data-theme="dark"] { --paper: #152030; --desk: #0b121b; }
+body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb, var(--accent) 12%, transparent), transparent 72%) no-repeat, var(--bg); }
+
+/* kepala halaman semi-transparan (blur di lapisan semu agar navigasi bawah HP tetap menempel di layar) */
+.top { background: transparent; }
+.top::before { content: ""; position: absolute; inset: 0; z-index: -1; background: color-mix(in srgb, var(--surface) 80%, transparent);
+  -webkit-backdrop-filter: saturate(170%) blur(14px); backdrop-filter: saturate(170%) blur(14px); }
+@media (max-width: 1000px) {
+  .top .tabs { background: color-mix(in srgb, var(--surface) 86%, transparent); -webkit-backdrop-filter: saturate(170%) blur(14px); backdrop-filter: saturate(170%) blur(14px); }
+}
+
+/* meja & lembar naskah */
+.doc-b { background: var(--desk); }
+.review { padding: 18px 22px 30px; max-height: 74vh; overflow-y: auto; scrollbar-width: thin; }
+.review .legend, .review .focusbar { max-width: 800px; margin-left: auto; margin-right: auto; }
+.sheet { position: relative; max-width: 800px; margin: 0 auto; background: var(--paper); border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(15, 27, 42, .06), 0 12px 32px rgba(15, 27, 42, .09); padding: 48px 56px 56px 72px; }
+.sheet .hl { font-family: var(--f-serif); font-size: 17.5px; line-height: 1.9; color: var(--ink); max-height: none !important; overflow: visible; }
+.sheet .hl mark { padding: .06em .08em; border-radius: 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; transition: background .2s; }
+.gutter { position: absolute; left: 0; top: 0; bottom: 0; width: 62px; }
+.gbdg { position: absolute; left: 18px; min-width: 30px; height: 20px; padding: 0 8px; border: 0; border-radius: 99px; color: #fff; font: 700 11.5px/20px var(--f-body); box-shadow: 0 2px 6px rgba(15, 27, 42, .2); transition: transform .15s; }
+.gbdg:hover { transform: scale(1.08); }
+.legend { justify-content: flex-start; }
+@media (max-width: 1000px) { .review { max-height: none; overflow: visible; } }
+@media (max-width: 560px) {
+  .review { padding: 12px 8px 18px; }
+  .sheet { padding: 24px 16px 28px 44px; }
+  .sheet .hl { font-size: 16.5px; line-height: 1.85; }
+  .gutter { width: 40px; } .gbdg { left: 7px; min-width: 26px; padding: 0 6px; font-size: 10.5px; }
+}
+
+/* ringkasan hasil */
+.summary { padding: 16px 16px 2px; }
+.summary p { margin: 6px 0 0; font-size: 15px; line-height: 1.5; text-wrap: pretty; }
+.summary b { font-weight: 700; }
+.scores2 { padding-top: 12px; }
+
+/* interaksi */
+.btn { transition: background-color .15s, border-color .15s, box-shadow .15s, transform .06s; }
+.btn:active { transform: translateY(1px); }
+.btn.primary:hover { box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 32%, transparent); }
+.srcitem { transition: border-color .15s, box-shadow .15s, transform .15s; }
+.srcitem:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(15, 27, 42, .08); }
+.docitem, .pair, .gcard { transition: box-shadow .2s, border-color .2s; }
+.pair:hover, .docitem:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+.card { border-color: color-mix(in srgb, var(--line) 85%, transparent); }
+.toast { display: flex; align-items: center; gap: 10px; border-radius: 12px; padding: 11px 16px; box-shadow: 0 10px 30px rgba(15, 27, 42, .25); }
+.toast::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.empty-drop { background: var(--paper); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -592,7 +644,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
           <div class="review" id="review">
             <div class="legend" id="legend"></div>
             <div class="focusbar" id="focusBar" hidden><span id="focusText"></span><button class="linkbtn" type="button" id="focusClear">Tampilkan semua sumber</button></div>
-            <div class="hl" id="hl"></div>
+            <div class="sheet" id="sheet"><div class="gutter" id="gutter"></div><div class="hl" id="hl"></div></div>
           </div>
           <label class="empty-drop" id="emptyDrop" for="mainFile" hidden>
             <svg viewBox="0 0 48 48" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6h14l10 10v24a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M28 6v10h10"/><path d="M25 34V22M20 27l5-5 5 5"/></svg>
@@ -614,6 +666,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
       <!-- ===== Panel hasil ===== -->
       <section class="panel" id="panel" aria-label="Hasil pemeriksaan">
         <div class="card">
+          <div class="summary"><div class="eyebrow">Hasil pemeriksaan</div><p id="summaryText">—</p></div>
           <div class="scores2">
             <div class="score-tile">
               <div class="ring" id="plagRing" style="--v:0"><span class="num" id="plagVal">0%</span></div>
@@ -1161,7 +1214,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "2.1.0";
+var APP_VERSION = "2.2.0";
 function setBusy(msg) {
   var b = $("#busy");
   if (!msg) { b.hidden = true; return; }
@@ -1440,7 +1493,19 @@ var SIG = {
 function verdict(el, v, labels) {
   var i = v < 35 ? 0 : v < 65 ? 1 : 2; el.textContent = labels[i]; el.style.color = lvl(v);
 }
-function setRing(id, v) { var el = $(id); el.style.setProperty("--v", Math.max(0, Math.min(100, v))); el.style.setProperty("--c", lvl(v)); }
+var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+function setRing(id, v) {
+  // Cincin skor bergerak halus dari nilai lama ke nilai baru.
+  var el = $(id), to = Math.max(0, Math.min(100, v)), from = el._v || 0;
+  el._v = to; el.style.setProperty("--c", lvl(v)); cancelAnimationFrame(el._raf);
+  if (REDUCED || Math.abs(to - from) < 0.5) { el.style.setProperty("--v", to); return; }
+  var t0 = performance.now();
+  (function step(now) {
+    var k = Math.min(1, (now - t0) / 500), e = 1 - Math.pow(1 - k, 3);
+    el.style.setProperty("--v", from + (to - from) * e);
+    if (k < 1) el._raf = requestAnimationFrame(step);
+  })(t0);
+}
 function joinID(a) { return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " dan " + a[a.length - 1]; }
 function aiExplain(a) {
   if (!a) return "Penjelasan skor muncul setelah ada naskah.";
@@ -1499,6 +1564,10 @@ function run() {
   var fn = []; if (p.excluded.bib) fn.push("daftar pustaka diabaikan"); if (p.excluded.quoteWords) fn.push(p.excluded.quoteWords + " kata kutipan diabaikan");
   $("#filterNote").textContent = fn.join(" · ");
   updateDocHeader(nWords);
+  var aiTxt = S.ai ? " Gaya tulisannya <b>" + verdictText(S.ai.score, ["cenderung ditulis manusia", "campuran", "cenderung dibuat AI"]) + "</b>." : "";
+  $("#summaryText").innerHTML = !nWords ? "Masukkan naskah untuk mulai memeriksa." :
+    (p.matched.length ? "<b>" + pctLabel(p.score) + "</b> naskah sama dengan <b>" + p.matched.length + " sumber</b>." :
+      srcs.length ? "Tidak ada bagian yang sama dengan sumber." : "Belum ada sumber pembanding.") + aiTxt;
   verdict($("#plagVerdict"), pv, ["Orisinal", "Ada kemiripan", "Kemiripan tinggi"]);
   if (!nWords) $("#plagVerdict").textContent = "Menunggu teks";
   $("#plagSub").textContent = !nWords ? "Ketik atau tempel naskah untuk mulai." :
@@ -1562,14 +1631,39 @@ function renderHL() {
   var html = "", pos = 0;
   spans.sort(function (x, y) { return x.s - y.s; }).forEach(function (sp) {
     if (sp.s < pos) return;
-    var open = sp.no ? '<mark data-no="' + sp.no + '"' + (S.focusNo && S.focusNo !== sp.no ? ' class="dim"' : "") + ' style="background:' + hexA(srcColor(sp.no)[0], .22) + ';box-shadow:inset 0 -2px 0 ' + srcColor(sp.no)[0] + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">' +
-      (sp.s === 0 || !spans.some(function (o) { return o.no === sp.no && o.e >= sp.s - 2 && o.s < sp.s; }) ? '<span class="bdg sm" style="background:' + srcColor(sp.no)[0] + '">' + sp.no + "</span>" : "")
+    var first = sp.no && !spans.some(function (o) { return o.no === sp.no && o.e >= sp.s - 2 && o.s < sp.s; });
+    var open = sp.no ? '<mark data-no="' + sp.no + '"' + (first ? ' data-start="1"' : "") + (S.focusNo && S.focusNo !== sp.no ? ' class="dim"' : "") + ' style="background:' + hexA(srcColor(sp.no)[0], .2) + ';box-shadow:inset 0 -2px 0 ' + srcColor(sp.no)[0] + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">'
       : '<mark class="' + sp.c + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">';
     html += esc(t.slice(pos, sp.s)) + open + esc(t.slice(sp.s, sp.e)) + "</mark>";
     pos = sp.e;
   });
   $("#hl").innerHTML = html + esc(t.slice(pos));
+  scheduleGutter();
 }
+function scheduleGutter() { cancelAnimationFrame(scheduleGutter.r); scheduleGutter.r = requestAnimationFrame(layoutGutter); }
+function layoutGutter() {
+  // Nomor sumber di margin kiri, sejajar baris tempat kecocokan dimulai (seperti laporan PDF).
+  var g = $("#gutter"); g.innerHTML = "";
+  if (S.hl !== "plag" || S.mode !== "review" || $("#review").hidden) return;
+  var top0 = $("#sheet").getBoundingClientRect().top, prev = -99, shown = [];
+  document.querySelectorAll('#hl mark[data-start="1"]').forEach(function (m) {
+    var no = +m.dataset.no, r = m.getClientRects()[0];
+    if (!r || (S.focusNo && S.focusNo !== no)) return;
+    var y = r.top - top0 + (r.height - 20) / 2;
+    if (shown.some(function (x) { return x.no === no && y - x.y < 64; })) return;
+    y = Math.max(y, prev + 24); prev = y; shown.push({ no: no, y: y });
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "gbdg"; b.style.top = y + "px"; b.style.background = srcColor(no)[0]; b.textContent = no;
+    b.setAttribute("aria-label", "Sorot sumber " + no); b.dataset.no = no;
+    g.appendChild(b);
+  });
+}
+window.addEventListener("resize", scheduleGutter);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleGutter);
+$("#gutter").addEventListener("click", function (e) {
+  var b = e.target.closest(".gbdg"); if (!b) return;
+  var no = +b.dataset.no; S.focusNo = S.focusNo === no ? 0 : no; run();
+});
 $("#hl").addEventListener("click", function (e) { var m = e.target.closest("mark"); if (m) toast(m.dataset.t); });
 function setHL(v) { S.hl = v; $("#hlPlag").setAttribute("aria-pressed", v === "plag"); $("#hlAi").setAttribute("aria-pressed", v === "ai"); renderHL(); }
 function setMode(m) {
@@ -1593,7 +1687,11 @@ $("#srcRows").addEventListener("click", function (e) {
   run();
   if (S.focusNo) {
     var m = document.querySelector('#hl mark[data-no="' + no + '"]');
-    if (m) { var box = $("#hl"); box.scrollTop = m.offsetTop - box.offsetTop - 60; if (window.innerWidth <= 1000) $("#docCard").scrollIntoView({ behavior: "smooth" }); }
+    if (m) {
+      var box = $("#review");
+      if (box.scrollHeight > box.clientHeight + 4) box.scrollTop += m.getBoundingClientRect().top - box.getBoundingClientRect().top - 90;
+      else m.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "center" });
+    }
   }
 });
 /* seret-lepas berkas ke ruang kerja */
