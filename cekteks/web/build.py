@@ -8,11 +8,18 @@ Jalankan:  python build.py
 """
 
 import json
+import re
 import os
+import shutil
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)  # folder cekteks/
 REPO = os.path.dirname(ROOT)
+# Alamat situs publik (GitHub Pages). Ganti bila situs dipindah ke alamat lain.
+SITE_URL = os.environ.get("CEKTEKS_SITE_URL", "https://ferdynandekawijaya92821-create.github.io/kalori-cli/")
+SITE_TITLE = "CekTeks - Cek Plagiarisme & Deteksi Tulisan AI"
+SITE_DESC = ("Cek plagiarisme dan deteksi tulisan AI gratis. Unggah PDF atau Word, lihat bagian yang mirip "
+             "dengan sumbernya, lalu unduh laporan PDF. Bisa offline, naskah tetap privat.")
 VENDOR = ["pdf.min.js", "pdf.worker.min.js", "mammoth.browser.min.js", "jszip.min.js", "jspdf.umd.min.js"]
 ICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0e6a86"/>'
         '<path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="#fff"/>'
@@ -36,6 +43,9 @@ def write(path, data):
 def build_standalone(app, pwa):
     head_end = app.index("</style>") + len("</style>")
     head, body = app[:head_end], app[head_end:]
+    if pwa:
+        head = head.replace("<title>CekTeks</title>", f"<title>{SITE_TITLE}</title>", 1)
+        head = re.sub(r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{SITE_DESC}">', head, count=1)
     vendor = ""
     for name in VENDOR:
         js = read(os.path.join(HERE, "vendor", name))
@@ -47,7 +57,28 @@ def build_standalone(app, pwa):
     extra = ('<meta name="theme-color" content="#0e6a86">\n'
              '<link rel="icon" href="data:image/svg+xml,' + ICON.replace('"', "'").replace("#", "%23") + '">\n')
     if pwa:
-        extra += '<link rel="manifest" href="manifest.webmanifest">\n<link rel="apple-touch-icon" href="icon.svg">\n'
+        og = SITE_URL + "og-image.png"
+        extra += (
+            '<link rel="manifest" href="manifest.webmanifest">\n'
+            '<link rel="apple-touch-icon" href="icon-180.png">\n'
+            f'<link rel="canonical" href="{SITE_URL}">\n'
+            '<meta property="og:type" content="website">\n'
+            '<meta property="og:locale" content="id_ID">\n'
+            '<meta property="og:site_name" content="CekTeks">\n'
+            f'<meta property="og:title" content="{SITE_TITLE}">\n'
+            f'<meta property="og:description" content="{SITE_DESC}">\n'
+            f'<meta property="og:url" content="{SITE_URL}">\n'
+            f'<meta property="og:image" content="{og}">\n'
+            f'<meta property="og:image:secure_url" content="{og}">\n'
+            '<meta property="og:image:type" content="image/png">\n'
+            '<meta property="og:image:width" content="1200">\n'
+            '<meta property="og:image:height" content="630">\n'
+            '<meta property="og:image:alt" content="CekTeks: cek plagiarisme dan deteksi tulisan AI">\n'
+            '<meta name="twitter:card" content="summary_large_image">\n'
+            f'<meta name="twitter:title" content="{SITE_TITLE}">\n'
+            f'<meta name="twitter:description" content="{SITE_DESC}">\n'
+            f'<meta name="twitter:image" content="{og}">\n'
+        )
     return ('<!doctype html>\n<html lang="id">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             + extra + head + "\n</head>\n<body>\n" + body + "\n</body>\n</html>\n")
@@ -65,10 +96,22 @@ def main():
         "name": "CekTeks - Cek Plagiarisme & AI", "short_name": "CekTeks", "lang": "id",
         "start_url": "./", "scope": "./", "display": "standalone",
         "background_color": "#eef2f6", "theme_color": "#0e6a86",
-        "icons": [{"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}],
+        "description": SITE_DESC,
+        "icons": [
+            {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+            {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
+            {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"},
+        ],
     }, indent=2, ensure_ascii=False))
     write(os.path.join(docs, "sw.js"), read(os.path.join(HERE, "src", "sw.js")))
     write(os.path.join(docs, ".nojekyll"), "")
+    for name in ("og-image.png", "icon-180.png", "icon-192.png", "icon-512.png"):
+        shutil.copyfile(os.path.join(HERE, "assets", name), os.path.join(docs, name))
+        print(f"  docs/{name}")
+    write(os.path.join(docs, "robots.txt"), f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n")
+    write(os.path.join(docs, "sitemap.xml"),
+          '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+          f"  <url><loc>{SITE_URL}</loc></url>\n</urlset>\n")
 
 
 if __name__ == "__main__":
