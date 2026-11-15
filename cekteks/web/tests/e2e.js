@@ -21,7 +21,6 @@ async function test(name, fn) {
   catch (e) { failed++; console.log("  ✗ " + name + "\n      " + (e && e.message ? e.message.split("\n")[0] : e)); }
 }
 function ok(cond, msg) { if (!cond) throw new Error(msg); }
-function pct(s) { return parseFloat(String(s).replace("<", "").replace(",", ".")); }
 
 function serve(dir) {
   const types = { ".html": "text/html", ".js": "application/javascript", ".png": "image/png", ".svg": "image/svg+xml", ".webmanifest": "application/manifest+json", ".xml": "application/xml", ".txt": "text/plain" };
@@ -58,9 +57,14 @@ async function download(page, selector) {
   const { ctx, page } = await newPage(browser, { viewport: { width: 1366, height: 900 } });
   await test("halaman terbuka, contoh dianalisis, tanpa error", async () => {
     await page.goto(SITE); await ready(page);
-    ok(pct(await page.textContent("#aiVal")) > 65, "teks contoh seharusnya cenderung AI");
-    ok(pct(await page.textContent("#plagVal")) > 5, "teks contoh seharusnya cocok dengan korpus");
+    // Skor dibaca dari hasil analisis; angka di layar beranimasi naik sekitar 0,6 detik.
+    ok(await page.evaluate(() => S.ai.score) > 65, "teks contoh seharusnya cenderung AI");
+    ok(await page.evaluate(() => S.plag.score) > 5, "teks contoh seharusnya cocok dengan korpus");
     ok(page.errors.length === 0, page.errors.join("; "));
+  });
+  await test("angka skor di layar berakhir sama dengan skor analisis", async () => {
+    await page.waitForFunction(() => document.getElementById("aiVal").textContent === Math.round(S.ai.score) + "%" &&
+      document.getElementById("plagVal").textContent === pctLabel(S.plag.score), null, { timeout: 5000 });
   });
   await test("halaman pertama ringan (pustaka dimuat terpisah)", async () => {
     ok(fs.statSync(path.join(DOCS, "index.html")).size < 400 * 1024, "docs/index.html lebih dari 400 KB");
@@ -74,7 +78,7 @@ async function download(page, selector) {
     await page.setInputFiles("#mainFile", path.join(FIX, "tugas.docx"));
     await page.waitForFunction(() => S.doc && S.doc.name === "tugas.docx");
     await page.waitForTimeout(400);
-    ok(pct(await page.textContent("#plagVal")) > 30, "kesamaan Word terlalu rendah");
+    ok(await page.evaluate(() => S.plag.score) > 30, "kesamaan Word terlalu rendah");
     ok((await page.textContent("#srcRows")).includes("Fotosintesis"), "sumber Fotosintesis tidak muncul");
   });
   await test("unggah PDF: posisi teks dicatat per halaman", async () => {
@@ -82,7 +86,7 @@ async function download(page, selector) {
     await page.waitForFunction(() => S.doc && S.doc.layout, null, { timeout: 30000 });
     await page.waitForTimeout(400);
     ok(await page.evaluate(() => S.doc.pages) === 2, "jumlah halaman PDF salah");
-    ok(pct(await page.textContent("#plagVal")) > 30, "kesamaan PDF terlalu rendah");
+    ok(await page.evaluate(() => S.plag.score) > 30, "kesamaan PDF terlalu rendah");
   });
   await test("klik kartu sumber menyorot bagiannya", async () => {
     await page.click(".srcitem");
