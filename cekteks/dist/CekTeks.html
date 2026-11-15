@@ -198,7 +198,8 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
     padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .lb { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
   .lb .num { font-size: 20px; font-weight: 600; }
-  .lb small { font-size: 11px; color: var(--muted); line-height: 1.2; }
+  .lb small { font-size: 11px; color: var(--muted); line-height: 1.2; white-space: nowrap; }
+  .lb > div { min-width: 0; }
   .lb-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
   .status .lbl { display: none; }
 }
@@ -238,10 +239,109 @@ td a b { color: var(--accent); }
 td a { color: var(--accent); text-decoration: none; } td a:hover { text-decoration: underline; }
 .btn:disabled { opacity: .55; cursor: not-allowed; }
 @media print {
-  .top, .livebar, .tools, .seg, .dl, #view-periksa .col:first-child > .card:first-child, #netCard, .toast { display: none !important; }
+  .top, .livebar, .tools, .seg, .dlrow, #netCard, .toast, .editor, .empty-drop { display: none !important; }
   body { background: #fff; } .card { box-shadow: none; break-inside: avoid; } .sticky { position: static; }
-  .grid { grid-template-columns: 1fr; } .hl { max-height: none; overflow: visible; }
+  .grid, .work { grid-template-columns: 1fr; } .hl { max-height: none !important; overflow: visible; } .panel { position: static; max-height: none; overflow: visible; }
 }
+/* ===== Ruang kerja (Periksa) ===== */
+:root { --g-int: #0e6a86; --g-pub: #7b3fe4; --g-usr: #d9480f; --orig: #dfe5ec; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --g-int: #4fc1de; --g-pub: #a98bf5; --g-usr: #f08a52; --orig: #263345; } }
+:root[data-theme="dark"] { --g-int: #4fc1de; --g-pub: #a98bf5; --g-usr: #f08a52; --orig: #263345; }
+
+.work { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: 20px; align-items: start; }
+@media (max-width: 1000px) { .work { grid-template-columns: minmax(0, 1fr); } }
+.doc { display: flex; flex-direction: column; overflow: hidden; }
+.doc-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.docname { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 220px; }
+.docname-t { display: grid; min-width: 0; }
+.docname-t b { font-family: var(--f-display); font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.docname-t .muted { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ficon { flex: none; width: 38px; height: 44px; border-radius: 6px; display: grid; place-items: end center; padding-bottom: 6px;
+  font: 700 9.5px/1 var(--f-mono); letter-spacing: .04em; color: #fff; background: var(--accent); position: relative; }
+.ficon::after { content: ""; position: absolute; top: 0; right: 0; width: 11px; height: 11px; background: linear-gradient(225deg, var(--surface) 50%, rgba(255,255,255,.35) 50%); border-bottom-left-radius: 3px; }
+.ficon.pdf { background: #c2392e; } .ficon.docx, .ficon.doc, .ficon.odt { background: #2f5fd0; } .ficon.pptx { background: #d9480f; }
+.doc-sub { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.doc-b { position: relative; min-height: 420px; }
+.review { padding: 18px 22px 22px; }
+.review .hl { max-height: 68vh; font-size: 15.5px; line-height: 1.9; }
+.editor { min-height: 420px; max-height: 68vh; padding: 18px 22px; }
+.empty-drop { position: absolute; inset: 14px; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center; padding: 24px;
+  border: 2px dashed var(--line); border-radius: var(--r); color: var(--muted); cursor: pointer; background: var(--surface); }
+.empty-drop:hover { border-color: var(--accent); color: var(--accent); }
+.empty-drop strong { font-family: var(--f-display); font-size: 19px; color: var(--ink); margin-top: 6px; }
+.empty-drop .formats { font: 500 11.5px var(--f-mono); letter-spacing: .04em; margin-top: 4px; }
+.empty-alt { font-size: 13.5px; margin-top: 10px; }
+.dragover { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 12%, var(--surface)); border: 2px dashed var(--accent); border-radius: 0 0 var(--r) var(--r); color: var(--accent); font-family: var(--f-display); font-size: 18px; pointer-events: none; }
+.edfoot { border-radius: 0; }
+.edfoot-r { margin-left: auto; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; }
+.linkbtn:hover { text-decoration: underline; }
+.btn.sm { min-height: 32px; padding: 5px 12px; font-size: 13px; }
+.btn.icon-only { padding: 7px 9px; }
+@media (max-width: 560px) { .tools .btn span { display: none; } .tools .btn { padding: 7px 10px; } .review { padding: 14px 16px 18px; } .editor { padding: 14px 16px; } }
+
+.focusbar { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 13px; padding: 8px 12px; margin-bottom: 12px; border-radius: 9px; background: var(--accent-soft); }
+.hl mark.dim { background: transparent !important; box-shadow: none !important; }
+.hl mark.dim .bdg { opacity: .35; }
+
+/* panel hasil */
+.panel { display: flex; flex-direction: column; gap: 16px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 108px); max-height: calc(100vh - 128px); overflow-y: auto; padding-bottom: 4px; scrollbar-width: thin; min-width: 0; }
+@media (max-width: 1000px) { .panel { position: static; max-height: none; overflow: visible; } }
+.scores2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; }
+.score-tile { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.ring { --v: 0; --c: var(--ok); flex: none; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(var(--c) calc(var(--v) * 1%), var(--surface-2) 0); transition: --v .4s; }
+.ring span { width: 60px; height: 60px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-size: 17px; font-weight: 600; }
+.score-tile .verdict { margin-top: 6px; font-size: 12px; padding: 2px 9px; }
+@media (max-width: 380px) { .ring { width: 72px; height: 72px; } .ring span { width: 56px; height: 56px; font-size: 16px; } .score-tile .eyebrow { font-size: 10.5px; letter-spacing: .04em; } }
+.comp { padding: 0 16px 14px; }
+.compbar { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: var(--orig); }
+.compbar i { display: block; height: 100%; }
+.complegend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+.complegend span { display: inline-flex; align-items: center; gap: 6px; }
+.complegend i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.complegend b { color: var(--ink); font-family: var(--f-mono); font-weight: 600; font-size: 12px; }
+.comp .sub { margin: 8px 0 0; font-size: 12.5px; }
+.dlrow { display: grid; gap: 8px; padding: 14px 16px 16px; border-top: 1px solid var(--line); }
+.dlmore { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.dlrow .btn.primary { min-height: 42px; font-size: 14.5px; }
+
+.srclist { display: grid; gap: 8px; padding-top: 12px; }
+.srcitem { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; text-align: left; width: 100%;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--ink); }
+.srcitem:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
+.srcitem[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.srcitem .who { min-width: 0; }
+.srcitem .who b { display: block; font-size: 13.5px; overflow-wrap: anywhere; }
+.srcitem .who small { display: block; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.srcitem .pct { font: 600 14px var(--f-mono); }
+.srcitem .kind { justify-self: start; }
+.srcitem .bar { grid-column: 1 / -1; margin-top: 2px; }
+.srcitem a { font-size: 12px; color: var(--accent); }
+
+.aiexplain { margin: 0 0 12px; font-size: 14px; line-height: 1.55; padding: 10px 12px; border-radius: 9px; background: var(--surface-2); border: 1px solid var(--line); }
+.sig.small b, .sig.small .num { color: var(--muted); }
+.wt { font-family: var(--f-mono); font-size: 10.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; margin-left: 6px; font-weight: 500; }
+
+/* penyempurnaan tata letak skor & HP */
+.score-tile { flex-direction: column; text-align: center; gap: 8px; }
+.score-tile .eyebrow { white-space: nowrap; }
+.score-tile .verdict { white-space: nowrap; margin-top: 4px; }
+.ring { width: 84px; height: 84px; } .ring span { width: 66px; height: 66px; font-size: 18px; }
+#panel, #docCard { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 116px); }
+@media (max-width: 560px) {
+  .brandrow { padding-block: 10px 2px; }
+  .status #statusText, .status #statusDot { display: none; }
+  .tab { padding: 9px 10px 10px; font-size: 13.5px; }
+  .doc-sub { flex-wrap: nowrap; gap: 8px; padding: 8px 12px; }
+  .doc-sub .seg button { padding: 5px 8px; font-size: 12.5px; }
+  .doc-h { padding: 12px; }
+  .sample-note { display: none; }
+  #panel, #docCard { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 96px); }
+}
+.themebtn { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
+.themebtn svg { width: 17px; height: 17px; }
+
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -255,7 +355,8 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
         <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="var(--surface)"/><path d="M11 14h8M11 17h6M11 20h4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="3.3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M23 23l2.6 2.6" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
         <b>Cek<span>Teks</span></b>
       </div>
-      <div class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">Analisis langsung</span><span class="lbl muted">· diproses di perangkat Anda</span><span class="net" id="net"><i></i><span id="netText">Online</span></span></div>
+      <div class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">Analisis langsung</span><span class="lbl muted">· diproses di perangkat Anda</span><span class="net" id="net"><i></i><span id="netText">Online</span></span>
+        <button class="themebtn" id="themeBtn" type="button" aria-label="Ganti tema terang/gelap" title="Ganti tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button></div>
     </div>
     <nav class="tabs" role="tablist">
       <button class="tab" role="tab" id="tab-periksa" aria-selected="true" data-view="periksa">Periksa</button>
@@ -269,50 +370,114 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 <main>
   <!-- ================= PERIKSA ================= -->
   <section class="view on" id="view-periksa">
-    <div class="grid">
-      <div class="col">
+    <div class="work">
+      <!-- ===== Ruang kerja dokumen ===== -->
+      <div class="doc card" id="docCard">
+        <div class="doc-h">
+          <div class="docname">
+            <span class="ficon" id="docIcon" aria-hidden="true">TXT</span>
+            <div class="docname-t">
+              <b id="docTitle">Naskah baru</b>
+              <span class="muted" id="docMeta">Ketik, tempel, atau unggah dokumen</span>
+            </div>
+            <span class="sample-note" id="sampleNote" hidden>Contoh</span>
+          </div>
+          <div class="tools">
+            <label class="btn" for="mainFile" title="Unggah PDF, Word, dan lainnya"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 15V4M7 9l5-5 5 5M5 20h14"/></svg><span>Unggah</span></label>
+            <input type="file" id="mainFile" accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,.csv,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+            <button class="btn" id="pasteBtn" type="button" title="Tempel dari papan klip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9z"/></svg><span>Tempel</span></button>
+            <button class="btn" id="sampleBtn" type="button" title="Muat teks contoh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg><span>Contoh</span></button>
+            <button class="btn icon-only" id="clearBtn" type="button" title="Kosongkan naskah" aria-label="Kosongkan naskah"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+          </div>
+        </div>
+        <div class="doc-sub">
+          <div class="seg" role="group" aria-label="Mode naskah">
+            <button type="button" id="modeWrite" aria-pressed="false">Tulis</button>
+            <button type="button" id="modeReview" aria-pressed="true">Tinjau</button>
+          </div>
+          <div class="seg" role="group" aria-label="Jenis sorotan" id="hlSeg">
+            <button type="button" id="hlPlag" aria-pressed="true">Kesamaan</button>
+            <button type="button" id="hlAi" aria-pressed="false">AI per kalimat</button>
+          </div>
+        </div>
+        <div class="doc-b" id="docBody">
+          <textarea class="editor" id="editor" spellcheck="false" placeholder="Ketik atau tempel esai, artikel, atau tugas di sini. Hasil muncul otomatis saat Anda mengetik." hidden></textarea>
+          <div class="review" id="review">
+            <div class="legend" id="legend"></div>
+            <div class="focusbar" id="focusBar" hidden><span id="focusText"></span><button class="linkbtn" type="button" id="focusClear">Tampilkan semua sumber</button></div>
+            <div class="hl" id="hl"></div>
+          </div>
+          <label class="empty-drop" id="emptyDrop" for="mainFile" hidden>
+            <svg viewBox="0 0 48 48" width="52" height="52" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 6h14l10 10v24a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M28 6v10h10"/><path d="M25 34V22M20 27l5-5 5 5"/></svg>
+            <strong>Seret dokumen ke sini</strong>
+            <span>atau ketuk untuk memilih berkas</span>
+            <span class="formats">PDF · DOCX · DOC · ODT · PPTX · RTF · TXT</span>
+            <span class="empty-alt">Bisa juga <button type="button" class="linkbtn" id="emptyWrite">mulai mengetik</button> atau <button type="button" class="linkbtn" id="emptySample">coba teks contoh</button></span>
+          </label>
+          <div class="dragover" id="dragOver" hidden><strong>Lepaskan untuk memeriksa</strong></div>
+        </div>
+        <div class="edfoot">
+          <span><span class="num" id="cWords">0</span> kata</span>
+          <span><span class="num" id="cSents">0</span> kalimat</span>
+          <span><span class="num" id="cChars">0</span> karakter</span>
+          <span class="edfoot-r" id="filterNote"></span>
+        </div>
+      </div>
+
+      <!-- ===== Panel hasil ===== -->
+      <aside class="panel" id="panel">
         <div class="card">
-          <div class="card-h">
-            <h2>Naskah</h2>
-            <div class="tools">
-              <label class="btn" for="mainFile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Unggah</label>
-              <input type="file" id="mainFile" accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,.csv,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-              <button class="btn" id="pasteBtn" type="button">Tempel</button>
-              <button class="btn" id="sampleBtn" type="button">Contoh</button>
-              <button class="btn" id="clearBtn" type="button">Kosongkan</button>
+          <div class="scores2">
+            <div class="score-tile">
+              <div class="ring" id="plagRing" style="--v:0"><span class="num" id="plagVal">0%</span></div>
+              <div>
+                <div class="eyebrow">Kesamaan</div>
+                <div class="verdict" id="plagVerdict">—</div>
+              </div>
+            </div>
+            <div class="score-tile">
+              <div class="ring" id="aiRing" style="--v:0"><span class="num" id="aiVal">0%</span></div>
+              <div>
+                <div class="eyebrow">Kemungkinan AI</div>
+                <div class="verdict" id="aiVerdict">—</div>
+              </div>
             </div>
           </div>
-          <textarea class="editor" id="editor" spellcheck="false" placeholder="Ketik atau tempel esai, artikel, atau tugas di sini. Hasil muncul otomatis saat Anda mengetik."></textarea>
-          <div class="edfoot">
-            <span><span class="num" id="cWords">0</span> kata</span>
-            <span><span class="num" id="cSents">0</span> kalimat</span>
-            <span><span class="num" id="cChars">0</span> karakter</span>
-            <span class="sample-note" id="sampleNote" hidden>Teks contoh</span>
+          <div class="comp">
+            <div class="compbar" id="compBar" aria-hidden="true"></div>
+            <div class="complegend" id="compLegend"></div>
+            <p class="sub" id="plagSub">—</p>
           </div>
+          <div class="dlrow">
+            <button class="btn primary" id="dlPdf" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Unduh laporan PDF</button>
+            <div class="dlmore">
+              <button class="btn" id="dlDoc" type="button">Word</button>
+              <button class="btn" id="dlTxt" type="button">TXT</button>
+              <button class="btn" id="copyReport" type="button">Salin</button>
+              <button class="btn" id="printBtn" type="button" hidden>Cetak</button>
+            </div>
+          </div>
+          <div class="note" id="frameNote" hidden>Unduhan dan cek internet hanya berfungsi di situs CekTeks atau file CekTeks.html, tidak di pratinjau Claude ini.</div>
         </div>
 
         <div class="card" id="netCard">
           <div class="card-h">
             <h2>Cek di internet</h2>
-            <span class="muted" style="font-size:12.5px">butuh koneksi internet</span>
+            <button class="btn primary sm" id="webBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Cari</button>
           </div>
           <div class="card-b stack">
-            <p class="muted" style="margin:0;font-size:13.5px">Kalimat paling khas dari naskah dicari di internet. Halaman yang ditemukan ikut dibandingkan dan muncul di tabel sumber beserta tautannya.</p>
             <div class="checks">
-              <label><input type="checkbox" id="wWikiId" checked> Wikipedia Indonesia</label>
-              <label><input type="checkbox" id="wWikiEn" checked> Wikipedia Inggris</label>
-              <label><input type="checkbox" id="wOpenAlex" checked> Jurnal ilmiah (OpenAlex)</label>
+              <label><input type="checkbox" id="wWikiId" checked> Wikipedia ID</label>
+              <label><input type="checkbox" id="wWikiEn" checked> Wikipedia EN</label>
+              <label><input type="checkbox" id="wOpenAlex" checked> Jurnal ilmiah</label>
               <label><input type="checkbox" id="wGoogle"> Google <span class="muted" id="gHint">(atur API di tab Sumber)</span></label>
             </div>
-            <div class="row">
-              <button class="btn primary" id="webBtn" type="button">Cari di internet</button>
-              <button class="btn" id="webClear" type="button" hidden>Hapus hasil internet</button>
-              <span class="muted" style="font-size:13px" id="webStatus"></span>
-            </div>
+            <div class="row"><span class="muted" style="font-size:13px" id="webStatus">Kalimat paling khas dari naskah dicari, lalu halaman yang ditemukan ikut dibandingkan.</span>
+              <button class="linkbtn" id="webClear" type="button" hidden>Hapus hasil</button></div>
             <div class="progress" id="webProg" hidden><i></i></div>
             <div class="weblist" id="webList"></div>
             <details id="qBox" hidden>
-              <summary style="cursor:pointer;font-size:13.5px;font-weight:600">Periksa manual di Google</summary>
+              <summary>Periksa manual di Google</summary>
               <p class="muted" style="font-size:12.5px;margin:6px 0">Ketuk kalimat untuk mencarinya persis di Google pada tab baru.</p>
               <ol class="qlinks" id="qLinks"></ol>
             </details>
@@ -320,79 +485,21 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
         </div>
 
         <div class="card">
-          <div class="card-h">
-            <h2>Sorotan</h2>
-            <div class="seg" role="group" aria-label="Jenis sorotan">
-              <button type="button" id="hlPlag" aria-pressed="true">Plagiarisme</button>
-              <button type="button" id="hlAi" aria-pressed="false">AI per kalimat</button>
-            </div>
-          </div>
+          <div class="card-h"><h2>Sumber yang cocok</h2><button class="linkbtn" type="button" id="goSources">Kelola sumber</button></div>
+          <div class="card-b srclist" id="srcRows"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h2>Analisis gaya tulisan</h2><span class="muted" style="font-size:12px">deteksi AI</span></div>
           <div class="card-b">
-            <div class="legend" id="legend"></div>
-            <div class="hl" id="hl"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col sticky">
-        <div class="card">
-          <div class="card-b scores">
-            <div>
-              <div class="score-top">
-                <div>
-                  <div class="eyebrow">Indeks kesamaan</div>
-                  <div class="score-val num" id="plagVal">0<small>%</small></div>
-                </div>
-                <span class="verdict" id="plagVerdict">—</span>
-              </div>
-              <div class="meter"><span class="pin" id="plagPin" style="left:0%"></span></div>
-              <div class="ticks"><span>0</span><span>35</span><span>65</span><span>100</span></div>
-              <div class="sub" id="plagSub">—</div>
-            </div>
-            <hr class="sep">
-            <div>
-              <div class="score-top">
-                <div>
-                  <div class="eyebrow">Kemungkinan AI</div>
-                  <div class="score-val num" id="aiVal">0<small>%</small></div>
-                </div>
-                <span class="verdict" id="aiVerdict">—</span>
-              </div>
-              <div class="meter"><span class="pin" id="aiPin" style="left:0%"></span></div>
-              <div class="ticks"><span>0</span><span>35</span><span>65</span><span>100</span></div>
-              <div class="sub" id="aiSub">—</div>
-            </div>
+            <p class="aiexplain" id="aiSub">—</p>
             <div id="warns" class="stack"></div>
-            <div class="dl">
-              <button class="btn primary" id="dlPdf" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>Unduh laporan PDF</button>
-              <button class="btn" id="dlDoc" type="button">Unduh Word</button>
-              <button class="btn" id="dlTxt" type="button">Unduh TXT</button>
-              <button class="btn" id="copyReport" type="button">Salin laporan</button>
-              <button class="btn" id="printBtn" type="button">Cetak</button>
-            </div>
-            <div class="note" id="frameNote" hidden>Unduhan dan cek internet hanya berfungsi di versi aplikasi (file CekTeks.html atau situs Anda sendiri), tidak di pratinjau Claude ini.</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-h"><h2>Sumber yang cocok</h2><button class="btn" type="button" id="goSources">Kelola sumber</button></div>
-          <div class="card-b" style="padding-top:6px">
-            <div class="tbl-wrap"><table>
-              <thead><tr><th>Sumber</th><th class="r">Kesamaan</th><th class="r">Topik</th></tr></thead>
-              <tbody id="srcRows"></tbody>
-            </table></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-h"><h2>Sinyal deteksi AI</h2></div>
-          <div class="card-b" style="padding-top:4px">
             <div id="signals"></div>
             <div class="eyebrow" style="margin:14px 0 8px">Frasa khas AI ditemukan</div>
             <div class="chips" id="phrases"></div>
           </div>
         </div>
-      </div>
+      </aside>
     </div>
   </section>
 
@@ -1235,8 +1342,8 @@ var CONNECTORS = ["selain itu", "oleh karena itu", "dengan demikian", "namun", "
   "secara keseluruhan", "pertama", "kedua", "ketiga", "terakhir", "akhirnya", "sebaliknya", "selanjutnya", "maka",
   "oleh sebab itu", "meskipun demikian", "furthermore", "moreover", "additionally", "however", "therefore", "in addition",
   "consequently", "overall", "in conclusion", "firstly", "secondly", "finally", "ultimately", "notably", "importantly", "thus", "hence"];
-var INFORMAL = new Set(("gak nggak ngga enggak gk ga banget aja sih dong deh kok nih tuh gue gw lu lo elo aku kayak kaya udah " +
-  "udh blm yg dgn tdk krn jd jadi bgt wkwk wkwkwk haha hehe anjir btw lol lmao omg gonna wanna kinda yeah nope ok okay dunno " +
+var INFORMAL = new Set(("gak nggak ngga enggak gk ga banget aja sih dong deh kok nih tuh gue gw lu lo elo aku kayak udah " +
+  "udh blm yg dgn tdk krn jd bgt wkwk wkwkwk haha hehe anjir btw lol lmao omg gonna wanna kinda yeah nope ok okay dunno " +
   "tbh imo idk bikin gimana ngapain").split(" "));
 var WEIGHTS = { burstiness: .27, frasa_ai: .25, konektor_awal: .15, keseragaman_paragraf: .10, repetisi_awal: .08, leksikal: .05, informalitas: .10 };
 
@@ -1324,7 +1431,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var S = { userSources: [], webSources: [], doc: null, cmpDocs: [], hl: "plag", plag: null, ai: null, text: "", sample: false };
+var S = { userSources: [], webSources: [], doc: null, mode: "review", focusNo: 0, cmpDocs: [], hl: "plag", plag: null, ai: null, text: "", sample: false };
 try { S.userSources = JSON.parse(store("ct_sources") || "[]"); } catch (e) { S.userSources = []; }
 
 /* ---- tabs ---- */
@@ -1479,25 +1586,26 @@ function setText(t, isSample) {
   editor.value = t; S.sample = !!isSample; $("#sampleNote").hidden = !isSample; schedule(0);
 }
 editor.addEventListener("input", function () { S.sample = false; $("#sampleNote").hidden = true; schedule(); });
+editor.addEventListener("paste", function () { if (!editor.value.trim()) setTimeout(function () { if (editor.value.trim()) setMode("review"); }, 50); });
 function schedule(ms) {
   $("#statusDot").classList.add("busy"); $("#statusText").textContent = "Menganalisis…";
   clearTimeout(timer); timer = setTimeout(run, ms == null ? 250 : ms);
 }
-$("#sampleBtn").onclick = function () { S.doc = null; setText(SAMPLE, true); };
-$("#clearBtn").onclick = function () { S.doc = null; setText("", false); editor.focus(); };
+$("#sampleBtn").onclick = function () { S.doc = null; S.focusNo = 0; setText(SAMPLE, true); setMode("review"); };
+$("#clearBtn").onclick = function () { S.doc = null; S.focusNo = 0; setText("", false); setMode("review"); };
 $("#pasteBtn").onclick = function () {
   if (navigator.clipboard && navigator.clipboard.readText) {
-    navigator.clipboard.readText().then(function (t) { if (t) setText(t); else editor.focus(); }, function () { editor.focus(); toast("Tekan lama di kotak naskah lalu pilih Tempel."); });
+    navigator.clipboard.readText().then(function (t) { if (t) { S.doc = null; setText(t); setMode("review"); } else setMode("write"); }, function () { editor.focus(); toast("Tekan lama di kotak naskah lalu pilih Tempel."); });
   } else { editor.focus(); toast("Tekan lama di kotak naskah lalu pilih Tempel."); }
 };
-$("#mainFile").onchange = function (e) {
-  var f = e.target.files[0]; e.target.value = ""; if (!f) return;
+$("#mainFile").onchange = function (e) { var f = e.target.files[0]; e.target.value = ""; if (f) loadMainFile(f); };
+function loadMainFile(f) {
   toast("Membaca " + f.name + "…");
   readFileFull(f).then(function (r) {
     S.doc = { name: f.name, size: f.size, pages: r.pages || null, layout: r.layout || null, pdfBuf: r.pdfBuf || null };
-    setText(r.text); toast(f.name + " dimuat" + (r.pages ? " (" + r.pages + " halaman)." : "."));
+    S.focusNo = 0; setText(r.text); setMode("review"); toast(f.name + " dimuat" + (r.pages ? " (" + r.pages + " halaman)." : "."));
   }, function (err) { toast(err.message); });
-};
+}
 
 /* ---- sources ---- */
 function allSources() {
@@ -1550,7 +1658,40 @@ var SIG = {
 function verdict(el, v, labels) {
   var i = v < 35 ? 0 : v < 65 ? 1 : 2; el.textContent = labels[i]; el.style.color = lvl(v);
 }
-function setPin(id, v) { $(id).style.left = Math.max(0, Math.min(100, v)) + "%"; $(id).style.borderColor = lvl(v); }
+function setRing(id, v) { var el = $(id); el.style.setProperty("--v", Math.max(0, Math.min(100, v))); el.style.setProperty("--c", lvl(v)); }
+function joinID(a) { return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " dan " + a[a.length - 1]; }
+function aiExplain(a) {
+  if (!a) return "Penjelasan skor muncul setelah ada naskah.";
+  var g = a.signals, why = [];
+  var lead = a.score < 35 ? "Cenderung ditulis manusia" : a.score < 65 ? "Hasilnya campuran" : "Cenderung dibuat AI";
+  if (a.score < 65) {
+    if (g.burstiness < 40) why.push("panjang kalimatnya bervariasi");
+    if (g.frasa_ai < 25) why.push("hampir tidak ada frasa klise AI");
+    if (g.konektor_awal < 25) why.push("kalimat jarang diawali kata sambung formal");
+    if (g.informalitas > 25) why.push("ada gaya bahasa tidak baku");
+  }
+  if (a.score >= 35) {
+    if (g.burstiness >= 60) why.push("panjang kalimatnya sangat seragam");
+    if (g.frasa_ai >= 50) why.push("banyak frasa klise khas AI");
+    if (g.konektor_awal >= 50) why.push("banyak kalimat diawali kata sambung formal");
+    if (g.keseragaman_paragraf >= 70) why.push("panjang paragrafnya hampir sama");
+  }
+  return lead + (why.length ? " karena " + joinID(why.slice(0, 3)) + "." : ".") + " Sinyal berbobot kecil hanya sedikit memengaruhi skor.";
+}
+var EXT_LABEL = { pdf: "PDF", docx: "DOCX", doc: "DOC", odt: "ODT", pptx: "PPTX", rtf: "RTF", txt: "TXT", md: "MD", html: "HTML", htm: "HTML" };
+function updateDocHeader(nWords) {
+  var ic = $("#docIcon"), d = S.doc;
+  if (d) {
+    var ext = (d.name.split(".").pop() || "").toLowerCase();
+    ic.textContent = EXT_LABEL[ext] || ext.toUpperCase().slice(0, 4); ic.className = "ficon " + ext;
+    $("#docTitle").textContent = d.name;
+    $("#docMeta").textContent = [d.pages ? d.pages + " halaman" : "", fmtSize(d.size), fmtNum(nWords) + " kata"].filter(Boolean).join(" · ");
+  } else {
+    ic.textContent = "TXT"; ic.className = "ficon";
+    $("#docTitle").textContent = S.sample ? "Teks contoh" : nWords ? "Teks yang ditempel" : "Naskah baru";
+    $("#docMeta").textContent = S.sample ? "Contoh untuk mencoba CekTeks · " + fmtNum(nWords) + " kata" : nWords ? fmtNum(nWords) + " kata" : "Ketik, tempel, atau unggah dokumen";
+  }
+}
 
 function run() {
   var raw = editor.value; store("ct_draft", S.sample ? "" : raw);
@@ -1567,33 +1708,43 @@ function run() {
 
   // plagiarism
   var pv = nWords ? p.score : 0;
-  $("#plagVal").innerHTML = (nWords ? String(pv).replace(".", ",") : "0") + "<small>%</small>";
-  setPin("#plagPin", pv);
+  $("#plagVal").textContent = pctLabel(pv);
+  setRing("#plagRing", pv);
+  var gcol = { internet: "var(--g-int)", publikasi: "var(--g-pub)", pengguna: "var(--g-usr)" };
+  $("#compBar").innerHTML = ["internet", "publikasi", "pengguna"].map(function (g) { return '<i style="width:' + p.groups[g] + "%;background:" + gcol[g] + '"></i>'; }).join("");
+  $("#compLegend").innerHTML = ["internet", "publikasi", "pengguna"].map(function (g) { return '<span><i style="background:' + gcol[g] + '"></i>' + GROUPS[g] + " <b>" + pctLabel(p.groups[g]) + "</b></span>"; }).join("") +
+    '<span><i style="background:var(--orig)"></i>Orisinal <b>' + pctLabel(nWords ? Math.max(0, 100 - p.score) : 0) + "</b></span>";
+  var fn = []; if (p.excluded.bib) fn.push("daftar pustaka diabaikan"); if (p.excluded.quoteWords) fn.push(p.excluded.quoteWords + " kata kutipan diabaikan");
+  $("#filterNote").textContent = fn.join(" · ");
+  updateDocHeader(nWords);
   verdict($("#plagVerdict"), pv, ["Orisinal", "Ada kemiripan", "Kemiripan tinggi"]);
   if (!nWords) $("#plagVerdict").textContent = "Menunggu teks";
   $("#plagSub").textContent = !nWords ? "Ketik atau tempel naskah untuk mulai." :
-    (srcs.length ? p.matched.length + " sumber cocok · " + pctLabel(p.groups.internet) + " internet · " + pctLabel(p.groups.publikasi) + " publikasi · " + pctLabel(p.groups.pengguna) + " karya pengguna" +
-      (p.excluded.bib ? " · daftar pustaka diabaikan" : "") : "Belum ada sumber pembanding. Tambahkan di tab Sumber.");
-  var rows = p.matched.slice(0, 15);
+    (srcs.length ? p.matched.length + " sumber cocok dari " + srcs.length + " sumber yang dibandingkan" + (S.webSources.length ? " (" + S.webSources.length + " dari internet)" : "") : "Belum ada sumber pembanding. Tambahkan di tab Sumber.");
+  var rows = p.matched.slice(0, 20);
+  if (S.focusNo && !rows.some(function (r) { return r.no === S.focusNo; })) S.focusNo = 0;
   $("#srcRows").innerHTML = rows.length ? rows.map(function (s) {
     var c = srcColor(s.no);
-    return '<tr><td class="name"><div class="srow"><span class="bdg" style="background:' + c[0] + '">' + s.no + '</span><span class="kind" style="background:' + hexA(c[0], .16) + '">' + KIND_LABEL[s.group] + '</span></div>' +
-      (s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener"><b>' + esc(s.domain) + "</b></a><div class=\"muted sname\">" + esc(s.name) + "</div>" : "<b>" + esc(s.domain) + "</b>") + "</td>" +
-      '<td class="r num">' + pctLabel(s.share) + '</td><td class="r num">' + s.cosine.toFixed(0) + "%</td></tr>";
-  }).join("") : '<tr><td colspan="3" class="empty">Tidak ada sumber yang cocok.</td></tr>';
+    return '<button type="button" class="srcitem" data-no="' + s.no + '" aria-pressed="' + (S.focusNo === s.no) + '">' +
+      '<span class="bdg" style="background:' + c[0] + '">' + s.no + '</span>' +
+      '<span class="who"><span class="kind" style="background:' + hexA(c[0], .16) + '">' + KIND_LABEL[s.group] + "</span><b>" + esc(s.domain) + "</b>" + (s.url && s.name !== s.domain ? "<small>" + esc(s.name) + "</small>" : "") + "</span>" +
+      '<span class="pct">' + pctLabel(s.share) + '</span><span class="bar"><i style="width:' + Math.min(100, s.share * 2) + "%;background:" + c[0] + '"></i></span></button>';
+  }).join("") + '<p class="muted" style="font-size:12px;margin:2px 0 0">Ketuk sumber untuk menyorot bagiannya di naskah.</p>'
+    : '<div class="empty">' + (nWords ? "Tidak ada bagian yang sama dengan sumber." : "Belum ada naskah.") + "</div>";
 
   // AI
   var av = a ? a.score : 0;
-  $("#aiVal").innerHTML = String(av).replace(".", ",") + "<small>%</small>";
-  setPin("#aiPin", av);
+  $("#aiVal").textContent = Math.round(av) + "%";
+  setRing("#aiRing", av);
   verdict($("#aiVerdict"), av, ["Cenderung manusia", "Campuran", "Cenderung AI"]);
   if (!a) $("#aiVerdict").textContent = "Menunggu teks";
-  $("#aiSub").textContent = a ? "Rata-rata " + a.stats.meanLen.toFixed(1).replace(".", ",") + " kata per kalimat · variasi panjang kalimat " +
-    (a.stats.cv == null ? "–" : a.stats.cv.toFixed(2).replace(".", ",")) : "Skor muncul otomatis saat Anda mengetik.";
+  $("#aiSub").textContent = aiExplain(a);
   $("#warns").innerHTML = (a ? a.warnings : []).map(function (w) { return '<div class="warn">' + esc(w) + "</div>"; }).join("");
-  $("#signals").innerHTML = a ? Object.keys(SIG).map(function (k) {
-    var v = a.signals[k], col = k === "informalitas" ? "var(--ok)" : lvl(v);
-    return '<div class="sig"><b>' + SIG[k][0] + '</b><span class="num">' + Math.round(v) + '%</span><div class="bar"><i style="width:' + v + "%;background:" + col + '"></i></div><small>' + SIG[k][1] + "</small></div>";
+  $("#signals").innerHTML = a ? Object.keys(SIG).sort(function (x, y) { return WEIGHTS[y] - WEIGHTS[x]; }).map(function (k) {
+    var v = a.signals[k], w = WEIGHTS[k], human = k === "informalitas", small = !human && w < 0.1;
+    var col = human ? "var(--ok)" : small ? "var(--muted)" : lvl(v);
+    var wl = human ? "pengurang" : "bobot " + Math.round(w * 100) + "%";
+    return '<div class="sig' + (small ? " small" : "") + '"><b>' + SIG[k][0] + '<span class="wt">' + wl + '</span></b><span class="num">' + Math.round(v) + '%</span><div class="bar"><i style="width:' + v + "%;background:" + col + '"></i></div><small>' + SIG[k][1] + (small ? ". Pengaruhnya kecil." : "") + "</small></div>";
   }).join("") : '<div class="empty">Belum ada teks.</div>';
   var ph = a ? Object.keys(a.phrases).sort(function (x, y) { return a.phrases[y] - a.phrases[x]; }) : [];
   $("#phrases").innerHTML = ph.length ? ph.map(function (k) { return '<span class="chip">' + esc(k) + '<span class="num">×' + a.phrases[k] + "</span></span>"; }).join("") : '<span class="muted" style="font-size:13px">Tidak ada.</span>';
@@ -1609,7 +1760,12 @@ function run() {
 
 function renderHL() {
   var t = S.text, spans = [];
-  if (!t.trim()) { $("#hl").innerHTML = '<div class="empty">Sorotan akan muncul di sini.</div>'; $("#legend").innerHTML = ""; return; }
+  $("#emptyDrop").hidden = !(S.mode === "review" && !t.trim());
+  $("#review").hidden = S.mode !== "review" || !t.trim();
+  var fs = S.hl === "plag" && S.focusNo ? S.plag.matched.filter(function (x) { return x.no === S.focusNo; })[0] : null;
+  $("#focusBar").hidden = !fs;
+  if (fs) $("#focusText").innerHTML = 'Menampilkan sumber <span class="bdg sm" style="background:' + srcColor(fs.no)[0] + '">' + fs.no + "</span> " + esc(fs.domain) + " · " + pctLabel(fs.share);
+  if (!t.trim()) { $("#hl").innerHTML = ""; $("#legend").innerHTML = ""; return; }
   if (S.hl === "plag") {
     spans = S.plag.matches.map(function (m) { return { s: m.start, e: m.end, no: m.no, t: "Sumber " + m.no + ": " + m.source }; });
     $("#legend").innerHTML = S.plag.matched.length ? S.plag.matched.slice(0, 10).map(function (s) {
@@ -1624,7 +1780,7 @@ function renderHL() {
   var html = "", pos = 0;
   spans.sort(function (x, y) { return x.s - y.s; }).forEach(function (sp) {
     if (sp.s < pos) return;
-    var open = sp.no ? '<mark style="background:' + hexA(srcColor(sp.no)[0], .22) + ';box-shadow:inset 0 -2px 0 ' + srcColor(sp.no)[0] + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">' +
+    var open = sp.no ? '<mark data-no="' + sp.no + '"' + (S.focusNo && S.focusNo !== sp.no ? ' class="dim"' : "") + ' style="background:' + hexA(srcColor(sp.no)[0], .22) + ';box-shadow:inset 0 -2px 0 ' + srcColor(sp.no)[0] + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">' +
       (sp.s === 0 || !spans.some(function (o) { return o.no === sp.no && o.e >= sp.s - 2 && o.s < sp.s; }) ? '<span class="bdg sm" style="background:' + srcColor(sp.no)[0] + '">' + sp.no + "</span>" : "")
       : '<mark class="' + sp.c + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">';
     html += esc(t.slice(pos, sp.s)) + open + esc(t.slice(sp.s, sp.e)) + "</mark>";
@@ -1634,9 +1790,50 @@ function renderHL() {
 }
 $("#hl").addEventListener("click", function (e) { var m = e.target.closest("mark"); if (m) toast(m.dataset.t); });
 function setHL(v) { S.hl = v; $("#hlPlag").setAttribute("aria-pressed", v === "plag"); $("#hlAi").setAttribute("aria-pressed", v === "ai"); renderHL(); }
+function setMode(m) {
+  S.mode = m;
+  editor.hidden = m !== "write";
+  $("#hlSeg").hidden = m !== "review";
+  $("#modeWrite").setAttribute("aria-pressed", m === "write"); $("#modeReview").setAttribute("aria-pressed", m === "review");
+  renderHL();
+  if (m === "write") editor.focus({ preventScroll: true });
+}
+$("#modeWrite").onclick = function () { setMode("write"); };
+$("#modeReview").onclick = function () { setMode("review"); };
+$("#emptyWrite").onclick = function (e) { e.preventDefault(); setMode("write"); };
+$("#emptySample").onclick = function (e) { e.preventDefault(); S.doc = null; setText(SAMPLE, true); };
+$("#focusClear").onclick = function () { S.focusNo = 0; run(); };
+$("#srcRows").addEventListener("click", function (e) {
+  var b = e.target.closest(".srcitem"); if (!b) return;
+  var no = +b.dataset.no; S.focusNo = S.focusNo === no ? 0 : no;
+  if (S.mode !== "review") setMode("review");
+  if (S.hl !== "plag") setHL("plag");
+  run();
+  if (S.focusNo) {
+    var m = document.querySelector('#hl mark[data-no="' + no + '"]');
+    if (m) { var box = $("#hl"); box.scrollTop = m.offsetTop - box.offsetTop - 60; if (window.innerWidth <= 1000) $("#docCard").scrollIntoView({ behavior: "smooth" }); }
+  }
+});
+/* seret-lepas berkas ke ruang kerja */
+(function () {
+  var card = $("#docCard"), depth = 0;
+  function hasFiles(e) { return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], "Files") >= 0; }
+  card.addEventListener("dragenter", function (e) { if (!hasFiles(e)) return; e.preventDefault(); depth++; $("#dragOver").hidden = false; });
+  card.addEventListener("dragover", function (e) { if (hasFiles(e)) e.preventDefault(); });
+  card.addEventListener("dragleave", function () { if (--depth <= 0) { depth = 0; $("#dragOver").hidden = true; } });
+  card.addEventListener("drop", function (e) { if (!hasFiles(e)) return; e.preventDefault(); depth = 0; $("#dragOver").hidden = true; if (e.dataTransfer.files[0]) loadMainFile(e.dataTransfer.files[0]); });
+})();
+/* tema terang/gelap */
+(function () {
+  var saved = store("ct_theme"); if (saved === "light" || saved === "dark") document.documentElement.setAttribute("data-theme", saved);
+  $("#themeBtn").onclick = function () {
+    var cur = document.documentElement.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    var next = cur === "dark" ? "light" : "dark"; document.documentElement.setAttribute("data-theme", next); store("ct_theme", next);
+  };
+})();
 $("#hlPlag").onclick = function () { setHL("plag"); };
 $("#hlAi").onclick = function () { setHL("ai"); };
-$("#lbDetail").onclick = function () { document.querySelector(".sticky").scrollIntoView({ behavior: "smooth" }); };
+$("#lbDetail").onclick = function () { $("#panel").scrollIntoView({ behavior: "smooth" }); };
 
 /* ---- laporan & unduhan ---- */
 var IN_FRAME = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
@@ -1679,7 +1876,8 @@ function buildReport() {
     plag: p, plagLabel: verdictText(p.score, ["Orisinal", "Ada kemiripan", "Kemiripan tinggi"]),
     ai: a, aiLabel: verdictText(a.score, ["Cenderung ditulis manusia", "Campuran / tidak pasti", "Cenderung dibuat AI"]),
     aiSents: a.sentences.filter(function (s) { return s.score >= 55; }).map(function (s) { return { text: t.slice(s.start, s.end), score: s.score }; }),
-    signals: Object.keys(SIG).map(function (k) { return { name: SIG[k][0], value: a.signals[k], human: k === "informalitas" }; }),
+    signals: Object.keys(SIG).sort(function (x, y) { return WEIGHTS[y] - WEIGHTS[x]; }).map(function (k) { return { name: SIG[k][0], value: a.signals[k], human: k === "informalitas", weight: WEIGHTS[k] }; }),
+    aiExplain: aiExplain(a),
     phrases: Object.keys(a.phrases).map(function (k) { return k + " (" + a.phrases[k] + "x)"; }),
     filters: filterList(), layout: layoutOk ? d.layout : null, pdfBuf: layoutOk ? d.pdfBuf : null
   };
@@ -1910,11 +2108,15 @@ function reportPdf(r, onProgress) {
   fnt(34, "bold"); doc.text(pctId(r.ai.score) + "%", M, 126);
   fnt(17); doc.text("Kemungkinan Tulisan AI", M, 160);
   fnt(10, "normal", MUTED); doc.text(pdfSafe(r.aiLabel) + "  |  " + r.ai.sentence_count + " kalimat dianalisis", M, 180);
-  rule(196); y = 230;
+  rule(196); y = 222;
+  var ex = wrap(r.aiExplain, W - 2 * M); fnt(10, "normal", INK); doc.text(ex, M, y); y += ex.length * 13 + 22;
   fnt(13); doc.text("Sinyal Gaya Tulisan", M, y); y += 22;
   r.signals.forEach(function (g) {
-    fnt(9.5, "normal", INK); doc.text(pdfSafe(g.name), M, y + 9);
-    var bx = M + 250, bw = W - 2 * M - 300, col = g.human ? [29, 127, 85] : (g.value < 35 ? [29, 127, 85] : g.value < 65 ? [181, 112, 12] : [194, 57, 46]);
+    var small = !g.human && g.weight < 0.1;
+    fnt(9.5, "normal", small ? MUTED : INK); doc.text(pdfSafe(g.name), M, y + 9);
+    fnt(7.5, "normal", MUTED); doc.text(g.human ? "pengurang skor" : "bobot " + Math.round(g.weight * 100) + "%" + (small ? " (pengaruh kecil)" : ""), M + 160, y + 9);
+    fnt(9.5, "normal", small ? MUTED : INK);
+    var bx = M + 250, bw = W - 2 * M - 300, col = g.human ? [29, 127, 85] : small ? [173, 181, 189] : (g.value < 35 ? [29, 127, 85] : g.value < 65 ? [181, 112, 12] : [194, 57, 46]);
     doc.setFillColor(233, 236, 239); doc.roundedRect(bx, y + 3, bw, 7, 3.5, 3.5, "F");
     if (g.value > 0) { doc.setFillColor(col[0], col[1], col[2]); doc.roundedRect(bx, y + 3, Math.max(7, bw * g.value / 100), 7, 3.5, 3.5, "F"); }
     doc.text(Math.round(g.value) + "%", W - M, y + 9, { align: "right" }); y += 21;
@@ -2225,6 +2427,7 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !IN_F
 renderSources(); renderCmp();
 var draft = store("ct_draft");
 if (draft && draft.trim()) setText(draft, false); else setText(SAMPLE, true);
+setMode("review");
 var h0 = location.hash.slice(1); if (h0 && $("#view-" + h0)) showView(h0);
 </script>
 
