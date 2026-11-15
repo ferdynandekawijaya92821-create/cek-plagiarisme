@@ -18,7 +18,12 @@ lalu buka dengan browser apa pun (Chrome, Safari, Edge, Firefox). Tidak butuh se
 - Analisis langsung saat mengetik: indeks kesamaan dan kemungkinan AI
 - Unggah PDF, Word (.docx/.doc), ODT, PPTX, RTF, HTML, TXT
 - **Cek di internet** (saat online): Wikipedia Indonesia & Inggris, jurnal ilmiah OpenAlex, dan Google (opsional, API key gratis 100 pencarian/hari)
-- **Unduh laporan** PDF, Word, atau TXT, lengkap dengan naskah yang disorot
+- **Unduh laporan PDF** bergaya laporan kesamaan: sampul dengan detail dokumen (ID pemeriksaan, nama file, ukuran,
+  jumlah halaman/kata/karakter, tanggal, opsi filter), ringkasan kesamaan dan sumber bernomor berwarna
+  (internet / publikasi / karya pengguna), halaman deteksi AI, lalu **halaman asli dokumen** (untuk PDF) dengan
+  bagian yang cocok diwarnai sesuai sumbernya dan nomor sumber di margin. File Word/teks disusun ulang dengan sorotan yang sama.
+- Opsi filter: abaikan daftar pustaka, abaikan kutipan, abaikan kecocokan kecil
+- Unduh juga sebagai Word atau TXT
 - Bandingkan banyak dokumen sekaligus
 
 **Situs sendiri yang bisa dipasang di HP:** folder [`docs/`](../docs) siap untuk GitHub Pages
