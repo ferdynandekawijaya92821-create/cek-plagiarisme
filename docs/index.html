@@ -617,6 +617,25 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
 .bbar { flex-basis: 100%; height: 4px; border-radius: 9px; background: var(--surface-2); overflow: hidden; }
 .bbar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 9px; transition: width .2s; }
 .card-h h2.hic { font-size: 15.5px; }
+/* ===== v7: bank naskah, parafrase, identitas jasa ===== */
+:root { --g-bank: #2b8a3e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --g-bank: #5fd08a; } }
+:root[data-theme="dark"] { --g-bank: #5fd08a; }
+.banklist { display: grid; gap: 6px; max-height: 340px; overflow-y: auto; grid-template-columns: minmax(0, 1fr); }
+.bankitem { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; }
+.bankitem > div { display: grid; min-width: 0; }
+.bankitem b { font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bankitem small { font-size: 12px; color: var(--muted); }
+.search { width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; background: var(--surface); font-size: 14px; }
+.field.client { font-size: 12.5px; }
+.field.client input { font-size: 13.5px; padding: 7px 10px; }
+.field .muted { font-weight: 400; }
+#bankSave { justify-self: stretch; }
+.parahint { color: var(--muted); font-style: italic; }
+.lkind { display: inline-flex; align-items: center; gap: 6px; }
+.lkind i { display: inline-block; width: 18px; height: 0; border-bottom: 2px solid var(--muted); margin: 0 2px 0 6px; vertical-align: middle; }
+.lkind i.lk-pa { border-bottom-style: dashed; }
+.sheet .hl mark.para { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -760,6 +779,8 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
               <button class="btn" id="copyReport" type="button">Salin</button>
               <button class="btn" id="printBtn" type="button" hidden>Cetak</button>
             </div>
+            <label class="field client" for="clientName">Nama klien (opsional)<input type="text" id="clientName" autocomplete="off" placeholder="mis. Andi · Skripsi Bab 2"></label>
+            <button class="btn" id="bankSave" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg>Simpan naskah ke bank</button>
           </div>
           <div class="note" id="frameNote" hidden>Unduhan dan cek internet hanya berfungsi di situs CekTeks atau file CekTeks.html, tidak di pratinjau Claude ini.</div>
         </div>
@@ -773,7 +794,9 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
             <div class="checks">
               <label><input type="checkbox" id="wWikiId" checked> Wikipedia ID</label>
               <label><input type="checkbox" id="wWikiEn" checked> Wikipedia EN</label>
-              <label><input type="checkbox" id="wOpenAlex" checked> Jurnal ilmiah</label>
+              <label><input type="checkbox" id="wOpenAlex" checked> OpenAlex</label>
+              <label><input type="checkbox" id="wDoaj" checked> DOAJ</label>
+              <label><input type="checkbox" id="wCrossref" checked> Crossref</label>
               <label><input type="checkbox" id="wGoogle"> Google <span class="muted" id="gHint">(atur API di tab Sumber)</span></label>
             </div>
             <div class="row"><span class="muted" style="font-size:13px" id="webStatus">Kalimat paling khas dari naskah dicari, lalu halaman yang ditemukan ikut dibandingkan.</span>
@@ -818,6 +841,24 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
     </div>
     <div class="grid">
       <div class="col">
+        <div class="card" id="bankCard">
+          <div class="card-h">
+            <h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg></span><span>Bank naskah<small class="muted" id="bankCount">0 naskah</small></span></h2>
+            <label class="toggle" for="useBank"><input type="checkbox" id="useBank" checked><span class="tr" aria-hidden="true"></span>Bandingkan</label>
+          </div>
+          <div class="card-b stack">
+            <p class="hint">Simpan naskah yang sudah diperiksa ke bank. Setiap naskah baru otomatis dibandingkan dengan seluruh isi bank, sehingga tugas yang saling contek atau menyalin angkatan sebelumnya ikut tertangkap. Bank tersimpan di perangkat ini saja.</p>
+            <label class="toggle" for="bankAuto"><input type="checkbox" id="bankAuto"><span class="tr" aria-hidden="true"></span>Simpan otomatis setiap dokumen yang diunggah</label>
+            <div class="tools">
+              <button class="btn" type="button" id="bankExport">Ekspor</button>
+              <label class="btn" for="bankImport">Impor</label>
+              <input type="file" id="bankImport" accept=".json,application/json">
+              <button class="btn" type="button" id="bankClear">Kosongkan</button>
+            </div>
+            <input type="search" id="bankSearch" class="search" placeholder="Cari nama naskah atau klien" aria-label="Cari di bank naskah" hidden>
+            <div class="banklist" id="bankList"></div>
+          </div>
+        </div>
         <div class="card" id="srcCard">
           <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>Sumber Anda</h2>
             <div class="tools">
@@ -852,6 +893,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
             <p class="hint">Bagian naskah dihitung sama bila sejumlah kata berurutan juga muncul di sumber. Semakin sensitif, semakin banyak frasa umum ikut terhitung.</p>
             <hr class="sep">
             <div class="eyebrow">Opsi filter</div>
+            <label class="toggle" for="fPara"><input type="checkbox" id="fPara" checked><span class="tr" aria-hidden="true"></span>Deteksi parafrase (kata diganti sinonim atau urutan diubah)</label>
             <label class="toggle" for="fBib"><input type="checkbox" id="fBib" checked><span class="tr" aria-hidden="true"></span>Abaikan daftar pustaka</label>
             <label class="toggle" for="fQuote"><input type="checkbox" id="fQuote" checked><span class="tr" aria-hidden="true"></span>Abaikan teks kutipan (dalam tanda petik)</label>
             <label class="field" for="fMin">Abaikan kecocokan kecil
@@ -863,6 +905,14 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
               </select>
             </label>
             <p class="hint">Opsi filter ikut dicantumkan di sampul laporan. Daftar pustaka dikenali dari judul seperti DAFTAR PUSTAKA, REFERENSI, atau REFERENCES.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg></span>Identitas laporan</h2></div>
+          <div class="card-b stack">
+            <p class="hint" style="margin:0">Untuk jasa pengecekan: nama dan kontak ini tampil di sampul dan kaki setiap halaman laporan PDF.</p>
+            <label class="field" for="svcName">Nama jasa atau pemeriksa<input type="text" id="svcName" autocomplete="off" placeholder="mis. Jasa Cek Naskah Ferdy"></label>
+            <label class="field" for="svcContact">Kontak<input type="text" id="svcContact" autocomplete="off" placeholder="mis. WA 0812-xxxx-xxxx"></label>
           </div>
         </div>
         <div class="card">
@@ -937,9 +987,9 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
     <div class="guide">
       <article class="card gcard">
         <h2>Indeks kesamaan</h2>
-        <p>Naskah dipecah menjadi rangkaian kata berurutan (standar 5 kata). Rangkaian yang juga ada di sumber ditandai sama dan diberi warna serta nomor sesuai sumbernya.</p>
-        <div class="formula">kesamaan = kata yang sama dengan sumber ÷ total kata</div>
-        <p class="muted">Setiap kata hanya dihitung untuk satu sumber, sehingga persentase per sumber menjumlah ke total. "Topik" menunjukkan kemiripan kosakata, berguna untuk melihat parafrase ringan.</p>
+        <p>Dua lapis pencocokan. <b>Sama persis</b>: rangkaian kata berurutan (standar 5 kata) yang juga ada di sumber, ditandai dengan garis penuh. <b>Parafrase</b>: kalimat yang kata dasarnya sebagian besar sama dengan kalimat sumber walau sinonim atau urutannya diubah, ditandai dengan garis putus-putus.</p>
+        <div class="formula">kesamaan = kata sama persis + kata parafrase ÷ total kata</div>
+        <p class="muted">Setiap kata hanya dihitung untuk satu sumber, sehingga persentase per sumber menjumlah ke total. Parafrase berat yang mengubah hampir semua kata tetap sulit terdeteksi.</p>
       </article>
       <article class="card gcard">
         <h2>Kemungkinan AI</h2>
@@ -949,15 +999,20 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       </article>
       <article class="card gcard">
         <h2>Cek di internet</h2>
-        <p>Kalimat paling khas dicari di Wikipedia Indonesia dan Inggris, abstrak jurnal ilmiah OpenAlex, dan Google bila API key diisi. Halaman yang ditemukan diambil teksnya lalu dibandingkan.</p>
+        <p>Kalimat paling khas dicari di Wikipedia Indonesia dan Inggris, abstrak jurnal di OpenAlex, DOAJ, dan Crossref (termasuk banyak jurnal Indonesia), serta Google bila API key diisi. Halaman yang ditemukan diambil teksnya lalu dibandingkan.</p>
         <p class="muted">Tanpa Google, blog, situs berita, dan repositori kampus tidak terjangkau. Gunakan daftar "Periksa manual di Google" untuk itu.</p>
+      </article>
+      <article class="card gcard">
+        <h2>Bank naskah</h2>
+        <p>Naskah yang sudah diperiksa bisa disimpan ke bank di halaman Periksa. Setiap naskah berikutnya otomatis dibandingkan dengan seluruh isi bank, sehingga tugas yang saling contek atau menyalin angkatan sebelumnya ikut tertangkap.</p>
+        <p class="muted">Bank tersimpan di perangkat ini. Gunakan Ekspor dan Impor di halaman Sumber untuk memindahkan atau berbagi bank. Untuk jasa pengecekan, simpan naskah klien hanya dengan persetujuan mereka.</p>
       </article>
       <article class="card gcard" id="privasi">
         <h2>Privasi</h2>
         <ul>
           <li>Naskah dan berkas diproses di perangkat Anda. CekTeks tidak punya server dan tidak mengumpulkan data.</li>
           <li>Saat Anda menekan "Cari", kata kunci dari beberapa kalimat dikirim ke mesin pencari yang Anda centang (Wikipedia, OpenAlex, Google).</li>
-          <li>Draf naskah, sumber, kunci API Google, dan pilihan tema disimpan di browser perangkat ini saja.</li>
+          <li>Draf naskah, sumber, bank naskah, identitas jasa, kunci API Google, dan pilihan tema disimpan di browser perangkat ini saja. Tombol di bawah menghapus semuanya.</li>
         </ul>
         <button class="btn" type="button" id="wipeBtn" style="margin-top:12px">Hapus data tersimpan</button>
       </article>
@@ -1070,8 +1125,8 @@ var SRC_COLORS = [["#c2185b", "#f9d3e3"], ["#2f5fd0", "#d6e2fb"], ["#13795b", "#
   ["#2b8a3e", "#d8f2dc"], ["#5f3dc4", "#e2dbfa"]];
 function srcColor(no) { return SRC_COLORS[(Math.max(1, no) - 1) % SRC_COLORS.length]; }
 function hexA(hex, a) { var n = parseInt(hex.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
-var GROUPS = { internet: "Sumber internet", publikasi: "Publikasi", pengguna: "Karya pengguna" };
-var KIND_LABEL = { internet: "Internet", publikasi: "Publikasi", pengguna: "Karya pengguna" };
+var GROUPS = { internet: "Sumber internet", publikasi: "Publikasi", bank: "Bank naskah", pengguna: "Karya pengguna" };
+var KIND_LABEL = { internet: "Internet", publikasi: "Publikasi", bank: "Bank naskah", pengguna: "Karya pengguna" };
 function groupOf(src) {
   if (src.group) return src.group;
   if (src.corpus || /jurnal/i.test(src.kind || "")) return "publikasi";
@@ -1095,15 +1150,96 @@ function quoteSpans(text) {
   return out;
 }
 
+/* ---------- Kata dasar & sinonim (untuk mendeteksi parafrase) ----------
+   Pemotong imbuhan sederhana tanpa kamus. Yang penting bukan hasil yang benar secara tata bahasa,
+   melainkan konsisten: "menulis", "tulisan", dan "penulis" sama-sama menjadi kunci "ulis". */
+var PREFIX_RE = /^(meng|meny|mem|men|me|peng|peny|pem|pen|pe|ber|be|ter|te|di|ke|se)$/;
+function stemWord(w) {
+  if (w.length <= 4 || /\d/.test(w)) return w;
+  if (/^[a-z]+$/.test(w) && /(ing|ed|ies|ly|tion|ment)$/.test(w)) {           // Inggris
+    var e = w.replace(/(ingly|edly|ing|ed|ies|ly|ment)$/, "");
+    if (e.length >= 3) return e;
+  }
+  var x = w.replace(/(lah|kah|tah|pun)$/, ""); if (x.length > 4) w = x;           // partikel
+  x = w.replace(/(ku|mu|nya)$/, ""); if (x.length > 4) w = x;                    // kata ganti milik
+  x = w.replace(/(kan|an|i)$/, ""); if (x.length > 3 && !PREFIX_RE.test(x)) w = x; // akhiran
+  var m;
+  if ((m = /^(memper|diper|keber|keter)(.{3,})$/.exec(w))) w = m[2];
+  else if ((m = /^(meng|peng|meny|peny)(.{3,})$/.exec(w))) w = m[2];
+  else if ((m = /^(mem|pem)([bfpv].{2,}|[aiueo].{2,})$/.exec(w))) w = m[2];
+  else if ((m = /^(men|pen)([cdjtz].{2,}|[aiueo].{2,})$/.exec(w))) w = m[2];
+  else if ((m = /^(me|pe)([lmnrwy].{2,})$/.exec(w))) w = m[2];
+  else if ((m = /^(ber|ter|per)(.{3,})$/.exec(w))) w = m[2];
+  else if ((m = /^(di|ke|se)(.{4,})$/.exec(w))) w = m[2];
+  // meN-/peN- meluluhkan k/t/p/s (kirim→mengirim, tulis→menulis): huruf itu dibuang di semua kata
+  if (w.length >= 5 && /^[ktps][aiueo]/.test(w)) w = w.slice(1);
+  return w;
+}
+var SYN_GROUPS = [
+  "menggunakan memakai memanfaatkan mempergunakan", "adalah merupakan ialah yaitu yakni", "dapat bisa mampu sanggup",
+  "sangat amat sungguh begitu", "penting krusial vital esensial", "membantu menolong", "meningkatkan menaikkan mempertinggi",
+  "masyarakat publik warga khalayak", "perkembangan kemajuan", "contoh misalnya", "namun tetapi tapi walaupun meskipun",
+  "karena sebab lantaran", "menunjukkan memperlihatkan", "pengaruh dampak efek akibat imbas", "tujuan sasaran maksud",
+  "cara metode teknik", "cepat lekas segera", "modern mutakhir terkini", "berbagai beragam aneka sejumlah",
+  "membuat menciptakan menghasilkan", "sulit susah sukar", "mudah gampang", "perlu harus wajib mesti",
+  "siswa murid pelajar", "guru pengajar pendidik", "uang dana biaya", "informasi keterangan", "masalah persoalan problem",
+  "solusi penyelesaian pemecahan", "upaya usaha ikhtiar", "kurang minim", "semakin makin kian", "sering kerap",
+  "ingin mau hendak", "kini sekarang", "dahulu dulu", "penelitian kajian studi riset", "meneliti mengkaji menelaah",
+  "use utilize employ", "important crucial vital essential", "show demonstrate indicate reveal", "help assist aid",
+  "increase enhance boost improve", "large huge big", "many numerous various several", "however nevertheless",
+  "result outcome", "method approach technique", "problem issue challenge", "study research"
+];
+var SYN = new Map();
+SYN_GROUPS.forEach(function (g) {
+  var ws = g.split(" "), canon = stemWord(ws[0]);
+  ws.forEach(function (w) { SYN.set(stemWord(w), canon); });
+});
+function canonWord(w) { var s = stemWord(w); return SYN.get(s) || s; }
+function canonSet(ws) {
+  var set = new Set();
+  ws.forEach(function (w) { if (w.length > 2 && !STOPWORDS.has(w)) set.add(canonWord(w)); });
+  return set;
+}
+// Kalimat sumber disiapkan sekali lalu disimpan di objek sumber.
+function sourceSentences(src) {
+  if (src._para) return src._para;
+  var t = normalize(src.text);
+  return (src._para = splitSentences(t).map(function (s) { return canonSet(words(s[0])); }).filter(function (set) { return set.size >= 5; }));
+}
+var PARA_INDEX = { sig: "", map: null };
+function paraIndex(sources) {
+  var sig = sources.map(function (s) { if (!s._uid) s._uid = ++paraIndex.seq; return s._uid + ":" + (s.text || "").length; }).join(",");
+  if (PARA_INDEX.sig === sig) return PARA_INDEX.map;
+  var map = new Map();
+  sources.forEach(function (src, si) {
+    sourceSentences(src).forEach(function (set, k) {
+      set.forEach(function (w) { var arr = map.get(w); if (!arr) map.set(w, (arr = [])); arr.push(si * 100000 + k); });
+    });
+  });
+  PARA_INDEX = { sig: sig, map: map };
+  return map;
+}
+paraIndex.seq = 0;
+function textHash(t) {
+  var h = 2166136261; t = normalize(t).replace(/\s+/g, " ").trim().toLowerCase();
+  for (var i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(16) + "-" + t.length;
+}
+
 function checkPlagiarism(text, sources, n, opts) {
   opts = opts || {};
   text = normalize(text); n = Math.max(2, n | 0 || 5);
+  // Naskah yang sama persis dengan isi bank (mis. naskah ini sendiri) tidak dibandingkan dengan dirinya.
+  if (sources.some(function (s) { return s.hash; })) {
+    var selfHash = textHash(text);
+    sources = sources.filter(function (s) { return !s.hash || s.hash !== selfHash; });
+  }
   var tok = tokenize(text);
   var bib = opts.excludeBib ? findBibStart(text) : -1;
   if (bib >= 0) tok = tok.filter(function (t) { return t[1] < bib; });
   var w = tok.map(function (x) { return x[0]; }), N = w.length;
-  var r = { word_count: N, ngram: n, score: 0, sources: [], matches: [], matched: [], source_count: sources.length,
-    groups: { internet: 0, publikasi: 0, pengguna: 0 }, bibStart: bib, excluded: { bib: bib >= 0, quoteWords: 0 } };
+  var r = { word_count: N, ngram: n, score: 0, exactScore: 0, paraScore: 0, sources: [], matches: [], matched: [], source_count: sources.length,
+    groups: { internet: 0, publikasi: 0, bank: 0, pengguna: 0 }, bibStart: bib, excluded: { bib: bib >= 0, quoteWords: 0 } };
   if (N < n || !sources.length) return r;
 
   var blocked = new Uint8Array(N);
@@ -1115,11 +1251,12 @@ function checkPlagiarism(text, sources, n, opts) {
     }
   }
   var ts = shingles(w, n);
-  var cwText = contentWords(text), srcCw = sources.map(function (s) { return contentWords(normalize(s.text)); });
+  var cwText = contentWords(text), srcCw = sources.map(function (s) { return s._cw || (s._cw = contentWords(normalize(s.text))); });
   var df = new Map();
   [cwText].concat(srcCw).forEach(function (d) { new Set(d).forEach(function (t) { df.set(t, (df.get(t) || 0) + 1); }); });
   var nDocs = sources.length + 1;
 
+  // 1. Kecocokan persis: rangkaian n kata yang sama.
   var covs = sources.map(function (src) {
     var sw = src._words || (src._words = words(normalize(src.text)));
     var sset = src._sh && src._shN === n ? src._sh : (src._sh = new Set(shingles(sw, n).keys()), src._shN = n, src._sh);
@@ -1135,7 +1272,6 @@ function checkPlagiarism(text, sources, n, opts) {
   });
   var covAny = new Uint8Array(N);
   covs.forEach(function (c) { for (var i = 0; i < N; i++) if (c[i]) covAny[i] = 1; });
-  // Abaikan kecocokan yang terlalu pendek.
   var minW = opts.minWords | 0;
   if (minW > n) {
     for (var i = 0; i < N;) {
@@ -1145,16 +1281,44 @@ function checkPlagiarism(text, sources, n, opts) {
       i = j + 1;
     }
   }
-  // Tiap kata dikaitkan ke satu sumber saja (sumber dengan cakupan terbesar lebih dulu), seperti laporan kesamaan pada umumnya.
+  // Tiap kata dikaitkan ke satu sumber saja (sumber dengan cakupan terbesar lebih dulu).
   var totals = covs.map(function (c) { var t = 0; for (var i = 0; i < N; i++) t += c[i]; return t; });
   var order = sources.map(function (_, i) { return i; }).sort(function (a, b) { return totals[b] - totals[a]; });
-  var owner = new Int16Array(N).fill(-1), owned = new Array(sources.length).fill(0);
+  var owner = new Int32Array(N).fill(-1), isPara = new Uint8Array(N), owned = new Array(sources.length).fill(0), paraOwned = new Array(sources.length).fill(0);
   for (var i = 0; i < N; i++) if (covAny[i]) for (var o = 0; o < order.length; o++) if (covs[order[o]][i]) { owner[i] = order[o]; owned[order[o]]++; break; }
 
+  // 2. Parafrase: kalimat yang kata dasarnya (setelah sinonim disamakan) sebagian besar sama dengan kalimat sumber,
+  //    walau urutan atau bentuk katanya diubah.
+  if (opts.paraphrase !== false) {
+    var index = paraIndex(sources), sents = splitSentences(text), ti = 0;
+    sents.forEach(function (s) {
+      while (ti < N && tok[ti][2] <= s[1]) ti++;
+      var a = ti, b = a; while (b < N && tok[b][1] < s[2]) b++;
+      if (b - a < 6) return;
+      var exact = 0, blockedN = 0; for (var q = a; q < b; q++) { if (owner[q] >= 0) exact++; if (blocked[q]) blockedN++; }
+      if (exact / (b - a) >= 0.5 || blockedN / (b - a) >= 0.5) return;
+      var A = canonSet(w.slice(a, b)); if (A.size < 6) return;
+      var counts = new Map();
+      A.forEach(function (key) {
+        var post = index.get(key); if (!post || post.length > 4000) return;
+        for (var z = 0; z < post.length; z++) counts.set(post[z], (counts.get(post[z]) || 0) + 1);
+      });
+      var best = -1, bestInter = 0;
+      counts.forEach(function (inter, id) {
+        if (inter < 5 || inter <= bestInter) return;
+        var B = sourceSentences(sources[Math.floor(id / 100000)])[id % 100000];
+        if (inter / A.size >= 0.6 && inter / B.size >= 0.5) { best = id; bestInter = inter; }
+      });
+      if (best < 0) return;
+      var si = Math.floor(best / 100000);
+      for (q = a; q < b; q++) if (owner[q] < 0 && !blocked[q]) { owner[q] = si; isPara[q] = 1; paraOwned[si]++; }
+    });
+  }
+
   var list = sources.map(function (src, si) {
-    var g = groupOf(src);
-    return { si: si, name: src.name, url: src.url || "", kind: src.kind || "", group: g, domain: domainOf(src),
-      overlap: +(100 * totals[si] / N).toFixed(2), share: +(100 * owned[si] / N).toFixed(2), words: owned[si],
+    var g = groupOf(src), tot = owned[si] + paraOwned[si];
+    return { si: si, name: src.name, url: src.url || "", kind: src.kind || "", group: g, domain: domainOf(src), sub: src.sub || "",
+      overlap: +(100 * totals[si] / N).toFixed(2), share: +(100 * tot / N).toFixed(2), paraShare: +(100 * paraOwned[si] / N).toFixed(2), words: tot,
       cosine: +(100 * tfidfCosine(cwText, srcCw[si], df, nDocs)).toFixed(2), no: 0 };
   });
   list.sort(function (a, b) { return b.share - a.share || b.overlap - a.overlap || b.cosine - a.cosine; });
@@ -1165,13 +1329,15 @@ function checkPlagiarism(text, sources, n, opts) {
   r.matched = list.filter(function (s) { return s.no; });
   for (var i = 0; i < N;) {
     if (owner[i] < 0) { i++; continue; }
-    var j = i, s = owner[i];
-    while (j + 1 < N && owner[j + 1] === s && tok[j + 1][1] - tok[j][2] < 40) j++;
-    r.matches.push({ start: tok[i][1], end: tok[j][2], no: noOf[s], source: sources[s].name, url: sources[s].url || "" });
+    var j = i, s = owner[i], pp = isPara[i];
+    while (j + 1 < N && owner[j + 1] === s && isPara[j + 1] === pp && tok[j + 1][1] - tok[j][2] < 40) j++;
+    r.matches.push({ start: tok[i][1], end: tok[j][2], no: noOf[s], source: sources[s].name, url: sources[s].url || "", para: !!pp });
     i = j + 1;
   }
-  var nc = 0; for (var i = 0; i < N; i++) nc += covAny[i];
-  r.score = +(100 * nc / N).toFixed(1);
+  var nExact = 0, nPara = 0; for (var i = 0; i < N; i++) { if (owner[i] >= 0) { if (isPara[i]) nPara++; else nExact++; } }
+  r.exactScore = +(100 * nExact / N).toFixed(1);
+  r.paraScore = +(100 * nPara / N).toFixed(1);
+  r.score = +(100 * (nExact + nPara) / N).toFixed(1);
   return r;
 }
 
@@ -1282,7 +1448,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "2.4.0";
+var APP_VERSION = "3.0.0";
 function setBusy(msg, frac) {
   var b = $("#busy");
   if (!msg) { b.hidden = true; return; }
@@ -1485,12 +1651,14 @@ function loadMainFile(f) {
     setBusy(null);
     S.doc = { name: f.name, size: f.size, pages: r.pages || null, layout: r.layout || null, pdfBuf: r.pdfBuf || null };
     S.focusNo = 0; setText(r.text); setMode("review"); toast(f.name + " dimuat" + (r.pages ? " (" + r.pages + " halaman)." : "."));
+    if ($("#bankAuto").checked) bankAdd([bankEntry(f.name, r.text, $("#clientName").value.trim())]).catch(function () {});
   }, function (err) { setBusy(null); toast(err.message); });
 }
 
 /* ---- sources ---- */
 function allSources() {
   var list = S.userSources.filter(function (s) { return s.text && s.text.trim(); }).concat(S.webSources);
+  if ($("#useBank").checked) list = list.concat(BANK.map(function (e) { return e._src; }));
   return $("#useCorpus").checked ? list.concat(CORPUS) : list;
 }
 function saveSources() { store("ct_sources", JSON.stringify(S.userSources.map(function (s) { return { name: s.name, text: s.text }; }))); }
@@ -1546,7 +1714,7 @@ function addSourceFiles(files) {
 };
 $("#useCorpus").onchange = function () { $("#srcBadge").textContent = allSources().length; schedule(0); };
 $("#ngram").onchange = function () { schedule(0); };
-["fBib", "fQuote", "fMin"].forEach(function (id) { $("#" + id).onchange = function () { schedule(0); }; });
+["fBib", "fQuote", "fMin", "fPara"].forEach(function (id) { $("#" + id).onchange = function () { schedule(0); }; });
 $("#corpCount").textContent = CORPUS.length + " dokumen";
 $("#corpList").innerHTML = CORPUS.map(function (c) { return '<div class="corp-item"><span>' + esc(c.name) + '</span><span class="muted num">' + words(c.text).length + " kata</span></div>"; }).join("");
 
@@ -1621,16 +1789,16 @@ function run() {
   $("#cSents").textContent = text.trim() ? splitSentences(text).length.toLocaleString("id-ID") : "0";
 
   var srcs = allSources();
-  S.plag = checkPlagiarism(text, srcs, +$("#ngram").value, { excludeBib: $("#fBib").checked, excludeQuotes: $("#fQuote").checked, minWords: +$("#fMin").value });
+  S.plag = checkPlagiarism(text, srcs, +$("#ngram").value, { excludeBib: $("#fBib").checked, excludeQuotes: $("#fQuote").checked, minWords: +$("#fMin").value, paraphrase: $("#fPara").checked });
   S.ai = nWords ? detectAI(text) : null;
   var p = S.plag, a = S.ai;
 
   // plagiarism
   var pv = nWords ? p.score : 0;
   setRing("#plagRing", pv, pctLabel(pv));
-  var gcol = { internet: "var(--g-int)", publikasi: "var(--g-pub)", pengguna: "var(--g-usr)" };
-  $("#compBar").innerHTML = ["internet", "publikasi", "pengguna"].map(function (g) { return '<i style="width:' + p.groups[g] + "%;background:" + gcol[g] + '"></i>'; }).join("");
-  $("#compLegend").innerHTML = ["internet", "publikasi", "pengguna"].map(function (g) { return '<span><i style="background:' + gcol[g] + '"></i>' + GROUPS[g] + " <b>" + pctLabel(p.groups[g]) + "</b></span>"; }).join("") +
+  var gcol = { internet: "var(--g-int)", publikasi: "var(--g-pub)", bank: "var(--g-bank)", pengguna: "var(--g-usr)" };
+  $("#compBar").innerHTML = ["internet", "publikasi", "bank", "pengguna"].map(function (g) { return '<i style="width:' + p.groups[g] + "%;background:" + gcol[g] + '"></i>'; }).join("");
+  $("#compLegend").innerHTML = ["internet", "publikasi", "bank", "pengguna"].map(function (g) { return '<span><i style="background:' + gcol[g] + '"></i>' + GROUPS[g] + " <b>" + pctLabel(p.groups[g]) + "</b></span>"; }).join("") +
     '<span><i style="background:var(--orig)"></i>Orisinal <b>' + pctLabel(nWords ? Math.max(0, 100 - p.score) : 0) + "</b></span>";
   var fn = []; if (p.excluded.bib) fn.push("daftar pustaka diabaikan"); if (p.excluded.quoteWords) fn.push(p.excluded.quoteWords + " kata kutipan diabaikan");
   $("#filterNote").textContent = fn.join(" · ");
@@ -1644,14 +1812,14 @@ function run() {
   verdict($("#plagVerdict"), pv, ["Orisinal", "Ada kemiripan", "Kemiripan tinggi"]);
   if (!nWords) $("#plagVerdict").textContent = "Menunggu teks";
   $("#plagSub").textContent = !nWords ? "Ketik atau tempel naskah untuk mulai." :
-    (srcs.length ? p.matched.length + " sumber cocok dari " + srcs.length + " sumber yang dibandingkan" + (S.webSources.length ? " (" + S.webSources.length + " dari internet)" : "") : "Belum ada sumber pembanding. Tambahkan di tab Sumber.");
+    (srcs.length ? (p.score ? pctLabel(p.exactScore) + " sama persis · " + pctLabel(p.paraScore) + " parafrase · " : "") + p.matched.length + " sumber cocok dari " + srcs.length + " yang dibandingkan" + (S.webSources.length ? " (" + S.webSources.length + " dari internet)" : "") : "Belum ada sumber pembanding. Tambahkan di tab Sumber.");
   var rows = p.matched.slice(0, 20);
   if (S.focusNo && !rows.some(function (r) { return r.no === S.focusNo; })) S.focusNo = 0;
   $("#srcRows").innerHTML = rows.length ? rows.map(function (s) {
     var c = srcColor(s.no);
     return '<button type="button" class="srcitem" data-no="' + s.no + '" aria-pressed="' + (S.focusNo === s.no) + '">' +
       '<span class="bdg" style="background:' + c[0] + '">' + s.no + '</span>' +
-      '<span class="who"><span class="kind" style="background:' + hexA(c[0], .16) + '">' + KIND_LABEL[s.group] + "</span><b>" + esc(s.domain) + "</b>" + (s.url && s.name !== s.domain ? "<small>" + esc(s.name) + "</small>" : "") + "</span>" +
+      '<span class="who"><span class="kind" style="background:' + hexA(c[0], .16) + '">' + KIND_LABEL[s.group] + "</span><b>" + esc(s.domain) + "</b>" + (s.url && s.name !== s.domain ? "<small>" + esc(s.name) + "</small>" : s.sub ? "<small>" + esc(s.sub) + "</small>" : "") + (s.paraShare ? '<small class="parahint">termasuk ' + pctLabel(s.paraShare) + " parafrase</small>" : "") + "</span>" +
       '<span class="pct">' + pctLabel(s.share) + '</span><span class="bar"><i style="width:' + Math.min(100, s.share * 2) + "%;background:" + c[0] + '"></i></span></button>';
   }).join("") + '<p class="muted" style="font-size:12px;margin:2px 0 0">Ketuk sumber untuk menyorot bagiannya di naskah.</p>'
     : '<div class="empty">' + (nWords ? "Tidak ada bagian yang sama dengan sumber." : "Belum ada naskah.") + "</div>";
@@ -1691,10 +1859,10 @@ function renderHL() {
   if (fs) $("#focusText").innerHTML = 'Menampilkan sumber <span class="bdg sm" style="background:' + srcColor(fs.no)[0] + '">' + fs.no + "</span> " + esc(fs.domain) + " · " + pctLabel(fs.share);
   if (!t.trim()) { $("#hl").innerHTML = ""; $("#legend").innerHTML = ""; return; }
   if (S.hl === "plag") {
-    spans = S.plag.matches.map(function (m) { return { s: m.start, e: m.end, no: m.no, t: "Sumber " + m.no + ": " + m.source }; });
+    spans = S.plag.matches.map(function (m) { return { s: m.start, e: m.end, no: m.no, para: m.para, t: "Sumber " + m.no + (m.para ? " (parafrase)" : "") + ": " + m.source }; });
     $("#legend").innerHTML = S.plag.matched.length ? S.plag.matched.slice(0, 10).map(function (s) {
       return '<span><span class="bdg sm" style="background:' + srcColor(s.no)[0] + '">' + s.no + "</span> " + esc(s.domain) + "</span>";
-    }).join("") + '<span class="lhint">· ketuk sorotan untuk nama sumber</span>' : '<span>Belum ada bagian yang sama dengan sumber.</span>';
+    }).join("") + (S.plag.paraScore ? '<span class="lkind"><i class="lk-ex"></i>sama persis <i class="lk-pa"></i>parafrase</span>' : "") + '<span class="lhint">· ketuk sorotan untuk nama sumber</span>' : '<span>Belum ada bagian yang sama dengan sumber.</span>';
   } else if (S.ai) {
     spans = S.ai.sentences.filter(function (s) { return s.score >= 40; }).map(function (s) {
       return { s: s.start, e: s.end, c: s.score >= 70 ? "a3" : s.score >= 55 ? "a2" : "a1", t: "Skor AI kalimat: " + s.score + "%" };
@@ -1705,7 +1873,9 @@ function renderHL() {
   spans.sort(function (x, y) { return x.s - y.s; }).forEach(function (sp) {
     if (sp.s < pos) return;
     var first = sp.no && !spans.some(function (o) { return o.no === sp.no && o.e >= sp.s - 2 && o.s < sp.s; });
-    var open = sp.no ? '<mark data-no="' + sp.no + '"' + (first ? ' data-start="1"' : "") + (S.focusNo && S.focusNo !== sp.no ? ' class="dim"' : "") + ' style="background:' + hexA(srcColor(sp.no)[0], .2) + ';box-shadow:inset 0 -2px 0 ' + srcColor(sp.no)[0] + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">'
+    var cls = [sp.para ? "para" : "", S.focusNo && S.focusNo !== sp.no ? "dim" : ""].filter(Boolean).join(" ");
+    var sty = sp.para ? "background:" + hexA(srcColor(sp.no)[0], .09) + ";border-bottom:2px dashed " + srcColor(sp.no)[0] : "background:" + hexA(srcColor(sp.no)[0], .2) + ";box-shadow:inset 0 -2px 0 " + srcColor(sp.no)[0];
+    var open = sp.no ? '<mark data-no="' + sp.no + '"' + (first ? ' data-start="1"' : "") + (cls ? ' class="' + cls + '"' : "") + ' style="' + sty + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">'
       : '<mark class="' + sp.c + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">';
     html += esc(t.slice(pos, sp.s)) + open + esc(t.slice(sp.s, sp.e)) + "</mark>";
     pos = sp.e;
@@ -1797,7 +1967,8 @@ document.querySelectorAll("[data-goto]").forEach(function (b) {
     if (!armed) { armed = true; btn.textContent = "Tekan sekali lagi untuk menghapus"; btn.classList.add("danger"); tm = setTimeout(function () { armed = false; btn.textContent = "Hapus data tersimpan"; btn.classList.remove("danger"); }, 4000); return; }
     clearTimeout(tm);
     try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("ct_") === 0) localStorage.removeItem(k); }); } catch (e) {}
-    S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = "";
+    S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = ""; $("#svcName").value = ""; $("#svcContact").value = "";
+    bankReq("readwrite", function (st) { st.clear(); return null; }).then(loadBank, function () {});
     setText("", false); setMode("review");
     armed = false; btn.textContent = "Data dihapus"; btn.classList.remove("danger"); toast("Draf, sumber, kunci API, dan pengaturan di perangkat ini sudah dihapus.");
   };
@@ -1832,6 +2003,94 @@ $("#lbDetail").onclick = function () {
 };
 if (window.innerWidth > 1000) $("#sigMore").open = true;
 
+/* ---- bank naskah (IndexedDB, hanya di perangkat ini) ---- */
+var BANK = [];
+function bankDB() {
+  return new Promise(function (res, rej) {
+    if (!window.indexedDB) return rej(new Error("Browser ini tidak mendukung bank naskah."));
+    var r = indexedDB.open("cekteks", 1);
+    r.onupgradeneeded = function () { r.result.createObjectStore("bank", { keyPath: "id" }); };
+    r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); };
+  });
+}
+function bankReq(mode, fn) {
+  return bankDB().then(function (db) {
+    return new Promise(function (res, rej) {
+      var tx = db.transaction("bank", mode), req = fn(tx.objectStore("bank"));
+      tx.oncomplete = function () { res(req ? req.result : undefined); };
+      tx.onerror = tx.onabort = function () { rej(tx.error || new Error("Bank naskah gagal disimpan.")); };
+    });
+  });
+}
+function fmtDay(iso) { try { return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return ""; } }
+function bankSource(e) { return { name: e.name, text: e.text, group: "bank", kind: "Bank naskah", hash: e.hash, bankId: e.id, sub: [e.client, fmtDay(e.added)].filter(Boolean).join(" · ") }; }
+function bankEntry(name, text, client, added) {
+  var h = textHash(text);
+  return { id: h, hash: h, name: name || "Tanpa nama", client: client || "", text: text, words: words(text).length, added: added || new Date().toISOString() };
+}
+function loadBank() {
+  return bankReq("readonly", function (st) { return st.getAll(); }).then(function (all) {
+    BANK = (all || []).sort(function (a, b) { return a.added < b.added ? 1 : -1; });
+    BANK.forEach(function (e) { e._src = bankSource(e); });
+    renderBank(); schedule(0);
+  }, function () { BANK = []; renderBank(); });
+}
+function bankAdd(entries) { return bankReq("readwrite", function (st) { entries.forEach(function (e) { st.put(e); }); return null; }).then(loadBank); }
+function renderBank() {
+  $("#bankCount").textContent = fmtNum(BANK.length) + " naskah";
+  $("#srcBadge").textContent = allSources().length;
+  var q = ($("#bankSearch").value || "").toLowerCase();
+  $("#bankSearch").hidden = BANK.length < 8;
+  var list = BANK.filter(function (e) { return !q || (e.name + " " + e.client).toLowerCase().indexOf(q) >= 0; });
+  $("#bankList").innerHTML = BANK.length ? list.slice(0, 200).map(function (e) {
+    return '<div class="bankitem"><div><b>' + esc(e.name) + "</b><small>" + esc([e.client, fmtDay(e.added), fmtNum(e.words) + " kata"].filter(Boolean).join(" · ")) +
+      '</small></div><button class="btn sm icon-only" type="button" data-del="' + esc(e.id) + '" aria-label="Hapus dari bank" title="Hapus dari bank">' + TRASH + "</button></div>";
+  }).join("") + (list.length > 200 ? '<p class="hint">Menampilkan 200 dari ' + fmtNum(list.length) + " naskah.</p>" : "")
+    : '<div class="empty">Bank masih kosong. Tekan "Simpan naskah ke bank" di halaman Periksa, atau impor bank dari perangkat lain.</div>';
+}
+$("#bankList").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-del]"); if (!b) return;
+  bankReq("readwrite", function (st) { st.delete(b.dataset.del); return null; }).then(loadBank).then(function () { toast("Naskah dihapus dari bank."); });
+});
+$("#bankSearch").oninput = renderBank;
+$("#bankSave").onclick = function () {
+  var t = editor.value; if (!t.trim()) return toast("Masukkan naskah terlebih dahulu.");
+  var name = S.doc ? S.doc.name : S.sample ? "Teks contoh" : "Naskah " + fmtDay(new Date().toISOString());
+  bankAdd([bankEntry(name, t, $("#clientName").value.trim())]).then(function () { toast("Disimpan ke bank. Isi bank: " + fmtNum(BANK.length) + " naskah."); }, function (e) { toast(e.message); });
+};
+$("#bankExport").onclick = function () {
+  if (!BANK.length) return toast("Bank masih kosong.");
+  var data = { app: "CekTeks", type: "bank-naskah", version: 1, exported: new Date().toISOString(),
+    entries: BANK.map(function (e) { return { name: e.name, client: e.client, added: e.added, text: e.text }; }) };
+  download(new Blob([JSON.stringify(data)], { type: "application/json" }), "bank-naskah-CekTeks-" + new Date().toISOString().slice(0, 10) + ".json");
+};
+$("#bankImport").onchange = function (e) {
+  var f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  f.text().then(function (t) {
+    var d = JSON.parse(t), list = d && Array.isArray(d.entries) ? d.entries : null;
+    if (!list) throw new Error("Berkas ini bukan ekspor bank naskah CekTeks.");
+    var entries = list.filter(function (x) { return x && typeof x.text === "string" && x.text.trim(); })
+      .map(function (x) { return bankEntry(String(x.name || "Tanpa nama"), x.text, String(x.client || ""), x.added); });
+    return bankAdd(entries).then(function () { toast(fmtNum(entries.length) + " naskah diimpor. Isi bank: " + fmtNum(BANK.length) + " naskah."); });
+  }).catch(function (err) { toast("Impor gagal: " + (err && err.message ? err.message : err)); });
+};
+(function () {
+  var btn = $("#bankClear"), armed = false, tm;
+  btn.onclick = function () {
+    if (!BANK.length) return toast("Bank masih kosong.");
+    if (!armed) { armed = true; btn.textContent = "Tekan lagi untuk mengosongkan"; btn.classList.add("danger"); tm = setTimeout(function () { armed = false; btn.textContent = "Kosongkan"; btn.classList.remove("danger"); }, 4000); return; }
+    clearTimeout(tm); armed = false; btn.textContent = "Kosongkan"; btn.classList.remove("danger");
+    bankReq("readwrite", function (st) { st.clear(); return null; }).then(loadBank).then(function () { toast("Bank naskah dikosongkan."); });
+  };
+})();
+["useBank", "bankAuto"].forEach(function (id) {
+  var el = $("#" + id), k = "ct_" + id.toLowerCase(), v = store(k);
+  if (v === "0" || v === "1") el.checked = v === "1";
+  el.addEventListener("change", function () { store(k, el.checked ? "1" : "0"); if (id === "useBank") { renderBank(); schedule(0); } });
+});
+/* identitas jasa */
+["svcName", "svcContact"].forEach(function (id) { var el = $("#" + id), k = "ct_" + id.toLowerCase(); el.value = store(k) || ""; el.oninput = function () { store(k, el.value.trim()); }; });
+loadBank();
 /* ---- laporan & unduhan ---- */
 var IN_FRAME = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
 if (IN_FRAME) $("#frameNote").hidden = false;
@@ -1860,6 +2119,16 @@ function filterList() {
   f.push("Sumber: " + S.plag.source_count + " dokumen (" + S.webSources.length + " dari internet)");
   return f;
 }
+function coverage() {
+  var all = allSources(), cnt = { web: 0, bank: 0, user: 0, corpus: 0 };
+  all.forEach(function (s) { if (s.group === "bank") cnt.bank++; else if (s.corpus) cnt.corpus++; else if (s.url) cnt.web++; else cnt.user++; });
+  return [
+    "Pencocokan: rangkaian " + S.plag.ngram + " kata berurutan" + ($("#fPara").checked ? ", ditambah deteksi parafrase (kata dasar dan sinonim)" : ""),
+    "Dibandingkan dengan " + fmtNum(all.length) + " dokumen: " + cnt.web + " dari internet, " + fmtNum(cnt.bank) + " dari bank naskah, " + cnt.user + " sumber tambahan, " + cnt.corpus + " korpus bawaan",
+    "Pencarian internet: " + (S.webSources.length && S.lastEngines && S.lastEngines.length ? S.lastEngines.join(", ") : "tidak dilakukan untuk naskah ini"),
+    "CekTeks tidak terhubung dengan basis data Turnitin atau layanan sejenis, sehingga hasilnya dapat berbeda."
+  ];
+}
 function buildReport() {
   var p = S.plag, a = S.ai, t = S.text;
   if (!a) return null;
@@ -1876,7 +2145,8 @@ function buildReport() {
     signals: Object.keys(SIG).sort(function (x, y) { return WEIGHTS[y] - WEIGHTS[x]; }).map(function (k) { return { name: SIG[k][0], value: a.signals[k], human: k === "informalitas", weight: WEIGHTS[k] }; }),
     aiExplain: aiExplain(a),
     phrases: Object.keys(a.phrases).map(function (k) { return k + " (" + a.phrases[k] + "x)"; }),
-    filters: filterList(), layout: layoutOk ? d.layout : null, pdfBuf: layoutOk ? d.pdfBuf : null
+    filters: filterList(), layout: layoutOk ? d.layout : null, pdfBuf: layoutOk ? d.pdfBuf : null,
+    svc: ($("#svcName").value || "").trim(), contact: ($("#svcContact").value || "").trim(), client: ($("#clientName").value || "").trim(), method: coverage()
   };
 }
 var DISCLAIMER = "Deteksi AI bersifat perkiraan berdasarkan gaya tulisan dan bisa keliru. Cek plagiarisme hanya membandingkan dengan sumber yang dipilih. Jangan jadikan laporan ini satu-satunya dasar keputusan.";
@@ -1891,19 +2161,23 @@ function download(blob, name) {
 }
 function needReport() { var r = buildReport(); if (!r) toast("Masukkan naskah terlebih dahulu."); return r; }
 function charSources(r) {
-  var cs = new Int16Array(r.text.length);
-  r.plag.matches.forEach(function (m) { cs.fill(m.no, m.start, m.end); });
+  var cs = new Int16Array(r.text.length), cp = new Uint8Array(r.text.length);
+  r.plag.matches.forEach(function (m) { cs.fill(m.no, m.start, m.end); if (m.para) cp.fill(1, m.start, m.end); });
+  cs.para = cp;
   return cs;
 }
+function lighter(hex) { var c = rgbOf(hex); return [Math.round((c[0] + 255 * 1.4) / 2.4), Math.round((c[1] + 255 * 1.4) / 2.4), Math.round((c[2] + 255 * 1.4) / 2.4)]; }
 
 /* ---------- TXT ---------- */
 function reportText(r) {
   r = r || buildReport(); if (!r) return "";
   var p = r.plag;
-  var L = ["LAPORAN PLAGIARISME CEKTEKS", "=".repeat(27), "ID Pemeriksaan : " + r.id, "Dokumen        : " + r.doc, "Tanggal        : " + fmtDate(r.date),
+  var L = ["LAPORAN PLAGIARISME CEKTEKS", "=".repeat(27), "ID Pemeriksaan : " + r.id, "Dokumen        : " + r.doc].concat(
+    r.client ? ["Klien          : " + r.client] : [], r.svc ? ["Diperiksa oleh : " + r.svc + (r.contact ? " (" + r.contact + ")" : "")] : [], ["Tanggal        : " + fmtDate(r.date),
     "Panjang        : " + fmtNum(r.words) + " kata, " + fmtNum(r.chars) + " karakter" + (r.pages ? ", " + r.pages + " halaman" : ""), "",
-    "KESAMAAN       : " + pctLabel(p.score) + " (" + r.plagLabel + ")", "Sumber cocok   : " + p.matched.length,
-    "  " + pctLabel(p.groups.internet) + " sumber internet, " + pctLabel(p.groups.publikasi) + " publikasi, " + pctLabel(p.groups.pengguna) + " karya pengguna", ""];
+    "KESAMAAN       : " + pctLabel(p.score) + " (" + r.plagLabel + ")  =  " + pctLabel(p.exactScore) + " sama persis + " + pctLabel(p.paraScore) + " parafrase", "Sumber cocok   : " + p.matched.length,
+    "  " + pctLabel(p.groups.internet) + " sumber internet, " + pctLabel(p.groups.publikasi) + " publikasi, " + pctLabel(p.groups.bank) + " bank naskah, " + pctLabel(p.groups.pengguna) + " karya pengguna", "",
+    "Metode & cakupan:"].concat(r.method.map(function (x) { return "  - " + x; }), [""]));
   if (p.matched.length) {
     L.push("Sumber teratas:");
     p.matched.forEach(function (s) { L.push("  [" + s.no + "] " + pctLabel(s.share) + "  " + KIND_LABEL[s.group] + " - " + s.domain + (s.url ? "\n       " + s.name + "\n       " + s.url : "")); });
@@ -1944,13 +2218,14 @@ function reportDoc(r) {
     "<style>body{font-family:Arial,sans-serif;font-size:10.5pt;color:#212529}h1{font-size:20pt;margin:0}h2{font-size:13pt;font-weight:normal;margin:18pt 0 6pt}" +
     "table{border-collapse:collapse}.src td{border-bottom:1px solid #dee2e6;padding:6pt 6pt 6pt 0;vertical-align:middle}.muted{color:#787e87;font-size:9pt}</style></head><body>";
   h += "<p class='muted'><b style='color:#0e6a86'>CekTeks</b> &nbsp; Laporan Plagiarisme &nbsp; · &nbsp; ID Pemeriksaan " + r.id + "</p>";
-  h += "<h1>Laporan Plagiarisme</h1><p style='font-size:14pt;margin:4pt 0 12pt'>" + esc(r.doc) + "</p><hr>";
+  h += "<h1>Laporan Plagiarisme</h1><p style='font-size:14pt;margin:4pt 0 12pt'>" + esc(r.doc) + (r.client ? "<br><span style='font-size:11pt;color:#5a6577'>Klien: " + esc(r.client) + "</span>" : "") + "</p><hr>";
   h += "<h2>Detail Dokumen</h2><table><tr>" + cell("ID Pemeriksaan", r.id) + cell("Ukuran File", fmtSize(r.size)) + "</tr><tr>" + cell("Nama File", esc(r.doc)) + cell("Total Halaman", r.pages ? r.pages + " Halaman" : "-") +
-    "</tr><tr>" + cell("Diperiksa dengan", "CekTeks") + cell("Total Kata", fmtNum(r.words) + " Kata") + "</tr><tr>" + cell("Tanggal Pemeriksaan", fmtDate(r.date)) + cell("Total Karakter", fmtNum(r.chars) + " Karakter") + "</tr></table>";
+    "</tr><tr>" + cell("Diperiksa oleh", esc(r.svc || "CekTeks") + (r.contact ? "<br>" + esc(r.contact) : "")) + cell("Total Kata", fmtNum(r.words) + " Kata") + "</tr><tr>" + cell("Tanggal Pemeriksaan", fmtDate(r.date)) + cell("Total Karakter", fmtNum(r.chars) + " Karakter") + "</tr></table>";
   h += "<h2>Opsi Filter</h2><ul>" + r.filters.map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul><hr>";
   h += "<table style='width:100%;margin-top:10pt'><tr><td><div style='font-size:30pt;font-weight:bold'>" + pctLabel(p.score) + "</div><div style='font-size:13pt'>Kesamaan</div></td>" +
     "<td><div style='font-size:30pt;font-weight:bold'>" + p.matched.length + "</div><div style='font-size:13pt'>Sumber Cocok</div></td>" +
-    "<td class='muted'><b style='font-size:11pt;color:#212529'>Kelompok Kecocokan</b><br>" + pctLabel(p.groups.internet) + " &nbsp; Sumber internet<br>" + pctLabel(p.groups.publikasi) + " &nbsp; Publikasi<br>" + pctLabel(p.groups.pengguna) + " &nbsp; Karya pengguna</td></tr></table>";
+    "<td class='muted'><b style='font-size:11pt;color:#212529'>Kelompok Kecocokan</b><br>" + pctLabel(p.groups.internet) + " &nbsp; Sumber internet<br>" + pctLabel(p.groups.publikasi) + " &nbsp; Publikasi<br>" + pctLabel(p.groups.bank) + " &nbsp; Bank naskah<br>" + pctLabel(p.groups.pengguna) + " &nbsp; Karya pengguna</td></tr></table>" +
+    "<p class='muted'>" + pctLabel(p.exactScore) + " sama persis · " + pctLabel(p.paraScore) + " parafrase</p><h2>Metode &amp; cakupan</h2><ul>" + r.method.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
   h += "<h2>Sumber Teratas</h2>" + (p.matched.length ? "<table class='src' style='width:100%'>" + p.matched.map(function (s) {
     var c = srcColor(s.no);
     return "<tr><td style='width:28pt'><span style='background:" + c[0] + ";color:#fff;font-weight:bold;padding:2pt 9pt'>" + s.no + "</span></td><td><span style='background:" + c[1] + ";padding:1pt 8pt;font-size:8.5pt'>" + KIND_LABEL[s.group] + "</span><br><b>" + esc(s.domain) + "</b>" +
@@ -1995,10 +2270,14 @@ function renderPdfPages(r, cs, onPage) {
           lay.items.forEach(function (it) {
             var len = it.e - it.s, k = it.s; if (!len) return;
             while (k < it.e) {
-              var c = cs[k], a = k; while (k < it.e && cs[k] === c) k++;
+              var c = cs[k], pa = cs.para[k], a = k; while (k < it.e && cs[k] === c && cs.para[k] === pa) k++;
               if (!c) { last = null; continue; }
               var x0 = it.x + it.w * (a - it.s) / len, x1 = it.x + it.w * (k - it.s) / len;
-              ctx.fillStyle = srcColor(c)[1];
+              ctx.fillStyle = pa ? "rgb(" + lighter(srcColor(c)[1]).join(",") + ")" : srcColor(c)[1];
+              if (pa) {
+                ctx.save(); ctx.globalCompositeOperation = "source-over"; ctx.strokeStyle = srcColor(c)[0]; ctx.lineWidth = Math.max(1, 1.1 * scale);
+                ctx.setLineDash([4 * scale, 3 * scale]); ctx.beginPath(); ctx.moveTo(x0 * scale, (it.y + it.h) * scale); ctx.lineTo(x1 * scale, (it.y + it.h) * scale); ctx.stroke(); ctx.restore();
+              }
               if (last && last.c === c && Math.abs(last.y - it.y) < it.h * 0.4 && x0 > last.x1 && x0 - last.x1 < it.h * 1.5) ctx.fillRect(last.x1 * scale, it.y * scale, (x0 - last.x1) * scale, it.h * scale);
               ctx.fillRect(x0 * scale, it.y * scale, Math.max(1, x1 - x0) * scale, it.h * scale);
               last = { c: c, x1: x1, y: it.y };
@@ -2050,35 +2329,38 @@ function reportPdf(r, onProgress) {
 
   // 1. Sampul
   newReportPage(true);
-  y = 300; fnt(22, "bold"); doc.text("Laporan Plagiarisme", M, y);
+  y = 190; fnt(22, "bold"); doc.text("Laporan Plagiarisme", M, y);
   fnt(16, "normal"); var tl = wrap(r.doc, W - 2 * M); doc.text(tl, M, y + 30); y += 30 + tl.length * 19;
   rule(y + 8); y += 44;
   fnt(13); doc.text("Detail Dokumen", M, y); y += 30;
-  var left = [["ID Pemeriksaan", r.id], ["Nama File", r.doc], ["Diperiksa dengan", "CekTeks"], ["Tanggal Pemeriksaan", fmtDate(r.date)], ["Tanggal Laporan", fmtDate(new Date())]];
-  var right = [["Ukuran File", fmtSize(r.size)], ["Total Halaman", r.pages ? r.pages + " Halaman" : "-"], ["Total Kata", fmtNum(r.words) + " Kata"], ["Total Karakter", fmtNum(r.chars) + " Karakter"]];
+  var left = [["ID Pemeriksaan", r.id], ["Nama File", r.doc]].concat(r.client ? [["Klien", r.client]] : [], [["Diperiksa oleh", r.svc || "CekTeks"], ["Tanggal Pemeriksaan", fmtDate(r.date)], ["Tanggal Laporan", fmtDate(new Date())]]);
+  var right = [["Ukuran File", fmtSize(r.size)], ["Total Halaman", r.pages ? r.pages + " Halaman" : "-"], ["Total Kata", fmtNum(r.words) + " Kata"], ["Total Karakter", fmtNum(r.chars) + " Karakter"]].concat(r.contact ? [["Kontak Pemeriksa", r.contact]] : []);
   var top = y, bottom = y;
   [left, right].forEach(function (col, ci) {
     var x = ci ? W / 2 + 20 : M, yy = top;
     col.forEach(function (kv) {
       fnt(8.5, "normal", MUTED); doc.text(kv[0], x, yy);
-      fnt(9, "bold", INK); var v = wrap(kv[1], W / 2 - M - 30); doc.text(v, x, yy + 15); yy += 37 + (v.length - 1) * 11;
+      fnt(9, "bold", INK); var v = wrap(kv[1], W / 2 - M - 30); doc.text(v, x, yy + 14); yy += 33 + (v.length - 1) * 11;
     });
     bottom = Math.max(bottom, yy);
   });
   y = bottom; rule(y); y += 34;
   fnt(13); doc.text("Opsi Filter", M, y); y += 15;
   fnt(8.5, "normal", MUTED); doc.text("Pengaturan filter yang dipakai dalam laporan ini.", M, y); y += 22;
-  r.filters.forEach(function (f) { fnt(8.5, "normal", INK); doc.text("• " + pdfSafe(f), M + 10, y); y += 17; });
-  rule(y + 10);
+  r.filters.forEach(function (f) { fnt(8.5, "normal", INK); doc.text("\u2022 " + pdfSafe(f), M + 10, y); y += 14; });
+  rule(y + 10); y += 34;
+  fnt(13); doc.text("Metode & Cakupan", M, y); y += 20;
+  r.method.forEach(function (f) { fnt(8.5, "normal", INK); var ln = wrap("\u2022 " + f, W - 2 * M - 10); ensure(ln.length * 11); fnt(8.5, "normal", INK); doc.text(ln, M + 10, y); y += ln.length * 11 + 4; });
 
   // 2. Ringkasan & sumber teratas
   newReportPage();
   fnt(34, "bold"); doc.text(pctLabel(p.score), M, 126);
   fnt(17); doc.text("Kesamaan", M, 160);
+  fnt(8.5, "normal", MUTED); doc.text(pctLabel(p.exactScore) + " sama persis  |  " + pctLabel(p.paraScore) + " parafrase", M, 178);
   fnt(34, "bold"); doc.text(String(p.matched.length), M + 175, 126);
   fnt(17); doc.text("Sumber Cocok", M + 175, 160);
   var gx = 360; fnt(12); doc.text("Kelompok Kecocokan", gx, 104);
-  [["internet", "Sumber internet"], ["publikasi", "Publikasi"], ["pengguna", "Karya pengguna"]].forEach(function (g, i) {
+  [["internet", "Sumber internet"], ["publikasi", "Publikasi"], ["bank", "Bank naskah"], ["pengguna", "Karya pengguna"]].forEach(function (g, i) {
     fnt(8.5, "normal", MUTED); doc.text(pctLabel(p.groups[g[0]]), gx, 124 + i * 15); doc.text(g[1], gx + 30, 124 + i * 15);
   });
   rule(196); y = 230;
@@ -2086,7 +2368,8 @@ function reportPdf(r, onProgress) {
   fnt(8.5, "normal", MUTED); doc.text("Sumber dengan jumlah kecocokan terbanyak di dalam naskah.", M, y); y += 18;
   if (!p.matched.length) { fnt(10, "normal", INK); doc.text("Tidak ada sumber yang cocok dengan naskah ini.", M, y + 16); y += 30; }
   p.matched.forEach(function (s) {
-    var sub = s.url ? wrap(s.name, W - 2 * M - 70) : [], hgt = 52 + Math.min(sub.length, 2) * 11;
+    fnt(8, "normal", MUTED);
+    var sub = s.url ? wrap(s.name, W - 2 * M - 70) : s.sub ? wrap(s.sub, W - 2 * M - 70) : [], hgt = 52 + Math.min(sub.length, 2) * 11;
     ensure(hgt);
     var c = srcColor(s.no), solid = rgbOf(c[0]), tint = rgbOf(c[1]);
     doc.setFillColor(solid[0], solid[1], solid[2]); doc.roundedRect(M, y + 4, 56, 19, 9.5, 9.5, "F");
@@ -2144,7 +2427,9 @@ function reportPdf(r, onProgress) {
       doc.setFillColor(255, 255, 255); doc.rect(M + 5, yy - 9, 8, 10.5, "F");
       fnt(13, "bold", INK); doc.text("CekTeks", M + 24, yy + 0.5);
       fnt(8.5, "normal", MUTED); doc.text("Laporan Plagiarisme", M + 92, yy);
-      doc.text("Halaman " + pn + " dari " + total + "   |   ID " + r.id, W - M, yy, { align: "right" });
+      doc.text("Halaman " + pn + " dari " + total, W - M, yy, { align: "right" });
+      fnt(7.5, "normal", MUTED);
+      doc.text((r.svc ? "Diperiksa oleh " + pdfSafe(r.svc) + (r.contact ? " (" + pdfSafe(r.contact) + ")" : "") + "   |   " : "") + "ID " + r.id, M, yy + 15);
     });
     return doc.output("blob");
   });
@@ -2191,14 +2476,15 @@ function typesetDocument(doc, r, cs) {
       if (y + LH > B) newPage();
       var x = L;
       line.forEach(function (k, i) {
-        var c = 0; for (var q = k.s; q < k.e; q++) if (cs[q]) { c = cs[q]; break; }
-        k.x = x; k.c = c; x += k.w + sp;
+        var c = 0, pa = 0; for (var q = k.s; q < k.e; q++) if (cs[q]) { c = cs[q]; pa = cs.para[q]; break; }
+        k.x = x; k.c = c; k.p = pa; x += k.w + sp;
         for (var q2 = k.s; q2 < k.e; q2++) if (starts[q2]) { badges.push({ no: starts[q2], y: y + 1 }); break; }
       });
       line.forEach(function (k, i) {
         if (!k.c) return;
-        var nx = line[i + 1], w = k.w + (nx && nx.c === k.c ? sp : 0), col = rgbOf(srcColor(k.c)[1]);
+        var nx = line[i + 1], w = k.w + (nx && nx.c === k.c ? sp : 0), col = k.p ? lighter(srcColor(k.c)[1]) : rgbOf(srcColor(k.c)[1]);
         doc.setFillColor(col[0], col[1], col[2]); doc.rect(k.x, y + 2, w + 0.3, LH - 2, "F");
+        if (k.p) { var sc = rgbOf(srcColor(k.c)[0]); doc.setDrawColor(sc[0], sc[1], sc[2]); doc.setLineWidth(0.8); doc.setLineDashPattern([2, 1.5], 0); doc.line(k.x, y + LH - 1, k.x + w, y + LH - 1); doc.setLineDashPattern([], 0); }
       });
       doc.setTextColor(20, 20, 20);
       line.forEach(function (k) { doc.text(k.str, k.x, y + FS + 1.5); });
@@ -2314,6 +2600,31 @@ function wikiPage(lang, title) {
       url: "https://" + lang + ".wikipedia.org/wiki/" + encodeURIComponent((pg.title || title).replace(/ /g, "_")), text: pg.extract || "" };
   });
 }
+function stripTags(h) {
+  return String(h || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
+    .replace(/^(abstract|abstrak|abstrack)\s*[:.\-]?\s*/i, "").replace(/^(abstract|abstrak)(?=[A-Z])/, "");
+}
+// DOAJ: jurnal akses terbuka, termasuk banyak jurnal Indonesia.
+function doaj(terms) {
+  var u = "https://doaj.org/api/search/articles/" + encodeURIComponent(terms.join(" ")) + "?pageSize=3";
+  return fetchJSON(u).then(function (d) {
+    return (d.results || []).map(function (x) {
+      var b = x.bibjson || {}, doi = (b.identifier || []).filter(function (i) { return /doi/i.test(i.type); })[0], link = (b.link || [])[0];
+      return { name: (b.title || "Artikel jurnal") + (b.year ? " (" + b.year + ")" : ""), kind: "DOAJ", group: "publikasi",
+        url: doi ? "https://doi.org/" + doi.id : link && link.url ? link.url : "https://doaj.org/article/" + x.id, text: (b.title || "") + ". " + stripTags(b.abstract) };
+    }).filter(function (src) { return words(src.text).length > 20; });
+  });
+}
+// Crossref: metadata jurnal ber-DOI; hanya artikel yang menyertakan abstrak yang dipakai.
+function crossref(terms) {
+  var u = "https://api.crossref.org/works?rows=4&filter=has-abstract:true&select=DOI,title,abstract,URL,issued&query.bibliographic=" + encodeURIComponent(terms.join(" "));
+  return fetchJSON(u).then(function (d) {
+    return ((d.message && d.message.items) || []).filter(function (it) { return it.abstract; }).map(function (it) {
+      var t = (it.title || [])[0] || "Artikel jurnal", yr = it.issued && it.issued["date-parts"] && it.issued["date-parts"][0] ? it.issued["date-parts"][0][0] : "";
+      return { name: t + (yr ? " (" + yr + ")" : ""), kind: "Crossref", group: "publikasi", url: it.URL || "https://doi.org/" + it.DOI, text: t + ". " + stripTags(it.abstract) };
+    }).filter(function (src) { return words(src.text).length > 20; });
+  });
+}
 function openAlex(terms) {
   var u = "https://api.openalex.org/works?per_page=3&select=id,doi,display_name,publication_year,abstract_inverted_index&search=" + encodeURIComponent(terms.join(" "));
   return fetchJSON(u).then(function (d) {
@@ -2347,8 +2658,9 @@ function runWebSearch() {
   var useG = $("#wGoogle").checked && store("ct_gkey") && store("ct_gcx");
   if ($("#wGoogle").checked && !useG) toast("Google dilewati: isi API key dan cx di tab Sumber.");
   var langs = []; if ($("#wWikiId").checked) langs.push("id"); if ($("#wWikiEn").checked) langs.push("en");
-  var useOA = $("#wOpenAlex").checked;
-  if (!langs.length && !useOA && !useG) return toast("Pilih minimal satu sumber pencarian.");
+  var useOA = $("#wOpenAlex").checked, useDoaj = $("#wDoaj").checked, useCr = $("#wCrossref").checked;
+  if (!langs.length && !useOA && !useDoaj && !useCr && !useG) return toast("Pilih minimal satu sumber pencarian.");
+  S.lastEngines = [].concat(langs.map(function (l) { return "Wikipedia " + l.toUpperCase(); }), useOA ? ["OpenAlex"] : [], useDoaj ? ["DOAJ"] : [], useCr ? ["Crossref"] : [], useG ? ["Google"] : []);
   var sents = pickSentences(text, 6);
   if (!sents.length) return toast("Tidak menemukan kalimat yang cukup panjang untuk dicari.");
 
@@ -2368,7 +2680,9 @@ function runWebSearch() {
           .then(function () { tick("Mencari di Wikipedia…"); });
       });
     });
-    if (useOA) tasks.push(function () { return openAlex(terms.slice(0, 5)).then(function (rs) { rs.forEach(add); }, fail).then(function () { tick("Mencari di jurnal ilmiah…"); }); });
+    if (useOA) tasks.push(function () { return openAlex(terms.slice(0, 5)).then(function (rs) { rs.forEach(add); }, fail).then(function () { tick("Mencari di OpenAlex…"); }); });
+    if (useDoaj) tasks.push(function () { return doaj(terms.slice(0, 4)).then(function (rs) { rs.forEach(add); }, fail).then(function () { tick("Mencari di DOAJ…"); }); });
+    if (useCr) tasks.push(function () { return crossref(terms.slice(0, 6)).then(function (rs) { rs.forEach(add); }, fail).then(function () { tick("Mencari di Crossref…"); }); });
     if (useG) tasks.push(function () {
       return googleSearch(s).then(function (rs) { rs.forEach(function (r) { if (!snippetConfirms(r, s)) r.text = r.text.slice(0, r.text.length - s.length - 1); add(r); }); }, fail)
         .then(function () { tick("Mencari di Google…"); });
