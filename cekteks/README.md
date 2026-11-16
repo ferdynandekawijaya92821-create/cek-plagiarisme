@@ -23,6 +23,10 @@ lalu buka dengan browser apa pun (Chrome, Safari, Edge, Firefox). Tidak butuh se
   (internet / publikasi / karya pengguna), halaman deteksi AI, lalu **halaman asli dokumen** (untuk PDF) dengan
   bagian yang cocok diwarnai sesuai sumbernya dan nomor sumber di margin. File Word/teks disusun ulang dengan sorotan yang sama.
 - Opsi filter: abaikan daftar pustaka, abaikan kutipan, abaikan kecocokan kecil
+- Deteksi parafrase (kata dasar & sinonim) di samping kecocokan persis
+- Bank naskah: arsip naskah yang pernah diperiksa (di perangkat), otomatis ikut dibandingkan; bisa diekspor/impor
+- Cek internet ke Wikipedia, OpenAlex, DOAJ, Crossref, dan Google (opsional)
+- Identitas jasa pengecekan (nama, kontak, klien) di laporan, beserta bagian Metode & cakupan
 - Unduh juga sebagai Word atau TXT
 - Bandingkan banyak dokumen sekaligus
 

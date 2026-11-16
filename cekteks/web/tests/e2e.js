@@ -114,6 +114,64 @@ async function download(page, selector) {
     ok(await page.locator(".pair").count() === 3, "seharusnya 3 pasangan contoh");
     ok((await page.textContent(".pair .verdict")) !== "Berbeda", "pasangan teratas seharusnya mirip");
   });
+  const PARA = "Peningkatan temperatur rata-rata di permukaan bumi yang terutama diakibatkan oleh kegiatan manusia, contohnya pembakaran bahan bakar fosil serta penggundulan hutan, disebut pemanasan global. " +
+    "Gas rumah kaca misalnya metana dan karbon dioksida menahan panas pada atmosfer, sehingga temperatur bumi naik terus setiap tahun.";
+  await test("parafrase (sinonim & urutan diubah) terdeteksi, teks lain tidak", async () => {
+    await page.click("#tab-periksa");
+    await page.evaluate((t) => setText(t), PARA); await page.waitForTimeout(500);
+    const r = await page.evaluate(() => [S.plag.paraScore, S.plag.matched[0] && S.plag.matched[0].name]);
+    ok(r[0] > 50, "parafrase hanya " + r[0] + "%");
+    ok(/Pemanasan global/.test(r[1] || ""), "sumber parafrase salah: " + r[1]);
+    ok(await page.locator("#hl mark.para").count() > 0, "sorotan parafrase tidak tampil");
+    await page.evaluate((t) => setText(t), "Kemarin aku ke pasar sama ibu. Rame banget! Mau beli cabai aja antrinya panjang, padahal cuma dua ons. Ibu sih santai, malah ngobrol sama penjual sayur langganannya soal harga bawang yang naik lagi.");
+    await page.waitForTimeout(500);
+    ok(await page.evaluate(() => S.plag.score) === 0, "teks yang tidak berhubungan ikut ditandai");
+  });
+  await test("bank naskah: simpan, tetap ada setelah dimuat ulang, menangkap tugas mirip, ekspor/impor", async () => {
+    await page.click("#tab-periksa");
+    const A = "Teknologi informasi berkembang sangat cepat dalam sepuluh tahun terakhir. Banyak sekolah mulai memakai aplikasi pembelajaran daring untuk membantu siswa belajar dari rumah. Guru perlu menyesuaikan cara mengajar agar materi tetap mudah dipahami oleh semua siswa.";
+    const B = "Dalam sepuluh tahun terakhir teknologi informasi berkembang sangat cepat. Banyak sekolah mulai memakai aplikasi pembelajaran daring untuk membantu siswa belajar dari rumah. Menurut saya guru harus lebih kreatif agar kelas daring tidak membosankan.";
+    await page.evaluate((t) => setText(t), A); await page.fill("#clientName", "Klien Uji");
+    await page.click("#bankSave"); await page.waitForFunction(() => BANK.length === 1);
+    ok(await page.evaluate(() => S.plag.groups.bank) === 0, "naskah dibandingkan dengan dirinya sendiri di bank");
+    await page.reload(); await ready(page); await page.waitForFunction(() => BANK.length === 1);
+    await page.evaluate((t) => setText(t), B); await page.waitForTimeout(500);
+    ok(await page.evaluate(() => S.plag.groups.bank) > 30, "tugas mirip tidak tertangkap dari bank");
+    await page.click("#tab-sumber");
+    const ex = await download(page, "#bankExport");
+    const f = path.join(require("os").tmpdir(), "cekteks-bank-uji.json"); fs.writeFileSync(f, ex.buf);
+    await page.click("#bankClear"); await page.click("#bankClear"); await page.waitForFunction(() => BANK.length === 0);
+    await page.setInputFiles("#bankImport", f); await page.waitForFunction(() => BANK.length === 1);
+    ok(await page.evaluate(() => BANK[0].client) === "Klien Uji", "nama klien hilang setelah impor");
+    await page.click("#bankClear"); await page.click("#bankClear"); await page.waitForFunction(() => BANK.length === 0);
+    await page.click("#tab-periksa");
+  });
+  await test("cek internet: hasil DOAJ & Crossref dibandingkan (respons tiruan)", async () => {
+    await page.click("#tab-periksa");
+    const ABS = "Kajian tentang kandungan klorofil pada daun mangga dengan perbedaan warna pada tingkat perkembangan yang berbeda belum banyak dilakukan. Penelitian ini bertujuan untuk membandingkan kandungan klorofil daun mangga pada tingkat perkembangan daun yang berbeda.";
+    await ctx.route(/doaj\.org/, (r) => r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" },
+      body: JSON.stringify({ results: [{ id: "x1", bibjson: { title: "Klorofil daun mangga", year: "2011", abstract: "<p>Abstrak</p><p>" + ABS + "</p>", identifier: [{ type: "doi", id: "10.1/uji" }] } }] }) }));
+    await ctx.route(/api\.crossref\.org/, (r) => r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" },
+      body: JSON.stringify({ message: { items: [{ DOI: "10.2/uji", URL: "https://doi.org/10.2/uji", title: ["Pigmen fotosintesis"], abstract: "<jats:p>Pigmen fotosintesis pada tumbuhan tingkat tinggi terdiri atas klorofil a, klorofil b, dan karotenoid yang tersimpan di dalam kloroplas sel daun tanaman.</jats:p>" }] } }) }));
+    await page.evaluate((t) => setText(t), "Praktikum biologi minggu lalu membahas pigmen pada daun. " + ABS + " Kelompok kami juga mencoba mengukur klorofil daun jambu di halaman sekolah, tetapi alatnya terbatas.");
+    for (const id of ["wWikiId", "wWikiEn", "wOpenAlex"]) await page.uncheck("#" + id);
+    await page.click("#webBtn");
+    await page.waitForFunction(() => document.getElementById("webProg").hidden, null, { timeout: 30000 });
+    const r = await page.evaluate(() => [S.plag.groups.publikasi, S.webSources.map((w) => w.kind).sort().join(",")]);
+    ok(r[1].includes("DOAJ") && r[1].includes("Crossref"), "sumber yang ditemukan: " + r[1]);
+    ok(r[0] > 50, "kesamaan dengan jurnal hanya " + r[0] + "%");
+    await ctx.unroute(/doaj\.org/); await ctx.unroute(/api\.crossref\.org/);
+    await page.click("#webClear");
+    for (const id of ["wWikiId", "wWikiEn", "wOpenAlex"]) await page.check("#" + id);
+  });
+  await test("identitas jasa & klien tampil di laporan, beserta metode & cakupan", async () => {
+    await page.click("#tab-sumber"); await page.fill("#svcName", "Jasa Uji"); await page.fill("#svcContact", "WA 0800"); await page.click("#tab-periksa");
+    await page.fill("#clientName", "Budi");
+    const t = (await download(page, "#dlTxt")).buf.toString();
+    ok(t.includes("Diperiksa oleh : Jasa Uji (WA 0800)") && t.includes("Klien          : Budi"), "identitas tidak tercantum");
+    ok(t.includes("Metode & cakupan") && t.includes("tidak terhubung dengan basis data Turnitin"), "metode & cakupan tidak tercantum");
+    await page.fill("#clientName", "");
+  });
   await test("tetap berjalan offline setelah kunjungan pertama", async () => {
     await page.click("#tab-periksa");
     await page.waitForFunction(async () => { const ks = await caches.keys(); if (!ks.length) return false; const c = await caches.open(ks[0]); return (await c.keys()).filter((r) => r.url.includes("/vendor/")).length === 5; }, null, { timeout: 30000 });
