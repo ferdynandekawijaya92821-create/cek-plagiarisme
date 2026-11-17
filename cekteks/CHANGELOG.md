@@ -2,6 +2,21 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [3.2.0] - 2026-11-17
+### Ditambahkan
+- **Pembayaran & tagihan** (tanpa server):
+  - Pengaturan pembayaran di Riwayat: unggah foto QRIS (dibaca dengan jsQR) atau tempel kodenya; kode diperiksa
+    (format EMVCo dan CRC) dan nama merchant ditampilkan. Daftar rekening/e-wallet, kode unik, catatan tagihan.
+  - Tombol **Tagih** pada setiap pesanan: QRIS dinamis dengan nominal terisi (tag 54, tag 01 = 12, CRC dihitung ulang),
+    total dengan kode unik, salin nomor rekening, pesan WhatsApp siap kirim, unduh gambar QR, unduh tagihan PDF, tandai lunas.
+  - Nomor tagihan (INV-YYYYMMDD-xxxxx), nomor WhatsApp klien, kode unik, dan total ikut di ekspor Excel.
+- Pustaka baru: qrcode-generator (MIT) dan jsQR (Apache-2.0), dimuat saat dibutuhkan dan tersimpan untuk offline.
+- Uji e2e menjadi 25 skenario, termasuk memindai QR di tagihan untuk memastikan nominal dan CRC benar.
+
+### Catatan
+- Konfirmasi pembayaran tetap manual. Gateway otomatis (Midtrans, Xendit, dll.) memerlukan server untuk menyimpan
+  kunci rahasia dan menerima webhook, sehingga tidak dipasang di situs statis ini.
+
 ## [3.1.0] - 2026-11-17
 ### Ditambahkan
 - **Perbandingan berdampingan**: tombol "Bandingkan" pada setiap sumber membuka panel berisi bagian naskah dan

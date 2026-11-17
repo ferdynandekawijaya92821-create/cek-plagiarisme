@@ -20,7 +20,7 @@ SITE_URL = os.environ.get("CEKTEKS_SITE_URL", "https://ferdynandekawijaya92821-c
 SITE_TITLE = "CekTeks - Cek Plagiarisme & Deteksi Tulisan AI"
 SITE_DESC = ("Cek plagiarisme dan deteksi tulisan AI gratis. Unggah PDF atau Word, lihat bagian yang mirip "
              "dengan sumbernya, lalu unduh laporan PDF. Bisa offline, naskah tetap privat.")
-VENDOR = ["pdf.min.js", "pdf.worker.min.js", "mammoth.browser.min.js", "jszip.min.js", "jspdf.umd.min.js"]
+VENDOR = ["pdf.min.js", "pdf.worker.min.js", "mammoth.browser.min.js", "jszip.min.js", "jspdf.umd.min.js", "qrcode.js", "jsQR.js"]
 ICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0e6a86"/>'
         '<path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="#fff"/>'
         '<path d="M11 14h8M11 17h6M11 20h4" stroke="#0e6a86" stroke-width="1.6" stroke-linecap="round"/>'
