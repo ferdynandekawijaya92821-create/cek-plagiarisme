@@ -698,6 +698,35 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
 .hnote { grid-area: note; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; background: var(--surface-2); font-size: 13px; min-width: 0; }
 @media (max-width: 760px) { .hrow { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main del" "score score" "pay pay" "note note"; } }
 @media (max-width: 1000px) { .top .tabs { grid-template-columns: repeat(5, minmax(0, 1fr)); } .top .tab { font-size: 10.5px; } }
+/* ===== v9: pembayaran & tagihan ===== */
+#payCard { margin-bottom: 16px; }
+.paygrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 20px; }
+@media (max-width: 760px) { .paygrid { grid-template-columns: minmax(0, 1fr); } }
+.qrisinfo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.qrisinfo > div { display: grid; min-width: 0; } .qrisinfo b { overflow-wrap: anywhere; } .qrisinfo small { color: var(--muted); font-size: 12px; }
+.okchip { flex: none; font-size: 12px; font-weight: 600; color: var(--ok); border: 1px solid currentColor; border-radius: 99px; padding: 2px 10px; }
+.qristext { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--surface-2); font: 12.5px var(--f-mono); }
+.banks { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr); }
+.bankrow { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) minmax(0, 1.1fr) auto; gap: 6px; }
+.bankrow input { min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; background: var(--surface); font-size: 13.5px; }
+@media (max-width: 520px) { .bankrow { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; } .bankrow input[data-k="holder"] { grid-column: 1 / 3; grid-row: 2; } }
+.billpanel { width: min(560px, 100%); }
+.billcard { padding: 14px 16px; display: grid; gap: 8px; }
+.billtotal { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.billtotal b { display: block; font-family: var(--f-display); font-size: 30px; letter-spacing: -.02em; margin: 2px 0; }
+.paystate { font-size: 12.5px; font-weight: 600; border-radius: 99px; padding: 3px 12px; color: var(--warn); border: 1px solid currentColor; }
+.paystate.ok { color: var(--ok); }
+.qrcard { justify-items: center; text-align: center; }
+.qrwrap { width: 260px; max-width: 100%; aspect-ratio: 1; display: grid; place-items: center; background: #fff; border-radius: 12px; border: 1px solid var(--line); overflow: hidden; }
+.qrwrap canvas { width: 100%; height: auto; display: block; }
+.bankline { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px dashed var(--line); }
+.bankline:first-of-type { border-top: 0; }
+.bankline > div { display: grid; min-width: 0; } .bankline .num { font-size: 16px; font-weight: 600; overflow-wrap: anywhere; } .bankline small { font-size: 12px; }
+.billacts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.billacts a.btn { grid-column: 1 / -1; text-decoration: none; min-height: 42px; }
+.billacts svg { width: 16px; height: 16px; }
+.billpaid { padding: 4px 2px; }
+.hpay [data-bill] svg { width: 14px; height: 14px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -1043,6 +1072,32 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       <p>Setiap laporan PDF yang diunduh tercatat di sini. Atur tarif dan status pembayaran untuk jasa pengecekan Anda. Hanya ringkasan yang disimpan, bukan isi naskah.</p>
     </div>
     <div class="stats" id="hStats"></div>
+    <div class="card" id="payCard">
+      <details class="acc" id="payAcc">
+        <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h12v4"/><path d="M3 7v10a2 2 0 0 0 2 2h14V9H5a2 2 0 0 1-2-2z"/><circle cx="16" cy="14" r="1.2"/></svg></span><span><b>Pengaturan pembayaran</b><span class="muted" id="paySum">Belum diatur</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="card-b paygrid">
+          <div class="stack">
+            <div class="eyebrow">QRIS</div>
+            <div class="qrisbox" id="qrisBox"></div>
+            <div class="tools">
+              <label class="btn" for="qrisFile">Unggah foto QRIS</label>
+              <input type="file" id="qrisFile" accept="image/*">
+              <button class="btn" type="button" id="qrisPasteBtn">Tempel kode QRIS</button>
+              <button class="btn" type="button" id="qrisDel" hidden>Hapus QRIS</button>
+            </div>
+            <textarea id="qrisText" class="qristext" rows="3" placeholder="Tempel teks kode QRIS (diawali 000201…)" aria-label="Kode QRIS" hidden></textarea>
+            <p class="hint">Pakai QRIS usaha Anda dari GoPay/DANA/OVO Merchant, ShopeePay, atau aplikasi bank. Saat membuat tagihan, CekTeks menambahkan nominal ke QRIS sehingga klien tidak perlu mengetik jumlahnya. Uji dulu dengan nominal kecil.</p>
+          </div>
+          <div class="stack">
+            <div class="eyebrow">Rekening &amp; e-wallet</div>
+            <div class="banks" id="bankRows"></div>
+            <button class="btn" type="button" id="addBank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Tambah rekening</button>
+            <label class="toggle" for="payUnique"><input type="checkbox" id="payUnique" checked><span class="tr" aria-hidden="true"></span>Tambahkan kode unik (mis. Rp 15.000 menjadi Rp 15.123) agar transfer mudah dicocokkan</label>
+            <label class="field" for="payNote">Catatan di tagihan<input type="text" id="payNote" autocomplete="off" placeholder="mis. Kirim bukti bayar lewat WhatsApp"></label>
+          </div>
+        </div>
+      </details>
+    </div>
     <div class="card">
       <div class="card-h hbar">
         <input type="search" id="hSearch" class="search" placeholder="Cari klien atau dokumen" aria-label="Cari riwayat">
@@ -1097,6 +1152,8 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
           <li>Isi nama klien di kartu laporan sebelum mengunduh PDF. Setiap unduhan PDF tercatat di halaman Riwayat.</li>
           <li>Di Riwayat, ubah tarif, tandai Lunas, tambahkan catatan, dan ekspor ke Excel untuk pembukuan.</li>
           <li>Tekan "Bandingkan" pada sumber untuk menunjukkan ke klien bagian mana yang sama, dan "Abaikan" untuk sumber yang tidak relevan, misalnya karya klien sendiri.</li>
+          <li>Di Riwayat, buka Pengaturan pembayaran: unggah foto QRIS usaha Anda dan tambahkan rekening. Tekan "Tagih" pada pesanan untuk membuat QRIS dengan nominal terisi, tagihan PDF, dan pesan WhatsApp.</li>
+          <li>Konfirmasi pembayaran dilakukan manual: cek mutasi atau notifikasi QRIS, lalu tandai Lunas.</li>
         </ul>
       </article>
       <article class="card gcard" id="privasi">
@@ -1153,6 +1210,17 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
     </header>
     <div class="drawer-sum" id="drSum"></div>
     <div class="drawer-b" id="drBody"></div>
+  </section>
+</div>
+<div class="drawer" id="billDrawer" hidden>
+  <div class="drawer-bg" data-close="1"></div>
+  <section class="drawer-panel billpanel" role="dialog" aria-modal="true" aria-labelledby="billTitle">
+    <header class="drawer-h">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
+      <div class="drawer-t"><b id="billTitle">Tagihan</b><span class="muted" id="billSub"></span></div>
+      <button type="button" class="btn sm icon-only" data-close="1" id="billClose" aria-label="Tutup tagihan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </header>
+    <div class="drawer-b" id="billBody"></div>
   </section>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
@@ -1556,7 +1624,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "3.1.0";
+var APP_VERSION = "3.2.0";
 function setBusy(msg, frac) {
   var b = $("#busy");
   if (!msg) { b.hidden = true; return; }
@@ -1603,7 +1671,8 @@ var CDN = "https://cdnjs.cloudflare.com/ajax/libs/";
 // 2. Situs web: dimuat dari folder vendor/ milik situs saat dibutuhkan, lalu disimpan service worker.
 // 3. Selain itu (pratinjau): dari CDN.
 var VENDOR = window.CEKTEKS_VENDOR || "";
-function libUrl(src) { return VENDOR ? VENDOR + src.split("/").pop() : CDN + src; }
+function libUrl(src) { return VENDOR ? VENDOR + src.split("/").pop() : /^https?:/.test(src) ? src : CDN + src; }
+var QR_LIB = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js", QR_READ_LIB = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
 function need(globalName, src) { return window[globalName] ? Promise.resolve() : loadScript(libUrl(src)); }
 function decodeText(buf) {
   var u = new Uint8Array(buf);
@@ -2094,6 +2163,7 @@ document.querySelectorAll("[data-goto]").forEach(function (b) {
     S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = ""; $("#svcName").value = ""; $("#svcContact").value = "";
     bankReq("readwrite", function (st) { st.clear(); return null; }).then(loadBank, function () {});
     histReq("readwrite", function (st) { st.clear(); return null; }).then(loadHist, function () {}); $("#svcPrice").value = "";
+    PAY = { qris: "", banks: [], unique: true, note: "" }; $("#payNote").value = ""; $("#payUnique").checked = true; renderQrisBox(); renderBanks(); renderPaySum();
     setText("", false); setMode("review");
     armed = false; btn.textContent = "Data dihapus"; btn.classList.remove("danger"); toast("Draf, sumber, kunci API, dan pengaturan di perangkat ini sudah dihapus.");
   };
@@ -2290,9 +2360,9 @@ function recordHistory(r) {
 function thisMonth(iso) { var d = new Date(iso), n = new Date(); return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth(); }
 function renderHist() {
   var month = HIST.filter(function (e) { return thisMonth(e.date); });
-  var earned = month.filter(function (e) { return e.paid; }).reduce(function (a, e) { return a + (e.price || 0); }, 0);
+  var earned = month.filter(function (e) { return e.paid; }).reduce(function (a, e) { return a + amountDue(e); }, 0);
   var unpaid = HIST.filter(function (e) { return !e.paid && e.price > 0; });
-  var owed = unpaid.reduce(function (a, e) { return a + e.price; }, 0);
+  var owed = unpaid.reduce(function (a, e) { return a + amountDue(e); }, 0);
   $("#hStats").innerHTML = [
     ["Total pemeriksaan", fmtNum(HIST.length), "sejak awal"],
     ["Bulan ini", fmtNum(month.length), "naskah diperiksa"],
@@ -2310,7 +2380,8 @@ function renderHist() {
       '<div class="hmain"><b>' + esc(e.client || "Tanpa nama klien") + "</b><span>" + esc(e.doc) + '</span><small class="muted">' + d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) + " · " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + " · " + fmtNum(e.words) + " kata</small></div>" +
       '<div class="hscore"><span class="chip" style="color:' + lvl(e.score) + '">Sama ' + pctLabel(e.score) + '</span><span class="chip" style="color:' + lvl(e.ai) + '">AI ' + Math.round(e.ai) + "%</span></div>" +
       '<div class="hpay"><label class="field">Tarif<input type="number" min="0" step="1000" inputmode="numeric" data-f="price" value="' + (e.price || "") + '" aria-label="Tarif pesanan"></label>' +
-      '<label class="toggle"><input type="checkbox" data-f="paid"' + (e.paid ? " checked" : "") + '><span class="tr" aria-hidden="true"></span>' + (e.paid ? "Lunas" : "Belum dibayar") + "</label></div>" +
+      '<label class="toggle"><input type="checkbox" data-f="paid"' + (e.paid ? " checked" : "") + '><span class="tr" aria-hidden="true"></span>' + (e.paid ? "Lunas" : "Belum dibayar") + "</label>" +
+      '<button type="button" class="btn sm" data-bill="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>Tagih</button></div>' +
       '<input class="hnote" type="text" data-f="note" placeholder="Catatan (mis. revisi gratis s.d. Jumat)" value="' + esc(e.note || "") + '" aria-label="Catatan">' +
       '<button type="button" class="btn sm icon-only" data-del="1" aria-label="Hapus dari riwayat" title="Hapus">' + TRASH + "</button></div>";
   }).join("") : '<div class="empty">Tidak ada yang cocok dengan pencarian.</div>')
@@ -2323,6 +2394,8 @@ $("#hList").addEventListener("change", function (e) {
   histPut(item);
 });
 $("#hList").addEventListener("click", function (e) {
+  var bill = e.target.closest("[data-bill]");
+  if (bill) { openBill(bill.closest(".hrow").dataset.id); return; }
   var b = e.target.closest("[data-del]"); if (!b) return;
   var id = b.closest(".hrow").dataset.id;
   histReq("readwrite", function (st) { st.delete(id); return null; }).then(loadHist).then(function () { toast("Dihapus dari riwayat."); });
@@ -2331,11 +2404,276 @@ $("#hSearch").oninput = renderHist; $("#hFilter").onchange = renderHist;
 $("#hExport").onclick = function () {
   if (!HIST.length) return toast("Riwayat masih kosong.");
   var cell = function (v) { v = String(v == null ? "" : v); return /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
-  var rows = [["Tanggal", "Klien", "Dokumen", "Kata", "Kesamaan (%)", "Sama persis (%)", "Parafrase (%)", "Kemungkinan AI (%)", "Sumber teratas", "Tarif (Rp)", "Status", "Catatan", "ID laporan"]]
-    .concat(HIST.map(function (e) { return [new Date(e.date).toLocaleString("id-ID"), e.client, e.doc, e.words, String(e.score).replace(".", ","), String(e.exact).replace(".", ","), String(e.para).replace(".", ","), Math.round(e.ai), e.sources.join(", "), e.price || 0, e.paid ? "Lunas" : "Belum dibayar", e.note, e.id]; }));
+  var rows = [["Tanggal", "No. tagihan", "Klien", "No. WA", "Dokumen", "Kata", "Kesamaan (%)", "Sama persis (%)", "Parafrase (%)", "Kemungkinan AI (%)", "Sumber teratas", "Tarif (Rp)", "Kode unik", "Total (Rp)", "Status", "Catatan", "ID laporan"]]
+    .concat(HIST.map(function (e) { return [new Date(e.date).toLocaleString("id-ID"), invoiceNo(e), e.client, e.phone || "", e.doc, e.words, String(e.score).replace(".", ","), String(e.exact).replace(".", ","), String(e.para).replace(".", ","), Math.round(e.ai), e.sources.join(", "), e.price || 0, e.code || 0, amountDue(e), e.paid ? "Lunas" : "Belum dibayar", e.note, e.id]; }));
   download(new Blob(["﻿" + rows.map(function (r) { return r.map(cell).join(";"); }).join("\r\n")], { type: "text/csv;charset=utf-8" }), "riwayat-CekTeks-" + new Date().toISOString().slice(0, 10) + ".csv");
 };
 loadHist();
+/* ---- QRIS: membaca, memeriksa, dan menambahkan nominal (standar EMVCo) ---- */
+var QRIS = {
+  crc: function (str) {
+    var c = 0xFFFF;
+    for (var i = 0; i < str.length; i++) { c ^= str.charCodeAt(i) << 8; for (var j = 0; j < 8; j++) c = c & 0x8000 ? ((c << 1) ^ 0x1021) & 0xFFFF : (c << 1) & 0xFFFF; }
+    return ("000" + c.toString(16).toUpperCase()).slice(-4);
+  },
+  parse: function (p) {
+    var out = [], i = 0;
+    while (i < p.length) {
+      var id = p.substr(i, 2), len = +p.substr(i + 2, 2);
+      if (!/^\d{2}$/.test(id) || !/^\d{2}$/.test(p.substr(i + 2, 2)) || i + 4 + len > p.length) throw new Error("Format kode QRIS tidak dikenali.");
+      out.push([id, p.substr(i + 4, len)]); i += 4 + len;
+    }
+    return out;
+  },
+  tlv: function (id, v) { return id + ("0" + v.length).slice(-2) + v; },
+  info: function (p) {
+    p = String(p || "").trim();
+    if (!/^000201/.test(p)) throw new Error("Ini bukan kode QRIS (kode QRIS selalu diawali 000201).");
+    var tags = QRIS.parse(p), get = function (id) { var t = tags.filter(function (x) { return x[0] === id; })[0]; return t ? t[1] : ""; };
+    if (!get("63") || QRIS.crc(p.slice(0, -4)) !== get("63").toUpperCase()) throw new Error("Kode QRIS rusak (CRC tidak cocok). Coba foto ulang dengan lebih jelas.");
+    return { payload: p, merchant: get("59"), city: get("60"), dynamic: get("01") === "12", amount: get("54"), qris: /ID\.CO\.QRIS/i.test(p) };
+  },
+  withAmount: function (p, amount) {
+    var amt = String(Math.round(amount)), out = "", put = false;
+    QRIS.parse(String(p).trim()).forEach(function (t) {
+      if (t[0] === "63" || t[0] === "54") return;
+      if (t[0] === "01") t = ["01", "12"];                                  // 12 = QR dinamis (sekali bayar, nominal tetap)
+      if (t[0] === "58" && !put) { out += QRIS.tlv("54", amt); put = true; } // nominal ditaruh sebelum kode negara
+      out += QRIS.tlv(t[0], t[1]);
+    });
+    if (!put) out += QRIS.tlv("54", amt);
+    out += "6304";
+    return out + QRIS.crc(out);
+  }
+};
+function qrCanvas(text, size) {
+  return need("qrcode", QR_LIB).then(function () {
+    var q = window.qrcode(0, "M"); q.addData(text); q.make();
+    var n = q.getModuleCount(), m = 3, cell = Math.max(2, Math.floor((size || 280) / (n + 2 * m))), c = document.createElement("canvas");
+    c.width = c.height = cell * (n + 2 * m);
+    var x = c.getContext("2d"); x.fillStyle = "#ffffff"; x.fillRect(0, 0, c.width, c.height); x.fillStyle = "#000000";
+    for (var r = 0; r < n; r++) for (var k = 0; k < n; k++) if (q.isDark(r, k)) x.fillRect((k + m) * cell, (r + m) * cell, cell, cell);
+    return c;
+  });
+}
+function readQrImage(file) {
+  return need("jsQR", QR_READ_LIB).then(function () {
+    return new Promise(function (res, rej) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var tries = [1400, 900, 600], found = null;
+        for (var i = 0; i < tries.length && !found; i++) {
+          var sc = Math.min(1, tries[i] / Math.max(img.width, img.height)), w = Math.max(1, Math.round(img.width * sc)), h = Math.max(1, Math.round(img.height * sc));
+          var c = document.createElement("canvas"); c.width = w; c.height = h; var x = c.getContext("2d"); x.drawImage(img, 0, 0, w, h);
+          var r = window.jsQR(x.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: "attemptBoth" });
+          if (r && r.data) found = r.data;
+        }
+        found ? res(found) : rej(new Error("Kode QR tidak terbaca. Pastikan foto QRIS tajam, tidak terpotong, dan cukup terang."));
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error("Gambar tidak bisa dibuka.")); };
+      img.src = url;
+    });
+  });
+}
+
+/* ---- pengaturan pembayaran ---- */
+var PAY = { qris: "", banks: [], unique: true, note: "" };
+try { var _pay = JSON.parse(store("ct_pay") || "null"); if (_pay) PAY = Object.assign(PAY, _pay); } catch (e) {}
+function savePay() { store("ct_pay", JSON.stringify(PAY)); renderPaySum(); }
+function payReady() { return !!(PAY.qris || PAY.banks.some(function (b) { return b.number; })); }
+function renderPaySum() {
+  var parts = []; if (PAY.qris) { try { parts.push("QRIS " + QRIS.info(PAY.qris).merchant); } catch (e) {} }
+  var nb = PAY.banks.filter(function (b) { return b.number; }).length; if (nb) parts.push(nb + " rekening");
+  $("#paySum").textContent = parts.length ? parts.join(" · ") : "Belum diatur. Atur sekali sebelum menagih klien.";
+}
+function renderQrisBox() {
+  var box = $("#qrisBox");
+  $("#qrisDel").hidden = !PAY.qris;
+  if (!PAY.qris) { box.innerHTML = '<div class="empty" style="padding:10px 0">Belum ada QRIS.</div>'; return; }
+  try {
+    var inf = QRIS.info(PAY.qris);
+    box.innerHTML = '<div class="qrisinfo"><div><b>' + esc(inf.merchant || "Merchant") + "</b><small>" + esc([inf.city, inf.qris ? "QRIS" : "Kode QR pembayaran", inf.dynamic ? "dinamis" : "statis"].filter(Boolean).join(" · ")) + "</small></div>" +
+      '<span class="okchip">Siap dipakai</span></div>';
+  } catch (e) { box.innerHTML = '<div class="warn">' + esc(e.message) + "</div>"; }
+}
+function setQris(text) {
+  var inf = QRIS.info(text);
+  PAY.qris = inf.payload; savePay(); renderQrisBox();
+  toast("QRIS " + (inf.merchant || "") + " tersimpan.");
+}
+$("#qrisFile").onchange = function (e) {
+  var f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  setBusy("Membaca kode QRIS…");
+  readQrImage(f).then(function (t) { setBusy(null); setQris(t); }, function (err) { setBusy(null); toast(err.message); }).catch(function (err) { toast(err.message); });
+};
+$("#qrisPasteBtn").onclick = function () { var t = $("#qrisText"); t.hidden = !t.hidden; if (!t.hidden) t.focus(); };
+$("#qrisText").addEventListener("input", function () {
+  var v = this.value.trim(); if (!v) return;
+  try { setQris(v); this.value = ""; this.hidden = true; } catch (e) { if (v.length > 60) toast(e.message); }
+});
+$("#qrisDel").onclick = function () { PAY.qris = ""; savePay(); renderQrisBox(); toast("QRIS dihapus."); };
+function renderBanks() {
+  var box = $("#bankRows");
+  if (!PAY.banks.length) PAY.banks.push({ bank: "", number: "", holder: "" });
+  box.innerHTML = PAY.banks.map(function (b, i) {
+    return '<div class="bankrow" data-i="' + i + '"><input type="text" data-k="bank" placeholder="Bank / e-wallet" aria-label="Nama bank atau e-wallet" value="' + esc(b.bank) + '">' +
+      '<input type="text" data-k="number" inputmode="numeric" placeholder="Nomor" aria-label="Nomor rekening" value="' + esc(b.number) + '">' +
+      '<input type="text" data-k="holder" placeholder="Atas nama" aria-label="Atas nama" value="' + esc(b.holder) + '">' +
+      '<button type="button" class="btn sm icon-only" data-delbank="1" aria-label="Hapus rekening">' + TRASH + "</button></div>";
+  }).join("");
+}
+$("#bankRows").addEventListener("input", function (e) { var r = e.target.closest(".bankrow"); if (!r) return; PAY.banks[+r.dataset.i][e.target.dataset.k] = e.target.value.trim(); savePay(); });
+$("#bankRows").addEventListener("click", function (e) { if (!e.target.closest("[data-delbank]")) return; PAY.banks.splice(+e.target.closest(".bankrow").dataset.i, 1); savePay(); renderBanks(); });
+$("#addBank").onclick = function () { PAY.banks.push({ bank: "", number: "", holder: "" }); renderBanks(); var ins = $("#bankRows").querySelectorAll("input"); ins[ins.length - 3].focus(); };
+$("#payUnique").checked = PAY.unique !== false;
+$("#payUnique").onchange = function () { PAY.unique = this.checked; savePay(); };
+$("#payNote").value = PAY.note || "";
+$("#payNote").oninput = function () { PAY.note = this.value.trim(); savePay(); };
+renderQrisBox(); renderBanks(); renderPaySum();
+if (!payReady()) $("#payAcc").open = true;
+
+/* ---- tagihan ---- */
+function amountDue(e) { return (e.price || 0) + (e.price ? e.code || 0 : 0); }
+function invoiceNo(e) { var d = new Date(e.date); return "INV-" + d.getFullYear() + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2) + "-" + String(e.id).slice(0, 5).toUpperCase(); }
+function waNumber(ph) { var d = String(ph || "").replace(/\D/g, ""); if (/^0/.test(d)) d = "62" + d.slice(1); return d.length >= 9 ? d : ""; }
+function billText(e) {
+  var svc = ($("#svcName").value || "").trim(), L = [];
+  L.push("Halo" + (e.client ? " " + e.client : "") + ", berikut tagihan pemeriksaan naskah:");
+  L.push("", "No. tagihan: " + invoiceNo(e), "Dokumen: " + e.doc, "Hasil: kesamaan " + pctLabel(e.score) + ", kemungkinan AI " + Math.round(e.ai) + "%", "", "*Total: " + RP.format(amountDue(e)) + "*" + (e.code ? " (sudah termasuk kode unik " + e.code + ")" : ""));
+  L.push("", "Pembayaran:");
+  if (PAY.qris) L.push("- QRIS (gambar QR saya kirim terpisah, nominal sudah terisi)");
+  PAY.banks.filter(function (b) { return b.number; }).forEach(function (b) { L.push("- " + (b.bank || "Rekening") + " " + b.number + (b.holder ? " a.n. " + b.holder : "")); });
+  if (e.code) L.push("", "Mohon transfer tepat " + RP.format(amountDue(e)) + " agar pembayaran mudah dicocokkan.");
+  if (PAY.note) L.push("", PAY.note);
+  L.push("", "Terima kasih" + (svc ? ", " + svc : "") + ".");
+  return L.join("\n");
+}
+var billState = { id: null, canvas: null };
+function openBill(id) {
+  var e = HIST.filter(function (x) { return x.id === id; })[0]; if (!e) return;
+  if (PAY.unique !== false && !e.code && e.price) { var h = 0; for (var i = 0; i < e.id.length; i++) h = (h * 31 + e.id.charCodeAt(i)) >>> 0; e.code = 1 + (h % 499); histPut(e); }
+  if (PAY.unique === false && e.code && !e.paid) { e.code = 0; histPut(e); }
+  billState.id = id; billState.canvas = null;
+  $("#billTitle").textContent = "Tagihan " + invoiceNo(e);
+  $("#billSub").textContent = (e.client || "Tanpa nama klien") + " · " + e.doc;
+  renderBill(e);
+  lastFocus = document.activeElement; $("#billDrawer").hidden = false; document.body.classList.add("noscroll"); $("#billClose").focus();
+}
+function renderBill(e) {
+  var body = $("#billBody"), total = amountDue(e), banks = PAY.banks.filter(function (b) { return b.number; });
+  if (!e.price) {
+    body.innerHTML = '<div class="card billcard"><div class="eyebrow">Tarif belum diisi</div><p class="hint">Isi tarif pesanan ini untuk membuat tagihan.</p>' +
+      '<label class="field" for="billPrice">Tarif (Rp)<input type="number" id="billPrice" min="0" step="1000" inputmode="numeric" placeholder="mis. 15000"></label>' +
+      '<button class="btn primary" type="button" id="billPriceOk">Simpan tarif</button></div>';
+    $("#billPriceOk").onclick = function () { var v = +$("#billPrice").value || 0; if (!v) return toast("Isi tarif terlebih dahulu."); e.price = v; histPut(e).then(function () { openBill(e.id); }); };
+    return;
+  }
+  if (!payReady()) {
+    body.innerHTML = '<div class="card billcard"><div class="eyebrow">Metode pembayaran belum diatur</div><p class="hint">Tambahkan QRIS atau nomor rekening sekali saja, lalu semua tagihan memakainya.</p>' +
+      '<button class="btn primary" type="button" id="billSetup">Atur pembayaran</button></div>';
+    $("#billSetup").onclick = function () { closeBill(); $("#payAcc").open = true; $("#payCard").scrollIntoView({ behavior: "smooth", block: "start" }); };
+    return;
+  }
+  body.innerHTML =
+    '<div class="card billcard billtotal"><div><div class="eyebrow">Total tagihan</div><b class="num" id="billTotal">' + RP.format(total) + "</b>" +
+      '<small class="muted">' + RP.format(e.price) + " tarif" + (e.code ? " + " + e.code + " kode unik" : "") + "</small></div>" +
+      '<span class="paystate ' + (e.paid ? "ok" : "") + '">' + (e.paid ? "Lunas" : "Belum dibayar") + "</span></div>" +
+    (PAY.qris ? '<div class="card billcard qrcard"><div class="eyebrow">Bayar dengan QRIS</div><div class="qrwrap" id="billQr"><div class="spin" aria-hidden="true"></div></div>' +
+      '<b id="billMerchant"></b><small class="muted">Scan dengan aplikasi bank atau e-wallet apa pun. Nominal ' + RP.format(total) + " sudah terisi.</small>" +
+      '<button class="btn" type="button" id="billQrDl">Unduh gambar QR</button></div>' : "") +
+    (banks.length ? '<div class="card billcard"><div class="eyebrow">Transfer ke</div>' + banks.map(function (b, i) {
+      return '<div class="bankline"><div><b>' + esc(b.bank || "Rekening") + '</b><span class="num">' + esc(b.number) + "</span>" + (b.holder ? "<small class=\"muted\">a.n. " + esc(b.holder) + "</small>" : "") + "</div>" +
+        '<button type="button" class="btn sm" data-copy="' + esc(b.number) + '">Salin</button></div>';
+    }).join("") + "</div>" : "") +
+    '<div class="card billcard"><div class="eyebrow">Kirim ke klien</div>' +
+      '<label class="field" for="billPhone">Nomor WhatsApp klien (opsional)<input type="tel" id="billPhone" inputmode="tel" placeholder="mis. 0812xxxxxxx" value="' + esc(e.phone || "") + '"></label>' +
+      '<div class="billacts"><a class="btn primary" id="billWa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4.1A8 8 0 1 1 20 12z"/></svg>Kirim lewat WhatsApp</a>' +
+      '<button class="btn" type="button" id="billPdf">Unduh tagihan PDF</button><button class="btn" type="button" id="billCopy">Salin pesan</button></div>' +
+      '<p class="hint">WhatsApp hanya mengirim teks. Lampirkan gambar QR atau tagihan PDF secara manual di obrolan.</p></div>' +
+    '<label class="toggle billpaid" for="billPaid"><input type="checkbox" id="billPaid"' + (e.paid ? " checked" : "") + '><span class="tr" aria-hidden="true"></span>Sudah dibayar (cek mutasi rekening atau notifikasi QRIS dulu)</label>';
+  function updWa() {
+    var num = waNumber($("#billPhone").value), txt = encodeURIComponent(billText(e));
+    $("#billWa").href = "https://wa.me/" + num + "?text=" + txt;
+  }
+  updWa();
+  $("#billPhone").oninput = function () { e.phone = this.value.trim(); updWa(); clearTimeout(renderBill.t); renderBill.t = setTimeout(function () { histPut(e); }, 400); };
+  $("#billCopy").onclick = function () { copyText(billText(e), "Pesan tagihan disalin."); };
+  body.querySelectorAll("[data-copy]").forEach(function (b) { b.onclick = function () { copyText(b.dataset.copy, "Nomor disalin."); }; });
+  $("#billPaid").onchange = function () { e.paid = this.checked; histPut(e).then(function () { renderBill(e); }); toast(e.paid ? "Pesanan ditandai lunas." : "Pesanan ditandai belum dibayar."); };
+  $("#billPdf").onclick = function () { invoicePdf(e).then(function (b) { download(b, invoiceNo(e) + ".pdf"); }, function (err) { toast("Gagal membuat tagihan: " + err.message); }); };
+  if (PAY.qris) {
+    var payload = QRIS.withAmount(PAY.qris, total);
+    $("#billMerchant").textContent = QRIS.info(PAY.qris).merchant;
+    qrCanvas(payload, 260).then(function (c) {
+      billState.canvas = c; c.setAttribute("role", "img"); c.setAttribute("aria-label", "Kode QRIS untuk membayar " + RP.format(total)); c.dataset.payload = payload;
+      var w = $("#billQr"); if (w) { w.innerHTML = ""; w.appendChild(c); }
+    }, function () { var w = $("#billQr"); if (w) w.innerHTML = '<div class="warn">Pembuat QR gagal dimuat. Periksa koneksi lalu buka tagihan lagi.</div>'; });
+    $("#billQrDl").onclick = function () { if (!billState.canvas) return; billState.canvas.toBlob(function (b) { download(b, "QRIS-" + invoiceNo(e) + ".png"); }); };
+  }
+}
+function copyText(t, msg) {
+  function fallback() { var ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); var ok = false; try { ok = document.execCommand("copy"); } catch (e) {} ta.remove(); toast(ok ? msg : "Browser menolak menyalin otomatis."); }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { toast(msg); }, fallback); else fallback();
+}
+function closeBill() { $("#billDrawer").hidden = true; document.body.classList.remove("noscroll"); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+$("#billDrawer").addEventListener("click", function (e) { if (e.target.closest("[data-close]")) closeBill(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#billDrawer").hidden) closeBill(); });
+
+function invoicePdf(e) {
+  return need("jspdf", "jspdf/2.5.1/jspdf.umd.min.js").then(function () {
+    return PAY.qris ? qrCanvas(QRIS.withAmount(PAY.qris, amountDue(e)), 360) : null;
+  }).then(function (qr) {
+    var doc = new window.jspdf.jsPDF({ unit: "pt", format: "a4" }), W = 595.28, M = 48, y = 64;
+    var INK = [33, 37, 41], MUTED = [120, 126, 135], ACC = [14, 106, 134], svc = ($("#svcName").value || "").trim(), contact = ($("#svcContact").value || "").trim();
+    function f(sz, st, c) { doc.setFont("helvetica", st || "normal"); doc.setFontSize(sz); c = c || INK; doc.setTextColor(c[0], c[1], c[2]); }
+    doc.setFillColor(ACC[0], ACC[1], ACC[2]); doc.rect(0, 0, W, 6, "F");
+    f(18, "bold"); doc.text(pdfSafe(svc || "CekTeks"), M, y);
+    if (contact) { f(9, "normal", MUTED); doc.text(pdfSafe(contact), M, y + 16); }
+    f(26, "bold", ACC); doc.text("TAGIHAN", W - M, y + 2, { align: "right" });
+    f(9, "normal", MUTED); doc.text(invoiceNo(e), W - M, y + 18, { align: "right" });
+    doc.text("Tanggal: " + new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }), W - M, y + 31, { align: "right" });
+    y += 70;
+    f(9, "bold", MUTED); doc.text("KEPADA", M, y); f(12, "bold"); doc.text(pdfSafe(e.client || "-"), M, y + 17);
+    if (e.phone) { f(9, "normal", MUTED); doc.text(pdfSafe(e.phone), M, y + 31); }
+    var stc = e.paid ? [29, 127, 85] : [181, 112, 12];
+    doc.setDrawColor(stc[0], stc[1], stc[2]); doc.setLineWidth(1.5); doc.roundedRect(W - M - 120, y - 4, 120, 26, 6, 6, "S");
+    f(11, "bold", stc); doc.text(e.paid ? "LUNAS" : "BELUM DIBAYAR", W - M - 60, y + 13, { align: "center" });
+    y += 56;
+    doc.setFillColor(245, 247, 250); doc.rect(M, y, W - 2 * M, 24, "F");
+    f(9, "bold", MUTED); doc.text("DESKRIPSI", M + 10, y + 16); doc.text("JUMLAH", W - M - 10, y + 16, { align: "right" });
+    y += 40;
+    f(10.5, "bold"); doc.text("Pemeriksaan plagiarisme & deteksi tulisan AI", M + 10, y);
+    f(9, "normal", MUTED); var dl = doc.splitTextToSize(pdfSafe(e.doc + " - " + fmtNum(e.words) + " kata - kesamaan " + pctLabel(e.score) + ", kemungkinan AI " + Math.round(e.ai) + "%"), W - 2 * M - 140);
+    doc.text(dl, M + 10, y + 14);
+    f(10.5); doc.text(pdfSafe(RP.format(e.price)), W - M - 10, y, { align: "right" });
+    y += 18 + dl.length * 12;
+    if (e.code) { f(10); doc.text("Kode unik pembayaran", M + 10, y); doc.text(pdfSafe(RP.format(e.code)), W - M - 10, y, { align: "right" }); y += 18; }
+    doc.setDrawColor(222, 226, 230); doc.setLineWidth(.8); doc.line(M, y, W - M, y); y += 24;
+    f(12, "bold"); doc.text("Total", W - M - 160, y); f(16, "bold", ACC); doc.text(pdfSafe(RP.format(amountDue(e))), W - M - 10, y + 1, { align: "right" });
+    y += 40;
+    f(12, "bold"); doc.text("Cara pembayaran", M, y); y += 18;
+    var x0 = M;
+    if (qr) {
+      doc.setDrawColor(222, 226, 230); doc.roundedRect(M, y, 170, 196, 8, 8, "S");
+      doc.addImage(qr.toDataURL("image/png"), "PNG", M + 15, y + 12, 140, 140);
+      f(9, "bold"); doc.text(pdfSafe(QRIS.info(PAY.qris).merchant || "QRIS"), M + 85, y + 168, { align: "center" });
+      f(7.5, "normal", MUTED); doc.text("Scan QRIS, nominal sudah terisi", M + 85, y + 182, { align: "center" });
+      x0 = M + 190;
+    }
+    var yy = y + 10;
+    PAY.banks.filter(function (b) { return b.number; }).forEach(function (b) {
+      f(9, "bold", MUTED); doc.text(pdfSafe((b.bank || "Rekening").toUpperCase()), x0, yy);
+      f(13, "bold"); doc.text(pdfSafe(b.number), x0, yy + 16);
+      if (b.holder) { f(9, "normal", MUTED); doc.text("a.n. " + pdfSafe(b.holder), x0, yy + 29); }
+      yy += 46;
+    });
+    if (e.code) { f(9, "normal", INK); doc.text(doc.splitTextToSize("Mohon transfer tepat " + pdfSafe(RP.format(amountDue(e))) + " agar pembayaran mudah dicocokkan.", W - M - x0), x0, yy + 4); yy += 30; }
+    if (PAY.note) { f(9, "italic", MUTED); doc.text(doc.splitTextToSize(pdfSafe(PAY.note), W - M - x0), x0, yy + 4); }
+    f(8, "normal", MUTED); doc.text("Dibuat dengan CekTeks  |  " + invoiceNo(e), W / 2, 812, { align: "center" });
+    return doc.output("blob");
+  });
+}
 /* ---- laporan & unduhan ---- */
 var IN_FRAME = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
 if (IN_FRAME) $("#frameNote").hidden = false;

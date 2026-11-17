@@ -29,6 +29,7 @@ lalu buka dengan browser apa pun (Chrome, Safari, Edge, Firefox). Tidak butuh se
 - Identitas jasa pengecekan (nama, kontak, klien) di laporan, beserta bagian Metode & cakupan
 - Perbandingan berdampingan naskah vs sumber, dan opsi mengabaikan sumber tertentu
 - Riwayat & pesanan: catatan setiap laporan, tarif, status pembayaran, ringkasan pendapatan, ekspor Excel
+- Tagihan: QRIS dengan nominal terisi (dari foto QRIS usaha Anda), rekening & kode unik, tagihan PDF, pesan WhatsApp
 - Unduh juga sebagai Word atau TXT
 - Bandingkan banyak dokumen sekaligus
 
@@ -37,7 +38,7 @@ lalu buka dengan browser apa pun (Chrome, Safari, Edge, Firefox). Tidak butuh se
 sekali, situs tetap jalan offline dan bisa dipasang lewat menu browser "Tambahkan ke layar utama".
 
 Kode sumber halaman ada di `web/src/app.html`; jalankan `python web/build.py` untuk membangun ulang.
-Pustaka pihak ketiga di `web/vendor/`: pdf.js (Apache-2.0), mammoth (BSD-2), JSZip (MIT), jsPDF (MIT).
+Pustaka pihak ketiga di `web/vendor/`: pdf.js (Apache-2.0), mammoth (BSD-2), JSZip (MIT), jsPDF (MIT), qrcode-generator (MIT), jsQR (Apache-2.0).
 
 ## Instalasi
 

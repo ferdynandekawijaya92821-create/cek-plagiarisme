@@ -211,6 +211,51 @@ async function download(page, selector) {
     await page.click('.hrow [data-del]'); await page.waitForFunction((n) => HIST.length === n - 1 && !HIST.some((e) => e.client === "Klien Riwayat"), n0);
     await page.click("#tab-periksa"); await page.fill("#clientName", "");
   });
+  // QRIS statis tiruan (format EMVCo) untuk menguji alur pembayaran.
+  function crc16(str) { let c = 0xFFFF; for (let i = 0; i < str.length; i++) { c ^= str.charCodeAt(i) << 8; for (let j = 0; j < 8; j++) c = c & 0x8000 ? ((c << 1) ^ 0x1021) & 0xFFFF : (c << 1) & 0xFFFF; } return c.toString(16).toUpperCase().padStart(4, "0"); }
+  const tlv = (id, v) => id + String(v.length).padStart(2, "0") + v;
+  const QRIS_BODY = tlv("00", "01") + tlv("01", "11") + tlv("26", tlv("00", "ID.CO.QRIS.WWW") + tlv("01", "936000140000000001")) + tlv("52", "5814") + tlv("53", "360") + tlv("58", "ID") + tlv("59", "TOKO UJI") + tlv("60", "JAKARTA") + "6304";
+  const QRIS_STATIC = QRIS_BODY + crc16(QRIS_BODY);
+  await test("QRIS: kode dibaca dari foto, nominal ditambahkan sesuai standar (CRC valid)", async () => {
+    await page.click("#tab-riwayat");
+    const png = await page.evaluate((q) => qrCanvas(q, 400).then((c) => c.toDataURL("image/png").split(",")[1]), QRIS_STATIC);
+    await page.setInputFiles("#qrisFile", { name: "qris.png", mimeType: "image/png", buffer: Buffer.from(png, "base64") });
+    await page.waitForFunction(() => PAY.qris && PAY.qris.length > 20, null, { timeout: 15000 });
+    ok((await page.textContent("#qrisBox")).includes("TOKO UJI"), "nama merchant tidak tampil");
+    const dyn = await page.evaluate((q) => { const d = QRIS.withAmount(q, 15123); const i = QRIS.info(d); return [i.amount, i.dynamic, d]; }, QRIS_STATIC);
+    ok(dyn[0] === "15123" && dyn[1] === true, "nominal/jenis QRIS dinamis salah: " + dyn[0] + "/" + dyn[1]);
+    ok(crc16(dyn[2].slice(0, -4)) === dyn[2].slice(-4), "CRC QRIS dinamis tidak valid");
+    const bad = await page.evaluate((q) => { try { QRIS.info(q.slice(0, -1) + (q.slice(-1) === "0" ? "1" : "0")); return "lolos"; } catch (e) { return e.message; } }, QRIS_STATIC);
+    ok(/CRC/.test(bad), "QRIS rusak tidak ditolak");
+  });
+  await test("tagihan: total dengan kode unik, QR berisi nominal, pesan WhatsApp, PDF, tandai lunas", async () => {
+    await page.click("#tab-riwayat");
+    await page.fill('#bankRows .bankrow input[data-k="bank"]', "BCA");
+    await page.fill('#bankRows .bankrow input[data-k="number"]', "1234567890");
+    await page.fill('#bankRows .bankrow input[data-k="holder"]', "Pemilik Uji");
+    await page.evaluate(() => histPut({ id: "uji-tagihan-1", date: new Date().toISOString(), client: "Rina", doc: "Skripsi Bab 2.pdf", words: 3200, score: 18.4, exact: 14, para: 4.4, ai: 22, sources: ["id.wikipedia.org"], price: 15000, paid: false, note: "" }));
+    await page.waitForSelector('.hrow[data-id="uji-tagihan-1"] [data-bill]');
+    await page.click('.hrow[data-id="uji-tagihan-1"] [data-bill]');
+    ok(await page.isVisible("#billDrawer"), "panel tagihan tidak terbuka");
+    const total = await page.evaluate(() => amountDue(HIST.filter((e) => e.id === "uji-tagihan-1")[0]));
+    ok(total > 15000 && total < 15500, "total dengan kode unik salah: " + total);
+    await page.waitForSelector("#billQr canvas");
+    const scanned = await page.evaluate(() => { const c = document.querySelector("#billQr canvas"); const r = jsQR(c.getContext("2d").getImageData(0, 0, c.width, c.height).data, c.width, c.height); return r && r.data; });
+    ok(scanned, "QR tagihan tidak bisa dipindai");
+    ok(scanned.includes(tlv("54", String(total))) && crc16(scanned.slice(0, -4)) === scanned.slice(-4), "QR tagihan tidak berisi nominal " + total + " dengan CRC valid");
+    await page.fill("#billPhone", "0812-3456-789");
+    const wa = await page.getAttribute("#billWa", "href");
+    ok(wa.startsWith("https://wa.me/628123456789?text=") && decodeURIComponent(wa).includes("Rp") && decodeURIComponent(wa).includes("1234567890"), "tautan WhatsApp salah: " + wa.slice(0, 60));
+    const inv = await download(page, "#billPdf");
+    ok(inv.buf.slice(0, 4).toString() === "%PDF" && /^INV-\d{8}-/.test(inv.name), "tagihan PDF tidak valid: " + inv.name);
+    await page.click(".billpaid");
+    await page.waitForFunction(() => HIST.filter((e) => e.id === "uji-tagihan-1")[0].paid === true);
+    await page.keyboard.press("Escape");
+    ok(await page.isHidden("#billDrawer"), "Esc tidak menutup tagihan");
+    await page.click('.hrow[data-id="uji-tagihan-1"] [data-del]');
+    await page.waitForFunction(() => !HIST.some((e) => e.id === "uji-tagihan-1"));
+    await page.click("#tab-periksa");
+  });
   await test("identitas jasa & klien tampil di laporan, beserta metode & cakupan", async () => {
     await page.click("#tab-sumber"); await page.fill("#svcName", "Jasa Uji"); await page.fill("#svcContact", "WA 0800"); await page.click("#tab-periksa");
     await page.fill("#clientName", "Budi");
@@ -221,7 +266,7 @@ async function download(page, selector) {
   });
   await test("tetap berjalan offline setelah kunjungan pertama", async () => {
     await page.click("#tab-periksa");
-    await page.waitForFunction(async () => { const ks = await caches.keys(); if (!ks.length) return false; const c = await caches.open(ks[0]); return (await c.keys()).filter((r) => r.url.includes("/vendor/")).length === 5; }, null, { timeout: 30000 });
+    await page.waitForFunction(async () => { const ks = await caches.keys(); if (!ks.length) return false; const c = await caches.open(ks[0]); return (await c.keys()).filter((r) => r.url.includes("/vendor/")).length === 7; }, null, { timeout: 30000 });
     await ctx.setOffline(true); await page.reload(); await ready(page);
     await page.setInputFiles("#mainFile", path.join(FIX, "sample.pdf"));
     await page.waitForFunction(() => S.doc && S.doc.layout, null, { timeout: 30000 });
