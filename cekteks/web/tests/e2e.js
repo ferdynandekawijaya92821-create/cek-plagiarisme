@@ -89,7 +89,7 @@ async function download(page, selector) {
     ok(await page.evaluate(() => S.plag.score) > 30, "kesamaan PDF terlalu rendah");
   });
   await test("klik kartu sumber menyorot bagiannya", async () => {
-    await page.click(".srcitem");
+    await page.click(".srcmain");
     ok(await page.evaluate(() => S.focusNo) === 1, "fokus sumber tidak aktif");
     ok(await page.isVisible("#focusBar"), "bilah fokus tidak tampil");
   });
@@ -164,6 +164,53 @@ async function download(page, selector) {
     await page.click("#webClear");
     for (const id of ["wWikiId", "wWikiEn", "wOpenAlex"]) await page.check("#" + id);
   });
+  await test("perbandingan berdampingan: naskah & sumber, sama persis dan parafrase", async () => {
+    await page.click("#tab-periksa");
+    const mix = "Fotosintesis adalah proses biokimia pembentukan zat makanan berupa karbohidrat yang dilakukan oleh tumbuhan. " + PARA;
+    await page.evaluate((t) => setText(t), mix); await page.waitForTimeout(500);
+    const no = await page.evaluate(() => S.plag.matched.filter((m) => /Pemanasan/.test(m.name))[0].no);
+    await page.click('.srcact [data-act="cmp"][data-no="' + no + '"]');
+    ok(await page.isVisible("#drawer"), "panel perbandingan tidak terbuka");
+    ok(await page.locator("#drBody .cmp").count() >= 1, "tidak ada bagian di panel");
+    ok(await page.locator("#drBody .tagp").count() >= 1, "bagian parafrase tidak ditandai");
+    ok(await page.locator("#drBody .cmp-cols > div:nth-child(2) mark").count() >= 3, "kata yang sama di sisi sumber tidak disorot");
+    await page.keyboard.press("Escape");
+    ok(await page.isHidden("#drawer"), "Esc tidak menutup panel");
+    const foto = await page.evaluate(() => S.plag.matched.filter((m) => /Fotosintesis/.test(m.name))[0].no);
+    await page.click('.srcact [data-act="cmp"][data-no="' + foto + '"]');
+    const side = await page.textContent("#drBody .cmp-cols > div:nth-child(2) mark");
+    ok(/proses biokimia pembentukan zat makanan/.test(side), "sisi sumber tidak menyorot kalimat yang sama: " + side);
+    await page.click("#drClose");
+  });
+  await test("abaikan sumber: skor dihitung ulang, bisa dikembalikan, tercantum di laporan", async () => {
+    const before = await page.evaluate(() => S.plag.score);
+    const no = await page.evaluate(() => S.plag.matched.filter((m) => /Fotosintesis/.test(m.name))[0].no);
+    await page.click('.srcact [data-act="ex"][data-no="' + no + '"]'); await page.waitForTimeout(300);
+    const after = await page.evaluate(() => [S.plag.score, S.plag.matched.map((m) => m.name).join(",")]);
+    ok(after[0] < before && !/Fotosintesis/.test(after[1]), "sumber yang diabaikan masih dihitung");
+    ok((await download(page, "#dlTxt")).buf.toString().includes("Sumber diabaikan"), "laporan tidak mencantumkan sumber yang diabaikan");
+    await page.click(".exchip"); await page.waitForTimeout(300);
+    ok(await page.evaluate(() => S.plag.score) === before, "sumber tidak kembali setelah dikembalikan");
+  });
+  await test("riwayat & pesanan: unduhan PDF tercatat, tarif dan status lunas dihitung, ekspor Excel", async () => {
+    await page.click("#tab-sumber"); await page.fill("#svcPrice", "15000"); await page.click("#tab-periksa");
+    await page.fill("#clientName", "Klien Riwayat");
+    await download(page, "#dlPdf");
+    await page.waitForFunction(() => HIST.length >= 1 && HIST[0].client === "Klien Riwayat");
+    ok(await page.evaluate(() => HIST[0].price) === 15000, "tarif default tidak dipakai");
+    await page.click("#tab-riwayat");
+    ok((await page.textContent("#hStats")).includes("15.000"), "tagihan belum dibayar tidak tampil");
+    await page.click('.hrow .toggle');
+    // Tampilan diperbarui setelah data tersimpan di perangkat.
+    await page.waitForFunction(() => /15\.000/.test(document.querySelector("#hStats .stat:nth-child(3) b").textContent), null, { timeout: 5000 })
+      .catch(() => { throw new Error("pendapatan bulan ini tidak terhitung"); });
+    ok((await page.textContent(".hrow .toggle")).includes("Lunas"), "label status tidak berubah menjadi Lunas");
+    const csv = (await download(page, "#hExport")).buf.toString();
+    ok(csv.includes("Klien Riwayat") && csv.includes("Lunas") && csv.includes("15000"), "ekspor riwayat tidak lengkap");
+    const n0 = await page.evaluate(() => HIST.length);
+    await page.click('.hrow [data-del]'); await page.waitForFunction((n) => HIST.length === n - 1 && !HIST.some((e) => e.client === "Klien Riwayat"), n0);
+    await page.click("#tab-periksa"); await page.fill("#clientName", "");
+  });
   await test("identitas jasa & klien tampil di laporan, beserta metode & cakupan", async () => {
     await page.click("#tab-sumber"); await page.fill("#svcName", "Jasa Uji"); await page.fill("#svcContact", "WA 0800"); await page.click("#tab-periksa");
     await page.fill("#clientName", "Budi");
@@ -188,7 +235,7 @@ async function download(page, selector) {
     await test(name + ": tanpa scroll horizontal dan tumpang-tindih di semua halaman" + (AXE ? " dan lolos audit WCAG" : ""), async () => {
       const { ctx: c, page: p } = await newPage(browser, opts);
       await p.goto(SITE); await ready(p);
-      for (const v of ["periksa", "sumber", "bandingkan", "metode"]) {
+      for (const v of ["periksa", "sumber", "bandingkan", "riwayat", "metode"]) {
         await p.evaluate((v) => showView(v), v); await p.waitForTimeout(100);
         const w = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
         ok(w[0] <= w[1], v + ": lebar " + w[0] + " > layar " + w[1]);
