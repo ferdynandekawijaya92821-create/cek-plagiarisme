@@ -30,6 +30,7 @@ lalu buka dengan browser apa pun (Chrome, Safari, Edge, Firefox). Tidak butuh se
 - Perbandingan berdampingan naskah vs sumber, dan opsi mengabaikan sumber tertentu
 - Riwayat & pesanan: catatan setiap laporan, tarif, status pembayaran, ringkasan pendapatan, ekspor Excel
 - Tagihan: QRIS dengan nominal terisi (dari foto QRIS usaha Anda), rekening & kode unik, tagihan PDF, pesan WhatsApp
+- Cek sitasi vs daftar pustaka, keterbacaan (kalimat panjang, kata berulang), dan kartu hasil bergambar untuk dibagikan
 - Unduh juga sebagai Word atau TXT
 - Bandingkan banyak dokumen sekaligus
 
