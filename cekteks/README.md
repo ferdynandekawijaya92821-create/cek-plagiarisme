@@ -27,6 +27,8 @@ lalu buka dengan browser apa pun (Chrome, Safari, Edge, Firefox). Tidak butuh se
 - Bank naskah: arsip naskah yang pernah diperiksa (di perangkat), otomatis ikut dibandingkan; bisa diekspor/impor
 - Cek internet ke Wikipedia, OpenAlex, DOAJ, Crossref, dan Google (opsional)
 - Identitas jasa pengecekan (nama, kontak, klien) di laporan, beserta bagian Metode & cakupan
+- Perbandingan berdampingan naskah vs sumber, dan opsi mengabaikan sumber tertentu
+- Riwayat & pesanan: catatan setiap laporan, tarif, status pembayaran, ringkasan pendapatan, ekspor Excel
 - Unduh juga sebagai Word atau TXT
 - Bandingkan banyak dokumen sekaligus
 
