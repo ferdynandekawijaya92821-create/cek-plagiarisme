@@ -2,6 +2,24 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [3.3.0] - 2026-11-17
+### Ditambahkan
+- **Sitasi & daftar pustaka**: mengenali sitasi (Nama, 2020), Nama dkk. (2020), Nama & Nama, 2020, beberapa sitasi
+  dalam satu kurung, sitasi yang terpotong baris di PDF, dan sitasi bernomor [1]. Dicocokkan dengan entri Daftar
+  Pustaka: sitasi yang mungkin tidak ada di daftar pustaka, entri yang tidak dikutip, dan jumlah bagian yang sama
+  dengan sumber yang sudah disertai sitasi. Tercantum juga di laporan PDF, Word, dan TXT.
+- **Keterbacaan**: waktu baca, panjang kalimat rata-rata, kalimat ≥ 35 kata (mode sorotan baru "Keterbacaan"),
+  dan kata yang paling sering diulang.
+- **Kartu hasil**: gambar PNG 1080×1350 berisi ringkasan hasil, identitas jasa, dan klien; di HP langsung bisa dibagikan.
+- Uji e2e menjadi 29 skenario.
+
+### Diperbaiki
+- Mode sorotan "AI per kalimat" tidak menampilkan apa pun sejak 3.0.0 (galat saat menghitung warna sumber untuk
+  sorotan tanpa sumber). Kini diuji otomatis.
+- "Abaikan daftar pustaka" ikut mengabaikan semua bagian sesudah daftar pustaka (mis. Lampiran). Kini daftar
+  pustaka berakhir di judul besar berikutnya, dan pengenal judul tidak lagi menelan nomor halaman di baris sebelumnya.
+- Kartu di panel hasil desktop bisa menyusut dan tertimpa kartu lain ketika panel lebih tinggi dari layar.
+
 ## [3.2.0] - 2026-11-17
 ### Ditambahkan
 - **Pembayaran & tagihan** (tanpa server):

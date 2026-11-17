@@ -256,6 +256,44 @@ async function download(page, selector) {
     await page.waitForFunction(() => !HIST.some((e) => e.id === "uji-tagihan-1"));
     await page.click("#tab-periksa");
   });
+  await test("sitasi: cocokkan dengan daftar pustaka, bagian sesudah daftar pustaka tetap diperiksa", async () => {
+    await page.click("#tab-periksa");
+    const T = "BAB I PENDAHULUAN\nFotosintesis adalah proses biokimia pembentukan zat makanan berupa karbohidrat yang dilakukan oleh tumbuhan (Campbell, 2008). " +
+      "Menurut Salisbury dan Ross (1992), cahaya sangat menentukan laju fotosintesis pada daun. Penelitian lain menunjukkan hasil serupa (Hidayat et al., 2019; Putra, 2021).\n" +
+      "Kami mengamati daun bayam di laboratorium sekolah selama tiga hari berturut-turut dan mencatat perubahan warnanya setiap pagi sebelum pelajaran dimulai.\n\n" +
+      "DAFTAR PUSTAKA\nCampbell, N. A. (2008). Biology (8th ed.). Pearson.\nSalisbury, F. B., & Ross, C. W. (1992). Plant physiology. Wadsworth.\n" +
+      "Hidayat, R., Sari, D., & Wijaya, A. (2019). Pengaruh cahaya terhadap klorofil. Jurnal Biologi, 5(2), 10-20.\nSuryani, T. (2015). Ekologi tumbuhan. Penerbit Kampus.\n\n" +
+      "LAMPIRAN\nRevolusi Industri 4.0 ditandai dengan penggabungan teknologi digital, fisik, dan biologis, seperti kecerdasan buatan, internet of things, komputasi awan, dan big data.";
+    await page.evaluate((t) => setText(t), T); await page.waitForTimeout(500);
+    const c = await page.evaluate(() => ({ count: S.cite.count, entries: S.cite.entries, missing: S.cite.missing, uncited: S.cite.uncited, cited: S.cite.citedMatches, total: S.cite.totalMatches }));
+    ok(c.count === 4 && c.entries === 4, "jumlah sitasi/entri salah: " + c.count + "/" + c.entries);
+    ok(c.missing.length === 1 && /Putra \(2021\)/.test(c.missing[0]), "sitasi tanpa entri pustaka salah: " + c.missing.join(","));
+    ok(c.uncited.length === 1 && /^Suryani/.test(c.uncited[0]), "entri yang tidak dikutip salah: " + c.uncited.join(","));
+    ok(c.total >= 2 && c.cited >= 1 && c.cited < c.total, "bagian bersitasi salah: " + c.cited + "/" + c.total);
+    ok(await page.evaluate(() => S.plag.matched.some((m) => /Revolusi Industri/.test(m.name))), "bagian LAMPIRAN sesudah daftar pustaka tidak diperiksa");
+    ok((await page.textContent("#citeSum")).includes("perlu dicek"), "ringkasan sitasi tidak memberi peringatan");
+  });
+  await test("sorotan AI per kalimat tampil", async () => {
+    await page.click("#tab-periksa");
+    await page.click("#sampleBtn"); await page.waitForTimeout(400);
+    await page.click("#hlAi");
+    ok(await page.locator("#hl mark.a1, #hl mark.a2, #hl mark.a3").count() > 0, "kalimat AI tidak disorot");
+    await page.click("#hlPlag");
+  });
+  await test("keterbacaan: kalimat panjang terdeteksi dan bisa disorot", async () => {
+    const longS = "Penelitian ini " + Array.from({ length: 40 }, (_, i) => "kata" + i).join(" ") + " selesai.";
+    await page.evaluate((t) => setText(t), "Kalimat pendek pertama di sini. " + longS + " Kalimat penutup yang singkat saja."); await page.waitForTimeout(400);
+    ok(await page.evaluate(() => S.read.long.length) === 1, "kalimat panjang tidak terdeteksi");
+    await page.click("#readAcc summary"); await page.click("#showLong");
+    ok(await page.locator("#hl mark.rd1, #hl mark.rd2").count() === 1, "kalimat panjang tidak disorot");
+    await page.click("#hlPlag");
+  });
+  await test("kartu hasil: gambar PNG 1080x1350 dibuat", async () => {
+    await page.evaluate((t) => setText(t), PARA); await page.waitForTimeout(400);
+    const d = await download(page, "#shareCard");
+    ok(d.name.endsWith(".png") && d.buf.slice(1, 4).toString() === "PNG", "bukan berkas PNG");
+    ok(d.buf.readUInt32BE(16) === 1080 && d.buf.readUInt32BE(20) === 1350, "ukuran gambar salah");
+  });
   await test("identitas jasa & klien tampil di laporan, beserta metode & cakupan", async () => {
     await page.click("#tab-sumber"); await page.fill("#svcName", "Jasa Uji"); await page.fill("#svcContact", "WA 0800"); await page.click("#tab-periksa");
     await page.fill("#clientName", "Budi");

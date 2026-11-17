@@ -701,6 +701,22 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
 .billacts svg { width: 16px; height: 16px; }
 .billpaid { padding: 4px 2px; }
 .hpay [data-bill] svg { width: 14px; height: 14px; }
+/* ===== v10: sitasi, keterbacaan, kartu hasil ===== */
+:root { --hl-rd1: #dbe9fb; --hl-rd2: #bcd5f7; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --hl-rd1: rgba(96,165,250,.18); --hl-rd2: rgba(96,165,250,.32); } }
+:root[data-theme="dark"] { --hl-rd1: rgba(96,165,250,.18); --hl-rd2: rgba(96,165,250,.32); }
+.hl mark.rd1 { background: var(--hl-rd1); } .hl mark.rd2 { background: var(--hl-rd2); box-shadow: inset 0 -2px 0 #3b82f6; }
+.minis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.minis > div { display: grid; gap: 2px; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); min-width: 0; }
+.minis b { font-family: var(--f-display); font-size: 20px; } .minis small { font-size: 11.5px; color: var(--muted); }
+.warntxt { color: var(--warn); font-weight: 600; } .oktxt { color: var(--ok); font-weight: 600; } .badtxt { color: var(--bad); font-weight: 600; }
+.warnchip { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+.uncited { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); }
+/* kartu di panel hasil tidak boleh menyusut; panel yang digulir, bukan kartunya */
+.panel > .card { flex-shrink: 0; }
+.dlmore .wide { grid-column: 1 / -1; }
+.dlmore .wide svg { width: 16px; height: 16px; }
+@media (max-width: 560px) { .doc-sub { flex-wrap: wrap; } .minis b { font-size: 17px; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 
@@ -772,6 +788,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
           <div class="seg" role="group" aria-label="Jenis sorotan" id="hlSeg">
             <button type="button" id="hlPlag" aria-pressed="true">Kesamaan</button>
             <button type="button" id="hlAi" aria-pressed="false">AI per kalimat</button>
+            <button type="button" id="hlRead" aria-pressed="false">Keterbacaan</button>
           </div>
         </div>
         <div class="doc-b" id="docBody">
@@ -840,6 +857,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
               <button class="btn" id="dlDoc" type="button">Word</button>
               <button class="btn" id="dlTxt" type="button">TXT</button>
               <button class="btn" id="copyReport" type="button">Salin</button>
+              <button class="btn wide" id="shareCard" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3.5"/><path d="M8 17h8"/></svg>Bagikan kartu hasil (gambar)</button>
               <button class="btn" id="printBtn" type="button" hidden>Cetak</button>
             </div>
             <label class="field client" for="clientName">Nama klien (opsional)<input type="text" id="clientName" autocomplete="off" placeholder="mis. Andi · Skripsi Bab 2"></label>
@@ -877,6 +895,19 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
         <div class="card">
           <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>Sumber yang cocok</h2><button class="linkbtn" type="button" id="goSources">Kelola sumber</button></div>
           <div class="card-b srclist" id="srcRows"></div>
+        </div>
+
+        <div class="card" id="citeCard">
+          <details class="acc" id="citeAcc">
+            <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4H8a3 3 0 0 0 3 3v2a5 5 0 0 1-5-5V8a1 1 0 0 1 1-1z"/><path d="M15 7h4v4h-3a3 3 0 0 0 3 3v2a5 5 0 0 1-5-5V8a1 1 0 0 1 1-1z"/></svg></span><span><b>Sitasi &amp; daftar pustaka</b><span class="muted" id="citeSum">—</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="card-b stack" id="citeBody"></div>
+          </details>
+        </div>
+        <div class="card" id="readCard">
+          <details class="acc" id="readAcc">
+            <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg></span><span><b>Keterbacaan</b><span class="muted" id="readSum">—</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="card-b stack" id="readBody"></div>
+          </details>
         </div>
 
         <div class="card">
@@ -1112,6 +1143,11 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
         <p class="muted">Tanpa Google, blog, situs berita, dan repositori kampus tidak terjangkau. Gunakan daftar "Periksa manual di Google" untuk itu.</p>
       </article>
       <article class="card gcard">
+        <h2>Sitasi &amp; keterbacaan</h2>
+        <p>Sitasi seperti (Tomasi, 2004), Kennedy &amp; Davis (1992), atau [1] dicocokkan dengan Daftar Pustaka. CekTeks menunjukkan sitasi yang mungkin tidak ada di daftar pustaka, entri yang tidak pernah dikutip, dan bagian yang sama dengan sumber tetapi belum disertai sitasi.</p>
+        <p class="muted">Keterbacaan menghitung waktu baca, panjang kalimat rata-rata, kalimat 35 kata atau lebih (bisa disorot), dan kata yang paling sering diulang. Pengenalan sitasi memakai pola umum, jadi tetap periksa ulang hasilnya.</p>
+      </article>
+      <article class="card gcard">
         <h2>Bank naskah</h2>
         <p>Naskah yang sudah diperiksa bisa disimpan ke bank di halaman Periksa. Setiap naskah berikutnya otomatis dibandingkan dengan seluruh isi bank, sehingga tugas yang saling contek atau menyalin angkatan sebelumnya ikut tertangkap.</p>
         <p class="muted">Bank tersimpan di perangkat ini. Gunakan Ekspor dan Impor di halaman Sumber untuk memindahkan atau berbagi bank. Untuk jasa pengecekan, simpan naskah klien hanya dengan persetujuan mereka.</p>
@@ -1125,6 +1161,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
           <li>Tekan "Bandingkan" pada sumber untuk menunjukkan ke klien bagian mana yang sama, dan "Abaikan" untuk sumber yang tidak relevan, misalnya karya klien sendiri.</li>
           <li>Di Riwayat, buka Pengaturan pembayaran: unggah foto QRIS usaha Anda dan tambahkan rekening. Tekan "Tagih" pada pesanan untuk membuat QRIS dengan nominal terisi, tagihan PDF, dan pesan WhatsApp.</li>
           <li>Konfirmasi pembayaran dilakukan manual: cek mutasi atau notifikasi QRIS, lalu tandai Lunas.</li>
+          <li>Tekan "Bagikan kartu hasil" untuk membuat gambar ringkasan hasil. Di HP gambar bisa langsung dibagikan ke WhatsApp.</li>
         </ul>
       </article>
       <article class="card gcard" id="privasi">
@@ -1281,12 +1318,21 @@ function domainOf(src) {
 }
 function pctLabel(v) { return v > 0 && v < 1 ? "<1%" : Math.round(v) + "%"; }
 
-var BIB_RE = /^[ \t]*(?:\d+[.)]?\s*|[IVX]+\.\s*|BAB\s+\w+\s*)?(DAFTAR\s+PUSTAKA|DAFTAR\s+REFERENSI|DAFTAR\s+RUJUKAN|REFERENSI|KEPUSTAKAAN|BIBLIOGRAFI|REFERENCES|BIBLIOGRAPHY|WORKS\s+CITED)[ \t]*:?[ \t]*$/gim;
+var BIB_RE = /^[ \t]*(?:\d+[.)]?[ \t]*|[IVX]+\.[ \t]*|BAB[ \t]+\w+[ \t]*)?(DAFTAR\s+PUSTAKA|DAFTAR\s+REFERENSI|DAFTAR\s+RUJUKAN|REFERENSI|KEPUSTAKAAN|BIBLIOGRAFI|REFERENCES|BIBLIOGRAPHY|WORKS\s+CITED)[ \t]*:?[ \t]*$/gim;
 function findBibStart(text) {
   var m, last = -1; BIB_RE.lastIndex = 0;
   while ((m = BIB_RE.exec(text))) if (m.index > text.length * 0.3) last = m.index;
   return last;
 }
+// Daftar pustaka berakhir di judul besar berikutnya (mis. LAMPIRAN, BAB IV, atau baris huruf kapital semua).
+var BIB_END_RE = /\n[ \t]*(?:LAMPIRAN\b[^\n]*|BAB\s+[IVXLC\d]+\b[^\n]*|[A-Z][A-Z \t&\-]{9,}|APPENDIX\b[^\n]*)[ \t]*(?=\n)/g;
+function findBibEnd(text, start) {
+  if (start < 0) return -1;
+  var nl = text.indexOf("\n", start + 1); if (nl < 0) return text.length;   // lewati baris judul daftar pustaka
+  BIB_END_RE.lastIndex = nl; var m = BIB_END_RE.exec(text);
+  return m ? m.index : text.length;
+}
+function blankRange(text, a, b) { return a < 0 ? text : text.slice(0, a) + text.slice(a, b).replace(/[^\n]/g, " ") + text.slice(b); }
 function quoteSpans(text) {
   var out = [], re = /“[^”\n]{3,600}”|"[^"\n]{3,600}"|«[^»\n]{3,600}»/g, m;
   while ((m = re.exec(text))) out.push([m.index, m.index + m[0].length]);
@@ -1378,11 +1424,11 @@ function checkPlagiarism(text, sources, n, opts) {
     sources = sources.filter(function (s) { return !s.hash || s.hash !== selfHash; });
   }
   var tok = tokenize(text);
-  var bib = opts.excludeBib ? findBibStart(text) : -1;
-  if (bib >= 0) tok = tok.filter(function (t) { return t[1] < bib; });
+  var bib = opts.excludeBib ? findBibStart(text) : -1, bibEnd = findBibEnd(text, bib);
+  if (bib >= 0) tok = tok.filter(function (t) { return t[1] < bib || t[1] >= bibEnd; });
   var w = tok.map(function (x) { return x[0]; }), N = w.length;
   var r = { word_count: N, ngram: n, score: 0, exactScore: 0, paraScore: 0, sources: [], matches: [], matched: [], source_count: sources.length,
-    groups: { internet: 0, publikasi: 0, bank: 0, pengguna: 0 }, bibStart: bib, excluded: { bib: bib >= 0, quoteWords: 0 } };
+    groups: { internet: 0, publikasi: 0, bank: 0, pengguna: 0 }, bibStart: bib, bibEnd: bibEnd, excluded: { bib: bib >= 0, quoteWords: 0 } };
   if (N < n || !sources.length) return r;
 
   var blocked = new Uint8Array(N);
@@ -1594,7 +1640,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "3.2.0";
+var APP_VERSION = "3.3.0";
 function setBusy(msg, frac) {
   var b = $("#busy");
   if (!msg) { b.hidden = true; return; }
@@ -1998,6 +2044,9 @@ function run() {
   $("#lbPlag").textContent = Math.round(pv) + "%"; $("#lbPlagDot").style.background = lvl(pv);
   $("#lbAi").textContent = Math.round(av) + "%"; $("#lbAiDot").style.background = lvl(av);
 
+  S.cite = nWords ? analyzeCitations(text, p) : null;
+  S.read = nWords ? analyzeReadability(text, p.bibStart, p.bibEnd) : null;
+  renderCite(); renderRead();
   renderHL();
   if (S.webSources.length && typeof renderWebList === "function") renderWebList();
   $("#statusDot").classList.remove("busy"); $("#statusText").textContent = "Analisis langsung";
@@ -2016,6 +2065,10 @@ function renderHL() {
     $("#legend").innerHTML = S.plag.matched.length ? S.plag.matched.slice(0, 10).map(function (s) {
       return '<span><span class="bdg sm" style="background:' + srcColor(s.no)[0] + '">' + s.no + "</span> " + esc(s.domain) + "</span>";
     }).join("") + (S.plag.paraScore ? '<span class="lkind"><i class="lk-ex"></i>sama persis <i class="lk-pa"></i>parafrase</span>' : "") + '<span class="lhint">· ketuk sorotan untuk nama sumber</span>' : '<span>Belum ada bagian yang sama dengan sumber.</span>';
+  } else if (S.hl === "read") {
+    spans = (S.read ? S.read.long : []).map(function (x) { return { s: x.s, e: x.e, c: x.n >= 50 ? "rd2" : "rd1", t: "Kalimat ini " + x.n + " kata. Coba pecah menjadi dua atau tiga kalimat." }; });
+    $("#legend").innerHTML = spans.length ? '<span><i style="background:var(--hl-rd1)"></i>35–49 kata</span><span><i style="background:var(--hl-rd2)"></i>50 kata atau lebih</span><span class="lhint">· kalimat panjang lebih sulit dipahami</span>'
+      : "<span>Tidak ada kalimat yang terlalu panjang. Bagus.</span>";
   } else if (S.ai) {
     spans = S.ai.sentences.filter(function (s) { return s.score >= 40; }).map(function (s) {
       return { s: s.start, e: s.end, c: s.score >= 70 ? "a3" : s.score >= 55 ? "a2" : "a1", t: "Skor AI kalimat: " + s.score + "%" };
@@ -2027,7 +2080,8 @@ function renderHL() {
     if (sp.s < pos) return;
     var first = sp.no && !spans.some(function (o) { return o.no === sp.no && o.e >= sp.s - 2 && o.s < sp.s; });
     var cls = [sp.para ? "para" : "", S.focusNo && S.focusNo !== sp.no ? "dim" : ""].filter(Boolean).join(" ");
-    var sty = sp.para ? "background:" + hexA(srcColor(sp.no)[0], .09) + ";border-bottom:2px dashed " + srcColor(sp.no)[0] : "background:" + hexA(srcColor(sp.no)[0], .2) + ";box-shadow:inset 0 -2px 0 " + srcColor(sp.no)[0];
+    // Warna sumber hanya untuk sorotan kesamaan; sorotan AI & keterbacaan memakai kelas CSS.
+    var sty = !sp.no ? "" : sp.para ? "background:" + hexA(srcColor(sp.no)[0], .09) + ";border-bottom:2px dashed " + srcColor(sp.no)[0] : "background:" + hexA(srcColor(sp.no)[0], .2) + ";box-shadow:inset 0 -2px 0 " + srcColor(sp.no)[0];
     var open = sp.no ? '<mark data-no="' + sp.no + '"' + (first ? ' data-start="1"' : "") + (cls ? ' class="' + cls + '"' : "") + ' style="' + sty + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">'
       : '<mark class="' + sp.c + '" title="' + esc(sp.t) + '" data-t="' + esc(sp.t) + '">';
     html += esc(t.slice(pos, sp.s)) + open + esc(t.slice(sp.s, sp.e)) + "</mark>";
@@ -2061,7 +2115,8 @@ $("#gutter").addEventListener("click", function (e) {
   var no = +b.dataset.no; S.focusNo = S.focusNo === no ? 0 : no; run();
 });
 $("#hl").addEventListener("click", function (e) { var m = e.target.closest("mark"); if (m) toast(m.dataset.t); });
-function setHL(v) { S.hl = v; $("#hlPlag").setAttribute("aria-pressed", v === "plag"); $("#hlAi").setAttribute("aria-pressed", v === "ai"); renderHL(); }
+function setHL(v) { S.hl = v; $("#hlPlag").setAttribute("aria-pressed", v === "plag"); $("#hlAi").setAttribute("aria-pressed", v === "ai"); $("#hlRead").setAttribute("aria-pressed", v === "read"); renderHL(); }
+$("#hlRead").onclick = function () { setHL("read"); };
 function setMode(m) {
   S.mode = m;
   editor.hidden = m !== "write";
@@ -2644,6 +2699,186 @@ function invoicePdf(e) {
     return doc.output("blob");
   });
 }
+/* ---- sitasi & daftar pustaka ---- */
+var NAME = "[A-ZÀ-Þ][A-Za-zÀ-ɏ'’\\-]+";
+var CITE_PAREN = /\(([^()]{2,240}?\b(?:19|20)\d{2}[a-z]?[^()]{0,40})\)/g;   // boleh terpotong baris (umum di PDF)
+var CITE_NARR = new RegExp("\\b(" + NAME + ")(?:\\s+(?:et al\\.?|dkk\\.?|&\\s*" + NAME + "|dan\\s+" + NAME + "))?\\s*\\(((?:19|20)\\d{2})[a-z]?(?:[,:][^()\\n]{0,20})?\\)", "g");
+var CITE_NUM = /\[(\d{1,3}(?:\s*[-–,]\s*\d{1,3})*)\]/g;
+function citeKey(name, year) { return name.toLowerCase().replace(/[^a-zÀ-ɏ]/g, "") + "|" + year; }
+function analyzeCitations(text, p) {
+  var bib = p.bibStart >= 0 ? p.bibStart : findBibStart(text), bibEnd = p.bibStart >= 0 ? p.bibEnd : findBibEnd(text, bib);
+  var body = blankRange(text, bib, bibEnd), cites = [], seen = {}, m;   // posisi karakter tetap sama dengan naskah
+  function addCite(name, year, pos, raw) {
+    if (!name || !/^[A-ZÀ-Þ]/.test(name)) return;
+    var k = citeKey(name, year); cites.push({ key: k, name: name, year: year, pos: pos, label: raw });
+    seen[k] = (seen[k] || 0) + 1;
+  }
+  CITE_PAREN.lastIndex = 0;
+  while ((m = CITE_PAREN.exec(body))) {
+    m[1].split(";").forEach(function (piece) {
+      var y = /\b((?:19|20)\d{2})[a-z]?\b/.exec(piece); if (!y) return;
+      var who = piece.slice(0, y.index).replace(/[,\s]+$/, "").trim();
+      who = who.replace(/\s+/g, " ");
+      var first = (/^([A-ZÀ-Þ][A-Za-zÀ-ɏ'’\-]+)/.exec(who) || [])[1];
+      if (first && who.length < 90) addCite(first, y[1], m.index, who + ", " + y[1]);
+    });
+  }
+  CITE_NARR.lastIndex = 0;
+  while ((m = CITE_NARR.exec(body))) addCite(m[1], m[2], m.index, m[0].replace(/\s+/g, " "));
+  var nums = []; CITE_NUM.lastIndex = 0;
+  while ((m = CITE_NUM.exec(body))) {
+    m[1].split(",").forEach(function (part) {
+      var r = part.split(/[-–]/).map(function (x) { return +x.trim(); });
+      if (r.length === 2 && r[1] >= r[0] && r[1] - r[0] < 30) for (var i = r[0]; i <= r[1]; i++) nums.push(i); else nums.push(r[0]);
+    });
+    cites.push({ key: "#" + m[1], pos: m.index, num: true });
+  }
+  // daftar pustaka: satu entri per baris pembuka (Nama, X. / nomor), baris lanjutan digabung
+  var entries = [];
+  if (bib >= 0) {
+    var lines = text.slice(bib, bibEnd).split("\n").slice(1), cur = null;
+    var startRe = new RegExp("^(\\[\\d+\\]|\\d{1,3}\\.)\\s+|^" + NAME + "(?:\\s" + NAME + ")?,\\s");
+    lines.forEach(function (ln) {
+      var t = ln.trim(); if (!t) return;
+      var isStart = startRe.test(t) || (cur && /\.\s*$/.test(cur.text) && /(19|20)\d{2}/.test(cur.text) && /^[A-Z]/.test(t) && /(19|20)\d{2}/.test(t.slice(0, 150)));
+      if (isStart || !cur) { cur = { text: t }; entries.push(cur); } else cur.text += " " + t;
+    });
+    entries.forEach(function (e) {
+      var y = /\b((?:19|20)\d{2})[a-z]?\b/.exec(e.text), nm = /^(?:\[\d+\]|\d{1,3}\.)?\s*([A-ZÀ-Þ][A-Za-zÀ-ɏ'’\-]+)/.exec(e.text);
+      e.year = y ? y[1] : ""; e.name = nm ? nm[1] : ""; e.low = e.text.toLowerCase();
+      e.label = e.text.length > 110 ? e.text.slice(0, 107) + "…" : e.text;
+    });
+    entries = entries.filter(function (e) { return e.year && e.text.length > 15; });
+  }
+  var ay = cites.filter(function (c) { return !c.num; }), uniq = {}, missing = [], uncited = [];
+  ay.forEach(function (c) { uniq[c.key] = uniq[c.key] || c; });
+  Object.keys(uniq).forEach(function (k) {
+    var c = uniq[k], ok = entries.some(function (e) { return e.year === c.year && e.low.indexOf(c.name.toLowerCase()) >= 0; });
+    if (!ok && entries.length) missing.push(c.name + " (" + c.year + ")");
+  });
+  if (ay.length) entries.forEach(function (e) {
+    var used = ay.some(function (c) { return c.year === e.year && e.low.indexOf(c.name.toLowerCase()) >= 0; });
+    if (!used) uncited.push(e.label);
+  });
+  // bagian yang sama dengan sumber: apakah kalimatnya (atau kalimat sesudahnya) mencantumkan sitasi?
+  var sents = splitSentences(body), citedSent = new Set();
+  cites.forEach(function (c) { for (var i = 0; i < sents.length; i++) if (c.pos >= sents[i][1] && c.pos < sents[i][2] + 2) { citedSent.add(i); break; } });
+  var citedMatches = 0;
+  p.matches.forEach(function (mt) {
+    for (var i = 0; i < sents.length; i++) {
+      if (sents[i][2] < mt.start || sents[i][1] > mt.end) continue;
+      if (citedSent.has(i) || citedSent.has(i + 1)) { citedMatches++; mt.cited = true; return; }
+    }
+  });
+  return { count: cites.length, unique: Object.keys(uniq).length + (nums.length ? new Set(nums).size : 0), numeric: nums.length, entries: entries.length, bibFound: bib >= 0,
+    missing: missing, uncited: uncited, citedMatches: citedMatches, totalMatches: p.matches.length };
+}
+function renderCite() {
+  var c = S.cite, sum = $("#citeSum"), body = $("#citeBody");
+  if (!c) { sum.textContent = "Belum ada naskah."; body.innerHTML = ""; return; }
+  var warn = c.missing.length + c.uncited.length;
+  sum.innerHTML = !c.count && !c.entries ? "Tidak ada sitasi atau daftar pustaka" :
+    fmtNum(c.count) + " sitasi · " + fmtNum(c.entries) + " entri pustaka" + (warn ? ' · <span class="warntxt">' + warn + " perlu dicek</span>" : c.entries ? ' · <span class="oktxt">semua cocok</span>' : "");
+  var html = '<div class="minis"><div><b class="num">' + fmtNum(c.count) + "</b><small>sitasi di naskah</small></div><div><b class=\"num\">" + fmtNum(c.entries) + "</b><small>entri daftar pustaka</small></div>" +
+    '<div><b class="num">' + (c.totalMatches ? c.citedMatches + "/" + c.totalMatches : "–") + "</b><small>bagian sama yang bersitasi</small></div></div>";
+  if (c.totalMatches) html += '<p class="hint">' + (c.citedMatches === c.totalMatches ? "Semua bagian yang sama dengan sumber sudah disertai sitasi." :
+    (c.totalMatches - c.citedMatches) + " bagian yang sama dengan sumber belum disertai sitasi di kalimat itu atau kalimat sesudahnya. Tambahkan sitasi, atau tulis ulang dengan kata-kata sendiri.") + "</p>";
+  if (!c.bibFound && c.count) html += '<div class="warn">Naskah memuat sitasi, tetapi bagian DAFTAR PUSTAKA tidak ditemukan. Pastikan judulnya ditulis di baris tersendiri.</div>';
+  if (c.missing.length) html += '<div class="eyebrow">Dikutip tetapi mungkin tidak ada di daftar pustaka</div><div class="chips">' + c.missing.slice(0, 30).map(function (x) { return '<span class="chip warnchip">' + esc(x) + "</span>"; }).join("") + "</div>";
+  if (c.uncited.length) html += '<div class="eyebrow">Ada di daftar pustaka tetapi tidak dikutip</div><ul class="uncited">' + c.uncited.slice(0, 20).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
+  if (c.numeric) html += '<p class="hint">Sitasi bernomor seperti [1] terhitung ' + fmtNum(c.numeric) + " kali.</p>";
+  if (!c.count && !c.entries) html += '<p class="hint">Sitasi dikenali dari pola seperti (Tomasi, 2004), Kennedy &amp; Davis (1992), atau [1]. Daftar pustaka dikenali dari judul DAFTAR PUSTAKA atau REFERENSI.</p>';
+  body.innerHTML = html;
+}
+
+/* ---- keterbacaan ---- */
+function analyzeReadability(text, bibStart, bibEnd) {
+  var body = blankRange(text, bibStart, bibEnd), ws = words(body), sents = splitSentences(body), long = [], freq = {};
+  sents.forEach(function (x) { var n = words(x[0]).length; if (n >= 35) long.push({ s: x[1], e: x[2], n: n }); });
+  ws.forEach(function (w) { if (w.length > 3 && !STOPWORDS.has(w) && !/^\d+$/.test(w)) freq[w] = (freq[w] || 0) + 1; });
+  var top = Object.keys(freq).map(function (k) { return [k, freq[k]]; }).filter(function (x) { return x[1] >= 4 && x[1] / Math.max(ws.length, 1) > 0.008; })
+    .sort(function (a, b) { return b[1] - a[1]; }).slice(0, 8);
+  var lens = sents.map(function (x) { return words(x[0]).length; }).filter(function (n) { return n > 0; });
+  var avg = lens.length ? lens.reduce(function (a, b) { return a + b; }, 0) / lens.length : 0;
+  return { words: ws.length, minutes: ws.length / 200, sentences: sents.length, avg: avg, long: long, paragraphs: body.split(/\n\s*\n/).filter(function (x) { return x.trim(); }).length, top: top,
+    level: avg <= 18 ? ["Mudah dibaca", "ok"] : avg <= 25 ? ["Cukup mudah", "ok"] : avg <= 32 ? ["Agak berat", "warn"] : ["Berat dibaca", "bad"] };
+}
+function renderRead() {
+  var r = S.read, sum = $("#readSum"), body = $("#readBody");
+  if (!r) { sum.textContent = "Belum ada naskah."; body.innerHTML = ""; return; }
+  var mins = r.minutes < 1 ? "kurang dari 1 menit" : "±" + Math.round(r.minutes) + " menit";
+  sum.innerHTML = '<span class="' + r.level[1] + 'txt">' + r.level[0] + "</span> · " + mins + " membaca" + (r.long.length ? " · " + r.long.length + " kalimat panjang" : "");
+  body.innerHTML = '<div class="minis"><div><b class="num">' + mins.replace("kurang dari ", "<") + '</b><small>waktu baca</small></div><div><b class="num">' + r.avg.toFixed(1).replace(".", ",") +
+    '</b><small>kata per kalimat</small></div><div><b class="num">' + r.long.length + "</b><small>kalimat ≥ 35 kata</small></div></div>" +
+    '<p class="hint">' + (r.avg > 25 ? "Rata-rata kalimat cukup panjang. Kalimat 15–25 kata biasanya paling mudah dipahami pembaca." : "Panjang kalimat rata-rata sudah nyaman dibaca.") + "</p>" +
+    (r.long.length ? '<button class="btn sm" type="button" id="showLong">Sorot kalimat panjang di naskah</button>' : "") +
+    (r.top.length ? '<div class="eyebrow">Kata yang paling sering diulang</div><div class="chips">' + r.top.map(function (x) { return '<span class="chip">' + esc(x[0]) + '<span class="num">×' + x[1] + "</span></span>"; }).join("") + "</div>" +
+      '<p class="hint">Variasikan dengan sinonim bila kata yang sama terasa berulang dalam satu paragraf.</p>' : "");
+  var b = $("#showLong"); if (b) b.onclick = function () { if (S.mode !== "review") setMode("review"); setHL("read"); if (MOBILE.matches) setPane("doc"); else $("#docCard").scrollIntoView({ behavior: "smooth" }); };
+}
+
+/* ---- kartu hasil (gambar untuk dibagikan) ---- */
+function roundRect(x, X, Y, w, h, r) { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); }
+function wrapLines(x, text, maxW, maxLines) {
+  var ws = String(text).split(/\s+/), lines = [], cur = "";
+  ws.forEach(function (w) { var t = cur ? cur + " " + w : w; if (x.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t; });
+  if (cur) lines.push(cur);
+  if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, "") + "…"; }
+  return lines;
+}
+function drawResultCard(r) {
+  var W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
+  var x = c.getContext("2d"), F = '"Manrope", "Inter", "Segoe UI", Arial, sans-serif', M = 80;
+  var g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, "#0f1b2a"); g.addColorStop(1, "#11344a"); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  var rg = x.createRadialGradient(W - 120, 140, 10, W - 120, 140, 520); rg.addColorStop(0, "rgba(79,193,222,.35)"); rg.addColorStop(1, "rgba(79,193,222,0)"); x.fillStyle = rg; x.fillRect(0, 0, W, H);
+  x.fillStyle = "#4fc1de"; roundRect(x, M, 76, 64, 64, 16); x.fill();
+  x.fillStyle = "#0f1b2a"; x.fillRect(M + 18, 92, 26, 34); x.fillStyle = "#4fc1de"; x.fillRect(M + 23, 102, 16, 4); x.fillRect(M + 23, 111, 12, 4);
+  x.fillStyle = "#ffffff"; x.font = "800 40px " + F; x.fillText(r.svc || "CekTeks", M + 88, 122);
+  x.fillStyle = "#9fb3c8"; x.font = "500 28px " + F; x.fillText("Hasil pemeriksaan naskah", M, 210);
+  x.fillStyle = "#ffffff"; x.font = "800 52px " + F;
+  var tl = wrapLines(x, r.doc, W - 2 * M, 2); tl.forEach(function (ln, i) { x.fillText(ln, M, 276 + i * 62); });
+  var yb = 276 + tl.length * 62;
+  if (r.client) { x.fillStyle = "#9fb3c8"; x.font = "500 30px " + F; x.fillText("Klien: " + r.client, M, yb + 6); yb += 44; }
+  function col(v) { return v < 35 ? "#4cc58e" : v < 65 ? "#e9a640" : "#f07a6e"; }
+  [[r.plag.score, "KESAMAAN", r.plagLabel, pctLabel(r.plag.score)], [r.ai.score, "KEMUNGKINAN AI", r.aiLabel, Math.round(r.ai.score) + "%"]].forEach(function (d, i) {
+    var cx = i ? 770 : 310, cy = yb + 250, R = 165;
+    x.lineWidth = 34; x.strokeStyle = "rgba(255,255,255,.12)"; x.beginPath(); x.arc(cx, cy, R, 0, Math.PI * 2); x.stroke();
+    x.strokeStyle = col(d[0]); x.lineCap = "round"; x.beginPath(); x.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.max(0.005, Math.min(1, d[0] / 100))); x.stroke(); x.lineCap = "butt";
+    x.fillStyle = "#ffffff"; x.font = "800 86px " + F; x.textAlign = "center"; x.fillText(d[3], cx, cy + 30);
+    x.fillStyle = "#9fb3c8"; x.font = "700 24px " + F; x.fillText(d[1], cx, cy + R + 70);
+    x.fillStyle = col(d[0]); x.font = "700 30px " + F; x.fillText(d[2], cx, cy + R + 112); x.textAlign = "left";
+  });
+  var y = yb + 590, p = r.plag;
+  x.fillStyle = "#9fb3c8"; x.font = "700 24px " + F; x.fillText("SUMBER TERATAS", M, y);
+  y += 20;
+  if (!p.matched.length) { x.fillStyle = "#ffffff"; x.font = "500 30px " + F; x.fillText("Tidak ada bagian yang sama dengan sumber.", M, y + 44); y += 70; }
+  p.matched.slice(0, 3).forEach(function (sr) {
+    y += 24; x.fillStyle = "rgba(255,255,255,.07)"; roundRect(x, M, y, W - 2 * M, 72, 16); x.fill();
+    x.fillStyle = srcColor(sr.no)[0]; roundRect(x, M + 18, y + 18, 54, 36, 18); x.fill();
+    x.fillStyle = "#ffffff"; x.font = "800 24px " + F; x.textAlign = "center"; x.fillText(String(sr.no), M + 45, y + 45); x.textAlign = "left";
+    x.font = "600 28px " + F; x.fillText(wrapLines(x, sr.domain, W - 2 * M - 230, 1)[0], M + 92, y + 46);
+    x.textAlign = "right"; x.font = "800 30px " + F; x.fillText(pctLabel(sr.share), W - M - 24, y + 47); x.textAlign = "left";
+    y += 72;
+  });
+  if (S.cite && S.cite.totalMatches) { x.fillStyle = "#9fb3c8"; x.font = "500 26px " + F; x.fillText(S.cite.citedMatches + " dari " + S.cite.totalMatches + " bagian yang sama sudah disertai sitasi", M, y + 54); }
+  x.fillStyle = "rgba(255,255,255,.12)"; x.fillRect(M, H - 150, W - 2 * M, 2);
+  x.fillStyle = "#9fb3c8"; x.font = "500 24px " + F;
+  x.fillText(new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) + "  ·  ID " + r.id.slice(0, 12), M, H - 100);
+  x.fillText(r.contact ? r.contact : "Diperiksa dengan CekTeks", M, H - 64);
+  x.textAlign = "right"; x.fillText("CekTeks", W - M, H - 64); x.textAlign = "left";
+  return c;
+}
+$("#shareCard").onclick = function () {
+  var r = needReport(); if (!r) return;
+  var c = drawResultCard(r), name = "Hasil-CekTeks-" + (r.client || r.doc).replace(/[^\w\-]+/g, "_").slice(0, 40) + ".png";
+  c.toBlob(function (b) {
+    var file = window.File ? new File([b], name, { type: "image/png" }) : null;
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: "Hasil pemeriksaan naskah", text: "Kesamaan " + pctLabel(r.plag.score) + " · kemungkinan AI " + Math.round(r.ai.score) + "%" })
+        .catch(function (e) { if (e && e.name !== "AbortError") download(b, name); });
+    } else download(b, name);
+  }, "image/png");
+};
 /* ---- laporan & unduhan ---- */
 var IN_FRAME = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
 if (IN_FRAME) $("#frameNote").hidden = false;
@@ -2700,6 +2935,7 @@ function buildReport() {
     aiExplain: aiExplain(a),
     phrases: Object.keys(a.phrases).map(function (k) { return k + " (" + a.phrases[k] + "x)"; }),
     filters: filterList(), layout: layoutOk ? d.layout : null, pdfBuf: layoutOk ? d.pdfBuf : null,
+    cite: S.cite, read: S.read,
     svc: ($("#svcName").value || "").trim(), contact: ($("#svcContact").value || "").trim(), client: ($("#clientName").value || "").trim(), method: coverage()
   };
 }
@@ -2730,6 +2966,7 @@ function reportText(r) {
     r.client ? ["Klien          : " + r.client] : [], r.svc ? ["Diperiksa oleh : " + r.svc + (r.contact ? " (" + r.contact + ")" : "")] : [], ["Tanggal        : " + fmtDate(r.date),
     "Panjang        : " + fmtNum(r.words) + " kata, " + fmtNum(r.chars) + " karakter" + (r.pages ? ", " + r.pages + " halaman" : ""), "",
     "KESAMAAN       : " + pctLabel(p.score) + " (" + r.plagLabel + ")  =  " + pctLabel(p.exactScore) + " sama persis + " + pctLabel(p.paraScore) + " parafrase", "Sumber cocok   : " + p.matched.length,
+    "Sitasi         : " + (r.cite ? r.cite.count + " di naskah, " + r.cite.entries + " entri daftar pustaka, " + r.cite.citedMatches + "/" + r.cite.totalMatches + " bagian sama bersitasi" : "-"),
     "  " + pctLabel(p.groups.internet) + " sumber internet, " + pctLabel(p.groups.publikasi) + " publikasi, " + pctLabel(p.groups.bank) + " bank naskah, " + pctLabel(p.groups.pengguna) + " karya pengguna", "",
     "Metode & cakupan:"].concat(r.method.map(function (x) { return "  - " + x; }), [""]));
   if (p.matched.length) {
@@ -2738,6 +2975,11 @@ function reportText(r) {
     L.push("");
     L.push("Bagian yang sama:");
     p.matches.forEach(function (m) { L.push("  [" + m.no + "] \"" + r.text.slice(m.start, m.end).replace(/\s+/g, " ") + "\""); });
+    L.push("");
+  }
+  if (r.cite && (r.cite.missing.length || r.cite.uncited.length)) {
+    if (r.cite.missing.length) L.push("Dikutip tetapi mungkin tidak ada di daftar pustaka: " + r.cite.missing.join("; "));
+    if (r.cite.uncited.length) L.push("Ada di daftar pustaka tetapi tidak dikutip:", r.cite.uncited.map(function (x) { return "  - " + x; }).join("\n"));
     L.push("");
   }
   L.push("KEMUNGKINAN AI : " + pctId(r.ai.score) + "% (" + r.aiLabel + ")");
@@ -2779,7 +3021,9 @@ function reportDoc(r) {
   h += "<table style='width:100%;margin-top:10pt'><tr><td><div style='font-size:30pt;font-weight:bold'>" + pctLabel(p.score) + "</div><div style='font-size:13pt'>Kesamaan</div></td>" +
     "<td><div style='font-size:30pt;font-weight:bold'>" + p.matched.length + "</div><div style='font-size:13pt'>Sumber Cocok</div></td>" +
     "<td class='muted'><b style='font-size:11pt;color:#212529'>Kelompok Kecocokan</b><br>" + pctLabel(p.groups.internet) + " &nbsp; Sumber internet<br>" + pctLabel(p.groups.publikasi) + " &nbsp; Publikasi<br>" + pctLabel(p.groups.bank) + " &nbsp; Bank naskah<br>" + pctLabel(p.groups.pengguna) + " &nbsp; Karya pengguna</td></tr></table>" +
-    "<p class='muted'>" + pctLabel(p.exactScore) + " sama persis · " + pctLabel(p.paraScore) + " parafrase</p><h2>Metode &amp; cakupan</h2><ul>" + r.method.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
+    "<p class='muted'>" + pctLabel(p.exactScore) + " sama persis · " + pctLabel(p.paraScore) + " parafrase" + (r.cite ? " · sitasi: " + r.cite.count + " di naskah, " + r.cite.citedMatches + "/" + r.cite.totalMatches + " bagian sama bersitasi" : "") + "</p>" +
+    (r.cite && r.cite.missing.length ? "<p class='muted'>Dikutip tetapi mungkin tidak ada di daftar pustaka: " + esc(r.cite.missing.join("; ")) + "</p>" : "") +
+    (r.cite && r.cite.uncited.length ? "<p class='muted'>Ada di daftar pustaka tetapi tidak dikutip: " + esc(r.cite.uncited.join("; ")) + "</p>" : "") + "<h2>Metode &amp; cakupan</h2><ul>" + r.method.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
   h += "<h2>Sumber Teratas</h2>" + (p.matched.length ? "<table class='src' style='width:100%'>" + p.matched.map(function (s) {
     var c = srcColor(s.no);
     return "<tr><td style='width:28pt'><span style='background:" + c[0] + ";color:#fff;font-weight:bold;padding:2pt 9pt'>" + s.no + "</span></td><td><span style='background:" + c[1] + ";padding:1pt 8pt;font-size:8.5pt'>" + KIND_LABEL[s.group] + "</span><br><b>" + esc(s.domain) + "</b>" +
@@ -2910,7 +3154,7 @@ function reportPdf(r, onProgress) {
   newReportPage();
   fnt(34, "bold"); doc.text(pctLabel(p.score), M, 126);
   fnt(17); doc.text("Kesamaan", M, 160);
-  fnt(8.5, "normal", MUTED); doc.text(pctLabel(p.exactScore) + " sama persis  |  " + pctLabel(p.paraScore) + " parafrase", M, 178);
+  fnt(8.5, "normal", MUTED); doc.text(pctLabel(p.exactScore) + " sama persis  |  " + pctLabel(p.paraScore) + " parafrase" + (r.cite && r.cite.totalMatches ? "  |  " + r.cite.citedMatches + "/" + r.cite.totalMatches + " bagian bersitasi" : ""), M, 178);
   fnt(34, "bold"); doc.text(String(p.matched.length), M + 175, 126);
   fnt(17); doc.text("Sumber Cocok", M + 175, 160);
   var gx = 360; fnt(12); doc.text("Kelompok Kecocokan", gx, 104);
