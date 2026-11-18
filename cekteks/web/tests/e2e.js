@@ -41,6 +41,9 @@ async function newPage(browser, opts) {
   page.on("pageerror", (e) => page.errors.push(e.message));
   return { ctx, page };
 }
+// Daftar sumber cek internet ada di panel yang bisa dilipat; centang diatur langsung.
+async function srcOnly(page, ids) { await page.evaluate((ids) => document.querySelectorAll("#srcPick .checks input").forEach((c) => { c.checked = ids.includes(c.id); }), ids); }
+async function srcDefault(page) { await page.evaluate(() => document.querySelectorAll("#srcPick .checks input").forEach((c) => { c.checked = c.defaultChecked; })); }
 async function ready(page) { await page.waitForFunction(() => window.S && S.ai, null, { timeout: 30000 }); }
 async function download(page, selector) {
   const [d] = await Promise.all([page.waitForEvent("download", { timeout: 60000 }), page.click(selector)]);
@@ -154,7 +157,7 @@ async function download(page, selector) {
     await ctx.route(/api\.crossref\.org/, (r) => r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" },
       body: JSON.stringify({ message: { items: [{ DOI: "10.2/uji", URL: "https://doi.org/10.2/uji", title: ["Pigmen fotosintesis"], abstract: "<jats:p>Pigmen fotosintesis pada tumbuhan tingkat tinggi terdiri atas klorofil a, klorofil b, dan karotenoid yang tersimpan di dalam kloroplas sel daun tanaman.</jats:p>" }] } }) }));
     await page.evaluate((t) => setText(t), "Praktikum biologi minggu lalu membahas pigmen pada daun. " + ABS + " Kelompok kami juga mencoba mengukur klorofil daun jambu di halaman sekolah, tetapi alatnya terbatas.");
-    for (const id of ["wWikiId", "wWikiEn", "wOpenAlex", "wS2"]) await page.uncheck("#" + id);
+    await srcOnly(page, ["wDoaj", "wCrossref"]);
     await page.click("#webBtn");
     await page.waitForFunction(() => document.getElementById("webProg").hidden, null, { timeout: 30000 });
     const r = await page.evaluate(() => [S.plag.groups.publikasi, S.webSources.map((w) => w.kind).sort().join(",")]);
@@ -162,7 +165,7 @@ async function download(page, selector) {
     ok(r[0] > 50, "kesamaan dengan jurnal hanya " + r[0] + "%");
     await ctx.unroute(/doaj\.org/); await ctx.unroute(/api\.crossref\.org/);
     await page.click("#webClear");
-    for (const id of ["wWikiId", "wWikiEn", "wOpenAlex", "wS2"]) await page.check("#" + id);
+    await srcDefault(page);
   });
   await test("naskah panjang (±26 halaman): kalimat dari seluruh naskah dicari, salinan di bagian akhir ketemu, peta naskah", async () => {
     await page.click("#tab-periksa");
@@ -191,7 +194,7 @@ async function download(page, selector) {
       } else body = { query: { pages: { "1": { title: "Sungai Musi", extract: WIKI + " Sungai ini juga menjadi tempat berbagai festival budaya." } } } };
       r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(body) });
     });
-    for (const id of ["wOpenAlex", "wDoaj", "wCrossref", "wS2", "wWikiEn"]) await page.uncheck("#" + id);
+    await srcOnly(page, ["wWikiId"]);
     await page.evaluate((t) => setText(t), doc); await page.waitForTimeout(800);
     ok(await page.isVisible("#nudgeWeb"), "ajakan cek internet tidak tampil sebelum pencarian");
     const nW = await page.evaluate(() => words(S.text).length);
@@ -212,7 +215,7 @@ async function download(page, selector) {
     ok(await page.locator("#hl .jump").count() === 1, "lompat ke bagian naskah tidak berfungsi");
     await ctx.unroute(/wikipedia\.org\/w\/api\.php/);
     await page.click("#webClear");
-    for (const id of ["wOpenAlex", "wDoaj", "wCrossref", "wS2", "wWikiEn"]) await page.check("#" + id);
+    await srcDefault(page);
   });
   await test("teks lengkap jurnal (OpenAlex): kalimat yang ada di isi artikel ditemukan; kuota habis diberi tahu", async () => {
     await page.click("#tab-periksa");
@@ -227,7 +230,7 @@ async function download(page, selector) {
       r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" },
         body: JSON.stringify({ results: hitP ? [{ id: "https://openalex.org/W1", doi: "https://doi.org/10.9/pisang", display_name: "Pupuk organik cair kulit pisang", publication_year: 2017, abstract_inverted_index: { Penelitian: [0], tentang: [1], pupuk: [2] } }] : [] }) });
     });
-    for (const id of ["wWikiId", "wWikiEn", "wDoaj", "wCrossref", "wS2"]) await page.uncheck("#" + id);
+    await srcOnly(page, ["wOpenAlex"]);
     const txt = "Kebun percobaan kami berada di belakang gedung jurusan dan sering tergenang ketika hujan deras turun sore hari. " + PAPER + ". Kami menyiram tanaman setiap pagi sebelum kuliah dimulai dan mencatat suhu udara dengan termometer sederhana.";
     await page.evaluate((t) => setText(t), txt); await page.waitForTimeout(400);
     await page.click("#webBtn");
@@ -239,7 +242,40 @@ async function download(page, selector) {
     await page.waitForFunction(() => document.getElementById("webProg").hidden && !runWebSearch.busy, null, { timeout: 30000 });
     ok(/Kuota harian OpenAlex habis/.test(await page.textContent("#webStatus")), "kuota habis tidak diberitahukan: " + await page.textContent("#webStatus"));
     await ctx.unroute(/api\.openalex\.org/); await page.evaluate(() => { resetWeb(); run(); });
-    for (const id of ["wWikiId", "wWikiEn", "wDoaj", "wCrossref", "wS2"]) await page.check("#" + id);
+    await srcDefault(page);
+  });
+  await test("sumber diperluas: Google (Serper) + isi halaman (Tavily), Tavily search, OpenAIRE, Wikibooks; kunci ditolak diberi tahu", async () => {
+    await page.click("#tab-periksa");
+    const BLOG = "Sampah plastik yang dibuang ke sungai akan terbawa arus hingga ke laut dan terurai menjadi mikroplastik yang dimakan ikan serta biota laut lainnya";
+    const WEB2 = "Bank sampah merupakan sistem pengelolaan sampah kering secara kolektif yang mendorong masyarakat untuk berperan serta aktif di dalamnya";
+    const JOUR = "Partisipasi masyarakat dalam pengelolaan sampah rumah tangga dipengaruhi oleh tingkat pendidikan, pengetahuan, dan ketersediaan sarana di lingkungan tempat tinggal mereka";
+    const BOOK = "Daur ulang adalah proses mengolah kembali barang bekas menjadi barang baru yang bermanfaat sehingga mengurangi jumlah sampah yang dibuang";
+    const H = { "access-control-allow-origin": "*" }, J = (r, b, st) => r.fulfill({ status: st || 200, contentType: "application/json", headers: H, body: JSON.stringify(b) });
+    const seen = {};
+    await ctx.route(/google\.serper\.dev/, (r) => { seen.serper = (seen.serper || 0) + 1; const q = JSON.parse(r.request().postData()).q.replace(/"/g, "");
+      J(r, { organic: BLOG.toLowerCase().includes(q.split(" ").slice(0, 6).join(" ")) ? [{ title: "Bahaya sampah plastik - Blog Hijau", link: "https://bloghijau.example/sampah-plastik", snippet: "… " + BLOG.slice(0, 120) + " …" }] : [] }); });
+    await ctx.route(/api\.tavily\.com\/extract/, (r) => { seen.extract = JSON.parse(r.request().postData()).urls; J(r, { results: [{ url: "https://bloghijau.example/sampah-plastik", raw_content: "# Bahaya sampah plastik\n\nIni tulisan blog. " + BLOG + ". Karena itu kurangi kantong plastik." }] }); });
+    await ctx.route(/api\.tavily\.com\/search/, (r) => { seen.tsearch = (seen.tsearch || 0) + 1; J(r, { results: [{ title: "Apa itu bank sampah", url: "https://berita.example/bank-sampah", raw_content: "Pengertian. " + WEB2 + ". Nasabah menabung sampah." }] }); });
+    await ctx.route(/api\.openaire\.eu/, (r) => J(r, { response: { results: { result: [{ metadata: { "oaf:entity": { "oaf:result": { title: [{ "@classid": "main title", $: "Partisipasi masyarakat dalam pengelolaan sampah" }], description: { $: "<p>" + JOUR + ". Penelitian ini memakai metode survei terhadap seratus responden di kelurahan.</p>" }, pid: { "@classid": "doi", $: "10.7/sampah" }, dateofacceptance: { $: "2018-03-01" } } } } }] } } }));
+    await ctx.route(/wikibooks\.org|wikisource\.org/, (r) => { const u = new URL(r.request().url());
+      if (u.searchParams.get("list") === "search") return J(r, { query: { search: /wikibooks/.test(u.host) && BOOK.toLowerCase().replace(/[^\p{L} ]/gu, "").includes((u.searchParams.get("srsearch") || "").replace(/"/g, "")) ? [{ title: "Daur ulang" }] : [] } });
+      J(r, { query: { pages: { "5": { title: "Daur ulang", extract: "Bab 2. " + BOOK + ". Contohnya kertas bekas." } } } }); });
+    await ctx.route(/api\.core\.ac\.uk/, (r) => J(r, { message: "Invalid API key" }, 401));
+    await page.evaluate(() => { store("ct_serper", "uji"); store("ct_tavily", "uji"); store("ct_core", "uji"); updKeys(); });
+    await srcOnly(page, ["wSerper", "wTavily", "wOpenAire", "wWikiBooks", "wCore"]);
+    const txt = "Di kampung kami, sungai kecil di belakang pasar selalu penuh sampah setiap musim hujan datang. " + BLOG + ". Ibu-ibu PKK lalu membentuk kelompok sendiri untuk memilah sampah di rumah. " + WEB2 + ". " + JOUR + ". Anak-anak sekolah juga diajak menanam pohon di bantaran sungai setiap hari Minggu. " + BOOK + ".";
+    await page.evaluate((t) => setText(t), txt); await page.waitForTimeout(400);
+    await page.click("#webBtn");
+    await page.waitForFunction(() => document.getElementById("webProg").hidden && !runWebSearch.busy && S.webChecked, null, { timeout: 60000 });
+    const r = await page.evaluate(() => ({ kinds: S.webSources.map((w) => w.kind).sort().join(","), score: S.plag.score, net: S.plag.groups.internet, pub: S.plag.groups.publikasi, st: document.getElementById("webStatus").textContent, eng: S.lastEngines.join(",") }));
+    for (const k of ["Web", "OpenAIRE", "Wikibooks ID"]) ok(r.kinds.includes(k), "sumber " + k + " tidak ditemukan: " + r.kinds);
+    ok(seen.serper > 0 && seen.tsearch > 0 && (seen.extract || []).includes("https://bloghijau.example/sampah-plastik"), "Serper/Tavily tidak dipakai: " + JSON.stringify(seen));
+    ok(r.score > 55, "kesamaan hanya " + r.score + "% (" + JSON.stringify(r).slice(0, 200) + ")");
+    ok(/CORE: API key ditolak/.test(r.st), "kunci CORE yang ditolak tidak diberitahukan: " + r.st);
+    ok(/Google \(Serper\)/.test(r.eng) && /Tavily/.test(r.eng), "mesin tidak tercatat di laporan: " + r.eng);
+    for (const re of [/google\.serper\.dev/, /api\.tavily\.com\/extract/, /api\.tavily\.com\/search/, /api\.openaire\.eu/, /wikibooks\.org|wikisource\.org/, /api\.core\.ac\.uk/]) await ctx.unroute(re);
+    await page.evaluate(() => { ["ct_serper", "ct_tavily", "ct_core"].forEach((k) => localStorage.removeItem(k)); updKeys(); resetWeb(); run(); });
+    await srcDefault(page);
   });
   await test("deteksi AI terkalibrasi: abstrak manusia berdata rendah, teks AI generik tinggi", async () => {
     const HUMAN = "Penelitian ini bertujuan untuk mengetahui pengaruh pemberian pupuk kandang ayam terhadap pertumbuhan dan hasil tanaman jagung manis (Zea mays saccharata Sturt.) pada tanah PMK. Penelitian dilaksanakan di kebun percobaan Fakultas Pertanian Universitas Kapuas Sintang dari bulan Maret sampai Juni 2016. Rancangan yang digunakan adalah Rancangan Acak Lengkap (RAL) dengan 5 perlakuan dan 5 ulangan, yaitu tanpa pupuk kandang, 10 ton/ha, 20 ton/ha, 30 ton/ha, dan 40 ton/ha. Variabel yang diamati meliputi tinggi tanaman, diameter batang, berat tongkol berkelobot, dan berat tongkol tanpa kelobot. Hasil penelitian menunjukkan bahwa pemberian pupuk kandang ayam berpengaruh nyata terhadap semua variabel pengamatan. Dosis 30 ton/ha memberikan hasil terbaik dengan berat tongkol tanpa kelobot 312,4 g per tanaman.";

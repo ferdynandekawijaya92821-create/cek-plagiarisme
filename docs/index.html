@@ -239,6 +239,14 @@ td a b { color: var(--accent); }
 .checks { display: flex; flex-wrap: wrap; gap: 8px 16px; }
 .checks label { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; }
 .checks input { width: 17px; height: 17px; accent-color: var(--accent); }
+.chkgrp { flex-basis: 100%; margin-top: 4px; font-size: 11.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.chkgrp:first-child { margin-top: 0; }
+.srcpick > summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 40px; cursor: pointer; list-style: none; font-size: 13.5px; font-weight: 600; }
+.srcpick > summary::-webkit-details-marker { display: none; }
+.srcpick > summary .chev { width: 18px; height: 18px; flex: none; transition: transform .2s; }
+.srcpick[open] > summary .chev { transform: rotate(180deg); }
+.srcpick .checks { padding: 4px 0 6px; }
+.keyhint.ready { color: var(--ok); }
 .progress { height: 4px; background: var(--surface-2); border-radius: 9px; overflow: hidden; border: 1px solid var(--line); }
 .progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s ease; }
 .weblist { display: grid; gap: 8px; }
@@ -317,6 +325,8 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 @media (max-width: 380px) { .ring { width: 72px; height: 72px; } .ring span { width: 56px; height: 56px; font-size: 16px; } .score-tile .eyebrow { font-size: 10.5px; letter-spacing: .04em; } }
 .comp { padding: 0 16px 14px; }
 .compbar { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: var(--orig); }
+.keybox { display: grid; gap: 4px; }
+.keybox .hint { margin: 0; font-size: 12.5px; }
 .webopts { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 16px; }
 .webopts .field { flex: 1 1 220px; }
 .autoweb { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; min-height: 40px; }
@@ -594,6 +604,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
 .more summary::-webkit-details-marker { display: none; }
 .more .chev { width: 18px; height: 18px; transition: transform .2s; }
 .more[open] .chev { transform: rotate(180deg); }
+.acc[open] .more:not([open]) .chev { transform: none; }
 .more[open] summary { margin-bottom: 4px; }
 @media (max-width: 1000px) {
   .mswitch { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: -4px 0 14px; position: sticky; z-index: 15;
@@ -926,15 +937,27 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
             <button class="btn primary sm" id="webBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Cari</button>
           </div>
           <div class="card-b stack">
-            <div class="checks">
-              <label><input type="checkbox" id="wWikiId" checked> Wikipedia ID</label>
-              <label><input type="checkbox" id="wWikiEn" checked> Wikipedia EN</label>
-              <label><input type="checkbox" id="wOpenAlex" checked> OpenAlex <span class="muted">(teks lengkap jurnal)</span></label>
-              <label><input type="checkbox" id="wDoaj" checked> DOAJ</label>
-              <label><input type="checkbox" id="wCrossref" checked> Crossref</label>
-              <label><input type="checkbox" id="wS2" checked> Semantic Scholar</label>
-              <label><input type="checkbox" id="wGoogle"> Google <span class="muted" id="gHint">(atur API di tab Sumber)</span></label>
-            </div>
+            <details class="srcpick" id="srcPick">
+              <summary><span id="srcPickSum">Sumber pencarian</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+              <div class="checks">
+                <span class="chkgrp">Ensiklopedia &amp; buku</span>
+                <label><input type="checkbox" id="wWikiId" checked> Wikipedia ID</label>
+                <label><input type="checkbox" id="wWikiEn" checked> Wikipedia EN</label>
+                <label><input type="checkbox" id="wWikiBooks" checked> Wikibooks &amp; Wikisource ID</label>
+                <span class="chkgrp">Jurnal &amp; repositori</span>
+                <label><input type="checkbox" id="wOpenAlex" checked> OpenAlex <span class="muted">(teks lengkap)</span></label>
+                <label><input type="checkbox" id="wS2" checked> Semantic Scholar</label>
+                <label><input type="checkbox" id="wOpenAire" checked> OpenAIRE</label>
+                <label><input type="checkbox" id="wDoaj" checked> DOAJ</label>
+                <label><input type="checkbox" id="wCrossref" checked> Crossref</label>
+                <label><input type="checkbox" id="wEpmc" checked> Europe PMC <span class="muted">(teks lengkap, naskah Inggris)</span></label>
+                <label><input type="checkbox" id="wCore"> CORE <span class="muted keyhint" data-key="ct_core">(repositori kampus)</span></label>
+                <span class="chkgrp">Web umum: blog, berita, situs kampus</span>
+                <label><input type="checkbox" id="wSerper"> Google <span class="muted keyhint" data-key="ct_serper">(lewat Serper)</span></label>
+                <label><input type="checkbox" id="wTavily"> Tavily <span class="muted keyhint" data-key="ct_tavily">(isi halaman web)</span></label>
+                <label><input type="checkbox" id="wGoogle"> Google CSE lama <span class="muted" id="gHint">(atur API di tab Sumber)</span></label>
+              </div>
+            </details>
             <div class="webopts">
               <label class="field" for="wDepth">Kedalaman
                 <select id="wDepth">
@@ -1090,16 +1113,27 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
         </div>
         <div class="card">
           <details class="acc">
-            <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/></svg></span><span><b>Pencarian Google</b><span class="muted">opsional · menjangkau seluruh web</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/></svg></span><span><b>Mesin pencari web &amp; repositori</b><span class="muted" id="keySum">opsional · blog, berita, situs &amp; repositori kampus</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
             <div class="card-b stack">
-              <p class="hint" style="margin:0">Isi API key Google Programmable Search milik Anda sendiri. Gratis 100 pencarian per hari. Kunci hanya disimpan di perangkat ini.</p>
-              <label class="field" for="gKey">API key<input type="text" id="gKey" autocomplete="off" spellcheck="false" placeholder="AIza…"></label>
-              <label class="field" for="gCx">Search engine ID (cx)<input type="text" id="gCx" autocomplete="off" spellcheck="false" placeholder="mis. 0123456789abcdef"></label>
-              <ol class="howto">
-                <li>Buka programmablesearchengine.google.com, buat mesin pencari baru, dan pilih "Search the entire web". Salin ID-nya (cx).</li>
-                <li>Buka console.cloud.google.com, aktifkan Custom Search API, lalu buat API key.</li>
-                <li>Tempel keduanya di atas, lalu centang "Google" di panel Cek di internet.</li>
-              </ol>
+              <p class="hint" style="margin:0">Sumber gratis tanpa kunci hanya menjangkau ensiklopedia dan jurnal. Untuk blog, berita, makalah di situs kampus, dan repositori skripsi, isi API key gratis milik Anda sendiri. Kunci hanya disimpan di perangkat ini dan dikirim langsung ke layanan tersebut.</p>
+              <div class="keybox">
+                <label class="field" for="kSerper"><span>Serper (hasil Google) <span class="muted">· 2.500 pencarian gratis</span></span><input type="text" id="kSerper" autocomplete="off" spellcheck="false" placeholder="API key dari serper.dev"></label>
+                <p class="hint">Daftar di serper.dev, lalu salin API key dari dasbor. Kalimat dicari persis di Google, termasuk blog, berita, dan situs kampus.</p>
+              </div>
+              <div class="keybox">
+                <label class="field" for="kTavily"><span>Tavily (isi halaman web) <span class="muted">· 1.000 kredit gratis tiap bulan</span></span><input type="text" id="kTavily" autocomplete="off" spellcheck="false" placeholder="tvly-…"></label>
+                <p class="hint">Daftar di tavily.com. Tavily mengambil isi halaman yang ditemukan, sehingga seluruh halaman ikut dibandingkan, bukan hanya cuplikannya. Paling kuat bila dipakai bersama Serper.</p>
+              </div>
+              <div class="keybox">
+                <label class="field" for="kCore"><span>CORE (repositori kampus &amp; teks lengkap) <span class="muted">· gratis untuk keperluan non-komersial</span></span><input type="text" id="kCore" autocomplete="off" spellcheck="false" placeholder="API key dari core.ac.uk"></label>
+                <p class="hint">Daftar di core.ac.uk/services/api. CORE menghimpun ratusan juta makalah dari repositori universitas di seluruh dunia, termasuk repositori skripsi di Indonesia.</p>
+              </div>
+              <details class="more">
+                <summary>Google Custom Search (lama) <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+                <p class="hint">Google menutup layanan ini untuk pengguna baru dan menghentikannya pada 1 Januari 2027. Isi hanya bila Anda sudah punya kunci lama; untuk hasil Google, pakai Serper.</p>
+                <label class="field" for="gKey">API key<input type="text" id="gKey" autocomplete="off" spellcheck="false" placeholder="AIza…"></label>
+                <label class="field" for="gCx">Search engine ID (cx)<input type="text" id="gCx" autocomplete="off" spellcheck="false" placeholder="mis. 0123456789abcdef"></label>
+              </details>
             </div>
           </details>
         </div>
@@ -1217,9 +1251,9 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       </article>
       <article class="card gcard">
         <h2>Cek di internet</h2>
-        <p>Kalimat diambil merata dari seluruh naskah (Standar: satu kalimat tiap ±150 kata, maksimal 30; Mendalam: tiap ±70 kata, maksimal 60) lalu dicari persis di Wikipedia. Kata kunci tiap bagian naskah juga dicari, sehingga artikel bertopik sama diunduh utuh. Kalimat yang sama juga dicari persis di <b>teks lengkap</b> jutaan artikel ilmiah lewat OpenAlex, dan abstrak jurnal dicari di DOAJ, Crossref, serta Semantic Scholar (termasuk banyak jurnal Indonesia), serta Google bila API key diisi. Setelah dokumen diunggah, pencarian berjalan otomatis bila sedang online.</p>
+        <p>Kalimat diambil merata dari seluruh naskah (Standar: satu kalimat tiap ±150 kata, maksimal 30; Mendalam: tiap ±70 kata, maksimal 60) lalu dicari persis di Wikipedia. Kata kunci tiap bagian naskah juga dicari, sehingga artikel bertopik sama diunduh utuh. Kalimat yang sama juga dicari persis di <b>teks lengkap</b> jutaan artikel ilmiah lewat OpenAlex dan Europe PMC (naskah berbahasa Inggris), di Wikibooks dan Wikisource Indonesia, serta di abstrak jurnal pada Semantic Scholar, OpenAIRE, DOAJ, dan Crossref (termasuk banyak jurnal dan repositori kampus Indonesia). Dengan API key gratis milik Anda, kalimat juga dicari persis di Google (lewat Serper), isi halaman web diambil lewat Tavily, dan repositori kampus dicari lewat CORE. Setelah dokumen diunggah, pencarian berjalan otomatis bila sedang online.</p>
         <p><b>Peta naskah</b> membagi naskah panjang menjadi bagian ±250 kata dan menunjukkan kesamaan serta kemungkinan AI tiap bagian. Ketuk kotaknya untuk melompat ke bagian itu.</p>
-        <p class="muted">Tanpa Google, blog, situs berita, dan repositori kampus tidak terjangkau. Gunakan daftar "Periksa manual di Google" untuk itu.</p>
+        <p class="muted">Tanpa Serper atau Tavily, blog dan situs berita tidak terjangkau. Gunakan daftar "Periksa manual di Google" untuk itu.</p>
       </article>
       <article class="card gcard">
         <h2>Sitasi &amp; keterbacaan</h2>
@@ -1774,7 +1808,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "3.5.0";
+var APP_VERSION = "3.6.0";
 function setBusy(msg, frac) {
   var b = $("#busy");
   if (!msg) { b.hidden = true; return; }
@@ -3551,24 +3585,26 @@ function setNet() {
 }
 window.addEventListener("online", setNet); window.addEventListener("offline", setNet);
 
-function fetchJSON(url, ms, tries) {
+function fetchJSON(url, ms, tries, init) {
   tries = tries == null ? 2 : tries;
   return throttle(url).then(function () {
     var ctl = window.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ctl) ctl.abort(); }, ms || 15000);
-    return fetch(url, ctl ? { signal: ctl.signal } : {}).then(function (r) {
+    var opt = Object.assign({}, init || {}); if (ctl) opt.signal = ctl.signal;
+    return fetch(url, opt).then(function (r) {
       clearTimeout(tm);
       if ((r.status === 429 || r.status === 503) && tries > 0) {
         var wait = Math.min(8000, (+r.headers.get("Retry-After") || 0) * 1000 || 1500 * (3 - tries));
-        return new Promise(function (ok) { setTimeout(ok, wait); }).then(function () { return fetchJSON(url, ms, tries - 1); });
+        return new Promise(function (ok) { setTimeout(ok, wait); }).then(function () { return fetchJSON(url, ms, tries - 1, init); });
       }
       if (!r.ok) throw new Error("HTTP " + r.status); return r.json();
     }, function (e) { clearTimeout(tm); throw e; });
   });
 }
 // Jeda minimum antar-permintaan per layanan, supaya tidak ditolak karena terlalu sering.
-var HOST_GAP = { "doaj.org": 550, "api.semanticscholar.org": 1100, "api.openalex.org": 150, "api.crossref.org": 120 }, hostNext = {};
+var HOST_GAP = { "doaj.org": 550, "api.semanticscholar.org": 1100, "api.openalex.org": 150, "api.crossref.org": 120, "api.openaire.eu": 300,
+  "www.ebi.ac.uk": 150, "api.core.ac.uk": 1100, "google.serper.dev": 120, "api.tavily.com": 250, "www.googleapis.com": 120 }, hostNext = {};
 function throttle(url) {
-  var h = (/^https?:\/\/([^/]+)/.exec(url) || [])[1] || "", gap = HOST_GAP[h] || (/wikipedia\.org$/.test(h) ? 120 : 0);
+  var h = (/^https?:\/\/([^/]+)/.exec(url) || [])[1] || "", gap = HOST_GAP[h] || (/wiki(pedia|books|source)\.org$/.test(h) ? 120 : 0);
   if (!gap) return Promise.resolve();
   var now = Date.now(), at = Math.max(now, hostNext[h] || 0); hostNext[h] = at + gap;
   return at > now ? new Promise(function (ok) { setTimeout(ok, at - now); }) : Promise.resolve();
@@ -3615,16 +3651,19 @@ function docLangs(text) {
   words(text.slice(0, 60000)).forEach(function (w) { if (/^(yang|dan|di|dengan|untuk|dari|ini|adalah|dalam|pada)$/.test(w)) id++; else if (/^(the|and|of|to|is|that|with|for|are|this)$/.test(w)) en++; });
   var out = []; if (id >= en * 0.25) out.push("id"); if (en >= id * 0.25) out.push("en"); return out;
 }
+// Kode wiki: "id"/"en" = Wikipedia, "b:id" = Wikibooks, "s:id" = Wikisource.
+function wikiHost(c) { var p = c.split(":"); return p.length > 1 ? p[1] + "." + (p[0] === "b" ? "wikibooks" : "wikisource") + ".org" : c + ".wikipedia.org"; }
+function wikiLabel(c) { var p = c.split(":"); return p.length > 1 ? (p[0] === "b" ? "Wikibooks " : "Wikisource ") + p[1].toUpperCase() : "Wikipedia " + c.toUpperCase(); }
 function wikiSearch(lang, q, n) {
-  var u = "https://" + lang + ".wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=" + (n || 3) + "&srsearch=" + encodeURIComponent(q);
+  var u = "https://" + wikiHost(lang) + "/w/api.php?action=query&list=search&format=json&origin=*&srlimit=" + (n || 3) + "&srsearch=" + encodeURIComponent(q);
   return fetchJSON(u).then(function (d) { return (d.query && d.query.search || []).map(function (x) { return x.title; }); });
 }
 function wikiPage(lang, title) {
-  var u = "https://" + lang + ".wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&format=json&origin=*&titles=" + encodeURIComponent(title);
+  var u = "https://" + wikiHost(lang) + "/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&format=json&origin=*&titles=" + encodeURIComponent(title);
   return fetchJSON(u).then(function (d) {
-    var pages = d.query && d.query.pages || {}, pg = pages[Object.keys(pages)[0]] || {};
-    return { name: "Wikipedia (" + lang.toUpperCase() + "): " + (pg.title || title), kind: "Wikipedia " + lang.toUpperCase(),
-      url: "https://" + lang + ".wikipedia.org/wiki/" + encodeURIComponent((pg.title || title).replace(/ /g, "_")), text: pg.extract || "" };
+    var pages = d.query && d.query.pages || {}, pg = pages[Object.keys(pages)[0]] || {}, t = pg.title || title;
+    return { name: (lang.indexOf(":") > 0 ? wikiLabel(lang) + ": " : "Wikipedia (" + lang.toUpperCase() + "): ") + t, kind: wikiLabel(lang),
+      url: "https://" + wikiHost(lang) + "/wiki/" + encodeURIComponent(t.replace(/ /g, "_")), text: pg.extract || "" };
   });
 }
 function stripTags(h) {
@@ -3688,6 +3727,80 @@ function semScholar(terms) {
     }).filter(function (src) { return words(src.text).length > 20; });
   });
 }
+// ---- Sumber tambahan ----
+function phraseOf(sentence, n) { var tk = tokenize(sentence); n = Math.min(n, tk.length); return { tk: tk, n: n, q: tk.slice(0, n).map(function (t) { return t[0]; }).join(" ").replace(/["',:|]/g, " "), conf: n ? sentence.slice(0, tk[n - 1][2]) : "" }; }
+// Europe PMC: frasa persis di teks lengkap artikel (terutama berbahasa Inggris, bidang kesehatan & hayati).
+function europePmc(sentence) {
+  var p = phraseOf(sentence, 14); if (p.n < 8) return Promise.resolve([]);
+  var u = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&pageSize=3&resultType=core&query=" + encodeURIComponent('"' + p.q + '"');
+  return fetchJSON(u).then(function (d) {
+    return ((d.resultList && d.resultList.result) || []).map(function (r) {
+      return { id: "epmc:" + r.source + r.id, name: (r.title || "Artikel").replace(/\.$/, "") + (r.pubYear ? " (" + r.pubYear + ")" : ""), kind: "Europe PMC", group: "publikasi",
+        url: r.doi ? "https://doi.org/" + r.doi : "https://europepmc.org/article/" + r.source + "/" + r.id, text: (r.title || "") + " " + stripTags(r.abstractText), conf: p.conf };
+    });
+  });
+}
+// OpenAIRE: menghimpun jurnal OJS dan repositori, termasuk banyak kampus di Indonesia.
+function oaireVal(v) {
+  if (!v) return ""; if (typeof v === "string") return v;
+  if (Array.isArray(v)) { var m = v.filter(function (x) { return x && x["@classid"] === "main title"; })[0] || v[0]; return oaireVal(m); }
+  return typeof v.$ === "string" ? v.$ : "";
+}
+function openAire(terms) {
+  var u = "https://api.openaire.eu/search/publications?format=json&size=4&keywords=" + encodeURIComponent(terms.join(" "));
+  return fetchJSON(u, 20000).then(function (d) {
+    var res = d && d.response && d.response.results && d.response.results.result; if (!res) return [];
+    if (!Array.isArray(res)) res = [res];
+    return res.map(function (x) {
+      var m = (((x || {}).metadata || {})["oaf:entity"] || {})["oaf:result"] || {}, t = stripTags(oaireVal(m.title)), ab = stripTags(oaireVal(m.description));
+      var pid = [].concat(m.pid || []).filter(function (p) { return p && p["@classid"] === "doi"; })[0];
+      var link = (/"(https?:\/\/[^"\s]+)"/.exec(JSON.stringify((m.children || {}).instance || "")) || [])[1];
+      var yr = (/^(\d{4})/.exec(oaireVal(m.dateofacceptance)) || [])[1];
+      return { name: (t || "Artikel") + (yr ? " (" + yr + ")" : ""), kind: "OpenAIRE", group: "publikasi", url: pid ? "https://doi.org/" + pid.$ : link || "", text: t + ". " + ab };
+    }).filter(function (src) { return src.url && words(src.text).length > 20; });
+  });
+}
+// CORE (perlu API key gratis): repositori universitas di seluruh dunia, sering memuat teks lengkap.
+function coreSearch(sentence) {
+  var p = phraseOf(sentence, 12); if (p.n < 8) return Promise.resolve([]);
+  var u = "https://api.core.ac.uk/v3/search/works?limit=3&q=" + encodeURIComponent('"' + p.q + '"');
+  return fetchJSON(u, 25000, 1, { headers: { Authorization: "Bearer " + store("ct_core") } }).then(function (d) {
+    return (d.results || []).map(function (w) {
+      var full = String(w.fullText || "");
+      return { id: "core:" + w.id, name: (w.title || "Dokumen repositori") + (w.yearPublished ? " (" + w.yearPublished + ")" : ""), kind: "CORE", group: "publikasi",
+        url: "https://core.ac.uk/works/" + w.id, text: (w.title || "") + ". " + stripTags(w.abstract) + (full ? "\n\n" + full.slice(0, 150000) : ""), conf: full ? "" : p.conf };
+    });
+  });
+}
+// Serper: hasil pencarian Google (frasa persis). Yang didapat cuplikan; isi halamannya diambil lewat Tavily bila ada.
+function serperSearch(sentence) {
+  var q = '"' + words(sentence).slice(0, 14).join(" ") + '"';
+  return fetchJSON("https://google.serper.dev/search", 15000, 1, { method: "POST", headers: { "X-API-KEY": store("ct_serper"), "Content-Type": "application/json" },
+    body: JSON.stringify({ q: q, gl: "id", hl: "id", num: 10 }) }).then(function (d) {
+    return (d.organic || []).map(function (it) { return { name: it.title || it.link, kind: "Google", url: it.link, snip: (it.title || "") + ". " + (it.snippet || "") }; });
+  });
+}
+function mdText(t) { return String(t || "").replace(/!\[[^\]]*\]\([^)]*\)/g, " ").replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/^[#>*\-\s]+/gm, "").replace(/[*_`|]+/g, " "); }
+// Tavily: pencarian web yang sekaligus mengembalikan isi halaman.
+function tavilyPost(path, body) {
+  return fetchJSON("https://api.tavily.com/" + path, 30000, 1, { method: "POST", headers: { Authorization: "Bearer " + store("ct_tavily"), "Content-Type": "application/json" }, body: JSON.stringify(body) });
+}
+function tavilySearch(sentence) {
+  return tavilyPost("search", { query: sentence.slice(0, 380), search_depth: "basic", max_results: 5, include_raw_content: true }).then(function (d) {
+    return (d.results || []).map(function (r) { return { name: r.title || r.url, kind: "Web", url: r.url, text: (r.title || "") + ". " + mdText(r.raw_content || r.content).slice(0, 120000) }; });
+  });
+}
+function tavilyExtract(urls) {
+  return tavilyPost("extract", { urls: urls }).then(function (d) {
+    var out = {}; (d.results || []).forEach(function (r) { if (r.url && r.raw_content) out[r.url] = mdText(r.raw_content).slice(0, 120000); }); return out;
+  });
+}
+// Apakah cuplikan memuat potongan 5 kata berurutan dari kalimat?
+function confirmsIn(snip, sentence) {
+  var sw = " " + words(snip).join(" ") + " ", qw = words(sentence);
+  for (var i = 0; i + 5 <= qw.length; i++) if (sw.indexOf(" " + qw.slice(i, i + 5).join(" ") + " ") >= 0) return true;
+  return false;
+}
 function googleSearch(sentence) {
   var key = store("ct_gkey"), cx = store("ct_gcx");
   var q = '"' + words(sentence).slice(0, 14).join(" ") + '"';
@@ -3721,8 +3834,14 @@ function runWebSearch() {
   var dl = docLangs(text), langs = want.filter(function (l) { return dl.indexOf(l) >= 0; });
   if (!langs.length) langs = want.slice(0, 1);
   var useOA = $("#wOpenAlex").checked, useDoaj = $("#wDoaj").checked, useCr = $("#wCrossref").checked, useS2 = $("#wS2").checked;
-  if (!want.length && !useOA && !useDoaj && !useCr && !useS2 && !useG) return toast("Pilih minimal satu sumber pencarian.");
-  S.lastEngines = [].concat(langs.map(function (l) { return "Wikipedia " + l.toUpperCase(); }), useOA ? ["OpenAlex (teks lengkap)"] : [], useDoaj ? ["DOAJ"] : [], useCr ? ["Crossref"] : [], useS2 ? ["Semantic Scholar"] : [], useG ? ["Google"] : []);
+  var useBooks = $("#wWikiBooks").checked && dl.indexOf("id") >= 0, useAire = $("#wOpenAire").checked, useEpmc = $("#wEpmc").checked && dl.indexOf("en") >= 0;
+  var useCore = $("#wCore").checked && !!store("ct_core"), useSerper = $("#wSerper").checked && !!store("ct_serper"), useTav = $("#wTavily").checked && !!store("ct_tavily");
+  var missing = [["wCore", "ct_core", "CORE"], ["wSerper", "ct_serper", "Serper"], ["wTavily", "ct_tavily", "Tavily"]].filter(function (k) { return $("#" + k[0]).checked && !store(k[1]); }).map(function (k) { return k[2]; });
+  if (missing.length) toast(missing.join(", ") + " dilewati: isi API key di tab Sumber.");
+  if (!want.length && !useOA && !useDoaj && !useCr && !useS2 && !useG && !useBooks && !useAire && !useEpmc && !useCore && !useSerper && !useTav) return toast("Pilih minimal satu sumber pencarian.");
+  S.lastEngines = [].concat(langs.map(function (l) { return "Wikipedia " + l.toUpperCase(); }), useBooks ? ["Wikibooks & Wikisource ID"] : [], useOA ? ["OpenAlex (teks lengkap)"] : [],
+    useS2 ? ["Semantic Scholar"] : [], useAire ? ["OpenAIRE"] : [], useDoaj ? ["DOAJ"] : [], useCr ? ["Crossref"] : [], useEpmc ? ["Europe PMC (teks lengkap)"] : [], useCore ? ["CORE"] : [],
+    useSerper ? ["Google (Serper)"] : [], useTav ? ["Tavily"] : [], useG ? ["Google CSE"] : []);
   var bs = $("#fBib").checked ? findBibStart(text) : -1;
   var sents = pickSentences(text, webBudget(nW), bs, findBibEnd(text, bs));
   if (!sents.length) return toast("Tidak menemukan kalimat yang cukup panjang untuk dicari.");
@@ -3746,6 +3865,36 @@ function runWebSearch() {
     });
   }
   function oaFail(e) { if (/HTTP 429|HTTP 403/.test(e && e.message)) oaStop = true; else errors++; }
+  // Sumber yang memuat frasa persis (OpenAlex, Europe PMC, CORE): kalimatnya ditambahkan ke teks sumber.
+  function confAdd(rs) {
+    okCalls++;
+    rs.forEach(function (r) {
+      var o = oaWorks.get(r.id);
+      if (!o) { o = { name: r.name, kind: r.kind, group: r.group, url: r.url, text: r.text, conf: [] }; oaWorks.set(r.id, o); }
+      if (r.conf && o.conf.indexOf(r.conf) < 0) o.conf.push(r.conf);
+    });
+  }
+  // Mesin berkunci: kunci ditolak atau kuota habis -> mesin itu berhenti dipakai, lainnya jalan terus.
+  var stopped = {};
+  function guard(eng, label, fn) {
+    return function () {
+      if (stopped[eng]) { tick(label); return Promise.resolve(); }
+      return fn().catch(function (e) {
+        var m = (e && e.message) || "", c = (/HTTP (\d+)/.exec(m) || [])[1];
+        if (c && +c >= 400 && +c < 500) stopped[eng] = c === "401" || c === "403" ? "API key ditolak" : "kuota habis atau dibatasi (HTTP " + c + ")"; else errors++;
+      }).then(function () { tick(label); });
+    };
+  }
+  var webHits = new Map();
+  function serperAdd(rs, s) {
+    okCalls++;
+    rs.forEach(function (r) {
+      if (!r.url) return;
+      var o = webHits.get(r.url) || { name: r.name, kind: r.kind, url: r.url, snips: [], conf: [] }; webHits.set(r.url, o);
+      if (o.snips.indexOf(r.snip) < 0) o.snips.push(r.snip);
+      if (confirmsIn(r.snip, s) && o.conf.indexOf(s) < 0) o.conf.push(s);
+    });
+  }
   function hit(lang, t, w) { var k = lang + "|" + t, o = titles.get(k) || { lang: lang, title: t, w: 0 }; o.w += w; titles.set(k, o); }
   // Mesin jurnal dipakai untuk setiap kalimat kedua saja; Wikipedia untuk setiap kalimat.
   sents.forEach(function (s, si) {
@@ -3756,7 +3905,17 @@ function runWebSearch() {
           .then(function () { tick("Mencari kalimat di Wikipedia " + lang.toUpperCase() + "…"); });
       });
     });
+    if (useBooks) ["b:id", "s:id"].forEach(function (c) {
+      tasks.push(function () {
+        return wikiSearch(c, phrase, 2).then(function (ts) { okCalls++; ts.forEach(function (t) { hit(c, t, 3); }); }, fail).then(function () { tick("Mencari di " + wikiLabel(c) + "…"); });
+      });
+    });
     var journal = sents.length <= 12 || si % 2 === 0;
+    if (useEpmc) tasks.push(guard("Europe PMC", "Mencari di Europe PMC…", function () { return europePmc(s).then(confAdd); }));
+    if (journal && useAire) tasks.push(guard("OpenAIRE", "Mencari di OpenAIRE…", function () { return openAire(terms.slice(0, 5)).then(addAll); }));
+    if (journal && useCore) tasks.push(guard("CORE", "Mencari di repositori (CORE)…", function () { return coreSearch(s).then(confAdd); }));
+    if (useSerper) tasks.push(guard("Serper", "Mencari di Google…", function () { return serperSearch(s).then(function (rs) { serperAdd(rs, s); }); }));
+    if (useTav && (sents.length <= 12 || si % 2 === 1)) tasks.push(guard("Tavily", "Mencari di web (Tavily)…", function () { return tavilySearch(s).then(addAll); }));
     if (useOA) tasks.push(function () { if (oaStop) { tick("Mencari di teks lengkap jurnal…"); return Promise.resolve(); } return openAlexFull(s).then(oaAdd, oaFail).then(function () { tick("Mencari di teks lengkap jurnal…"); }); });
     if (journal && useDoaj) tasks.push(function () { return doaj(terms.slice(0, 4)).then(addAll, fail).then(function () { tick("Mencari di DOAJ…"); }); });
     if (journal && useCr) tasks.push(function () { return crossref(terms.slice(0, 6)).then(addAll, fail).then(function () { tick("Mencari di Crossref…"); }); });
@@ -3775,8 +3934,8 @@ function runWebSearch() {
       });
     });
   });
-  var maxPages = Math.min(40, 8 + sents.length);
-  total = tasks.length + maxPages;
+  var maxPages = Math.min(48, 8 + sents.length + (useBooks ? 8 : 0));
+  total = tasks.length + maxPages + (useSerper && useTav ? 1 : 0);
   function runAll(list, limit) {
     var i = 0;
     function next() { if (i >= list.length) return Promise.resolve(); var f = list[i++]; return f().then(next); }
@@ -3786,9 +3945,21 @@ function runWebSearch() {
   runAll(tasks, 4).then(function () {
     var pages = Array.from(titles.values()).sort(function (a, b) { return b.w - a.w; }).slice(0, maxPages);
     total = tasks.length + pages.length;
-    return runAll(pages.map(function (o) { return function () { return wikiPage(o.lang, o.title).then(function (x) { okCalls++; add(x); }, fail).then(function () { tick("Mengunduh artikel Wikipedia…"); }); }; }), 4);
+    return runAll(pages.map(function (o) { return function () { return wikiPage(o.lang, o.title).then(function (x) { okCalls++; add(x); }, fail).then(function () { tick("Mengunduh artikel " + wikiLabel(o.lang) + "…"); }); }; }), 4);
   }).then(function () {
+    // Halaman hasil Google: isi lengkapnya diambil lewat Tavily (bila ada kunci), mulai dari yang paling banyak cocok.
+    var urls = Array.from(webHits.values()).filter(function (o) { return !found.has(o.url) && !/wikipedia\.org/.test(o.url); })
+      .sort(function (a, b) { return b.conf.length - a.conf.length || b.snips.length - a.snips.length; }).slice(0, 20).map(function (o) { return o.url; });
+    if (!useTav || !urls.length || stopped.Tavily) return {};
+    return guard("Tavily", "Mengambil isi halaman web…", function () { return tavilyExtract(urls).then(function (m) { okCalls++; webHits.full = m; }); })().then(function () { return webHits.full || {}; });
+  }).then(function (full) {
     runWebSearch.busy = false;
+    webHits.forEach(function (o) {
+      if (found.has(o.url)) return;
+      var body = full && full[o.url];
+      if (body) found.set(o.url, { name: o.name, kind: "Web", url: o.url, text: o.name + ". " + body });
+      else if (o.conf.length) found.set(o.url, { name: o.name, kind: "Google", url: o.url, text: o.snips.join(" ") + "\n\n" + o.conf.join(" … ") });
+    });
     oaWorks.forEach(function (o) { if (!found.has(o.url)) found.set(o.url, { name: o.name, kind: o.kind, group: o.group, url: o.url, text: o.conf.join(" … ") + "\n\n" + o.text }); });
     S.webSources = Array.from(found.values()); S.webChecked = okCalls > 0; S.lastOA = { hits: oaHits, limited: oaStop };
     bar.style.width = "100%"; setTimeout(function () { prog.hidden = true; }, 600);
@@ -3796,6 +3967,7 @@ function runWebSearch() {
     $("#webStatus").textContent = okCalls ? sents.length + " kalimat dicari · " + S.webSources.length + " halaman ditemukan dan dibandingkan" + (errors ? " · " + errors + " permintaan gagal" : "") + "." :
       "Pencarian gagal. Periksa koneksi internet.";
     if (oaStop) $("#webStatus").textContent += " Kuota harian OpenAlex habis: isi API key gratis di tab Sumber agar teks lengkap jurnal ikut dicari.";
+    var st = Object.keys(stopped); if (st.length) $("#webStatus").textContent += " " + st.map(function (k) { return k + ": " + stopped[k]; }).join("; ") + ".";
     if (!okCalls && IN_FRAME) $("#webStatus").textContent = "Pencarian internet diblokir di pratinjau Claude. Pakai file CekTeks.html.";
     $("#webClear").hidden = !S.webSources.length;
     renderQLinks(sents.slice(0, 12));
@@ -3828,8 +4000,28 @@ $("#wAuto").checked = store("ct_wauto") !== "0"; $("#wAuto").onchange = function
   var el = $("#" + id), k = id === "gKey" ? "ct_gkey" : "ct_gcx"; el.value = store(k) || "";
   el.oninput = function () { store(k, el.value.trim()); updGHint(); };
 });
-function updGHint() { var ok = store("ct_gkey") && store("ct_gcx"); $("#gHint").textContent = ok ? "(API siap)" : "(atur API di tab Sumber)"; if (ok && !$("#wGoogle").dataset.touched) $("#wGoogle").checked = true; }
+function updGHint() { var ok = store("ct_gkey") && store("ct_gcx"); $("#gHint").textContent = ok ? "(API siap)" : "(atur API di tab Sumber)"; if (ok && !$("#wGoogle").dataset.touched) $("#wGoogle").checked = true; updKeys(); }
 $("#wGoogle").onchange = function () { this.dataset.touched = "1"; };
+var KEYS = [["kSerper", "ct_serper", "wSerper", "Google lewat Serper"], ["kTavily", "ct_tavily", "wTavily", "Tavily"], ["kCore", "ct_core", "wCore", "CORE"]];
+function updKeys() {
+  var ready = [];
+  KEYS.forEach(function (k) {
+    var ok = !!store(k[1]), cb = $("#" + k[2]), h = document.querySelector('.keyhint[data-key="' + k[1] + '"]');
+    if (h) { h.classList.toggle("ready", ok); h.textContent = ok ? "(API siap)" : "(atur API di tab Sumber)"; }
+    if (ok) ready.push(k[3]);
+    if (ok && !cb.dataset.touched) cb.checked = true;
+    if (!ok && !cb.dataset.touched) cb.checked = false;
+  });
+  $("#keySum").textContent = ready.length ? "aktif: " + ready.join(", ") : "opsional · blog, berita, situs & repositori kampus";
+  updSrcSum();
+}
+function updSrcSum() { var n = document.querySelectorAll("#srcPick .checks input:checked").length; $("#srcPickSum").textContent = n + " sumber dipilih"; }
+KEYS.forEach(function (k) {
+  var el = $("#" + k[0]); el.value = store(k[1]) || "";
+  el.oninput = function () { store(k[1], el.value.trim()); updKeys(); };
+  $("#" + k[2]).addEventListener("change", function () { this.dataset.touched = "1"; });
+});
+document.querySelectorAll("#srcPick .checks input").forEach(function (c) { c.addEventListener("change", updSrcSum); });
 updGHint(); setNet();
 if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !IN_FRAME) navigator.serviceWorker.register("sw.js").catch(function () {});
 
