@@ -277,6 +277,66 @@ async function download(page, selector) {
     await page.evaluate(() => { ["ct_serper", "ct_tavily", "ct_core"].forEach((k) => localStorage.removeItem(k)); updKeys(); resetWeb(); run(); });
     await srcDefault(page);
   });
+  await test("instansi: kode verifikasi + QR, tanda tangan digital, verifikasi dokumen, logo, laporan PDF", async () => {
+    await page.click("#tab-periksa");
+    await page.evaluate(() => { document.getElementById("svcName").value = "Universitas Contoh"; store("ct_sign", "rahasia-instansi-123");
+      const c = document.createElement("canvas"); c.width = 200; c.height = 60; const x = c.getContext("2d"); x.fillStyle = "#0e6a86"; x.fillRect(0, 0, 200, 60);
+      store("ct_logo", c.toDataURL("image/png")); store("ct_logo_wh", "200,60"); showLogo(); setText(SAMPLE, true); });
+    await page.waitForTimeout(400);
+    const r = await page.evaluate(async () => { const r = buildReport(); await prepReport(r); return { code: r.seal.code, signed: r.seal.signed, url: r.seal.url, qr: !!r.sealQr, txt: reportText(r), text: r.text }; });
+    ok(/^[0-9A-F]{4}(-[0-9A-F]{4}){3}$/.test(r.code) && r.signed && r.qr, "segel laporan tidak lengkap: " + JSON.stringify(r).slice(0, 160));
+    ok(r.txt.includes(r.code) && r.txt.includes("#cek="), "kode verifikasi tidak ada di laporan TXT");
+    const pdf = await download(page, "#dlPdf");
+    ok(pdf.buf.length > 5000 && pdf.buf.slice(0, 4).toString() === "%PDF", "PDF berlogo & ber-QR gagal dibuat: " + pdf.buf.length + " byte");
+    // Buka tautan verifikasi di tab baru, seperti memindai QR.
+    const v = await ctx.newPage(); v.errors = []; v.on("pageerror", (e) => v.errors.push(e.message));
+    await v.goto(r.url.replace(/^https:\/\/[^#]+/, SITE)); await ready(v);
+    await v.waitForSelector("#verDrawer:not([hidden])");
+    ok((await v.textContent("#verSub")).includes(r.code), "kode tidak tampil di halaman verifikasi");
+    await v.fill("#verText", r.text); await v.waitForSelector("#verDocRes .vres.ok", { timeout: 5000 });
+    await v.fill("#verText", r.text.replace("teknologi", "teknologi baru")); await v.waitForSelector("#verDocRes .vres.bad", { timeout: 5000 });
+    await v.fill("#verKey", "kunci-salah-sekali"); await v.click("#verSign"); await v.waitForSelector("#verSignRes .vres.bad");
+    await v.fill("#verKey", "rahasia-instansi-123"); await v.click("#verSign"); await v.waitForSelector("#verSignRes .vres.ok");
+    // Data laporan dipalsukan (skor diturunkan): tanda tangan harus gagal.
+    const fake = await v.evaluate((u) => { const o = parseSeal(u); o.s = 1; return SITE_URL + "#cek=" + b64u(JSON.stringify(o)); }, r.url);
+    await v.evaluate((u) => openVerify(parseSeal(u)), fake);
+    await v.fill("#verKey", "rahasia-instansi-123"); await v.click("#verSign"); await v.waitForSelector("#verSignRes .vres.bad");
+    ok(!v.errors.length, "galat di halaman verifikasi: " + v.errors.join("; ")); await v.close();
+    await page.evaluate(() => { ["ct_sign", "ct_logo", "ct_logo_wh"].forEach((k) => localStorage.removeItem(k)); showLogo(); document.getElementById("svcName").value = ""; });
+  });
+  await test("filter: abaikan sumber kecil menghitung ulang skor dan tercatat di laporan", async () => {
+    await page.evaluate(() => setText(SAMPLE, true)); await page.waitForTimeout(400);
+    const before = await page.evaluate(() => S.plag.matched.map((m) => m.share));
+    const setSmall = (v) => page.evaluate((v) => { const e = document.getElementById("fSmall"); e.value = v; e.dispatchEvent(new Event("change")); }, v);
+    await setSmall("5"); await page.waitForTimeout(400);
+    const after = await page.evaluate(() => ({ shares: S.plag.matched.map((m) => m.share), n: S.plag.smallExcluded, f: filterList().join(" | ") }));
+    ok(after.shares.every((x) => x >= 5), "masih ada sumber di bawah 5%: " + after.shares.join(","));
+    ok(after.n === before.filter((x) => x < 5).length, "jumlah sumber diabaikan salah: " + after.n + " dari " + before.join(","));
+    ok(/di bawah 5%/.test(after.f), "filter tidak tercatat: " + after.f);
+    await setSmall("0"); await page.waitForTimeout(300);
+  });
+  await test("sumber tambahan: PLOS (teks lengkap), Zenodo, DataCite, LangSearch", async () => {
+    const EN = "Malaria transmission in the highlands depends strongly on the temperature of the breeding sites and the survival of adult mosquitoes";
+    const ZEN = "Penerapan pendekatan pembelajaran matematika realistik mampu meningkatkan kemampuan pemecahan masalah siswa kelas lima sekolah dasar";
+    const DC = "Data curah hujan harian dari stasiun klimatologi menunjukkan tren penurunan selama musim kemarau dalam tiga dekade terakhir";
+    const WEB = "Warung kopi di sudut kota itu selalu ramai oleh mahasiswa yang mengerjakan tugas sambil menunggu hujan reda";
+    const H = { "access-control-allow-origin": "*" }, J = (r, b) => r.fulfill({ contentType: "application/json", headers: H, body: JSON.stringify(b) });
+    await ctx.route(/api\.plos\.org/, (r) => { const q = new URL(r.request().url()).searchParams.get("q") || ""; J(r, { response: { docs: EN.toLowerCase().includes(q.replace(/everything:|"/g, "")) ? [{ id: "10.1371/journal.pone.0000001", title_display: "Highland malaria", abstract: ["We study malaria in highland villages over ten years of surveillance."], publication_date: "2015-01-01T00:00:00Z" }] : [] } }); });
+    await ctx.route(/zenodo\.org/, (r) => J(r, { hits: { hits: [{ id: 7, doi_url: "https://doi.org/10.5281/zenodo.7", metadata: { title: "Pembelajaran matematika realistik", publication_date: "2019-05-01", description: "<p>" + ZEN + ". Penelitian tindakan kelas dilakukan dalam dua siklus.</p>" } }] } }));
+    await ctx.route(/api\.datacite\.org/, (r) => J(r, { data: [{ attributes: { doi: "10.9999/iklim", publicationYear: 2020, titles: [{ title: "Data iklim" }], descriptions: [{ description: DC + ". Data diolah dengan uji Mann-Kendall." }] } }] }));
+    await ctx.route(/api\.langsearch\.com/, (r) => J(r, { code: 200, data: { webPages: { value: [{ name: "Cerita kopi", url: "https://cerita.example/kopi", snippet: "…", summary: "Catatan perjalanan. " + WEB + ". Kopinya enak." }] } } }));
+    await page.evaluate(() => { store("ct_langsearch", "uji"); updKeys(); });
+    await srcOnly(page, ["wPlos", "wZenodo", "wDataCite", "wLang"]);
+    await page.evaluate((t) => setText(t), "Laporan praktikum gabungan. " + ZEN + ". Kelompok kami mengamati kebun sekolah setiap pagi selama dua minggu. " + DC + ". " + WEB + ". The second part is written in English for the international seminar. " + EN + ". We thank the village health workers for their help during the survey.");
+    await page.waitForTimeout(400); await page.click("#webBtn");
+    await page.waitForFunction(() => document.getElementById("webProg").hidden && !runWebSearch.busy && S.webChecked, null, { timeout: 60000 });
+    const k = await page.evaluate(() => S.webSources.map((w) => w.kind).sort().join(","));
+    for (const x of ["PLOS", "Zenodo", "DataCite", "Web"]) ok(k.includes(x), "sumber " + x + " tidak ditemukan: " + k);
+    ok(await page.evaluate(() => S.plag.score) > 50, "kesamaan terlalu rendah: " + await page.evaluate(() => S.plag.score));
+    for (const re of [/api\.plos\.org/, /zenodo\.org/, /api\.datacite\.org/, /api\.langsearch\.com/]) await ctx.unroute(re);
+    await page.evaluate(() => { localStorage.removeItem("ct_langsearch"); updKeys(); resetWeb(); run(); });
+    await srcDefault(page);
+  });
   await test("deteksi AI terkalibrasi: abstrak manusia berdata rendah, teks AI generik tinggi", async () => {
     const HUMAN = "Penelitian ini bertujuan untuk mengetahui pengaruh pemberian pupuk kandang ayam terhadap pertumbuhan dan hasil tanaman jagung manis (Zea mays saccharata Sturt.) pada tanah PMK. Penelitian dilaksanakan di kebun percobaan Fakultas Pertanian Universitas Kapuas Sintang dari bulan Maret sampai Juni 2016. Rancangan yang digunakan adalah Rancangan Acak Lengkap (RAL) dengan 5 perlakuan dan 5 ulangan, yaitu tanpa pupuk kandang, 10 ton/ha, 20 ton/ha, 30 ton/ha, dan 40 ton/ha. Variabel yang diamati meliputi tinggi tanaman, diameter batang, berat tongkol berkelobot, dan berat tongkol tanpa kelobot. Hasil penelitian menunjukkan bahwa pemberian pupuk kandang ayam berpengaruh nyata terhadap semua variabel pengamatan. Dosis 30 ton/ha memberikan hasil terbaik dengan berat tongkol tanpa kelobot 312,4 g per tanaman.";
     const r = await page.evaluate(([h]) => [detectAI(h).score, detectAI(SAMPLE.split("\n\n").filter((p, i) => i !== 2).join("\n\n")).score, detectAI(h).signals.kekhususan], [HUMAN]);
