@@ -2,6 +2,32 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [3.4.0] - 2026-11-18
+### Diperbaiki
+- **Cek internet pada naskah panjang**: sebelumnya hanya 6 kalimat yang dicari, berapa pun panjang naskahnya, sehingga
+  dokumen puluhan halaman bisa mendapat 0%. Kini kalimat diambil merata dari seluruh naskah (di luar daftar pustaka)
+  sesuai kedalaman: Cepat (8), Standar (1 tiap ±150 kata, maks. 30), Mendalam (1 tiap ±70 kata, maks. 60).
+  Kalimat bernama, beristilah, atau berangka diutamakan.
+- Kata yang terpotong tanda hubung di akhir baris PDF ("fotosin-\ntesis") kini dibaca sebagai satu kata, sehingga
+  kecocokan tidak terputus.
+- Deteksi AI tidak lagi ikut menilai daftar pustaka, judul, nomor halaman, dan isi tabel. Sinyal yang tidak bisa
+  diukur (mis. paragraf pada PDF) tidak lagi dianggap 50%.
+
+### Ditambahkan
+- Pencarian frasa persis di Wikipedia untuk tiap kalimat, ditambah pencarian kata kunci tiap bagian naskah
+  sehingga artikel bertopik sama diunduh utuh (hingga 40 artikel).
+- Sumber baru: **Semantic Scholar** (abstrak jurnal, termasuk banyak jurnal Indonesia).
+- Wikipedia hanya dicari dalam bahasa naskah; jeda antar-permintaan per layanan dan coba ulang otomatis bila ditolak
+  karena terlalu sering (HTTP 429).
+- **Cek otomatis setelah unggah** (bisa dimatikan) dan ajakan "Belum dicek di internet" di ringkasan hasil, supaya
+  skor offline tidak disangka hasil akhir. Hasil internet naskah lama dihapus saat dokumen baru diunggah.
+- **Peta naskah**: naskah panjang dibagi per ±250 kata; tiap bagian menampilkan kesamaan dan kemungkinan AI,
+  dan bisa diketuk untuk melompat ke bagian itu.
+- **AI per bagian**: skor AI menggabungkan skor keseluruhan dan skor tiap bagian, sehingga bagian yang ditulis AI
+  tidak tenggelam di naskah panjang. Sinyal baru "Pola daftar tiga" dan ±50 frasa khas AI tambahan.
+- Laporan mencatat jumlah kalimat yang dicari dan jumlah bagian yang cenderung AI.
+- Uji e2e menjadi 30 skenario (naskah ±6.500 kata dengan salinan di bagian akhir).
+
 ## [3.3.0] - 2026-11-17
 ### Ditambahkan
 - **Sitasi & daftar pustaka**: mengenali sitasi (Nama, 2020), Nama dkk. (2020), Nama & Nama, 2020, beberapa sitasi
