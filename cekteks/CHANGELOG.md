@@ -2,6 +2,38 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [3.7.0] - 2026-11-18
+### Ditambahkan: fitur untuk instansi
+- **Kode verifikasi dan QR** di sampul setiap laporan PDF, juga di laporan Word dan TXT.
+  - Kodenya berupa sidik SHA-256 isi naskah.
+  - Memindai QR membuka halaman **Verifikasi laporan**: naskah diunggah atau ditempel, lalu dicocokkan dengan
+    kode, sehingga ketahuan bila naskah diubah setelah diperiksa. Semua berjalan di perangkat.
+- **Tanda tangan digital instansi** (HMAC-SHA256) dengan kunci rahasia instansi.
+  - Staf dapat memastikan laporan asli dan skor, tanggal, serta ID-nya tidak diubah.
+  - Data yang dipalsukan membuat tanda tangan gagal.
+- **Logo instansi** tampil di kepala dan kaki setiap halaman laporan PDF, menggantikan merek CekTeks.
+- Tombol **Verifikasi laporan** di halaman Riwayat. Riwayat juga mencatat kode verifikasi tiap laporan.
+- Filter **Abaikan sumber kecil** (di bawah 1%, 2%, atau 5%). Skor dihitung ulang tanpa sumber itu, dan
+  pengaturannya tercatat di laporan.
+- Kartu panduan **Untuk instansi**.
+
+### Ditambahkan: sumber (menjadi 19)
+- **PLOS**: frasa persis di teks lengkap artikel. Hanya untuk naskah berbahasa Inggris.
+- **Zenodo**: repositori terbuka, banyak makalah pendidikan Indonesia.
+- **DataCite**: DOI repositori kampus, data penelitian, dan prosiding.
+- **LangSearch**: mesin pencari web kedua, memakai API key gratis.
+- PLOS, Zenodo, dan DataCite sudah dicoba langsung dari situs asli (CORS lolos).
+
+### Diperbaiki
+- Tautan bertanda `#...=` tidak lagi dianggap nama halaman saat situs dibuka.
+
+### Lainnya
+- Uji e2e menjadi 36 skenario. Skenario baru:
+  - verifikasi, termasuk tanda tangan salah dan data palsu;
+  - PDF berlogo dan ber-QR;
+  - filter sumber kecil;
+  - PLOS, Zenodo, DataCite, dan LangSearch.
+
 ## [3.6.0] - 2026-11-18
 ### Ditambahkan
 - Sumber cek internet diperluas menjadi 15, dikelompokkan dalam panel "Sumber pencarian" yang bisa dilipat.

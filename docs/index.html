@@ -326,6 +326,19 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 .comp { padding: 0 16px 14px; }
 .compbar { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: var(--orig); }
 .keybox { display: grid; gap: 4px; }
+.logorow { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 2px; }
+.logorow img { max-height: 40px; max-width: 160px; border: 1px solid var(--line); border-radius: 6px; padding: 3px; background: #fff; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.vcheck { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.vcheck h3 { margin: 0; font-size: 14.5px; }
+.vgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 16px; }
+.vgrid div { display: grid; gap: 2px; font-size: 13.5px; } .vgrid span { font-size: 12px; color: var(--muted); } .vgrid b { overflow-wrap: anywhere; }
+.vres { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; font-size: 13.5px; }
+.vres.ok { background: rgba(29, 127, 85, .12); } .vres.bad { background: rgba(194, 57, 46, .12); } .vres.info { background: var(--accent-soft); }
+.vres b { display: block; }
+.pagehead-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.pagehead-row h1 { margin: 0; }
+.vcode { font-family: var(--f-mono); letter-spacing: .04em; }
 .keybox .hint { margin: 0; font-size: 12.5px; }
 .webopts { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 16px; }
 .webopts .field { flex: 1 1 220px; }
@@ -951,10 +964,14 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
                 <label><input type="checkbox" id="wDoaj" checked> DOAJ</label>
                 <label><input type="checkbox" id="wCrossref" checked> Crossref</label>
                 <label><input type="checkbox" id="wEpmc" checked> Europe PMC <span class="muted">(teks lengkap, naskah Inggris)</span></label>
+                <label><input type="checkbox" id="wPlos" checked> PLOS <span class="muted">(teks lengkap, naskah Inggris)</span></label>
+                <label><input type="checkbox" id="wZenodo" checked> Zenodo</label>
+                <label><input type="checkbox" id="wDataCite" checked> DataCite <span class="muted">(DOI repositori &amp; data)</span></label>
                 <label><input type="checkbox" id="wCore"> CORE <span class="muted keyhint" data-key="ct_core">(repositori kampus)</span></label>
                 <span class="chkgrp">Web umum: blog, berita, situs kampus</span>
                 <label><input type="checkbox" id="wSerper"> Google <span class="muted keyhint" data-key="ct_serper">(lewat Serper)</span></label>
                 <label><input type="checkbox" id="wTavily"> Tavily <span class="muted keyhint" data-key="ct_tavily">(isi halaman web)</span></label>
+                <label><input type="checkbox" id="wLang"> LangSearch <span class="muted keyhint" data-key="ct_langsearch">(web)</span></label>
                 <label><input type="checkbox" id="wGoogle"> Google CSE lama <span class="muted" id="gHint">(atur API di tab Sumber)</span></label>
               </div>
             </details>
@@ -1086,6 +1103,14 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
                 <option value="20">Di bawah 20 kata</option>
               </select>
             </label>
+            <label class="field" for="fSmall">Abaikan sumber kecil
+              <select id="fSmall">
+                <option value="0" selected>Tidak</option>
+                <option value="1">Di bawah 1%</option>
+                <option value="2">Di bawah 2%</option>
+                <option value="5">Di bawah 5%</option>
+              </select>
+            </label>
             <p class="hint">Opsi filter ikut dicantumkan di sampul laporan. Daftar pustaka dikenali dari judul seperti DAFTAR PUSTAKA, REFERENSI, atau REFERENCES.</p>
           </div>
         </div>
@@ -1096,6 +1121,12 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
             <label class="field" for="svcName">Nama jasa atau pemeriksa<input type="text" id="svcName" autocomplete="off" placeholder="mis. Jasa Cek Naskah Ferdy"></label>
             <label class="field" for="svcContact">Kontak<input type="text" id="svcContact" autocomplete="off" placeholder="mis. WA 0812-xxxx-xxxx"></label>
             <label class="field" for="svcPrice">Tarif default per naskah (Rp)<input type="number" id="svcPrice" min="0" step="1000" inputmode="numeric" placeholder="mis. 15000"></label>
+            <div class="field">Logo instansi (opsional)
+              <div class="logorow"><img id="logoPrev" alt="Logo instansi" hidden><label class="btn sm" for="logoFile">Pilih logo</label><input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" class="sr-only"><button type="button" class="linkbtn" id="logoDel" hidden>Hapus logo</button></div>
+              <span class="muted" style="font-weight:400">Tampil di kepala setiap halaman laporan PDF, menggantikan merek CekTeks.</span>
+            </div>
+            <label class="field" for="signKey">Kunci tanda tangan laporan (opsional)<input type="password" id="signKey" autocomplete="new-password" placeholder="Rahasia instansi, minimal 8 karakter"></label>
+            <p class="hint" style="margin:0">Setiap laporan PDF diberi <b>kode verifikasi dan QR</b>. Bila kunci diisi, laporan juga <b>ditandatangani secara digital</b> (HMAC-SHA256): hanya pemegang kunci yang dapat memastikan laporan benar-benar dikeluarkan oleh instansi Anda. Simpan kunci di tempat aman; kunci tidak dapat dipulihkan.</p>
           </div>
         </div>
         <div class="card">
@@ -1123,6 +1154,10 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
               <div class="keybox">
                 <label class="field" for="kTavily"><span>Tavily (isi halaman web) <span class="muted">· 1.000 kredit gratis tiap bulan</span></span><input type="text" id="kTavily" autocomplete="off" spellcheck="false" placeholder="tvly-…"></label>
                 <p class="hint">Daftar di tavily.com. Tavily mengambil isi halaman yang ditemukan, sehingga seluruh halaman ikut dibandingkan, bukan hanya cuplikannya. Paling kuat bila dipakai bersama Serper.</p>
+              </div>
+              <div class="keybox">
+                <label class="field" for="kLang"><span>LangSearch (pencarian web) <span class="muted">· gratis untuk perorangan</span></span><input type="text" id="kLang" autocomplete="off" spellcheck="false" placeholder="sk-…"></label>
+                <p class="hint">Daftar di langsearch.com. Mesin pencari web kedua selain Google, dengan ringkasan isi halaman.</p>
               </div>
               <div class="keybox">
                 <label class="field" for="kCore"><span>CORE (repositori kampus &amp; teks lengkap) <span class="muted">· gratis untuk keperluan non-komersial</span></span><input type="text" id="kCore" autocomplete="off" spellcheck="false" placeholder="API key dari core.ac.uk"></label>
@@ -1182,7 +1217,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
   <!-- ================= RIWAYAT ================= -->
   <section class="view" id="view-riwayat">
     <div class="pagehead">
-      <h1>Riwayat &amp; pesanan</h1>
+      <div class="pagehead-row"><h1>Riwayat &amp; pesanan</h1><button type="button" class="btn" id="verOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Verifikasi laporan</button></div>
       <p>Setiap laporan PDF yang diunduh tercatat di sini. Atur tarif dan status pembayaran untuk jasa pengecekan Anda. Hanya ringkasan yang disimpan, bukan isi naskah.</p>
     </div>
     <div class="stats" id="hStats"></div>
@@ -1250,8 +1285,14 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
         <p class="muted">Setiap sinyal punya bobot. Sinyal berbobot kecil hanya sedikit memengaruhi skor.</p>
       </article>
       <article class="card gcard">
+        <h2>Untuk instansi</h2>
+        <p>Atur nama, kontak, dan <b>logo instansi</b> di tab Sumber; logo tampil di setiap halaman laporan. Setiap laporan PDF memuat <b>kode verifikasi dan QR</b> berisi sidik SHA-256 naskah. Siapa pun dapat memindai QR, lalu mengunggah naskahnya untuk memastikan naskah tidak diubah setelah diperiksa.</p>
+        <p>Dengan <b>kunci tanda tangan</b>, laporan juga ditandatangani secara digital (HMAC-SHA256), sehingga staf instansi dapat memastikan laporan asli dan skornya tidak diubah. Tombol "Verifikasi laporan" ada di halaman Riwayat.</p>
+        <p class="muted">Filter "Abaikan sumber kecil", bank naskah, dan riwayat pemeriksaan membantu menyamakan aturan pemeriksaan di satu instansi.</p>
+      </article>
+      <article class="card gcard">
         <h2>Cek di internet</h2>
-        <p>Kalimat diambil merata dari seluruh naskah (Standar: satu kalimat tiap ±150 kata, maksimal 30; Mendalam: tiap ±70 kata, maksimal 60) lalu dicari persis di Wikipedia. Kata kunci tiap bagian naskah juga dicari, sehingga artikel bertopik sama diunduh utuh. Kalimat yang sama juga dicari persis di <b>teks lengkap</b> jutaan artikel ilmiah lewat OpenAlex dan Europe PMC (naskah berbahasa Inggris), di Wikibooks dan Wikisource Indonesia, serta di abstrak jurnal pada Semantic Scholar, OpenAIRE, DOAJ, dan Crossref (termasuk banyak jurnal dan repositori kampus Indonesia). Dengan API key gratis milik Anda, kalimat juga dicari persis di Google (lewat Serper), isi halaman web diambil lewat Tavily, dan repositori kampus dicari lewat CORE. Setelah dokumen diunggah, pencarian berjalan otomatis bila sedang online.</p>
+        <p>Kalimat diambil merata dari seluruh naskah (Standar: satu kalimat tiap ±150 kata, maksimal 30; Mendalam: tiap ±70 kata, maksimal 60) lalu dicari persis di Wikipedia. Kata kunci tiap bagian naskah juga dicari, sehingga artikel bertopik sama diunduh utuh. Kalimat yang sama juga dicari persis di <b>teks lengkap</b> jutaan artikel ilmiah lewat OpenAlex, serta Europe PMC dan PLOS (naskah berbahasa Inggris), di Wikibooks dan Wikisource Indonesia, serta di abstrak jurnal dan repositori pada Semantic Scholar, OpenAIRE, Zenodo, DataCite, DOAJ, dan Crossref (termasuk banyak jurnal dan repositori kampus Indonesia). Dengan API key gratis milik Anda, kalimat juga dicari persis di Google (lewat Serper) dan LangSearch, isi halaman web diambil lewat Tavily, dan repositori kampus dicari lewat CORE. Setelah dokumen diunggah, pencarian berjalan otomatis bila sedang online.</p>
         <p><b>Peta naskah</b> membagi naskah panjang menjadi bagian ±250 kata dan menunjukkan kesamaan serta kemungkinan AI tiap bagian. Ketuk kotaknya untuk melompat ke bagian itu.</p>
         <p class="muted">Tanpa Serper atau Tavily, blog dan situs berita tidak terjangkau. Gunakan daftar "Periksa manual di Google" untuk itu.</p>
       </article>
@@ -1342,6 +1383,17 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       <button type="button" class="btn sm icon-only" data-close="1" id="billClose" aria-label="Tutup tagihan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </header>
     <div class="drawer-b" id="billBody"></div>
+  </section>
+</div>
+<div class="drawer" id="verDrawer" hidden>
+  <div class="drawer-bg" data-close="1"></div>
+  <section class="drawer-panel billpanel" role="dialog" aria-modal="true" aria-labelledby="verTitle">
+    <header class="drawer-h">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+      <div class="drawer-t"><b id="verTitle">Verifikasi laporan</b><span class="muted" id="verSub"></span></div>
+      <button type="button" class="btn sm icon-only" data-close="1" id="verClose" aria-label="Tutup verifikasi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </header>
+    <div class="drawer-b" id="verBody"></div>
   </section>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
@@ -1808,7 +1860,8 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "3.6.0";
+var APP_VERSION = "3.7.0";
+var SITE_URL = "https://ferdynandekawijaya92821-create.github.io/kalori-cli/";
 function setBusy(msg, frac) {
   var b = $("#busy");
   if (!msg) { b.hidden = true; return; }
@@ -1837,7 +1890,7 @@ function showView(v) {
   window.scrollTo(0, 0);
 }
 document.querySelectorAll(".tab").forEach(function (b) { b.addEventListener("click", function () { showView(b.dataset.view); }); });
-window.addEventListener("hashchange", function () { var h = location.hash.slice(1); if ($("#view-" + h)) showView(h); });
+window.addEventListener("hashchange", function () { var h = location.hash.slice(1); if (/^[a-z]+$/.test(h) && $("#view-" + h)) showView(h); });
 $("#goSources").onclick = function () { showView("sumber"); };
 
 /* ---- file reading ---- */
@@ -2077,7 +2130,7 @@ function addSourceFiles(files) {
 };
 $("#useCorpus").onchange = function () { $("#srcBadge").textContent = allSources().length; schedule(0); };
 $("#ngram").onchange = function () { schedule(0); };
-["fBib", "fQuote", "fMin", "fPara"].forEach(function (id) { $("#" + id).onchange = function () { schedule(0); }; });
+["fBib", "fQuote", "fMin", "fSmall", "fPara"].forEach(function (id) { $("#" + id).onchange = function () { schedule(0); }; });
 $("#corpCount").textContent = CORPUS.length + " dokumen";
 $("#corpList").innerHTML = CORPUS.map(function (c) { return '<div class="corp-item"><span>' + esc(c.name) + '</span><span class="muted num">' + words(c.text).length + " kata</span></div>"; }).join("");
 
@@ -2157,7 +2210,15 @@ function run() {
   $("#cSents").textContent = text.trim() ? splitSentences(text).length.toLocaleString("id-ID") : "0";
 
   var srcs = allSources().filter(function (x) { return !S.excluded.has(srcKey(x)); });
-  S.plag = checkPlagiarism(text, srcs, +$("#ngram").value, { excludeBib: $("#fBib").checked, excludeQuotes: $("#fQuote").checked, minWords: +$("#fMin").value, paraphrase: $("#fPara").checked });
+  var popts = { excludeBib: $("#fBib").checked, excludeQuotes: $("#fQuote").checked, minWords: +$("#fMin").value, paraphrase: $("#fPara").checked };
+  S.plag = checkPlagiarism(text, srcs, +$("#ngram").value, popts);
+  // Sumber yang sumbangannya di bawah batas diabaikan, lalu skor dihitung ulang tanpa sumber itu.
+  var smallCut = +$("#fSmall").value, smallN = 0;
+  if (smallCut && S.plag.matched.length) {
+    var drop = new Set(S.plag.matched.filter(function (m) { return m.share < smallCut; }).map(function (m) { return m.si; }));
+    if (drop.size) { smallN = drop.size; var kept = S.plag.srcs.filter(function (x, i) { return !drop.has(i); }); S.plag = checkPlagiarism(text, kept, +$("#ngram").value, popts); }
+  }
+  S.plag.smallExcluded = smallN;
   S.ai = nWords ? detectAI(text) : null;
   var p = S.plag, a = S.ai;
 
@@ -2168,7 +2229,7 @@ function run() {
   $("#compBar").innerHTML = ["internet", "publikasi", "bank", "pengguna"].map(function (g) { return '<i style="width:' + p.groups[g] + "%;background:" + gcol[g] + '"></i>'; }).join("");
   $("#compLegend").innerHTML = ["internet", "publikasi", "bank", "pengguna"].map(function (g) { return '<span><i style="background:' + gcol[g] + '"></i>' + GROUPS[g] + " <b>" + pctLabel(p.groups[g]) + "</b></span>"; }).join("") +
     '<span><i style="background:var(--orig)"></i>Orisinal <b>' + pctLabel(nWords ? Math.max(0, 100 - p.score) : 0) + "</b></span>";
-  var fn = []; if (p.excluded.bib) fn.push("daftar pustaka diabaikan"); if (p.excluded.quoteWords) fn.push(p.excluded.quoteWords + " kata kutipan diabaikan");
+  var fn = []; if (p.excluded.bib) fn.push("daftar pustaka diabaikan"); if (p.smallExcluded) fn.push(p.smallExcluded + " sumber kecil diabaikan"); if (p.excluded.quoteWords) fn.push(p.excluded.quoteWords + " kata kutipan diabaikan");
   $("#filterNote").textContent = fn.join(" · ");
   updateDocHeader(nWords);
   $("#repMeta").textContent = !nWords ? "Ringkasan, sumber, analisis AI, dan naskah bersorot" :
@@ -2305,6 +2366,114 @@ function jumpTo(off) {
 }
 ["#dmPlag", "#dmAi"].forEach(function (id) { $(id).addEventListener("click", function (e) { var b = e.target.closest("button[data-off]"); if (b) jumpTo(+b.dataset.off); }); });
 $("#summaryText").addEventListener("click", function (e) { if (e.target.closest("#nudgeWeb")) { $("#netCard").scrollIntoView({ block: "start", behavior: "smooth" }); runWebSearch(); } });
+/* ---- kode verifikasi & tanda tangan laporan ---- */
+function canonText(t) { return normalize(t).replace(/\s+/g, " ").trim().toLowerCase(); }
+function hexOf(buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); }
+function utf8(str) { return new TextEncoder().encode(str); }
+function sha256Hex(str) { return crypto.subtle.digest("SHA-256", utf8(str)).then(hexOf); }
+function hmacHex(key, str) {
+  return crypto.subtle.importKey("raw", utf8(key), { name: "HMAC", hash: "SHA-256" }, false, ["sign"])
+    .then(function (k) { return crypto.subtle.sign("HMAC", k, utf8(str)); }).then(hexOf);
+}
+function b64u(str) { return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+function unb64u(str) { str = str.replace(/-/g, "+").replace(/_/g, "/"); while (str.length % 4) str += "="; return decodeURIComponent(escape(atob(str))); }
+function sealBase(o) { return ["cekteks-v1", o.id, o.t, o.h, o.s, o.a, o.w, o.n || ""].join("|"); }
+function sealCode(h) { return h.slice(0, 16).toUpperCase().match(/.{4}/g).join("-"); }
+function canSeal() { return !!(window.crypto && crypto.subtle && window.TextEncoder); }
+// Menghasilkan kode verifikasi (sidik SHA-256 isi naskah) dan, bila ada kunci instansi, tanda tangan HMAC.
+function reportSeal(r) {
+  if (!canSeal()) return Promise.resolve(null);
+  return sha256Hex(canonText(r.text)).then(function (h) {
+    var o = { v: 1, id: r.id, t: r.date.toISOString(), h: h.slice(0, 32), s: +r.plag.score, a: +r.ai.score, w: r.words, n: r.svc || "" };
+    var key = store("ct_sign");
+    return (key ? hmacHex(key, sealBase(o)).then(function (g) { o.g = g.slice(0, 32); return o; }) : Promise.resolve(o));
+  }).then(function (o) { return { o: o, code: sealCode(o.h), signed: !!o.g, url: SITE_URL + "#cek=" + b64u(JSON.stringify(o)) }; });
+}
+function prepReport(r) {
+  r.logo = store("ct_logo") || ""; r.logoWH = (store("ct_logo_wh") || "").split(",").map(Number);
+  return reportSeal(r).then(function (seal) {
+    r.seal = seal; if (!seal) return r;
+    return qrCanvas(seal.url, 300).then(function (c) { r.sealQr = c.toDataURL("image/png"); return r; }, function () { return r; });
+  }, function () { return r; });
+}
+function parseSeal(str) {
+  var m = /#?cek=([A-Za-z0-9_\-]+)/.exec(String(str || "").trim()); if (!m) return null;
+  try { var o = JSON.parse(unb64u(m[1])); return o && o.id && o.h ? o : null; } catch (e) { return null; }
+}
+function openVerify(o) {
+  lastFocus = document.activeElement; $("#verDrawer").hidden = false; document.body.classList.add("noscroll");
+  renderVerify(o); $("#verClose").focus();
+}
+function closeVerify() { $("#verDrawer").hidden = true; document.body.classList.remove("noscroll"); if (/^#cek=/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+function vres(kind, title, sub) { return '<div class="vres ' + kind + '"><span aria-hidden="true">' + (kind === "ok" ? "✓" : kind === "bad" ? "✕" : "i") + "</span><div><b>" + title + "</b>" + (sub ? '<span class="muted">' + sub + "</span>" : "") + "</div></div>"; }
+function renderVerify(o) {
+  var b = $("#verBody");
+  if (!o) {
+    $("#verSub").textContent = "Pindai QR di sampul laporan, atau tempel tautannya di bawah";
+    b.innerHTML = '<div class="vcheck"><h3>Tautan verifikasi</h3><label class="field" for="verLink">Tautan dari QR laporan<input type="text" id="verLink" placeholder="https://…#cek=…" autocomplete="off" spellcheck="false"></label>' +
+      '<button type="button" class="btn primary" id="verRead">Baca laporan</button></div>' +
+      vres("info", "Verifikasi berjalan di perangkat ini", "Dokumen yang Anda unggah untuk dicocokkan tidak dikirim ke mana pun.");
+    $("#verRead").onclick = function () { var x = parseSeal($("#verLink").value); if (!x) return toast("Tautan verifikasi tidak dikenali."); renderVerify(x); };
+    return;
+  }
+  $("#verSub").textContent = "Kode " + sealCode(o.h);
+  b.innerHTML = '<div class="vcheck"><h3>Data di laporan</h3><div class="vgrid">' +
+    [["Kode verifikasi", '<span class="vcode">' + sealCode(o.h) + "</span>"], ["ID pemeriksaan", esc(o.id)], ["Tanggal", esc(fmtDate(new Date(o.t)))], ["Diperiksa oleh", esc(o.n || "CekTeks")],
+     ["Kesamaan", pctLabel(o.s)], ["Kemungkinan AI", Math.round(o.a) + "%"], ["Jumlah kata", fmtNum(o.w)], ["Tanda tangan", o.g ? "Ada (HMAC-SHA256)" : "Tidak ada"]]
+      .map(function (kv) { return "<div><span>" + kv[0] + "</span><b>" + kv[1] + "</b></div>"; }).join("") + "</div></div>" +
+    '<div class="vcheck"><h3>1. Cocokkan dokumen</h3><p class="hint" style="margin:0">Unggah naskah yang diperiksa (PDF, Word, atau lainnya), atau tempel teksnya. CekTeks menghitung sidik SHA-256 isinya dan membandingkannya dengan kode di laporan.</p>' +
+      '<div class="logorow"><label class="btn" for="verFile">Unggah dokumen</label><input type="file" id="verFile" class="sr-only" accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm"></div>' +
+      '<label class="field" for="verText">atau tempel teks naskah<textarea id="verText" rows="3" placeholder="Tempel seluruh teks naskah"></textarea></label><div id="verDocRes"></div></div>' +
+    '<div class="vcheck"><h3>2. Periksa tanda tangan instansi</h3>' + (o.g ?
+      '<label class="field" for="verKey">Kunci tanda tangan instansi<input type="password" id="verKey" autocomplete="off" placeholder="Hanya diketahui instansi penerbit"></label><button type="button" class="btn" id="verSign">Periksa tanda tangan</button><div id="verSignRes"></div>' :
+      vres("info", "Laporan ini tidak ditandatangani", "Penerbit laporan tidak memakai kunci tanda tangan. Kecocokan dokumen tetap bisa diperiksa.")) + "</div>" +
+    vres("info", "Batas verifikasi", "Kode membuktikan isi naskah sama dengan yang diperiksa. Tanda tangan membuktikan laporan dibuat oleh pemegang kunci. Skor dapat berbeda sedikit bila naskah diperiksa ulang dengan sumber internet yang berbeda.");
+  function checkText(t) {
+    if (!t || !t.trim()) return;
+    sha256Hex(canonText(t)).then(function (h) {
+      var same = h.slice(0, 32) === o.h, n = words(normalize(t)).length;
+      $("#verDocRes").innerHTML = same ? vres("ok", "Dokumen cocok dengan laporan", "Isinya sama persis dengan naskah yang diperiksa (" + fmtNum(n) + " kata).")
+        : vres("bad", "Dokumen tidak cocok", "Isinya berbeda dari naskah yang diperiksa: " + fmtNum(n) + " kata, di laporan " + fmtNum(o.w) + " kata. Naskah mungkin diubah setelah pemeriksaan, atau berkasnya lain.");
+    });
+  }
+  $("#verFile").onchange = function (e) {
+    var f = e.target.files[0]; e.target.value = ""; if (!f) return;
+    $("#verDocRes").innerHTML = vres("info", "Membaca " + esc(f.name) + "…", "");
+    readFileFull(f).then(function (r) { checkText(r.text); }, function (err) { $("#verDocRes").innerHTML = vres("bad", "Berkas tidak bisa dibaca", esc(err.message)); });
+  };
+  $("#verText").oninput = function () { clearTimeout(renderVerify.t); var v = this.value; renderVerify.t = setTimeout(function () { checkText(v); }, 300); };
+  if (o.g) $("#verSign").onclick = function () {
+    var k = $("#verKey").value; if (!k) return toast("Isi kunci tanda tangan instansi.");
+    hmacHex(k, sealBase(o)).then(function (g) {
+      $("#verSignRes").innerHTML = g.slice(0, 32) === o.g ? vres("ok", "Tanda tangan sah", "Laporan dibuat oleh pemegang kunci ini dan datanya tidak diubah.")
+        : vres("bad", "Tanda tangan tidak sah", "Kunci salah, atau data laporan (skor, tanggal, ID) telah diubah.");
+    });
+  };
+}
+$("#verDrawer").addEventListener("click", function (e) { if (e.target.closest("[data-close]")) closeVerify(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#verDrawer").hidden) closeVerify(); });
+$("#verOpen").onclick = function () { openVerify(null); };
+(function () { var o = parseSeal(location.hash); if (o) setTimeout(function () { openVerify(o); }, 50); })();
+window.addEventListener("hashchange", function () { var o = parseSeal(location.hash); if (o) openVerify(o); });
+
+/* ---- logo & kunci instansi ---- */
+function showLogo() { var d = store("ct_logo"); $("#logoPrev").hidden = !d; $("#logoDel").hidden = !d; if (d) $("#logoPrev").src = d; }
+$("#logoFile").onchange = function (e) {
+  var f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  var img = new Image(), url = URL.createObjectURL(f);
+  img.onload = function () {
+    var k = Math.min(1, 480 / img.width, 160 / img.height), c = document.createElement("canvas");
+    c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+    store("ct_logo", c.toDataURL("image/png")); store("ct_logo_wh", c.width + "," + c.height); showLogo(); toast("Logo instansi disimpan.");
+  };
+  img.onerror = function () { URL.revokeObjectURL(url); toast("Gambar logo tidak bisa dibaca."); };
+  img.src = url;
+};
+$("#logoDel").onclick = function () { localStorage.removeItem("ct_logo"); localStorage.removeItem("ct_logo_wh"); showLogo(); };
+$("#signKey").value = store("ct_sign") || "";
+$("#signKey").oninput = function () { var v = this.value; if (v && v.length < 8) return; store("ct_sign", v); if (!v) localStorage.removeItem("ct_sign"); };
+showLogo();
 function scheduleGutter() { cancelAnimationFrame(scheduleGutter.r); scheduleGutter.r = requestAnimationFrame(layoutGutter); }
 function layoutGutter() {
   // Nomor sumber di margin kiri, sejajar baris tempat kecocokan dimulai (seperti laporan PDF).
@@ -2400,7 +2569,7 @@ document.querySelectorAll("[data-goto]").forEach(function (b) {
     if (!armed) { armed = true; btn.textContent = "Tekan sekali lagi untuk menghapus"; btn.classList.add("danger"); tm = setTimeout(function () { armed = false; btn.textContent = "Hapus data tersimpan"; btn.classList.remove("danger"); }, 4000); return; }
     clearTimeout(tm);
     try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("ct_") === 0) localStorage.removeItem(k); }); } catch (e) {}
-    S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = ""; $("#svcName").value = ""; $("#svcContact").value = "";
+    S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = ""; $("#svcName").value = ""; $("#svcContact").value = ""; ["kSerper", "kTavily", "kLang", "kCore", "oaKey", "signKey"].forEach(function (id) { $("#" + id).value = ""; }); showLogo(); updKeys();
     bankReq("readwrite", function (st) { st.clear(); return null; }).then(loadBank, function () {});
     histReq("readwrite", function (st) { st.clear(); return null; }).then(loadHist, function () {}); $("#svcPrice").value = "";
     PAY = { qris: "", banks: [], unique: true, note: "" }; $("#payNote").value = ""; $("#payUnique").checked = true; renderQrisBox(); renderBanks(); renderPaySum();
@@ -2594,7 +2763,8 @@ function loadHist() { return histReq("readonly", function (st) { return st.getAl
 function histPut(e) { return histReq("readwrite", function (st) { st.put(e); return null; }).then(loadHist); }
 function recordHistory(r) {
   var e = { id: r.id, date: new Date().toISOString(), client: r.client, doc: r.doc, words: r.words, score: r.plag.score, exact: r.plag.exactScore, para: r.plag.paraScore,
-    ai: r.ai.score, sources: r.plag.matched.slice(0, 3).map(function (s) { return s.domain; }), price: +($("#svcPrice").value || 0) || 0, paid: false, note: "" };
+    ai: r.ai.score, sources: r.plag.matched.slice(0, 3).map(function (s) { return s.domain; }), price: +($("#svcPrice").value || 0) || 0, paid: false, note: "",
+    verify: r.seal ? r.seal.code : "", signed: !!(r.seal && r.seal.signed) };
   return histPut(e).then(function () { toast("Laporan diunduh dan tercatat di Riwayat."); }, function () {});
 }
 function thisMonth(iso) { var d = new Date(iso), n = new Date(); return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth(); }
@@ -3118,6 +3288,7 @@ function filterList() {
   if ($("#fBib").checked) f.push("Abaikan daftar pustaka" + (S.plag.excluded.bib ? "" : " (tidak ditemukan di naskah)"));
   if ($("#fQuote").checked) f.push("Abaikan teks kutipan");
   var m = +$("#fMin").value; if (m) f.push("Abaikan kecocokan kurang dari " + m + " kata");
+  var sc = +$("#fSmall").value; if (sc) f.push("Abaikan sumber dengan kesamaan di bawah " + sc + "%" + (S.plag.smallExcluded ? " (" + S.plag.smallExcluded + " sumber diabaikan)" : ""));
   f.push("Panjang n-gram " + S.plag.ngram + " kata");
   f.push("Sumber: " + S.plag.source_count + " dokumen (" + S.webSources.length + " dari internet)");
   if (S.excluded.size) f.push("Sumber diabaikan: " + Array.from(S.excluded.values()).join("; "));
@@ -3177,7 +3348,7 @@ function lighter(hex) { var c = rgbOf(hex); return [Math.round((c[0] + 255 * 1.4
 function reportText(r) {
   r = r || buildReport(); if (!r) return "";
   var p = r.plag;
-  var L = ["LAPORAN PLAGIARISME CEKTEKS", "=".repeat(27), "ID Pemeriksaan : " + r.id, "Dokumen        : " + r.doc].concat(
+  var L = ["LAPORAN PLAGIARISME CEKTEKS", "=".repeat(27), "ID Pemeriksaan : " + r.id].concat(r.seal ? ["Kode verifikasi: " + r.seal.code + (r.seal.signed ? " (bertanda tangan digital)" : ""), "Verifikasi     : " + r.seal.url] : [], ["Dokumen        : " + r.doc]).concat(
     r.client ? ["Klien          : " + r.client] : [], r.svc ? ["Diperiksa oleh : " + r.svc + (r.contact ? " (" + r.contact + ")" : "")] : [], ["Tanggal        : " + fmtDate(r.date),
     "Panjang        : " + fmtNum(r.words) + " kata, " + fmtNum(r.chars) + " karakter" + (r.pages ? ", " + r.pages + " halaman" : ""), "",
     "KESAMAAN       : " + pctLabel(p.score) + " (" + r.plagLabel + ")  =  " + pctLabel(p.exactScore) + " sama persis + " + pctLabel(p.paraScore) + " parafrase", "Sumber cocok   : " + p.matched.length,
@@ -3231,7 +3402,8 @@ function reportDoc(r) {
   h += "<p class='muted'><b style='color:#0e6a86'>CekTeks</b> &nbsp; Laporan Plagiarisme &nbsp; · &nbsp; ID Pemeriksaan " + r.id + "</p>";
   h += "<h1>Laporan Plagiarisme</h1><p style='font-size:14pt;margin:4pt 0 12pt'>" + esc(r.doc) + (r.client ? "<br><span style='font-size:11pt;color:#5a6577'>Klien: " + esc(r.client) + "</span>" : "") + "</p><hr>";
   h += "<h2>Detail Dokumen</h2><table><tr>" + cell("ID Pemeriksaan", r.id) + cell("Ukuran File", fmtSize(r.size)) + "</tr><tr>" + cell("Nama File", esc(r.doc)) + cell("Total Halaman", r.pages ? r.pages + " Halaman" : "-") +
-    "</tr><tr>" + cell("Diperiksa oleh", esc(r.svc || "CekTeks") + (r.contact ? "<br>" + esc(r.contact) : "")) + cell("Total Kata", fmtNum(r.words) + " Kata") + "</tr><tr>" + cell("Tanggal Pemeriksaan", fmtDate(r.date)) + cell("Total Karakter", fmtNum(r.chars) + " Karakter") + "</tr></table>";
+    "</tr><tr>" + cell("Diperiksa oleh", esc(r.svc || "CekTeks") + (r.contact ? "<br>" + esc(r.contact) : "")) + cell("Total Kata", fmtNum(r.words) + " Kata") + "</tr><tr>" + cell("Tanggal Pemeriksaan", fmtDate(r.date)) + cell("Total Karakter", fmtNum(r.chars) + " Karakter") + "</tr>" +
+    (r.seal ? "<tr>" + cell("Kode Verifikasi", r.seal.code + (r.seal.signed ? " (bertanda tangan digital)" : "")) + cell("Tautan Verifikasi", "<a href='" + esc(r.seal.url) + "'>Buka verifikasi</a>") + "</tr>" : "") + "</table>";
   h += "<h2>Opsi Filter</h2><ul>" + r.filters.map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul><hr>";
   h += "<table style='width:100%;margin-top:10pt'><tr><td><div style='font-size:30pt;font-weight:bold'>" + pctLabel(p.score) + "</div><div style='font-size:13pt'>Kesamaan</div></td>" +
     "<td><div style='font-size:30pt;font-weight:bold'>" + p.matched.length + "</div><div style='font-size:13pt'>Sumber Cocok</div></td>" +
@@ -3327,12 +3499,23 @@ function reportPdf(r, onProgress) {
   var INK = [33, 37, 41], MUTED = [120, 126, 135], LINE = [222, 226, 230], ACC = [14, 106, 134], p = r.plag;
   var reportPages = [];
   function fnt(sz, st, c) { doc.setFont("helvetica", st || "normal"); doc.setFontSize(sz); c = c || INK; doc.setTextColor(c[0], c[1], c[2]); }
-  function logo(yy) {
+  // Merek di kepala/kaki halaman: logo & nama instansi bila diatur, selain itu merek CekTeks.
+  function brand(yy) {
+    if (r.logo && r.logoWH[0] && r.logoWH[1]) {
+      var lh = 22, lw = Math.min(110, lh * r.logoWH[0] / r.logoWH[1]);
+      try { doc.addImage(r.logo, "PNG", M, yy - 16, lw, lh); } catch (e) { lw = 0; }
+      var nm = pdfSafe(r.svc || ""); fnt(11, "bold", INK); if (nm) doc.text(doc.splitTextToSize(nm, 130)[0], M + lw + 8, yy);
+      return M + lw + 8 + (nm ? Math.min(130, doc.getTextWidth(nm)) + 10 : 0);
+    }
     doc.setFillColor(ACC[0], ACC[1], ACC[2]); doc.roundedRect(M, yy - 13, 18, 18, 4, 4, "F");
     doc.setFillColor(255, 255, 255); doc.rect(M + 5, yy - 9, 8, 10.5, "F");
     doc.setDrawColor(ACC[0], ACC[1], ACC[2]); doc.setLineWidth(0.8); doc.line(M + 6.5, yy - 5.5, M + 11.5, yy - 5.5); doc.line(M + 6.5, yy - 3, M + 10.5, yy - 3);
     fnt(13, "bold", INK); doc.text("CekTeks", M + 24, yy + 0.5);
-    fnt(8.5, "normal", MUTED); doc.text("Laporan Plagiarisme", M + 92, yy);
+    return M + 92;
+  }
+  function logo(yy) {
+    var x = brand(yy);
+    fnt(8.5, "normal", MUTED); doc.text("Laporan Plagiarisme", x, yy);
     doc.text("ID Pemeriksaan  " + r.id, W - M, yy, { align: "right" });
   }
   function newReportPage(first) { if (!first) doc.addPage("a4", "p"); reportPages.push(doc.getNumberOfPages()); logo(40); y = 90; }
@@ -3342,11 +3525,19 @@ function reportPdf(r, onProgress) {
 
   // 1. Sampul
   newReportPage(true);
+  if (r.seal && r.sealQr) {
+    var qs = 84, qx = W - M - qs, qy = 92;
+    try { doc.addImage(r.sealQr, "PNG", qx, qy, qs, qs); } catch (e) {}
+    fnt(7.5, "normal", MUTED); doc.text("Kode verifikasi", W - M, qy + qs + 10, { align: "right" });
+    fnt(9, "bold", INK); doc.text(r.seal.code, W - M, qy + qs + 22, { align: "right" });
+    fnt(7, "normal", MUTED); doc.text(r.seal.signed ? "Ditandatangani digital oleh penerbit" : "Pindai untuk memverifikasi", W - M, qy + qs + 33, { align: "right" });
+  }
   y = 190; fnt(22, "bold"); doc.text("Laporan Plagiarisme", M, y);
-  fnt(16, "normal"); var tl = wrap(r.doc, W - 2 * M); doc.text(tl, M, y + 30); y += 30 + tl.length * 19;
+  fnt(16, "normal"); var tl = wrap(r.doc, W - 2 * M - (r.seal ? 140 : 0)); doc.text(tl, M, y + 30); y += 30 + tl.length * 19;
   rule(y + 8); y += 44;
   fnt(13); doc.text("Detail Dokumen", M, y); y += 30;
   var left = [["ID Pemeriksaan", r.id], ["Nama File", r.doc]].concat(r.client ? [["Klien", r.client]] : [], [["Diperiksa oleh", r.svc || "CekTeks"], ["Tanggal Pemeriksaan", fmtDate(r.date)], ["Tanggal Laporan", fmtDate(new Date())]]);
+  if (r.seal) left.push(["Kode Verifikasi", r.seal.code + (r.seal.signed ? " (bertanda tangan digital)" : "")]);
   var right = [["Ukuran File", fmtSize(r.size)], ["Total Halaman", r.pages ? r.pages + " Halaman" : "-"], ["Total Kata", fmtNum(r.words) + " Kata"], ["Total Karakter", fmtNum(r.chars) + " Karakter"]].concat(r.contact ? [["Kontak Pemeriksa", r.contact]] : []);
   var top = y, bottom = y;
   [left, right].forEach(function (col, ci) {
@@ -3436,13 +3627,12 @@ function reportPdf(r, onProgress) {
     reportPages.forEach(function (pn) {
       doc.setPage(pn);
       var yy = H - 32;
-      doc.setFillColor(ACC[0], ACC[1], ACC[2]); doc.roundedRect(M, yy - 13, 18, 18, 4, 4, "F");
-      doc.setFillColor(255, 255, 255); doc.rect(M + 5, yy - 9, 8, 10.5, "F");
-      fnt(13, "bold", INK); doc.text("CekTeks", M + 24, yy + 0.5);
-      fnt(8.5, "normal", MUTED); doc.text("Laporan Plagiarisme", M + 92, yy);
+      var fx = brand(yy);
+      fnt(8.5, "normal", MUTED); doc.text("Laporan Plagiarisme", fx, yy);
       doc.text("Halaman " + pn + " dari " + total, W - M, yy, { align: "right" });
       fnt(7.5, "normal", MUTED);
-      doc.text((r.svc ? "Diperiksa oleh " + pdfSafe(r.svc) + (r.contact ? " (" + pdfSafe(r.contact) + ")" : "") + "   |   " : "") + "ID " + r.id, M, yy + 15);
+      var foot = (r.svc ? "Diperiksa oleh " + pdfSafe(r.svc) + (r.contact && !r.seal ? " (" + pdfSafe(r.contact) + ")" : "") + "   |   " : "") + "ID " + r.id + (r.seal ? "   |   Kode verifikasi " + r.seal.code : "");
+      doc.text(doc.splitTextToSize(foot, W - 2 * M)[0], M, yy + 15);
     });
     return doc.output("blob");
   });
@@ -3512,12 +3702,12 @@ var busy = false;
 $("#dlPdf").onclick = function () {
   var r = needReport(); if (!r || busy) return;
   busy = true; var btn = $("#dlPdf"), old = btn.innerHTML; btn.disabled = true; btn.textContent = "Menyiapkan laporan…";
-  reportPdf(r, function (msg) { btn.textContent = msg; })
+  prepReport(r).then(function () { return reportPdf(r, function (msg) { btn.textContent = msg; }); })
     .then(function (b) { download(b, fileBase() + ".pdf"); if (!IN_FRAME) recordHistory(r); }, function (e) { toast("Gagal membuat PDF: " + e.message); })
     .then(function () { busy = false; btn.disabled = false; btn.innerHTML = old; });
 };
-$("#dlDoc").onclick = function () { var r = needReport(); if (r) download(new Blob(["﻿" + reportDoc(r)], { type: "application/msword" }), fileBase() + ".doc"); };
-$("#dlTxt").onclick = function () { var r = needReport(); if (r) download(new Blob([reportText(r)], { type: "text/plain;charset=utf-8" }), fileBase() + ".txt"); };
+$("#dlDoc").onclick = function () { var r = needReport(); if (r) prepReport(r).then(function () { download(new Blob(["﻿" + reportDoc(r)], { type: "application/msword" }), fileBase() + ".doc"); }); };
+$("#dlTxt").onclick = function () { var r = needReport(); if (r) prepReport(r).then(function () { download(new Blob([reportText(r)], { type: "text/plain;charset=utf-8" }), fileBase() + ".txt"); }); };
 $("#printBtn").onclick = function () { try { window.print(); } catch (e) {} if (IN_FRAME) toast("Cetak hanya berfungsi di versi aplikasi."); };
 $("#copyReport").onclick = function () {
   var t = reportText(); if (!t) return toast("Masukkan naskah terlebih dahulu.");
@@ -3602,7 +3792,8 @@ function fetchJSON(url, ms, tries, init) {
 }
 // Jeda minimum antar-permintaan per layanan, supaya tidak ditolak karena terlalu sering.
 var HOST_GAP = { "doaj.org": 550, "api.semanticscholar.org": 1100, "api.openalex.org": 150, "api.crossref.org": 120, "api.openaire.eu": 300,
-  "www.ebi.ac.uk": 150, "api.core.ac.uk": 1100, "google.serper.dev": 120, "api.tavily.com": 250, "www.googleapis.com": 120 }, hostNext = {};
+  "www.ebi.ac.uk": 150, "api.core.ac.uk": 1100, "google.serper.dev": 120, "api.tavily.com": 250, "www.googleapis.com": 120,
+  "api.plos.org": 700, "zenodo.org": 400, "api.datacite.org": 200, "api.langsearch.com": 350 }, hostNext = {};
 function throttle(url) {
   var h = (/^https?:\/\/([^/]+)/.exec(url) || [])[1] || "", gap = HOST_GAP[h] || (/wiki(pedia|books|source)\.org$/.test(h) ? 120 : 0);
   if (!gap) return Promise.resolve();
@@ -3772,6 +3963,49 @@ function coreSearch(sentence) {
     });
   });
 }
+// PLOS: frasa persis di teks lengkap seluruh artikel PLOS (naskah berbahasa Inggris).
+function plosSearch(sentence) {
+  var p = phraseOf(sentence, 14); if (p.n < 8) return Promise.resolve([]);
+  var u = "https://api.plos.org/search?wt=json&rows=3&fl=id,title_display,abstract,publication_date&q=" + encodeURIComponent('everything:"' + p.q + '"');
+  return fetchJSON(u).then(function (d) {
+    return ((d.response && d.response.docs) || []).map(function (x) {
+      var t = stripTags(x.title_display || "Artikel PLOS");
+      return { id: "plos:" + x.id, name: t + (x.publication_date ? " (" + String(x.publication_date).slice(0, 4) + ")" : ""), kind: "PLOS", group: "publikasi",
+        url: "https://doi.org/" + x.id, text: t + ". " + stripTags([].concat(x.abstract || []).join(" ")), conf: p.conf };
+    });
+  });
+}
+// Zenodo: repositori terbuka (makalah, skripsi, laporan) dengan abstrak.
+function zenodo(terms) {
+  var u = "https://zenodo.org/api/records?size=4&q=" + encodeURIComponent(terms.join(" "));
+  return fetchJSON(u).then(function (d) {
+    return ((d.hits && d.hits.hits) || []).map(function (h) {
+      var m = h.metadata || {}, t = stripTags(m.title || "Dokumen Zenodo");
+      return { name: t + (m.publication_date ? " (" + String(m.publication_date).slice(0, 4) + ")" : ""), kind: "Zenodo", group: "publikasi",
+        url: h.doi_url || (h.links && h.links.self_html) || "https://zenodo.org/records/" + h.id, text: t + ". " + stripTags(m.description) };
+    }).filter(function (src) { return words(src.text).length > 20; });
+  });
+}
+// DataCite: DOI dari repositori kampus, data penelitian, dan prosiding.
+function dataCite(terms) {
+  var u = "https://api.datacite.org/dois?page%5Bsize%5D=4&query=" + encodeURIComponent(terms.join(" "));
+  return fetchJSON(u).then(function (d) {
+    return (d.data || []).map(function (x) {
+      var a = x.attributes || {}, t = stripTags(((a.titles || [])[0] || {}).title || "Dokumen");
+      var ab = (a.descriptions || []).map(function (y) { return stripTags(y.description); }).join(" ");
+      return { name: t + (a.publicationYear ? " (" + a.publicationYear + ")" : ""), kind: "DataCite", group: "publikasi", url: "https://doi.org/" + a.doi, text: t + ". " + ab };
+    }).filter(function (src) { return src.url && words(src.text).length > 20; });
+  });
+}
+// LangSearch: mesin pencari web kedua (perlu API key gratis); hasilnya disertai ringkasan isi halaman.
+function langSearch(sentence) {
+  var q = '"' + words(sentence).slice(0, 14).join(" ") + '"';
+  return fetchJSON("https://api.langsearch.com/v1/web-search", 20000, 1, { method: "POST", headers: { Authorization: "Bearer " + store("ct_langsearch"), "Content-Type": "application/json" },
+    body: JSON.stringify({ query: q, summary: true, count: 8 }) }).then(function (d) {
+    var v = (d && d.data && d.data.webPages && d.data.webPages.value) || [];
+    return v.map(function (it) { return { name: it.name || it.url, kind: "Web", url: it.url, snip: (it.name || "") + ". " + (it.summary || it.snippet || "") }; });
+  });
+}
 // Serper: hasil pencarian Google (frasa persis). Yang didapat cuplikan; isi halamannya diambil lewat Tavily bila ada.
 function serperSearch(sentence) {
   var q = '"' + words(sentence).slice(0, 14).join(" ") + '"';
@@ -3836,12 +4070,14 @@ function runWebSearch() {
   var useOA = $("#wOpenAlex").checked, useDoaj = $("#wDoaj").checked, useCr = $("#wCrossref").checked, useS2 = $("#wS2").checked;
   var useBooks = $("#wWikiBooks").checked && dl.indexOf("id") >= 0, useAire = $("#wOpenAire").checked, useEpmc = $("#wEpmc").checked && dl.indexOf("en") >= 0;
   var useCore = $("#wCore").checked && !!store("ct_core"), useSerper = $("#wSerper").checked && !!store("ct_serper"), useTav = $("#wTavily").checked && !!store("ct_tavily");
-  var missing = [["wCore", "ct_core", "CORE"], ["wSerper", "ct_serper", "Serper"], ["wTavily", "ct_tavily", "Tavily"]].filter(function (k) { return $("#" + k[0]).checked && !store(k[1]); }).map(function (k) { return k[2]; });
+  var usePlos = $("#wPlos").checked && dl.indexOf("en") >= 0, useZen = $("#wZenodo").checked, useDc = $("#wDataCite").checked, useLang = $("#wLang").checked && !!store("ct_langsearch");
+  var missing = [["wCore", "ct_core", "CORE"], ["wSerper", "ct_serper", "Serper"], ["wTavily", "ct_tavily", "Tavily"], ["wLang", "ct_langsearch", "LangSearch"]].filter(function (k) { return $("#" + k[0]).checked && !store(k[1]); }).map(function (k) { return k[2]; });
   if (missing.length) toast(missing.join(", ") + " dilewati: isi API key di tab Sumber.");
-  if (!want.length && !useOA && !useDoaj && !useCr && !useS2 && !useG && !useBooks && !useAire && !useEpmc && !useCore && !useSerper && !useTav) return toast("Pilih minimal satu sumber pencarian.");
+  if (!want.length && !useOA && !useDoaj && !useCr && !useS2 && !useG && !useBooks && !useAire && !useEpmc && !useCore && !useSerper && !useTav && !usePlos && !useZen && !useDc && !useLang) return toast("Pilih minimal satu sumber pencarian.");
   S.lastEngines = [].concat(langs.map(function (l) { return "Wikipedia " + l.toUpperCase(); }), useBooks ? ["Wikibooks & Wikisource ID"] : [], useOA ? ["OpenAlex (teks lengkap)"] : [],
-    useS2 ? ["Semantic Scholar"] : [], useAire ? ["OpenAIRE"] : [], useDoaj ? ["DOAJ"] : [], useCr ? ["Crossref"] : [], useEpmc ? ["Europe PMC (teks lengkap)"] : [], useCore ? ["CORE"] : [],
-    useSerper ? ["Google (Serper)"] : [], useTav ? ["Tavily"] : [], useG ? ["Google CSE"] : []);
+    useS2 ? ["Semantic Scholar"] : [], useAire ? ["OpenAIRE"] : [], useDoaj ? ["DOAJ"] : [], useCr ? ["Crossref"] : [], useEpmc ? ["Europe PMC (teks lengkap)"] : [], usePlos ? ["PLOS (teks lengkap)"] : [],
+    useZen ? ["Zenodo"] : [], useDc ? ["DataCite"] : [], useCore ? ["CORE"] : [],
+    useSerper ? ["Google (Serper)"] : [], useTav ? ["Tavily"] : [], useLang ? ["LangSearch"] : [], useG ? ["Google CSE"] : []);
   var bs = $("#fBib").checked ? findBibStart(text) : -1;
   var sents = pickSentences(text, webBudget(nW), bs, findBibEnd(text, bs));
   if (!sents.length) return toast("Tidak menemukan kalimat yang cukup panjang untuk dicari.");
@@ -3913,6 +4149,10 @@ function runWebSearch() {
     var journal = sents.length <= 12 || si % 2 === 0;
     if (useEpmc) tasks.push(guard("Europe PMC", "Mencari di Europe PMC…", function () { return europePmc(s).then(confAdd); }));
     if (journal && useAire) tasks.push(guard("OpenAIRE", "Mencari di OpenAIRE…", function () { return openAire(terms.slice(0, 5)).then(addAll); }));
+    if (usePlos) tasks.push(guard("PLOS", "Mencari di PLOS…", function () { return plosSearch(s).then(confAdd); }));
+    if (journal && useZen) tasks.push(guard("Zenodo", "Mencari di Zenodo…", function () { return zenodo(terms.slice(0, 5)).then(addAll); }));
+    if (journal && useDc) tasks.push(guard("DataCite", "Mencari di DataCite…", function () { return dataCite(terms.slice(0, 5)).then(addAll); }));
+    if (useLang) tasks.push(guard("LangSearch", "Mencari di web (LangSearch)…", function () { return langSearch(s).then(function (rs) { serperAdd(rs, s); }); }));
     if (journal && useCore) tasks.push(guard("CORE", "Mencari di repositori (CORE)…", function () { return coreSearch(s).then(confAdd); }));
     if (useSerper) tasks.push(guard("Serper", "Mencari di Google…", function () { return serperSearch(s).then(function (rs) { serperAdd(rs, s); }); }));
     if (useTav && (sents.length <= 12 || si % 2 === 1)) tasks.push(guard("Tavily", "Mencari di web (Tavily)…", function () { return tavilySearch(s).then(addAll); }));
@@ -3958,7 +4198,7 @@ function runWebSearch() {
       if (found.has(o.url)) return;
       var body = full && full[o.url];
       if (body) found.set(o.url, { name: o.name, kind: "Web", url: o.url, text: o.name + ". " + body });
-      else if (o.conf.length) found.set(o.url, { name: o.name, kind: "Google", url: o.url, text: o.snips.join(" ") + "\n\n" + o.conf.join(" … ") });
+      else if (o.conf.length) found.set(o.url, { name: o.name, kind: o.kind, url: o.url, text: o.snips.join(" ") + "\n\n" + o.conf.join(" … ") });
     });
     oaWorks.forEach(function (o) { if (!found.has(o.url)) found.set(o.url, { name: o.name, kind: o.kind, group: o.group, url: o.url, text: o.conf.join(" … ") + "\n\n" + o.text }); });
     S.webSources = Array.from(found.values()); S.webChecked = okCalls > 0; S.lastOA = { hits: oaHits, limited: oaStop };
@@ -4002,7 +4242,7 @@ $("#wAuto").checked = store("ct_wauto") !== "0"; $("#wAuto").onchange = function
 });
 function updGHint() { var ok = store("ct_gkey") && store("ct_gcx"); $("#gHint").textContent = ok ? "(API siap)" : "(atur API di tab Sumber)"; if (ok && !$("#wGoogle").dataset.touched) $("#wGoogle").checked = true; updKeys(); }
 $("#wGoogle").onchange = function () { this.dataset.touched = "1"; };
-var KEYS = [["kSerper", "ct_serper", "wSerper", "Google lewat Serper"], ["kTavily", "ct_tavily", "wTavily", "Tavily"], ["kCore", "ct_core", "wCore", "CORE"]];
+var KEYS = [["kSerper", "ct_serper", "wSerper", "Google lewat Serper"], ["kTavily", "ct_tavily", "wTavily", "Tavily"], ["kLang", "ct_langsearch", "wLang", "LangSearch"], ["kCore", "ct_core", "wCore", "CORE"]];
 function updKeys() {
   var ready = [];
   KEYS.forEach(function (k) {
@@ -4030,7 +4270,7 @@ renderSources(); renderCmp();
 var draft = store("ct_draft");
 if (draft && draft.trim()) setText(draft, false); else setText(SAMPLE, true);
 setMode("review");
-var h0 = location.hash.slice(1); if (h0 && $("#view-" + h0)) showView(h0);
+var h0 = location.hash.slice(1); if (/^[a-z]+$/.test(h0) && $("#view-" + h0)) showView(h0);
 </script>
 
 </body>
