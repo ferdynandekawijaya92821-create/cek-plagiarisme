@@ -2,6 +2,54 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [3.8.0] - 2026-11-18
+### Diubah: tampilan dasbor
+- **Menu samping**:
+  - Grup menu: Pemeriksaan, Alat naskah, dan Kelola.
+  - Di desktop selalu tampil; di HP dibuka lewat tombol menu dan tertutup otomatis setelah memilih atau menekan Esc.
+  - Bilah atas desktop menampilkan judul halaman.
+- **Beranda baru**:
+  - Unggah dokumen, tempel teks, atau coba contoh.
+  - Statistik pemeriksaan dan kartu tiap alat.
+  - Daftar pemeriksaan terakhir.
+- Menu **Cek Sitasi** dan **Keterbacaan** langsung membuka kartu terkait di panel hasil.
+
+### Diubah: laporan PDF
+- **Halaman ringkasan baru**:
+  - Kartu indeks kesamaan dengan skala 0–100.
+  - Rincian per jenis sumber, beserta jumlah sumbernya.
+  - Empat angka: sumber cocok, kata yang sama, kata diperiksa, dan kemungkinan AI.
+  - Kartu detail dokumen.
+  - Kartu opsi pengecualian (kutipan, daftar pustaka, kecocokan kecil, sumber kecil, parafrase).
+  - Kotak verifikasi ber-QR.
+- **Daftar sumber** berbentuk tabel dengan kolom jumlah kata dan persentase, beserta bilah.
+- **Nomor sumber di naskah** kini ditempel tepat di atas awal kecocokan, bukan di margin.
+- **Naskah yang disusun ulang** dibuat rata kiri-kanan.
+- **Setiap halaman memuat QR verifikasi kecil** dan nomor halaman di pojok kanan bawah.
+
+### Ditambahkan
+- **Teks tersembunyi & typo**:
+  - Karakter tak terlihat (ZWSP, ZWJ, soft hyphen, dan lainnya).
+  - Kata bercampur huruf Kiril atau Yunani.
+  - Spasi khusus.
+  - Teks putih, bertanda tersembunyi, atau sangat kecil di DOCX.
+  - Teks sangat kecil atau di luar halaman di PDF.
+  - Kata ganda, spasi ganda, tanda baca, dan awalan di- yang terpisah.
+  - Sekitar 70 kata tidak baku.
+  - Huruf kecil di awal kalimat.
+  - Tombol "Lihat" melompat ke naskah, dan "Bersihkan" menghapus karakter tersembunyi.
+- **Buat daftar isi**:
+  - Mengenali BAB, subbab bernomor dan berhuruf, serta judul baku.
+  - Nomor halaman diambil dari PDF (bisa digeser) atau diperkirakan untuk Word.
+  - Hasilnya bisa disalin atau diunduh sebagai Word dengan titik penghubung.
+
+### Diperbaiki
+- Uji e2e menjadi 39 skenario. Skenario baru:
+  - menu samping, termasuk di HP;
+  - teks tersembunyi, dengan berkas uji DOCX berisi teks putih dan tersembunyi;
+  - daftar isi.
+- Audit WCAG kini juga mencakup halaman baru.
+
 ## [3.7.0] - 2026-11-18
 ### Ditambahkan: fitur untuk instansi
 - **Kode verifikasi dan QR** di sampul setiap laporan PDF, juga di laporan Word dan TXT.

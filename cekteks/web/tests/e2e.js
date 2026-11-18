@@ -337,6 +337,55 @@ async function download(page, selector) {
     await page.evaluate(() => { localStorage.removeItem("ct_langsearch"); updKeys(); resetWeb(); run(); });
     await srcDefault(page);
   });
+  await test("menu samping: Beranda, navigasi, Cek Sitasi membuka kartu sitasi", async () => {
+    await page.click("#tab-beranda");
+    ok(await page.isVisible("#view-beranda") && await page.locator("#view-beranda .tool").count() >= 7, "Beranda/alat tidak tampil");
+    ok(await page.getAttribute("#tab-beranda", "aria-current") === "page", "menu aktif tidak ditandai");
+    await page.click('#view-beranda .tool[data-nav="bandingkan"]'); ok(await page.isVisible("#view-bandingkan"), "kartu alat tidak membuka Bandingkan");
+    await page.click("#tab-sitasi"); await page.waitForTimeout(300);
+    ok(await page.isVisible("#view-periksa") && await page.evaluate(() => document.getElementById("citeAcc").open), "Cek Sitasi tidak membuka kartu sitasi");
+    ok((await page.textContent("#topTitle")).includes("Sitasi"), "judul halaman tidak diperbarui");
+    // HP: menu dibuka lewat tombol, tertutup setelah memilih
+    const { ctx: c, page: m } = await newPage(browser, devices["Pixel 7"]);
+    await m.goto(SITE); await ready(m);
+    ok(!(await m.isVisible("#tab-riwayat")), "menu samping terlihat di HP sebelum dibuka");
+    await m.click("#menuBtn"); await m.click("#tab-riwayat");
+    ok(await m.isVisible("#view-riwayat") && !(await m.evaluate(() => document.body.classList.contains("menu-open"))), "menu HP tidak menutup setelah memilih");
+    await m.click("#menuBtn"); await m.keyboard.press("Escape");
+    ok(!(await m.evaluate(() => document.body.classList.contains("menu-open"))), "Esc tidak menutup menu");
+    ok(!m.errors.length, m.errors.join("; ")); await c.close();
+  });
+  await test("teks tersembunyi & typo: karakter tak terlihat, huruf Kiril, teks putih DOCX, kata tidak baku, bersihkan", async () => {
+    await page.click("#tab-periksa");
+    await page.setInputFiles("#mainFile", path.join(FIX, "tersembunyi.docx"));
+    await page.waitForFunction(() => S.doc && S.doc.name === "tersembunyi.docx" && S.doc.hidden && S.doc.hidden.length, null, { timeout: 30000 });
+    const kinds = await page.evaluate(() => S.doc.hidden.map((h) => h.kind).join(","));
+    ok(/putih/.test(kinds) && /bertanda tersembunyi/.test(kinds), "teks tersembunyi DOCX tidak terdeteksi: " + kinds);
+    await page.evaluate(() => setText(editor.value + "\n\nAktifitas belajar anak anak​ meningkat. Analisa memakai pendekаtan kuantitatif. Kami ingin  bertanya ,lalu di lakukan uji."));
+    await page.waitForTimeout(400); await page.click("#tab-tersembunyi"); await page.waitForTimeout(200);
+    const c = await page.evaluate(() => { const n = {}; S.hidden.forEach((f) => { n[f.kind] = (n[f.kind] || 0) + 1; }); return n; });
+    ok(c.invis === 1 && c.homo === 1 && c.hidden >= 2 && c.baku >= 2 && c.typo >= 4, "temuan tidak lengkap: " + JSON.stringify(c));
+    ok(await page.isVisible("#hidVerdict.bad"), "kesimpulan penyamaran tidak tampil");
+    await page.click("#hidClean"); await page.waitForTimeout(700);
+    const after = await page.evaluate(() => [/[​а]/.test(editor.value), S.hidden.filter((f) => f.kind === "invis" || f.kind === "homo").length]);
+    ok(!after[0] && after[1] === 0, "pembersihan tidak menghapus karakter tersembunyi: " + after);
+    await page.click('#hidList [data-hid]'); await page.waitForTimeout(200);
+    ok(await page.isVisible("#view-periksa") && await page.locator("#hl .jump").count() === 1, "tombol Lihat tidak melompat ke naskah");
+  });
+  await test("buat daftar isi: BAB, subbab, nomor halaman, salin & unduh Word", async () => {
+    const T = "KATA PENGANTAR\nPuji syukur kami panjatkan.\n\nBAB I\nPENDAHULUAN\n\nA. Latar Belakang\nIsi latar belakang yang cukup panjang di sini.\n\n1.1 Rumusan Masalah\nBagaimana hasilnya?\n\n1.1.1 Batasan Masalah\nIsi.\n\n1. Mengetahui penerapan teknik modulasi pada sisi radio frequency sistem komunikasi bergerak seluler.\n\nBAB II TINJAUAN PUSTAKA\n\n2.1 Landasan Teori\nIsi teori.\n\nDAFTAR PUSTAKA\nSanjaya, W. (2016). Strategi. Kencana.";
+    await page.evaluate((t) => { S.doc = null; setText(t); }, T); await page.waitForTimeout(400);
+    await page.click("#tab-daftarisi"); await page.waitForTimeout(200);
+    const h = await page.evaluate(() => S.toc.map((x) => x.lvl + ":" + x.t));
+    const want = ["1:KATA PENGANTAR", "1:BAB I PENDAHULUAN", "2:A. Latar Belakang", "2:1.1 Rumusan Masalah", "3:1.1.1 Batasan Masalah", "1:BAB II TINJAUAN PUSTAKA", "2:2.1 Landasan Teori", "1:DAFTAR PUSTAKA"];
+    ok(JSON.stringify(h) === JSON.stringify(want), "judul terdeteksi: " + JSON.stringify(h));
+    ok(await page.locator("#tocPrev .tocrow").count() === 8, "pratinjau tidak lengkap");
+    const d = await download(page, "#tocDoc"); ok(/\.doc$/.test(d.name) && d.buf.toString().includes("BAB II TINJAUAN PUSTAKA"), "unduhan Word tidak berisi daftar isi");
+    // Nomor halaman dari PDF
+    await page.click("#tab-periksa"); await page.setInputFiles("#mainFile", path.join(FIX, "sample.pdf"));
+    await page.waitForFunction(() => S.doc && S.doc.layout, null, { timeout: 30000 }); await page.click("#tab-daftarisi");
+    ok(/halaman PDF/.test(await page.textContent("#tocNote")), "mode nomor halaman PDF tidak aktif: " + await page.textContent("#tocNote"));
+  });
   await test("deteksi AI terkalibrasi: abstrak manusia berdata rendah, teks AI generik tinggi", async () => {
     const HUMAN = "Penelitian ini bertujuan untuk mengetahui pengaruh pemberian pupuk kandang ayam terhadap pertumbuhan dan hasil tanaman jagung manis (Zea mays saccharata Sturt.) pada tanah PMK. Penelitian dilaksanakan di kebun percobaan Fakultas Pertanian Universitas Kapuas Sintang dari bulan Maret sampai Juni 2016. Rancangan yang digunakan adalah Rancangan Acak Lengkap (RAL) dengan 5 perlakuan dan 5 ulangan, yaitu tanpa pupuk kandang, 10 ton/ha, 20 ton/ha, 30 ton/ha, dan 40 ton/ha. Variabel yang diamati meliputi tinggi tanaman, diameter batang, berat tongkol berkelobot, dan berat tongkol tanpa kelobot. Hasil penelitian menunjukkan bahwa pemberian pupuk kandang ayam berpengaruh nyata terhadap semua variabel pengamatan. Dosis 30 ton/ha memberikan hasil terbaik dengan berat tongkol tanpa kelobot 312,4 g per tanaman.";
     const r = await page.evaluate(([h]) => [detectAI(h).score, detectAI(SAMPLE.split("\n\n").filter((p, i) => i !== 2).join("\n\n")).score, detectAI(h).signals.kekhususan], [HUMAN]);
@@ -498,7 +547,7 @@ async function download(page, selector) {
     await test(name + ": tanpa scroll horizontal dan tumpang-tindih di semua halaman" + (AXE ? " dan lolos audit WCAG" : ""), async () => {
       const { ctx: c, page: p } = await newPage(browser, opts);
       await p.goto(SITE); await ready(p);
-      for (const v of ["periksa", "sumber", "bandingkan", "riwayat", "metode"]) {
+      for (const v of ["beranda", "periksa", "sumber", "bandingkan", "tersembunyi", "daftarisi", "riwayat", "metode"]) {
         await p.evaluate((v) => showView(v), v); await p.waitForTimeout(100);
         const w = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
         ok(w[0] <= w[1], v + ": lebar " + w[0] + " > layar " + w[1]);
