@@ -2,6 +2,28 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [3.6.0] - 2026-11-18
+### Ditambahkan
+- Sumber cek internet diperluas menjadi 15, dikelompokkan dalam panel "Sumber pencarian" yang bisa dilipat.
+- **Ensiklopedia dan buku**:
+  - **Wikibooks** dan **Wikisource** Indonesia (modul, buku pelajaran, naskah sumber), dicari dengan frasa persis.
+- **Jurnal dan repositori**:
+  - **OpenAIRE** memanen jurnal OJS dan repositori, termasuk banyak kampus di Indonesia.
+  - **Europe PMC** mencari frasa persis di teks lengkap artikel. Hanya dipakai untuk naskah berbahasa Inggris.
+  - **CORE** mencari di repositori universitas dan memakai teks lengkapnya bila tersedia. Perlu API key gratis.
+- **Web umum (blog, berita, situs kampus)**, dengan API key gratis milik pengguna:
+  - **Google lewat Serper**: frasa persis, 2.500 pencarian gratis.
+  - **Tavily**: pencarian web yang langsung mengambil isi halaman, 1.000 kredit gratis per bulan. Bila dipakai
+    bersama Serper, isi halaman hasil Google ikut diambil, sehingga seluruh halaman dibandingkan, bukan hanya cuplikannya.
+- Bila kunci ditolak atau kuota habis, mesin itu berhenti dipakai dan alasannya ditampilkan. Mesin lain tetap jalan.
+- `fetchJSON` mendukung POST dan header, serta mengatur jeda per layanan baru.
+
+### Diubah
+- Google Custom Search ditandai "lama": Google sudah menutupnya untuk pengguna baru dan akan menghentikannya pada
+  1 Januari 2027. Panduan pemasangannya diganti dengan Serper, Tavily, dan CORE.
+- Uji e2e menjadi 33 skenario. Skenario baru: Serper + isi halaman Tavily, pencarian Tavily, OpenAIRE, Wikibooks,
+  dan kunci CORE yang ditolak.
+
 ## [3.5.0] - 2026-11-18
 ### Ditambahkan
 - **Teks lengkap jurnal (OpenAlex)**: kalimat naskah (hingga 20 kata) dicari persis di dalam teks lengkap jutaan
