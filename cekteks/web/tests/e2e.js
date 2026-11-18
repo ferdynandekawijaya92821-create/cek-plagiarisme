@@ -214,6 +214,40 @@ async function download(page, selector) {
     await page.click("#webClear");
     for (const id of ["wOpenAlex", "wDoaj", "wCrossref", "wS2", "wWikiEn"]) await page.check("#" + id);
   });
+  await test("teks lengkap jurnal (OpenAlex): kalimat yang ada di isi artikel ditemukan; kuota habis diberi tahu", async () => {
+    await page.click("#tab-periksa");
+    const PAPER = "Hasil analisis menunjukkan bahwa penggunaan pupuk organik cair dari limbah kulit pisang mampu meningkatkan tinggi tanaman cabai rawit secara nyata dibandingkan dengan perlakuan kontrol pada umur enam minggu setelah tanam";
+    const low = PAPER.toLowerCase();
+    let calls = 0, quota = false;
+    await ctx.route(/api\.openalex\.org/, (r) => {
+      calls++;
+      if (quota) return r.fulfill({ status: 429, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: '{"error":"Rate limit exceeded"}' });
+      const f = new URL(r.request().url()).searchParams.get("filter") || "", m = /fulltext\.search:"([^"]+)"/.exec(f);
+      const hitP = m && low.includes(m[1]);
+      r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" },
+        body: JSON.stringify({ results: hitP ? [{ id: "https://openalex.org/W1", doi: "https://doi.org/10.9/pisang", display_name: "Pupuk organik cair kulit pisang", publication_year: 2017, abstract_inverted_index: { Penelitian: [0], tentang: [1], pupuk: [2] } }] : [] }) });
+    });
+    for (const id of ["wWikiId", "wWikiEn", "wDoaj", "wCrossref", "wS2"]) await page.uncheck("#" + id);
+    const txt = "Kebun percobaan kami berada di belakang gedung jurusan dan sering tergenang ketika hujan deras turun sore hari. " + PAPER + ". Kami menyiram tanaman setiap pagi sebelum kuliah dimulai dan mencatat suhu udara dengan termometer sederhana.";
+    await page.evaluate((t) => setText(t), txt); await page.waitForTimeout(400);
+    await page.click("#webBtn");
+    await page.waitForFunction(() => document.getElementById("webProg").hidden && S.webChecked, null, { timeout: 30000 });
+    const r = await page.evaluate(() => ({ kinds: S.webSources.map((w) => w.kind).join(","), pub: S.plag.groups.publikasi, hits: S.lastOA.hits }));
+    ok(r.kinds.includes("Teks lengkap jurnal") && r.hits === 1, "artikel tidak ditemukan: " + JSON.stringify(r));
+    ok(r.pub > 35, "kesamaan dengan teks lengkap jurnal hanya " + r.pub + "%");
+    quota = true; await page.click("#webClear"); await page.click("#webBtn");
+    await page.waitForFunction(() => document.getElementById("webProg").hidden && !runWebSearch.busy, null, { timeout: 30000 });
+    ok(/Kuota harian OpenAlex habis/.test(await page.textContent("#webStatus")), "kuota habis tidak diberitahukan: " + await page.textContent("#webStatus"));
+    await ctx.unroute(/api\.openalex\.org/); await page.evaluate(() => { resetWeb(); run(); });
+    for (const id of ["wWikiId", "wWikiEn", "wDoaj", "wCrossref", "wS2"]) await page.check("#" + id);
+  });
+  await test("deteksi AI terkalibrasi: abstrak manusia berdata rendah, teks AI generik tinggi", async () => {
+    const HUMAN = "Penelitian ini bertujuan untuk mengetahui pengaruh pemberian pupuk kandang ayam terhadap pertumbuhan dan hasil tanaman jagung manis (Zea mays saccharata Sturt.) pada tanah PMK. Penelitian dilaksanakan di kebun percobaan Fakultas Pertanian Universitas Kapuas Sintang dari bulan Maret sampai Juni 2016. Rancangan yang digunakan adalah Rancangan Acak Lengkap (RAL) dengan 5 perlakuan dan 5 ulangan, yaitu tanpa pupuk kandang, 10 ton/ha, 20 ton/ha, 30 ton/ha, dan 40 ton/ha. Variabel yang diamati meliputi tinggi tanaman, diameter batang, berat tongkol berkelobot, dan berat tongkol tanpa kelobot. Hasil penelitian menunjukkan bahwa pemberian pupuk kandang ayam berpengaruh nyata terhadap semua variabel pengamatan. Dosis 30 ton/ha memberikan hasil terbaik dengan berat tongkol tanpa kelobot 312,4 g per tanaman.";
+    const r = await page.evaluate(([h]) => [detectAI(h).score, detectAI(SAMPLE.split("\n\n").filter((p, i) => i !== 2).join("\n\n")).score, detectAI(h).signals.kekhususan], [HUMAN]);
+    ok(r[0] < 35, "abstrak manusia dinilai " + r[0] + "%");
+    ok(r[1] >= 65, "teks AI generik hanya " + r[1] + "%");
+    ok(r[2] > 40, "sinyal kekhususan tidak terbaca: " + r[2]);
+  });
   await test("perbandingan berdampingan: naskah & sumber, sama persis dan parafrase", async () => {
     await page.click("#tab-periksa");
     const mix = "Fotosintesis adalah proses biokimia pembentukan zat makanan berupa karbohidrat yang dilakukan oleh tumbuhan. " + PARA;

@@ -2,6 +2,30 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [3.5.0] - 2026-11-18
+### Ditambahkan
+- **Teks lengkap jurnal (OpenAlex)**: kalimat naskah (hingga 20 kata) dicari persis di dalam teks lengkap jutaan
+  artikel ilmiah, termasuk jurnal Indonesia, bukan hanya di abstraknya. Bila ditemukan, ujung kalimat ikut
+  dikonfirmasi sehingga seluruh kalimat tersorot. Menggantikan pencarian kata kunci OpenAlex.
+- Isian **OpenAlex API key** (opsional, gratis) di tab Sumber untuk menaikkan kuota dari ±100 menjadi ±1.000
+  pencarian per hari; bila kuota habis, CekTeks memberi tahu dan melanjutkan dengan sumber lain.
+- Sinyal manusia baru **"Data & rujukan spesifik"** (angka, data, keterangan atau sitasi dalam kurung).
+
+### Diubah
+- **Deteksi AI dikalibrasi ulang** dengan data: 69 teks manusia (48 abstrak jurnal Indonesia terbitan sebelum 2020
+  dan 21 artikel Wikipedia Indonesia) dan 38 teks AI (termasuk teks AI bersitasi dan berangka).
+  - AUC naik dari 0,947 menjadi 0,997.
+  - Teks manusia yang masuk rentang "campuran" turun dari 23 menjadi 6.
+  - Tidak ada teks manusia yang mendapat skor 65% ke atas.
+- Sinyal "Kosakata" dibalik arahnya: teks AI berbahasa Indonesia ternyata memakai kosakata yang lebih beragam
+  (MATTR 0,87 dibanding 0,78 pada tulisan manusia). Bobot sinyal "Pengulangan kata pembuka" diturunkan karena
+  justru lebih sering muncul pada tulisan manusia.
+
+### Dicoba, tidak dipakai
+- Deteksi AI berbasis model bahasa di browser (Qwen2.5-0.5B, metode Fast-DetectGPT). Unduhannya ±500 MB, tetapi
+  pada data yang sama hanya mencapai AUC 0,64, jauh di bawah analisis gaya tulisan. Gemma 3 270M gagal dimuat
+  di WebAssembly.
+
 ## [3.4.0] - 2026-11-18
 ### Diperbaiki
 - **Cek internet pada naskah panjang**: sebelumnya hanya 6 kalimat yang dicari, berapa pun panjang naskahnya, sehingga

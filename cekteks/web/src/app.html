@@ -900,7 +900,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
             <div class="checks">
               <label><input type="checkbox" id="wWikiId" checked> Wikipedia ID</label>
               <label><input type="checkbox" id="wWikiEn" checked> Wikipedia EN</label>
-              <label><input type="checkbox" id="wOpenAlex" checked> OpenAlex</label>
+              <label><input type="checkbox" id="wOpenAlex" checked> OpenAlex <span class="muted">(teks lengkap jurnal)</span></label>
               <label><input type="checkbox" id="wDoaj" checked> DOAJ</label>
               <label><input type="checkbox" id="wCrossref" checked> Crossref</label>
               <label><input type="checkbox" id="wS2" checked> Semantic Scholar</label>
@@ -1048,6 +1048,19 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
         </div>
         <div class="card">
           <details class="acc">
+            <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11H4z"/><path d="M8 12h8M8 16h5"/></svg></span><span><b>Teks lengkap jurnal (OpenAlex)</b><span class="muted" id="oaHint">opsional · menambah kuota harian</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="card-b stack">
+              <p class="hint" style="margin:0">Kalimat naskah dicari persis di dalam teks lengkap jutaan artikel ilmiah, termasuk jurnal Indonesia. Tanpa kunci, kuota gratisnya sekitar 100 pencarian per hari dan dipakai bersama satu jaringan internet. Dengan API key gratis, kuotanya sekitar 1.000 pencarian per hari. Kunci hanya disimpan di perangkat ini.</p>
+              <label class="field" for="oaKey">OpenAlex API key<input type="text" id="oaKey" autocomplete="off" spellcheck="false" placeholder="Tempel API key di sini"></label>
+              <ol class="howto">
+                <li>Buka openalex.org/settings/api lalu daftar dengan email Anda.</li>
+                <li>Klik tautan di email, salin API key, dan tempel di atas.</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+        <div class="card">
+          <details class="acc">
             <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/></svg></span><span><b>Pencarian Google</b><span class="muted">opsional · menjangkau seluruh web</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
             <div class="card-b stack">
               <p class="hint" style="margin:0">Isi API key Google Programmable Search milik Anda sendiri. Gratis 100 pencarian per hari. Kunci hanya disimpan di perangkat ini.</p>
@@ -1175,7 +1188,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       </article>
       <article class="card gcard">
         <h2>Cek di internet</h2>
-        <p>Kalimat diambil merata dari seluruh naskah (Standar: satu kalimat tiap ±150 kata, maksimal 30; Mendalam: tiap ±70 kata, maksimal 60) lalu dicari persis di Wikipedia. Kata kunci tiap bagian naskah juga dicari, sehingga artikel bertopik sama diunduh utuh. Abstrak jurnal dicari di OpenAlex, DOAJ, Crossref, dan Semantic Scholar (termasuk banyak jurnal Indonesia), serta Google bila API key diisi. Setelah dokumen diunggah, pencarian berjalan otomatis bila sedang online.</p>
+        <p>Kalimat diambil merata dari seluruh naskah (Standar: satu kalimat tiap ±150 kata, maksimal 30; Mendalam: tiap ±70 kata, maksimal 60) lalu dicari persis di Wikipedia. Kata kunci tiap bagian naskah juga dicari, sehingga artikel bertopik sama diunduh utuh. Kalimat yang sama juga dicari persis di <b>teks lengkap</b> jutaan artikel ilmiah lewat OpenAlex, dan abstrak jurnal dicari di DOAJ, Crossref, serta Semantic Scholar (termasuk banyak jurnal Indonesia), serta Google bila API key diisi. Setelah dokumen diunggah, pencarian berjalan otomatis bila sedang online.</p>
         <p><b>Peta naskah</b> membagi naskah panjang menjadi bagian ±250 kata dan menunjukkan kesamaan serta kemungkinan AI tiap bagian. Ketuk kotaknya untuk melompat ke bagian itu.</p>
         <p class="muted">Tanpa Google, blog, situs berita, dan repositori kampus tidak terjangkau. Gunakan daftar "Periksa manual di Google" untuk itu.</p>
       </article>
@@ -1599,7 +1612,10 @@ var CONNECTORS = ["selain itu", "oleh karena itu", "dengan demikian", "namun", "
 var INFORMAL = new Set(("gak nggak ngga enggak gk ga banget aja sih dong deh kok nih tuh gue gw lu lo elo aku kayak udah " +
   "udh blm yg dgn tdk krn jd bgt wkwk wkwkwk haha hehe anjir btw lol lmao omg gonna wanna kinda yeah nope ok okay dunno " +
   "tbh imo idk bikin gimana ngapain").split(" "));
-var WEIGHTS = { burstiness: .25, frasa_ai: .24, konektor_awal: .14, pola_tiga: .05, keseragaman_paragraf: .09, repetisi_awal: .07, leksikal: .05, informalitas: .10 };
+// Bobot dikalibrasi pada 69 teks manusia (abstrak jurnal Indonesia sebelum 2020 dan Wikipedia) dan 38 teks AI
+// (termasuk teks AI bersitasi dan berangka): tidak ada teks manusia yang mendapat skor 65% ke atas.
+var WEIGHTS = { burstiness: .24, frasa_ai: .24, konektor_awal: .14, leksikal: .10, pola_tiga: .05, keseragaman_paragraf: .08, repetisi_awal: .04, informalitas: .10, kekhususan: .15 };
+var HUMAN_SIG = { informalitas: 1, kekhususan: 1 };
 // Pola daftar tiga hal ("X, Y, dan Z") yang sangat sering dipakai model bahasa.
 var TRIAD_RE = /[\p{L}\p{N}-]+(?: [\p{L}\p{N}-]+){0,2}, [\p{L}\p{N}-]+(?: [\p{L}\p{N}-]+){0,2},? (?:dan|serta|maupun|and|or|atau) [\p{L}\p{N}-]+/gu;
 // Judul, nomor halaman, isi tabel, dan keterangan gambar bukan kalimat prosa; tidak ikut dihitung.
@@ -1643,15 +1659,18 @@ function aiCore(text) {
   var para = pcv != null ? clamp((0.6 - pcv) / 0.45) : null;
   var firsts = sents.filter(function (s, i) { return prose[i]; }).map(function (s) { return words(s[0])[0]; }).filter(Boolean), rep = null;
   if (firsts.length >= 4) rep = clamp((1 - new Set(firsts).size / firsts.length) / 0.5);
-  var m = mattr(toks), lex = N >= 50 ? clamp(1 - Math.abs(m - 0.74) / 0.12) : null;
+  // Teks AI berbahasa Indonesia cenderung memakai kosakata lebih beragam (MATTR tinggi) daripada tulisan manusia.
+  var m = mattr(toks), lex = N >= 50 ? clamp((m - 0.76) / 0.12) : null;
+  // Kekhususan: angka, data, dan keterangan/sitasi dalam kurung jauh lebih sering ditulis manusia.
+  var specN = (text.match(/\d+(?:[.,]\d+)*/g) || []).length + (text.match(/\(/g) || []).length, spec = N >= 50 ? clamp((100 * specN / N - 0.8) / 3) : 0;
   var inf = toks.filter(function (w) { return INFORMAL.has(w); }).length + (text.match(/\b\w+['’](?:t|m|re|ve|ll|d)\b/gi) || []).length;
   inf += (text.match(/!/g) || []).length + (text.match(/\?{2,}|!{2,}|\.{3,}|:\)|:\(|:v/g) || []).length;
   var informal = clamp((100 * inf / Math.max(N, 1)) / 3);
   var sig = { burstiness: burst, frasa_ai: phrase, konektor_awal: connS, pola_tiga: triS, keseragaman_paragraf: para, repetisi_awal: rep, leksikal: lex };
   // Sinyal yang tidak bisa diukur (mis. paragraf tidak terdeteksi di PDF) tidak ikut dihitung, bukan dianggap 50%.
   var posW = 0, raw = 0; Object.keys(sig).forEach(function (k) { if (sig[k] == null) return; posW += WEIGHTS[k]; raw += sig[k] * WEIGHTS[k]; });
-  raw = (posW ? raw / posW : 0.45) - WEIGHTS.informalitas * informal * 2.5;
-  return { score: clamp(0.5 + (raw - 0.45) * 1.6), sig: sig, informal: informal, ph: ph, sents: sents, lens: lens, prose: prose, conn: conn,
+  raw = (posW ? raw / posW : 0.45) - WEIGHTS.informalitas * informal * 2.5 - WEIGHTS.kekhususan * spec;
+  return { score: clamp(0.5 + (raw - 0.45) * 1.6), sig: sig, informal: informal, spec: spec, ph: ph, sents: sents, lens: lens, prose: prose, conn: conn,
     burst: burst == null ? 0.5 : burst, c: c, m: m, density: density, mu: nP ? mean(plens) : 0, N: N, nP: nP };
 }
 // Naskah panjang dibagi menjadi bagian sekitar 250 kata agar bagian yang ditulis AI tidak "tenggelam" di antara bagian lain.
@@ -1695,7 +1714,7 @@ function detectAI(text) {
   else if (g.N > 0 && g.nP < 5) warns.push("Jumlah kalimat sedikit, sehingga analisis variasi kalimat terbatas.");
   var sig = {};
   Object.keys(g.sig).forEach(function (k) { sig[k] = g.sig[k] == null ? 0 : +(100 * g.sig[k]).toFixed(1); });
-  sig.informalitas = +(100 * g.informal).toFixed(1);
+  sig.informalitas = +(100 * g.informal).toFixed(1); sig.kekhususan = +(100 * g.spec).toFixed(1);
   return { score: pct, word_count: g.N, sentence_count: g.nP, signals: sig, phrases: g.ph, sentences: sentOut, warnings: warns,
     sections: sections, aiShare: totW ? +(100 * aiWords / totW).toFixed(1) : 0, aiSections: sections.filter(function (x) { return x.score >= 65; }).length,
     unmeasured: Object.keys(g.sig).filter(function (k) { return g.sig[k] == null; }),
@@ -1725,7 +1744,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "3.4.0";
+var APP_VERSION = "3.5.0";
 function setBusy(msg, frac) {
   var b = $("#busy");
   if (!msg) { b.hidden = true; return; }
@@ -2006,8 +2025,9 @@ var SIG = {
   pola_tiga: ["Pola daftar tiga", "Kalimat berpola “X, Y, dan Z” yang sangat sering dipakai model bahasa"],
   keseragaman_paragraf: ["Keseragaman paragraf", "Paragraf dengan panjang yang hampir sama"],
   repetisi_awal: ["Pengulangan kata pembuka", "Kalimat sering diawali kata yang sama"],
-  leksikal: ["Kosakata seragam", "Keragaman kata (MATTR) di rentang tipikal AI"],
-  informalitas: ["Gaya informal (sinyal manusia)", "Bahasa gaul, singkatan, tanda seru. Menurunkan skor AI"]
+  leksikal: ["Kosakata sangat beragam", "Pilihan kata yang terus berganti tanpa pengulangan istilah, khas teks AI"],
+  informalitas: ["Gaya informal (sinyal manusia)", "Bahasa gaul, singkatan, tanda seru. Menurunkan skor AI"],
+  kekhususan: ["Data & rujukan spesifik (sinyal manusia)", "Angka, data, dan keterangan atau sitasi dalam kurung. Menurunkan skor AI"]
 };
 function verdict(el, v, labels) {
   var i = v < 35 ? 0 : v < 65 ? 1 : 2; el.textContent = labels[i]; el.style.color = lvl(v);
@@ -2037,6 +2057,7 @@ function aiExplain(a) {
     if (g.frasa_ai < 25) why.push("hampir tidak ada frasa klise AI");
     if (g.konektor_awal < 25) why.push("kalimat jarang diawali kata sambung formal");
     if (g.informalitas > 25) why.push("ada gaya bahasa tidak baku");
+    if (g.kekhususan > 40) why.push("banyak data dan rujukan spesifik");
   }
   if (a.score >= 35) {
     if (g.burstiness >= 60) why.push("panjang kalimatnya sangat seragam");
@@ -2121,7 +2142,7 @@ function run() {
   $("#aiSub").textContent = aiExplain(a);
   $("#warns").innerHTML = (a ? a.warnings : []).map(function (w) { return '<div class="warn">' + esc(w) + "</div>"; }).join("");
   $("#signals").innerHTML = a ? Object.keys(SIG).sort(function (x, y) { return WEIGHTS[y] - WEIGHTS[x]; }).map(function (k) {
-    var v = a.signals[k], w = WEIGHTS[k], human = k === "informalitas", small = !human && w < 0.1;
+    var v = a.signals[k], w = WEIGHTS[k], human = !!HUMAN_SIG[k], small = !human && w < 0.1;
     var col = human ? "var(--ok)" : small ? "var(--muted)" : lvl(v);
     var wl = human ? "pengurang" : "bobot " + Math.round(w * 100) + "%";
     return '<div class="sig' + (small ? " small" : "") + '"><b>' + SIG[k][0] + '<span class="wt">' + wl + '</span></b><span class="num">' + Math.round(v) + '%</span><div class="bar"><i style="width:' + v + "%;background:" + col + '"></i></div><small>' + SIG[k][1] + (small ? ". Pengaruhnya kecil." : "") + "</small></div>";
@@ -3061,7 +3082,7 @@ function buildReport() {
     plag: p, plagLabel: verdictText(p.score, ["Orisinal", "Ada kemiripan", "Kemiripan tinggi"]),
     ai: a, aiLabel: verdictText(a.score, ["Cenderung ditulis manusia", "Campuran / tidak pasti", "Cenderung dibuat AI"]),
     aiSents: a.sentences.filter(function (s) { return s.score >= 55; }).map(function (s) { return { text: t.slice(s.start, s.end), score: s.score }; }),
-    signals: Object.keys(SIG).sort(function (x, y) { return WEIGHTS[y] - WEIGHTS[x]; }).map(function (k) { return { name: SIG[k][0], value: a.signals[k], human: k === "informalitas", weight: WEIGHTS[k] }; }),
+    signals: Object.keys(SIG).sort(function (x, y) { return WEIGHTS[y] - WEIGHTS[x]; }).map(function (k) { return { name: SIG[k][0], value: a.signals[k], human: !!HUMAN_SIG[k], weight: WEIGHTS[k] }; }),
     aiExplain: aiExplain(a),
     phrases: Object.keys(a.phrases).map(function (k) { return k + " (" + a.phrases[k] + "x)"; }),
     filters: filterList(), layout: layoutOk ? d.layout : null, pdfBuf: layoutOk ? d.pdfBuf : null,
@@ -3601,13 +3622,30 @@ function crossref(terms) {
     }).filter(function (src) { return words(src.text).length > 20; });
   });
 }
-function openAlex(terms) {
-  var u = "https://api.openalex.org/works?per_page=3&select=id,doi,display_name,publication_year,abstract_inverted_index&search=" + encodeURIComponent(terms.join(" "));
-  return fetchJSON(u).then(function (d) {
-    return (d.results || []).filter(function (w) { return w.abstract_inverted_index; }).map(function (w) {
-      var pos = []; Object.keys(w.abstract_inverted_index).forEach(function (word) { w.abstract_inverted_index[word].forEach(function (i) { pos[i] = word; }); });
-      return { name: (w.display_name || "Artikel ilmiah") + (w.publication_year ? " (" + w.publication_year + ")" : ""), kind: "Jurnal ilmiah",
-        url: w.doi || w.id, text: (w.display_name || "") + ". " + pos.filter(Boolean).join(" ") };
+// OpenAlex: frasa persis (hingga 20 kata) dicari di dalam teks lengkap artikel ilmiah. Bila ditemukan,
+// bagian kalimat itu terbukti ada di artikel tersebut dan ditambahkan ke teks sumbernya.
+function openAlexFull(sentence) {
+  var tk = tokenize(sentence); if (tk.length < 8) return Promise.resolve([]);
+  var key = store("ct_oakey");
+  function q(a, b) {
+    var phrase = tk.slice(a, b).map(function (t) { return t[0]; }).join(" ").replace(/["',:|]/g, " ");
+    var u = "https://api.openalex.org/works?per_page=3&select=id,doi,display_name,publication_year,abstract_inverted_index&filter=" +
+      encodeURIComponent('fulltext.search:"' + phrase + '"') + (key ? "&api_key=" + encodeURIComponent(key) : "");
+    return fetchJSON(u, 15000, 0).then(function (d) { return d.results || []; });
+  }
+  var n = Math.min(20, tk.length);
+  return q(0, n).then(function (head) {
+    if (!head.length) return [];
+    // Kalimat panjang: ujungnya ikut dicari, agar seluruh kalimat terbukti ada di artikel yang sama.
+    var tail = tk.length > n ? q(Math.max(n - 4, tk.length - 20), tk.length).catch(function () { return []; }) : Promise.resolve(null);
+    return tail.then(function (t) {
+      var tailIds = t ? t.map(function (w) { return w.id; }) : null;
+      return head.map(function (w) {
+        var pos = []; if (w.abstract_inverted_index) Object.keys(w.abstract_inverted_index).forEach(function (word) { w.abstract_inverted_index[word].forEach(function (i) { pos[i] = word; }); });
+        var whole = !tailIds || tailIds.indexOf(w.id) >= 0;
+        return { id: w.id, name: (w.display_name || "Artikel ilmiah") + (w.publication_year ? " (" + w.publication_year + ")" : ""), kind: "Teks lengkap jurnal", group: "publikasi",
+          url: w.doi || w.id, text: (w.display_name || "") + ". " + pos.filter(Boolean).join(" "), conf: whole ? sentence : sentence.slice(0, tk[n - 1][2]) };
+      });
     });
   });
 }
@@ -3654,7 +3692,7 @@ function runWebSearch() {
   if (!langs.length) langs = want.slice(0, 1);
   var useOA = $("#wOpenAlex").checked, useDoaj = $("#wDoaj").checked, useCr = $("#wCrossref").checked, useS2 = $("#wS2").checked;
   if (!want.length && !useOA && !useDoaj && !useCr && !useS2 && !useG) return toast("Pilih minimal satu sumber pencarian.");
-  S.lastEngines = [].concat(langs.map(function (l) { return "Wikipedia " + l.toUpperCase(); }), useOA ? ["OpenAlex"] : [], useDoaj ? ["DOAJ"] : [], useCr ? ["Crossref"] : [], useS2 ? ["Semantic Scholar"] : [], useG ? ["Google"] : []);
+  S.lastEngines = [].concat(langs.map(function (l) { return "Wikipedia " + l.toUpperCase(); }), useOA ? ["OpenAlex (teks lengkap)"] : [], useDoaj ? ["DOAJ"] : [], useCr ? ["Crossref"] : [], useS2 ? ["Semantic Scholar"] : [], useG ? ["Google"] : []);
   var bs = $("#fBib").checked ? findBibStart(text) : -1;
   var sents = pickSentences(text, webBudget(nW), bs, findBibEnd(text, bs));
   if (!sents.length) return toast("Tidak menemukan kalimat yang cukup panjang untuk dicari.");
@@ -3668,6 +3706,16 @@ function runWebSearch() {
   function add(src) { if (src && src.text && words(src.text).length > 5 && !found.has(src.url)) found.set(src.url, src); }
   function addAll(rs) { okCalls++; rs.forEach(add); }
   function fail() { errors++; }
+  var oaWorks = new Map(), oaStop = false, oaHits = 0;
+  function oaAdd(rs) {
+    okCalls++;
+    rs.forEach(function (r) {
+      var o = oaWorks.get(r.id);
+      if (!o) { o = { name: r.name, kind: r.kind, group: r.group, url: r.url, text: r.text, conf: [] }; oaWorks.set(r.id, o); }
+      if (o.conf.indexOf(r.conf) < 0) { o.conf.push(r.conf); oaHits++; }
+    });
+  }
+  function oaFail(e) { if (/HTTP 429|HTTP 403/.test(e && e.message)) oaStop = true; else errors++; }
   function hit(lang, t, w) { var k = lang + "|" + t, o = titles.get(k) || { lang: lang, title: t, w: 0 }; o.w += w; titles.set(k, o); }
   // Mesin jurnal dipakai untuk setiap kalimat kedua saja; Wikipedia untuk setiap kalimat.
   sents.forEach(function (s, si) {
@@ -3679,7 +3727,7 @@ function runWebSearch() {
       });
     });
     var journal = sents.length <= 12 || si % 2 === 0;
-    if (journal && useOA) tasks.push(function () { return openAlex(terms.slice(0, 5)).then(addAll, fail).then(function () { tick("Mencari di OpenAlex…"); }); });
+    if (useOA) tasks.push(function () { if (oaStop) { tick("Mencari di teks lengkap jurnal…"); return Promise.resolve(); } return openAlexFull(s).then(oaAdd, oaFail).then(function () { tick("Mencari di teks lengkap jurnal…"); }); });
     if (journal && useDoaj) tasks.push(function () { return doaj(terms.slice(0, 4)).then(addAll, fail).then(function () { tick("Mencari di DOAJ…"); }); });
     if (journal && useCr) tasks.push(function () { return crossref(terms.slice(0, 6)).then(addAll, fail).then(function () { tick("Mencari di Crossref…"); }); });
     if (journal && useS2) tasks.push(function () { return semScholar(terms.slice(0, 5)).then(addAll, fail).then(function () { tick("Mencari di Semantic Scholar…"); }); });
@@ -3711,11 +3759,13 @@ function runWebSearch() {
     return runAll(pages.map(function (o) { return function () { return wikiPage(o.lang, o.title).then(function (x) { okCalls++; add(x); }, fail).then(function () { tick("Mengunduh artikel Wikipedia…"); }); }; }), 4);
   }).then(function () {
     runWebSearch.busy = false;
-    S.webSources = Array.from(found.values()); S.webChecked = okCalls > 0;
+    oaWorks.forEach(function (o) { if (!found.has(o.url)) found.set(o.url, { name: o.name, kind: o.kind, group: o.group, url: o.url, text: o.conf.join(" … ") + "\n\n" + o.text }); });
+    S.webSources = Array.from(found.values()); S.webChecked = okCalls > 0; S.lastOA = { hits: oaHits, limited: oaStop };
     bar.style.width = "100%"; setTimeout(function () { prog.hidden = true; }, 600);
     btn.disabled = navigator.onLine === false;
     $("#webStatus").textContent = okCalls ? sents.length + " kalimat dicari · " + S.webSources.length + " halaman ditemukan dan dibandingkan" + (errors ? " · " + errors + " permintaan gagal" : "") + "." :
       "Pencarian gagal. Periksa koneksi internet.";
+    if (oaStop) $("#webStatus").textContent += " Kuota harian OpenAlex habis: isi API key gratis di tab Sumber agar teks lengkap jurnal ikut dicari.";
     if (!okCalls && IN_FRAME) $("#webStatus").textContent = "Pencarian internet diblokir di pratinjau Claude. Pakai file CekTeks.html.";
     $("#webClear").hidden = !S.webSources.length;
     renderQLinks(sents.slice(0, 12));
@@ -3741,6 +3791,7 @@ function renderQLinks(sents) {
 }
 $("#webBtn").onclick = runWebSearch;
 $("#webClear").onclick = function () { resetWeb(); run(); };
+$("#oaKey").value = store("ct_oakey") || ""; $("#oaKey").oninput = function () { store("ct_oakey", this.value.trim()); };
 $("#wDepth").value = store("ct_wdepth") || "std"; $("#wDepth").onchange = function () { store("ct_wdepth", this.value); };
 $("#wAuto").checked = store("ct_wauto") !== "0"; $("#wAuto").onchange = function () { store("ct_wauto", this.checked ? "1" : "0"); };
 ["gKey", "gCx"].forEach(function (id) {
