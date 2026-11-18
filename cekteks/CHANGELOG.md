@@ -2,6 +2,56 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [3.5.0] - 2026-11-18
+### Ditambahkan
+- **Teks lengkap jurnal (OpenAlex)**: kalimat naskah (hingga 20 kata) dicari persis di dalam teks lengkap jutaan
+  artikel ilmiah, termasuk jurnal Indonesia, bukan hanya di abstraknya. Bila ditemukan, ujung kalimat ikut
+  dikonfirmasi sehingga seluruh kalimat tersorot. Menggantikan pencarian kata kunci OpenAlex.
+- Isian **OpenAlex API key** (opsional, gratis) di tab Sumber untuk menaikkan kuota dari ±100 menjadi ±1.000
+  pencarian per hari; bila kuota habis, CekTeks memberi tahu dan melanjutkan dengan sumber lain.
+- Sinyal manusia baru **"Data & rujukan spesifik"** (angka, data, keterangan atau sitasi dalam kurung).
+
+### Diubah
+- **Deteksi AI dikalibrasi ulang** dengan data: 69 teks manusia (48 abstrak jurnal Indonesia terbitan sebelum 2020
+  dan 21 artikel Wikipedia Indonesia) dan 38 teks AI (termasuk teks AI bersitasi dan berangka).
+  - AUC naik dari 0,947 menjadi 0,997.
+  - Teks manusia yang masuk rentang "campuran" turun dari 23 menjadi 6.
+  - Tidak ada teks manusia yang mendapat skor 65% ke atas.
+- Sinyal "Kosakata" dibalik arahnya: teks AI berbahasa Indonesia ternyata memakai kosakata yang lebih beragam
+  (MATTR 0,87 dibanding 0,78 pada tulisan manusia). Bobot sinyal "Pengulangan kata pembuka" diturunkan karena
+  justru lebih sering muncul pada tulisan manusia.
+
+### Dicoba, tidak dipakai
+- Deteksi AI berbasis model bahasa di browser (Qwen2.5-0.5B, metode Fast-DetectGPT). Unduhannya ±500 MB, tetapi
+  pada data yang sama hanya mencapai AUC 0,64, jauh di bawah analisis gaya tulisan. Gemma 3 270M gagal dimuat
+  di WebAssembly.
+
+## [3.4.0] - 2026-11-18
+### Diperbaiki
+- **Cek internet pada naskah panjang**: sebelumnya hanya 6 kalimat yang dicari, berapa pun panjang naskahnya, sehingga
+  dokumen puluhan halaman bisa mendapat 0%. Kini kalimat diambil merata dari seluruh naskah (di luar daftar pustaka)
+  sesuai kedalaman: Cepat (8), Standar (1 tiap ±150 kata, maks. 30), Mendalam (1 tiap ±70 kata, maks. 60).
+  Kalimat bernama, beristilah, atau berangka diutamakan.
+- Kata yang terpotong tanda hubung di akhir baris PDF ("fotosin-\ntesis") kini dibaca sebagai satu kata, sehingga
+  kecocokan tidak terputus.
+- Deteksi AI tidak lagi ikut menilai daftar pustaka, judul, nomor halaman, dan isi tabel. Sinyal yang tidak bisa
+  diukur (mis. paragraf pada PDF) tidak lagi dianggap 50%.
+
+### Ditambahkan
+- Pencarian frasa persis di Wikipedia untuk tiap kalimat, ditambah pencarian kata kunci tiap bagian naskah
+  sehingga artikel bertopik sama diunduh utuh (hingga 40 artikel).
+- Sumber baru: **Semantic Scholar** (abstrak jurnal, termasuk banyak jurnal Indonesia).
+- Wikipedia hanya dicari dalam bahasa naskah; jeda antar-permintaan per layanan dan coba ulang otomatis bila ditolak
+  karena terlalu sering (HTTP 429).
+- **Cek otomatis setelah unggah** (bisa dimatikan) dan ajakan "Belum dicek di internet" di ringkasan hasil, supaya
+  skor offline tidak disangka hasil akhir. Hasil internet naskah lama dihapus saat dokumen baru diunggah.
+- **Peta naskah**: naskah panjang dibagi per ±250 kata; tiap bagian menampilkan kesamaan dan kemungkinan AI,
+  dan bisa diketuk untuk melompat ke bagian itu.
+- **AI per bagian**: skor AI menggabungkan skor keseluruhan dan skor tiap bagian, sehingga bagian yang ditulis AI
+  tidak tenggelam di naskah panjang. Sinyal baru "Pola daftar tiga" dan ±50 frasa khas AI tambahan.
+- Laporan mencatat jumlah kalimat yang dicari dan jumlah bagian yang cenderung AI.
+- Uji e2e menjadi 30 skenario (naskah ±6.500 kata dengan salinan di bagian akhir).
+
 ## [3.3.0] - 2026-11-17
 ### Ditambahkan
 - **Sitasi & daftar pustaka**: mengenali sitasi (Nama, 2020), Nama dkk. (2020), Nama & Nama, 2020, beberapa sitasi

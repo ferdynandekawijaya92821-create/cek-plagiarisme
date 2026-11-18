@@ -154,7 +154,7 @@ async function download(page, selector) {
     await ctx.route(/api\.crossref\.org/, (r) => r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" },
       body: JSON.stringify({ message: { items: [{ DOI: "10.2/uji", URL: "https://doi.org/10.2/uji", title: ["Pigmen fotosintesis"], abstract: "<jats:p>Pigmen fotosintesis pada tumbuhan tingkat tinggi terdiri atas klorofil a, klorofil b, dan karotenoid yang tersimpan di dalam kloroplas sel daun tanaman.</jats:p>" }] } }) }));
     await page.evaluate((t) => setText(t), "Praktikum biologi minggu lalu membahas pigmen pada daun. " + ABS + " Kelompok kami juga mencoba mengukur klorofil daun jambu di halaman sekolah, tetapi alatnya terbatas.");
-    for (const id of ["wWikiId", "wWikiEn", "wOpenAlex"]) await page.uncheck("#" + id);
+    for (const id of ["wWikiId", "wWikiEn", "wOpenAlex", "wS2"]) await page.uncheck("#" + id);
     await page.click("#webBtn");
     await page.waitForFunction(() => document.getElementById("webProg").hidden, null, { timeout: 30000 });
     const r = await page.evaluate(() => [S.plag.groups.publikasi, S.webSources.map((w) => w.kind).sort().join(",")]);
@@ -162,7 +162,91 @@ async function download(page, selector) {
     ok(r[0] > 50, "kesamaan dengan jurnal hanya " + r[0] + "%");
     await ctx.unroute(/doaj\.org/); await ctx.unroute(/api\.crossref\.org/);
     await page.click("#webClear");
-    for (const id of ["wWikiId", "wWikiEn", "wOpenAlex"]) await page.check("#" + id);
+    for (const id of ["wWikiId", "wWikiEn", "wOpenAlex", "wS2"]) await page.check("#" + id);
+  });
+  await test("naskah panjang (±26 halaman): kalimat dari seluruh naskah dicari, salinan di bagian akhir ketemu, peta naskah", async () => {
+    await page.click("#tab-periksa");
+    // Naskah buatan ±6.500 kata dengan kalimat acak (bukan salinan), lalu satu bagian disalin dari "Wikipedia" di dekat akhir.
+    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const V = ("petani warga desa sungai sawah ladang pupuk benih panen hujan kemarau irigasi koperasi pasar harga modal pinjaman bank " +
+      "sekolah guru murid buku kelas ujian nilai jalan jembatan kantor camat lurah posyandu bidan dokter obat vaksin anak ibu ayah " +
+      "kebun kopi kakao karet sawit ternak sapi kambing ayam ikan kolam perahu nelayan laut pantai angin ombak gunung hutan kayu rotan").split(" ");
+    const sent = () => { const n = 9 + Math.floor(rnd() * 22); const w = []; for (let i = 0; i < n; i++) w.push(V[Math.floor(rnd() * V.length)]); w[0] = w[0][0].toUpperCase() + w[0].slice(1); return w.join(" ") + "."; };
+    const para = () => Array.from({ length: 4 + Math.floor(rnd() * 4) }, sent).join(" ");
+    const WIKI = "Sungai Musi adalah sebuah sungai yang terletak di provinsi Sumatera Selatan, Indonesia. Dengan panjang sekitar 750 kilometer, sungai ini merupakan yang terpanjang di pulau Sumatra dan membelah Kota Palembang menjadi dua bagian. Jembatan Ampera yang menjadi ikon Kota Palembang pun melintas di atas sungai ini. Sejak zaman Kerajaan Sriwijaya, Sungai Musi terkenal sebagai sarana transportasi utama bagi masyarakat dan pedagang dari berbagai daerah. Hingga kini sungai tersebut masih dipakai untuk mengangkut hasil bumi seperti karet, kopi, dan batu bara dari daerah pedalaman menuju pelabuhan di hilir.";
+    const AI = "Di era digital saat ini, teknologi memainkan peran penting dalam pembangunan desa. Selain itu, pemanfaatan teknologi membuka peluang baru bagi petani, nelayan, dan pelaku usaha kecil. Oleh karena itu, penting untuk dicatat bahwa transformasi digital harus dilakukan secara bijak, terarah, dan berkelanjutan. Lebih lanjut, kolaborasi antara pemerintah, swasta, dan masyarakat merupakan salah satu kunci utama keberhasilan. Dengan demikian, desa dapat mengoptimalkan potensi yang dimiliki secara efektif dan efisien. Secara keseluruhan, inovasi teknologi memiliki dampak yang signifikan terhadap kualitas hidup, kesejahteraan, dan daya saing masyarakat. Selain itu, pendekatan yang holistik memastikan bahwa manfaat teknologi dapat dirasakan oleh seluruh lapisan masyarakat. Oleh karena itu, sinergi berbagai pihak menjadi semakin penting di tengah pesatnya perkembangan zaman. Kesimpulannya, teknologi bukan sekadar alat, melainkan fondasi yang kuat bagi kemajuan desa, kota, dan bangsa.";
+    const P = []; for (let i = 0; i < 70; i++) P.push(para());
+    P.splice(28, 0, AI + "\n\n" + AI.replace("pembangunan desa", "kemajuan wilayah"));
+    P.splice(62, 0, WIKI);
+    const doc = "BAB I PENDAHULUAN\n\n" + P.join("\n\n");
+    let wikiQ = 0, phraseQ = 0;
+    await ctx.route(/wikipedia\.org\/w\/api\.php/, (r) => {
+      const u = new URL(r.request().url()), q = (u.searchParams.get("srsearch") || "").toLowerCase();
+      let body;
+      if (u.searchParams.get("list") === "search") {
+        wikiQ++; if (q.startsWith('"')) phraseQ++;
+        const low = WIKI.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, "");
+        const hitW = q.startsWith('"') ? low.includes(q.replace(/"/g, "")) : q.includes("musi") && q.includes("palembang");
+        body = { query: { search: hitW ? [{ title: "Sungai Musi" }] : [] } };
+      } else body = { query: { pages: { "1": { title: "Sungai Musi", extract: WIKI + " Sungai ini juga menjadi tempat berbagai festival budaya." } } } };
+      r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(body) });
+    });
+    for (const id of ["wOpenAlex", "wDoaj", "wCrossref", "wS2", "wWikiEn"]) await page.uncheck("#" + id);
+    await page.evaluate((t) => setText(t), doc); await page.waitForTimeout(800);
+    ok(await page.isVisible("#nudgeWeb"), "ajakan cek internet tidak tampil sebelum pencarian");
+    const nW = await page.evaluate(() => words(S.text).length);
+    ok(nW > 6000, "naskah uji terlalu pendek: " + nW);
+    await page.click("#nudgeWeb");
+    await page.waitForFunction(() => document.getElementById("webProg").hidden && S.webChecked, null, { timeout: 60000 });
+    const r = await page.evaluate(() => ({ q: S.lastQueries, net: S.plag.groups.internet, cov: coverage().join(" | "), nudge: !!document.getElementById("nudgeWeb") }));
+    ok(r.q >= 25, "hanya " + r.q + " kalimat yang dicari");
+    ok(phraseQ >= 25 && wikiQ - phraseQ >= 15, "pencarian Wikipedia terlalu sedikit: " + wikiQ + " (" + phraseQ + " frasa)");
+    ok(r.net > 1, "salinan di bagian akhir tidak terdeteksi: " + r.net + "%");
+    ok(/kalimat dari seluruh naskah dicari/.test(r.cov), "cakupan pencarian tidak tercatat: " + r.cov);
+    ok(!r.nudge, "ajakan cek internet masih tampil");
+    // Peta naskah & AI per bagian
+    const m = await page.evaluate(() => ({ n: S.ai.sections.length, ai: S.ai.aiSections, cells: document.querySelectorAll("#dmAi button").length, vis: !document.getElementById("docMap").hidden, hiP: S.ai.sections.map((x) => x.score) }));
+    ok(m.vis && m.n >= 15 && m.cells === m.n, "peta naskah tidak lengkap: " + JSON.stringify(m).slice(0, 200));
+    ok(m.ai >= 1, "bagian bergaya AI tidak terdeteksi: " + m.hiP.join(","));
+    await page.locator("#dmPlag button").nth(m.n - 2).click(); await page.waitForTimeout(100);
+    ok(await page.locator("#hl .jump").count() === 1, "lompat ke bagian naskah tidak berfungsi");
+    await ctx.unroute(/wikipedia\.org\/w\/api\.php/);
+    await page.click("#webClear");
+    for (const id of ["wOpenAlex", "wDoaj", "wCrossref", "wS2", "wWikiEn"]) await page.check("#" + id);
+  });
+  await test("teks lengkap jurnal (OpenAlex): kalimat yang ada di isi artikel ditemukan; kuota habis diberi tahu", async () => {
+    await page.click("#tab-periksa");
+    const PAPER = "Hasil analisis menunjukkan bahwa penggunaan pupuk organik cair dari limbah kulit pisang mampu meningkatkan tinggi tanaman cabai rawit secara nyata dibandingkan dengan perlakuan kontrol pada umur enam minggu setelah tanam";
+    const low = PAPER.toLowerCase();
+    let calls = 0, quota = false;
+    await ctx.route(/api\.openalex\.org/, (r) => {
+      calls++;
+      if (quota) return r.fulfill({ status: 429, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: '{"error":"Rate limit exceeded"}' });
+      const f = new URL(r.request().url()).searchParams.get("filter") || "", m = /fulltext\.search:"([^"]+)"/.exec(f);
+      const hitP = m && low.includes(m[1]);
+      r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" },
+        body: JSON.stringify({ results: hitP ? [{ id: "https://openalex.org/W1", doi: "https://doi.org/10.9/pisang", display_name: "Pupuk organik cair kulit pisang", publication_year: 2017, abstract_inverted_index: { Penelitian: [0], tentang: [1], pupuk: [2] } }] : [] }) });
+    });
+    for (const id of ["wWikiId", "wWikiEn", "wDoaj", "wCrossref", "wS2"]) await page.uncheck("#" + id);
+    const txt = "Kebun percobaan kami berada di belakang gedung jurusan dan sering tergenang ketika hujan deras turun sore hari. " + PAPER + ". Kami menyiram tanaman setiap pagi sebelum kuliah dimulai dan mencatat suhu udara dengan termometer sederhana.";
+    await page.evaluate((t) => setText(t), txt); await page.waitForTimeout(400);
+    await page.click("#webBtn");
+    await page.waitForFunction(() => document.getElementById("webProg").hidden && S.webChecked, null, { timeout: 30000 });
+    const r = await page.evaluate(() => ({ kinds: S.webSources.map((w) => w.kind).join(","), pub: S.plag.groups.publikasi, hits: S.lastOA.hits }));
+    ok(r.kinds.includes("Teks lengkap jurnal") && r.hits === 1, "artikel tidak ditemukan: " + JSON.stringify(r));
+    ok(r.pub > 35, "kesamaan dengan teks lengkap jurnal hanya " + r.pub + "%");
+    quota = true; await page.click("#webClear"); await page.click("#webBtn");
+    await page.waitForFunction(() => document.getElementById("webProg").hidden && !runWebSearch.busy, null, { timeout: 30000 });
+    ok(/Kuota harian OpenAlex habis/.test(await page.textContent("#webStatus")), "kuota habis tidak diberitahukan: " + await page.textContent("#webStatus"));
+    await ctx.unroute(/api\.openalex\.org/); await page.evaluate(() => { resetWeb(); run(); });
+    for (const id of ["wWikiId", "wWikiEn", "wDoaj", "wCrossref", "wS2"]) await page.check("#" + id);
+  });
+  await test("deteksi AI terkalibrasi: abstrak manusia berdata rendah, teks AI generik tinggi", async () => {
+    const HUMAN = "Penelitian ini bertujuan untuk mengetahui pengaruh pemberian pupuk kandang ayam terhadap pertumbuhan dan hasil tanaman jagung manis (Zea mays saccharata Sturt.) pada tanah PMK. Penelitian dilaksanakan di kebun percobaan Fakultas Pertanian Universitas Kapuas Sintang dari bulan Maret sampai Juni 2016. Rancangan yang digunakan adalah Rancangan Acak Lengkap (RAL) dengan 5 perlakuan dan 5 ulangan, yaitu tanpa pupuk kandang, 10 ton/ha, 20 ton/ha, 30 ton/ha, dan 40 ton/ha. Variabel yang diamati meliputi tinggi tanaman, diameter batang, berat tongkol berkelobot, dan berat tongkol tanpa kelobot. Hasil penelitian menunjukkan bahwa pemberian pupuk kandang ayam berpengaruh nyata terhadap semua variabel pengamatan. Dosis 30 ton/ha memberikan hasil terbaik dengan berat tongkol tanpa kelobot 312,4 g per tanaman.";
+    const r = await page.evaluate(([h]) => [detectAI(h).score, detectAI(SAMPLE.split("\n\n").filter((p, i) => i !== 2).join("\n\n")).score, detectAI(h).signals.kekhususan], [HUMAN]);
+    ok(r[0] < 35, "abstrak manusia dinilai " + r[0] + "%");
+    ok(r[1] >= 65, "teks AI generik hanya " + r[1] + "%");
+    ok(r[2] > 40, "sinyal kekhususan tidak terbaca: " + r[2]);
   });
   await test("perbandingan berdampingan: naskah & sumber, sama persis dan parafrase", async () => {
     await page.click("#tab-periksa");
