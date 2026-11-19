@@ -2,6 +2,37 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.0.0] - 2026-11-19
+### Ditambahkan
+- **Periksa banyak dokumen**:
+  - Unggah hingga 40 naskah sekaligus.
+  - Tiap naskah dibandingkan dengan sumber offline, bank naskah, dan **naskah lain di antrian**, sehingga tugas
+    yang saling menyalin langsung ketahuan.
+  - Angka ringkasan: rata-rata kesamaan, naskah yang belum lolos batas, dan naskah yang saling mirip.
+  - Satu klik untuk membuka naskah di pemeriksa lengkap.
+  - Ekspor CSV, dan **semua laporan PDF dalam satu ZIP**. Laporannya ikut tercatat di Riwayat, dan naskah yang
+    sedang dibuka dikembalikan setelah ZIP selesai.
+- **Buat sitasi & daftar pustaka**:
+  - Cari dengan DOI, tautan, atau judul lewat Crossref, atau isi manual (artikel, buku, situs web, skripsi).
+  - Gaya **APA 7, IEEE, Harvard, MLA 9, dan Chicago** (penulis-tahun), lengkap dengan contoh sitasi di naskah.
+  - Urut otomatis; bisa disalin atau diunduh sebagai Word dengan indentasi gantung.
+  - Tombol **Sitasi** pada setiap sumber yang cocok.
+- **Cara memperbaiki** di panel Bandingkan:
+  - "Jadikan kutipan + sitasi" mengubah bagian yang sama menjadi kutipan bertanda petik dengan sitasi APA,
+    lalu sumbernya masuk daftar pustaka. Skor kesamaan turun karena kutipan dikecualikan.
+  - "Tambahkan sitasi saja", terutama untuk parafrase.
+- **Batas kesamaan kampus/instansi** (%), diatur di tab Sumber:
+  - Status "Lolos" atau "Belum lolos" tampil di panel hasil, sampul laporan PDF (beserta garis batas di skala),
+    laporan teks, dan pemeriksaan massal.
+- **Palet perintah** (Ctrl/⌘+K, dan kotak pencarian di bilah atas): cari menu dan perintah, lalu jalankan
+  dengan Enter.
+- Tombol **Pasang aplikasi** (PWA) di menu samping, bila browser mendukung.
+
+### Diubah
+- Tes ukuran halaman kini memakai ukuran terkompresi yang benar-benar diunduh browser: di bawah 160 KB
+  (saat ini ±125 KB).
+- Uji e2e menjadi 43 skenario.
+
 ## [3.9.0] - 2026-11-19
 ### Ditambahkan
 - **Teks lengkap sumber**: sumber tidak lagi hanya dibandingkan abstraknya.

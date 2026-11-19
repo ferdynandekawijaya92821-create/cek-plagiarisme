@@ -70,7 +70,10 @@ async function download(page, selector) {
       document.getElementById("plagVal").textContent === pctLabel(S.plag.score), null, { timeout: 5000 });
   });
   await test("halaman pertama ringan (pustaka dimuat terpisah)", async () => {
-    ok(fs.statSync(path.join(DOCS, "index.html")).size < 400 * 1024, "docs/index.html lebih dari 400 KB");
+    // Yang diunduh browser adalah versi terkompresi (GitHub Pages mengirim gzip); pustaka besar dimuat terpisah.
+    const raw = fs.readFileSync(path.join(DOCS, "index.html")), gz = require("zlib").gzipSync(raw, { level: 6 }).length;
+    ok(gz < 160 * 1024, "docs/index.html terkompresi " + Math.round(gz / 1024) + " KB, lebih dari 160 KB");
+    ok(!/pdf\.worker|mammoth\.browser/.test(raw.toString().slice(0, 200000)) || raw.length < 900 * 1024, "pustaka besar ikut tertanam di halaman situs");
   });
   await test("pratinjau tautan (Open Graph) lengkap", async () => {
     for (const prop of ["og:title", "og:description", "og:image", "twitter:card"]) {
@@ -435,6 +438,60 @@ async function download(page, selector) {
     for (const re of [/^https:\/\/jb\.test\//, /zenodo\.org\/api\/records\?/, /zenodo\.org\/api\/records\/9\/files/]) await ctx.unroute(re);
     await page.evaluate(() => { ["ct_jb_url", "ct_jb_key", "ct_jb_repos"].forEach((k) => localStorage.removeItem(k)); document.getElementById("jbUrlIn").value = ""; document.getElementById("jbKeyIn").value = ""; document.getElementById("useCorpus").checked = true; updKeys(); resetWeb(); run(); });
     await srcDefault(page);
+  });
+  await test("periksa banyak dokumen: antar-naskah, CSV, ZIP berisi semua laporan, keadaan semula kembali", async () => {
+    await page.click("#tab-periksa"); await page.evaluate(() => { S.doc = null; setText("Naskah yang sedang dibuka sebelum pemeriksaan massal dimulai, jangan sampai hilang."); });
+    await page.click("#tab-massal");
+    await page.setInputFiles("#bFiles", [path.join(FIX, "tugas.docx"), path.join(FIX, "tersembunyi.docx"), path.join(FIX, "sample.pdf")]);
+    await page.waitForFunction(() => BATCH.length === 3 && document.querySelectorAll("#bList .brow-i").length === 3, null, { timeout: 60000 });
+    const b = await page.evaluate(() => BATCH.map((x) => ({ n: x.name, s: x.score, p: x.peer && x.peer.name, ps: x.peer && x.peer.share })));
+    const t = b.find((x) => x.n === "tugas.docx");
+    ok(t.p === "tersembunyi.docx" && t.ps > 50, "naskah yang saling menyalin tidak terdeteksi: " + JSON.stringify(b));
+    const csv = await download(page, "#bCsv"); ok(/tugas\.docx/.test(csv.buf.toString()) && /Kemiripan antar-naskah/.test(csv.buf.toString()), "CSV tidak lengkap");
+    const z = await download(page, "#bZip");
+    const zs = z.buf.toString("latin1"), nPdf = (zs.match(/Laporan-[\w-]+\.pdf/g) || []).filter((v, i, a) => a.indexOf(v) === i).length;
+    ok(zs.startsWith("PK") && nPdf === 3 && zs.includes("ringkasan.csv"), "ZIP tidak berisi 3 laporan: " + nPdf);
+    ok(await page.evaluate(() => /jangan sampai hilang/.test(editor.value)), "naskah semula tidak dikembalikan setelah ZIP");
+    await page.click("#bClear");
+  });
+  await test("sitasi: DOI (Crossref) ke APA & IEEE, isi manual, unduh Word, sitasi dari sumber yang cocok", async () => {
+    await ctx.route(/api\.crossref\.org\/works\/10\.1234/, (r) => r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify({ message: {
+      type: "journal-article", DOI: "10.1234/jp.5.2", title: ["Strategi pembelajaran berbasis masalah"], "container-title": ["Jurnal Pendidikan"], volume: "5", issue: "2", page: "10-20",
+      author: [{ given: "Wina", family: "Sanjaya" }, { given: "Andi Budi", family: "Putra" }], issued: { "date-parts": [[2016, 3]] } } }) }));
+    await page.click("#tab-pustaka"); await page.click("#rfClear").catch(() => {});
+    await page.fill("#rfQuery", "https://doi.org/10.1234/jp.5.2"); await page.click("#rfSearch");
+    await page.click('#rfResults [data-radd="0"]');
+    await page.selectOption("#rfStyle", "apa");
+    const apa = await page.textContent("#rfList .reft");
+    ok(apa === "Sanjaya, W., & Putra, A. B. (2016). Strategi pembelajaran berbasis masalah. Jurnal Pendidikan, 5(2), 10-20. https://doi.org/10.1234/jp.5.2", "APA salah: " + apa);
+    ok((await page.textContent("#rfList .refc")).includes("(Sanjaya & Putra, 2016)"), "sitasi di naskah salah");
+    await page.selectOption("#rfStyle", "ieee");
+    ok((await page.textContent("#rfList .reft")).startsWith("[1] W. Sanjaya and A. B. Putra, “Strategi pembelajaran berbasis masalah,” Jurnal Pendidikan, vol. 5, no. 2, pp. 10-20, 2016"), "IEEE salah: " + await page.textContent("#rfList .reft"));
+    await page.click("#rfModeMan"); await page.selectOption("#rfType", "book");
+    await page.fill("#rfAuthors", "Sugiyono"); await page.fill("#rfYear", "2017"); await page.fill("#rfTitle", "Metode penelitian kuantitatif, kualitatif, dan R&D"); await page.fill("#rfCont", "Alfabeta"); await page.fill("#rfPlace", "Bandung"); await page.click("#rfAdd");
+    await page.selectOption("#rfStyle", "apa");
+    const all = await page.evaluate(() => [...document.querySelectorAll("#rfList .reft")].map((x) => x.textContent));
+    ok(all.length === 2 && all[0].startsWith("Sanjaya") && all[1] === "Sugiyono (2017). Metode penelitian kuantitatif, kualitatif, dan R&D. Alfabeta.", "urutan/format buku salah: " + JSON.stringify(all));
+    const w = await download(page, "#rfDoc"); ok(w.buf.toString().includes("DAFTAR PUSTAKA") && w.buf.toString().includes("<i>Jurnal Pendidikan</i>"), "Word daftar pustaka tidak lengkap");
+    await ctx.unroute(/api\.crossref\.org\/works\/10\.1234/);
+    await page.click("#tab-periksa"); await page.evaluate(() => { S.doc = null; setText(SAMPLE, true); }); await page.waitForTimeout(400);
+    await page.click('.srcact [data-act="ref"]'); await page.waitForFunction(() => REFS.length === 3);
+    await page.evaluate(() => { REFS = []; saveRefs(); renderRefs(); });
+  });
+  await test("batas kesamaan kampus, perbaiki jadi kutipan bersitasi, palet perintah Ctrl+K", async () => {
+    await page.click("#tab-sumber"); await page.fill("#svcLimit", "10"); await page.click("#tab-periksa");
+    await page.evaluate(() => { S.doc = null; setText(SAMPLE, true); }); await page.waitForTimeout(400);
+    const before = await page.evaluate(() => S.plag.score);
+    ok(await page.isVisible("#limitPill.bad") && /Belum lolos/.test(await page.textContent("#limitPill")), "status batas tidak tampil");
+    ok(await page.evaluate(() => /BELUM LOLOS batas 10%/.test(reportText())), "status batas tidak ada di laporan");
+    const no = await page.evaluate(() => S.plag.matched[0].no);
+    await page.click('.srcact [data-act="cmp"][data-no="' + no + '"]'); await page.click('#drBody [data-fix="quote"]');
+    await page.waitForFunction((b) => S.plag.score < b && /“/.test(editor.value) && /\(“[^)]+”, (\d{4}|t\.t\.)\)/.test(editor.value), before, { timeout: 10000 });
+    ok(await page.evaluate(() => REFS.length) >= 1, "sumber tidak masuk daftar pustaka");
+    await page.keyboard.press("Control+k"); ok(await page.isVisible("#cmdk"), "palet perintah tidak terbuka");
+    await page.keyboard.type("riwayat"); await page.keyboard.press("Enter");
+    ok(await page.isVisible("#view-riwayat") && await page.isHidden("#cmdk"), "palet perintah tidak membuka Riwayat");
+    await page.click("#tab-sumber"); await page.fill("#svcLimit", ""); await page.evaluate(() => { REFS = []; saveRefs(); renderRefs(); });
   });
   await test("deteksi AI terkalibrasi: abstrak manusia berdata rendah, teks AI generik tinggi", async () => {
     const HUMAN = "Penelitian ini bertujuan untuk mengetahui pengaruh pemberian pupuk kandang ayam terhadap pertumbuhan dan hasil tanaman jagung manis (Zea mays saccharata Sturt.) pada tanah PMK. Penelitian dilaksanakan di kebun percobaan Fakultas Pertanian Universitas Kapuas Sintang dari bulan Maret sampai Juni 2016. Rancangan yang digunakan adalah Rancangan Acak Lengkap (RAL) dengan 5 perlakuan dan 5 ulangan, yaitu tanpa pupuk kandang, 10 ton/ha, 20 ton/ha, 30 ton/ha, dan 40 ton/ha. Variabel yang diamati meliputi tinggi tanaman, diameter batang, berat tongkol berkelobot, dan berat tongkol tanpa kelobot. Hasil penelitian menunjukkan bahwa pemberian pupuk kandang ayam berpengaruh nyata terhadap semua variabel pengamatan. Dosis 30 ton/ha memberikan hasil terbaik dengan berat tongkol tanpa kelobot 312,4 g per tanaman.";
