@@ -825,6 +825,58 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
 .recent-i b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
 .recent-i small { color: var(--muted); font-size: 12px; }
 .recent-i .pct { font-family: var(--f-mono); font-weight: 600; }
+
+/* v4.0: massal, pustaka, batas, palet perintah */
+.cmdbtn { display: none; align-items: center; gap: 10px; min-height: 38px; padding: 0 10px 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--muted); font-size: 13.5px; min-width: 260px; }
+.cmdbtn svg { width: 16px; height: 16px; } .cmdbtn span { flex: 1; text-align: left; }
+kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); }
+@media (min-width: 1001px) { .cmdbtn { display: inline-flex; margin-left: 18px; } }
+.installbtn { margin: 10px 4px 0; justify-content: center; } .installbtn svg { width: 17px; height: 17px; }
+.cmdk { position: fixed; inset: 0; z-index: 90; display: flex; justify-content: center; align-items: flex-start; padding: 12vh 16px 16px; }
+.cmdk-bg { position: absolute; inset: 0; background: rgba(10, 16, 24, .45); }
+.cmdk-box { position: relative; width: min(620px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 30px 80px rgba(10, 16, 24, .35); overflow: hidden; }
+.cmdk-box input { width: 100%; border: 0; border-bottom: 1px solid var(--line); padding: 16px 18px; font-size: 16px; background: transparent; color: var(--ink); outline: none; }
+.cmdk-list { max-height: 52vh; overflow-y: auto; padding: 6px; }
+.cmdi { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 12px; border: 0; border-radius: 10px; background: none; color: var(--ink); font-size: 14px; }
+.cmdi svg { width: 18px; height: 18px; color: var(--muted); flex: none; } .cmdi small { margin-left: auto; color: var(--muted); font-size: 12px; }
+.cmdi[aria-selected="true"] { background: var(--accent-soft); } .cmdi[aria-selected="true"] svg { color: var(--accent); }
+.cmdk-f { display: flex; gap: 14px; padding: 9px 14px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.limitpill { margin: 0 16px 12px; padding: 9px 12px; border-radius: 10px; font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
+.limitpill.ok { background: rgba(29, 127, 85, .12); color: var(--ok); } .limitpill.bad { background: rgba(194, 57, 46, .12); color: var(--bad); }
+.limitpill b { font-weight: 700; }
+.bdrop { display: grid; justify-items: center; gap: 6px; text-align: center; padding: 30px 16px; border: 2px dashed var(--line); border-radius: 14px; cursor: pointer; background: var(--surface-2); transition: border-color .15s, background .15s; }
+.bdrop svg { width: 34px; height: 34px; color: var(--accent); } .bdrop.over, .bdrop:hover { border-color: var(--accent); background: var(--accent-soft); }
+.bdrop .muted { font-size: 12.5px; }
+.brow { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; }
+.btnrow .btn svg { width: 16px; height: 16px; }
+.brow-i { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(110px, .9fr) 70px minmax(0, 1.2fr) auto; gap: 6px 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.brow-i:last-child { border-bottom: 0; }
+.brow-i .bn { min-width: 0; } .brow-i .bn b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .brow-i .bn small, .brow-i .bp small { color: var(--muted); font-size: 12px; }
+.brow-i .bs { display: grid; gap: 4px; } .brow-i .bs b { font-family: var(--f-mono); }
+.brow-i .bar { height: 6px; }
+.brow-i .ba { display: flex; gap: 6px; }
+.brow-i .bp { min-width: 0; overflow-wrap: anywhere; }
+.bwarn { color: var(--bad); font-weight: 600; }
+.bsh { display: flex; align-items: center; gap: 8px; }
+.lpill { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+.lpill.ok { background: rgba(29, 127, 85, .14); color: var(--ok); } .lpill.bad { background: rgba(194, 57, 46, .14); color: var(--bad); }
+.reflist a { color: var(--accent); text-decoration: none; overflow-wrap: anywhere; } .reflist a:hover { text-decoration: underline; }
+@media (max-width: 760px) { .brow-i { grid-template-columns: minmax(0, 1fr) auto; } .brow-i .bp, .brow-i .bs { grid-column: 1 / -1; } .brow-i .bai { grid-column: 2; grid-row: 1; } .brow-i .ba { grid-column: 1 / -1; } }
+.seg { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); gap: 2px; }
+.segb { border: 0; background: none; padding: 7px 12px; border-radius: 8px; font-size: 13.5px; font-weight: 600; color: var(--muted); }
+.segb[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(15, 27, 42, .12); }
+.rf2 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.field textarea { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--surface); font: inherit; font-size: 14px; resize: vertical; }
+.reflist { display: grid; gap: 0; font-family: "Times New Roman", Times, serif; font-size: 15px; line-height: 1.6; }
+.refi { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.refi:last-child { border-bottom: 0; }
+.refi .reft { padding-left: 2em; text-indent: -2em; overflow-wrap: anywhere; }
+.refi.ieee .reft { padding-left: 0; text-indent: 0; }
+.refi .refc { grid-column: 1; font-family: var(--f-body, inherit); font-size: 12.5px; color: var(--muted); }
+.refi .refa { grid-row: 1 / span 2; grid-column: 2; display: flex; gap: 6px; align-items: start; font-family: var(--f-body, inherit); }
+.rfres { display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
+.rfres b { font-size: 13.5px; } .rfres .btn { justify-self: start; }
+.cmp-fix { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px dashed var(--line); font-size: 12.5px; }
 /* Teks tersembunyi & daftar isi */
 .hidbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; margin-bottom: 14px; }
 .hidbar-t { display: grid; gap: 2px; min-width: 0; } .hidbar-t b { overflow-wrap: anywhere; }
@@ -858,11 +910,13 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       <button class="tab" type="button" id="tab-beranda" data-view="beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Beranda</span></button>
       <span class="side-g">Pemeriksaan</span>
       <button class="tab" type="button" id="tab-periksa" data-view="periksa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg><span>Cek Plagiasi &amp; AI</span></button>
+      <button class="tab" type="button" id="tab-massal" data-view="massal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg><span>Periksa Banyak Dokumen</span><span class="newtag">Baru</span></button>
       <button class="tab" type="button" id="tab-bandingkan" data-view="bandingkan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg><span>Bandingkan Dokumen</span></button>
       <button class="tab" type="button" id="tab-sitasi" data-view="periksa" data-go="cite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg><span>Cek Sitasi</span></button>
       <button class="tab" type="button" id="tab-keterbacaan" data-view="periksa" data-go="read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg><span>Keterbacaan</span></button>
       <span class="side-g">Alat naskah</span>
       <button class="tab" type="button" id="tab-tersembunyi" data-view="tersembunyi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg><span>Teks Tersembunyi &amp; Typo</span><span class="newtag">Baru</span></button>
+      <button class="tab" type="button" id="tab-pustaka" data-view="pustaka"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/><path d="M7 8h2M15 8h2"/></svg><span>Buat Sitasi &amp; Daftar Pustaka</span><span class="newtag">Baru</span></button>
       <button class="tab" type="button" id="tab-daftarisi" data-view="daftarisi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Buat Daftar Isi</span><span class="newtag">Baru</span></button>
       <span class="side-g">Kelola</span>
       <button class="tab" type="button" id="tab-sumber" data-view="sumber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h12v14H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 0 2 2h12v-4"/><path d="M9 7h6M9 11h4"/></svg><span>Sumber &amp; Pengaturan</span><span class="count" id="srcBadge">0</span></button>
@@ -870,6 +924,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       <button class="tab" type="button" id="sideVerify"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Verifikasi Laporan</span></button>
       <button class="tab" type="button" id="tab-metode" data-view="metode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.3 2-2.3 3.5"/><path d="M12 17.5h.01"/></svg><span>Panduan</span></button>
   </nav>
+  <button type="button" class="btn installbtn" id="installBtn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Pasang aplikasi</button>
   <div class="side-f"><span>Analisis di perangkat Anda</span><span class="num" id="sideVer"></span></div>
 </aside>
 <div class="side-bg" id="sideBg" hidden></div>
@@ -881,6 +936,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="var(--surface)"/><path d="M11 14h8M11 17h6M11 20h4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="3.3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M23 23l2.6 2.6" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
       <b>Cek<span>Teks</span></b>
     </div>
+    <button type="button" class="cmdbtn" id="cmdBtn" aria-label="Cari menu dan perintah (Ctrl+K)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>Cari menu &amp; perintah</span><kbd>Ctrl K</kbd></button>
     <div class="top-r">
       <div class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">Analisis langsung</span></div>
       <div class="miniscore" id="livebar">
@@ -921,7 +977,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
     </div>
     <div class="stats" id="homeStats"></div>
     <h2 class="sec-h">Alat pemeriksaan</h2>
-    <div class="toolgrid"><button type="button" class="tool" data-nav="periksa"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg></span><b>Cek Plagiasi &amp; AI</b><small>Bandingkan naskah dengan lebih dari 20 sumber internet, jurnal, dan repositori, lalu nilai kemungkinan tulisan AI.</small></button><button type="button" class="tool" data-nav="bandingkan"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg></span><b>Bandingkan Dokumen</b><small>Temukan tugas yang saling mirip di antara beberapa dokumen sekaligus.</small></button><button type="button" class="tool" data-nav="periksa" data-go="cite"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg></span><b>Cek Sitasi</b><small>Cocokkan sitasi di naskah dengan daftar pustaka, temukan yang hilang atau tak dikutip.</small></button><button type="button" class="tool" data-nav="periksa" data-go="read"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg></span><b>Keterbacaan</b><small>Waktu baca, kalimat terlalu panjang, dan kata yang terlalu sering diulang.</small></button><button type="button" class="tool" data-nav="tersembunyi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg></span><b>Teks Tersembunyi &amp; Typo</b><small>Karakter tak terlihat, huruf aksara lain, teks putih, salah ketik, dan kata tidak baku.</small></button><button type="button" class="tool" data-nav="daftarisi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><b>Buat Daftar Isi</b><small>Susun daftar isi otomatis dari judul bab dan subbab, siap disalin ke Word.</small></button><button type="button" class="tool" id="homeVerify"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Verifikasi Laporan</b><small>Pindai QR laporan untuk memastikan naskah dan skor tidak diubah.</small></button></div>
+    <div class="toolgrid"><button type="button" class="tool" data-nav="periksa"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg></span><b>Cek Plagiasi &amp; AI</b><small>Bandingkan naskah dengan lebih dari 20 sumber internet, jurnal, dan repositori, lalu nilai kemungkinan tulisan AI.</small></button><button type="button" class="tool" data-nav="massal"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg></span><b>Periksa Banyak Dokumen</b><small>Puluhan naskah sekaligus, saling dibandingkan, laporan PDF dalam satu ZIP.</small></button><button type="button" class="tool" data-nav="bandingkan"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg></span><b>Bandingkan Dokumen</b><small>Temukan tugas yang saling mirip di antara beberapa dokumen sekaligus.</small></button><button type="button" class="tool" data-nav="periksa" data-go="cite"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg></span><b>Cek Sitasi</b><small>Cocokkan sitasi di naskah dengan daftar pustaka, temukan yang hilang atau tak dikutip.</small></button><button type="button" class="tool" data-nav="periksa" data-go="read"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg></span><b>Keterbacaan</b><small>Waktu baca, kalimat terlalu panjang, dan kata yang terlalu sering diulang.</small></button><button type="button" class="tool" data-nav="tersembunyi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg></span><b>Teks Tersembunyi &amp; Typo</b><small>Karakter tak terlihat, huruf aksara lain, teks putih, salah ketik, dan kata tidak baku.</small></button><button type="button" class="tool" data-nav="pustaka"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/><path d="M7 8h2M15 8h2"/></svg></span><b>Buat Sitasi &amp; Daftar Pustaka</b><small>DOI atau judul menjadi sitasi APA, IEEE, Harvard, MLA, atau Chicago.</small></button><button type="button" class="tool" data-nav="daftarisi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><b>Buat Daftar Isi</b><small>Susun daftar isi otomatis dari judul bab dan subbab, siap disalin ke Word.</small></button><button type="button" class="tool" id="homeVerify"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Verifikasi Laporan</b><small>Pindai QR laporan untuk memastikan naskah dan skor tidak diubah.</small></button></div>
     <div class="card">
       <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Pemeriksaan terakhir</h2><button type="button" class="linkbtn" data-nav="riwayat">Lihat semua</button></div>
       <div class="card-b" id="homeRecent"></div>
@@ -1022,6 +1078,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
               </div>
             </div>
           </div>
+          <div class="limitpill" id="limitPill" hidden></div>
           <div class="comp">
             <div class="compbar" id="compBar" aria-hidden="true"></div>
             <div class="complegend" id="compLegend"></div>
@@ -1139,6 +1196,66 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
           </div>
         </div>
       </section>
+    </div>
+  </section>
+
+  <!-- ================= MASSAL ================= -->
+  <section class="view" id="view-massal">
+    <div class="pagehead">
+      <h1>Periksa banyak dokumen</h1>
+      <p>Unggah beberapa naskah sekaligus, misalnya tugas satu kelas. Setiap naskah dibandingkan dengan sumber offline, bank naskah, dan <b>naskah lain di antrian</b>, sehingga tugas yang saling menyalin langsung terlihat. Untuk cek internet, buka naskahnya satu per satu.</p>
+    </div>
+    <div class="card">
+      <div class="card-b">
+        <label class="bdrop" id="bDrop" for="bFiles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg><b>Pilih atau seret beberapa berkas ke sini</b><span class="muted">PDF, Word, ODT, PPTX, RTF, HTML, TXT · hingga 40 berkas</span></label>
+        <input type="file" id="bFiles" class="sr-only" multiple accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+        <div class="brow">
+          <label class="toggle" for="bToBank"><input type="checkbox" id="bToBank"><span class="tr" aria-hidden="true"></span>Simpan juga ke bank naskah</label>
+          <div class="btnrow"><button type="button" class="btn" id="bCsv">Ekspor CSV</button><button type="button" class="btn primary" id="bZip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Unduh semua laporan (ZIP)</button><button type="button" class="linkbtn" id="bClear">Kosongkan</button></div>
+        </div>
+        <div class="progress" id="bProg" hidden><i></i></div>
+        <p class="muted" id="bStatus" style="font-size:13px;margin:8px 0 0"></p>
+      </div>
+    </div>
+    <div class="stats" id="bStats"></div>
+    <div class="card"><div class="card-h"><h2>Hasil per naskah</h2><span class="muted" style="font-size:12.5px">Urut dari kesamaan tertinggi</span></div><div class="card-b" id="bList"></div></div>
+  </section>
+
+  <!-- ================= PUSTAKA ================= -->
+  <section class="view" id="view-pustaka">
+    <div class="pagehead">
+      <h1>Buat sitasi &amp; daftar pustaka</h1>
+      <p>Tempel DOI atau judul artikel, atau isi data buku, situs web, dan skripsi. Daftar pustaka tersusun otomatis dalam gaya APA 7, IEEE, Harvard, MLA, atau Chicago, lengkap dengan contoh sitasi di naskah.</p>
+    </div>
+    <div class="tocgrid">
+      <div class="card">
+        <div class="card-h"><h2>Tambah sumber</h2></div>
+        <div class="card-b stack">
+          <div class="seg" role="group" aria-label="Cara menambah"><button type="button" class="segb" id="rfModeFind" aria-pressed="true">Cari DOI / judul</button><button type="button" class="segb" id="rfModeMan" aria-pressed="false">Isi manual</button></div>
+          <div id="rfFind" class="stack">
+            <label class="field" for="rfQuery">DOI, tautan, atau judul<input type="text" id="rfQuery" placeholder="mis. 10.1016/j.compedu.2019.103599"></label>
+            <button type="button" class="btn primary" id="rfSearch">Cari</button>
+            <div id="rfResults" class="stack"></div>
+          </div>
+          <div id="rfMan" class="stack" hidden>
+            <label class="field" for="rfType">Jenis<select id="rfType"><option value="article">Artikel jurnal</option><option value="book">Buku</option><option value="web">Situs web / berita</option><option value="thesis">Skripsi / tesis / disertasi</option></select></label>
+            <label class="field" for="rfAuthors">Penulis, satu per baris<textarea id="rfAuthors" rows="3" placeholder="Wina Sanjaya&#10;Budi Santoso"></textarea></label>
+            <label class="field" for="rfYear">Tahun<input type="text" id="rfYear" inputmode="numeric" placeholder="2016"></label>
+            <label class="field" for="rfTitle">Judul<input type="text" id="rfTitle"></label>
+            <label class="field" for="rfCont"><span id="rfContL">Nama jurnal</span><input type="text" id="rfCont"></label>
+            <div class="rf2"><label class="field" for="rfVol">Volume<input type="text" id="rfVol"></label><label class="field" for="rfIss">Nomor<input type="text" id="rfIss"></label><label class="field" for="rfPages">Halaman<input type="text" id="rfPages" placeholder="10-20"></label></div>
+            <label class="field" for="rfPlace">Kota penerbit<input type="text" id="rfPlace"></label>
+            <label class="field" for="rfUrl">DOI atau URL<input type="text" id="rfUrl"></label>
+            <button type="button" class="btn primary" id="rfAdd">Tambahkan</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>Daftar pustaka <span class="count" id="rfCount">0</span></h2>
+          <div class="btnrow"><label class="field inline" for="rfStyle"><span class="sr-only">Gaya sitasi</span><select id="rfStyle"><option value="apa">APA 7</option><option value="ieee">IEEE</option><option value="harvard">Harvard</option><option value="mla">MLA 9</option><option value="chicago">Chicago (penulis-tahun)</option></select></label>
+          <button type="button" class="btn" id="rfCopy">Salin</button><button type="button" class="btn primary" id="rfDoc">Unduh Word</button></div></div>
+        <div class="card-b"><div class="reflist" id="rfList"></div><button type="button" class="linkbtn" id="rfClear" hidden>Kosongkan daftar</button></div>
+      </div>
     </div>
   </section>
 
@@ -1274,6 +1391,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
             <p class="hint" style="margin:0">Untuk jasa pengecekan: nama dan kontak ini tampil di sampul dan kaki setiap halaman laporan PDF.</p>
             <label class="field" for="svcName">Nama jasa atau pemeriksa<input type="text" id="svcName" autocomplete="off" placeholder="mis. Jasa Cek Naskah Ferdy"></label>
             <label class="field" for="svcContact">Kontak<input type="text" id="svcContact" autocomplete="off" placeholder="mis. WA 0812-xxxx-xxxx"></label>
+            <label class="field" for="svcLimit">Batas kesamaan yang diizinkan kampus/instansi (%)<input type="number" id="svcLimit" min="1" max="100" step="1" inputmode="numeric" placeholder="mis. 25"></label>
             <label class="field" for="svcPrice">Tarif default per naskah (Rp)<input type="number" id="svcPrice" min="0" step="1000" inputmode="numeric" placeholder="mis. 15000"></label>
             <div class="field">Logo instansi (opsional)
               <div class="logorow"><img id="logoPrev" alt="Logo instansi" hidden><label class="btn sm" for="logoFile">Pilih logo</label><input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" class="sr-only"><button type="button" class="linkbtn" id="logoDel" hidden>Hapus logo</button></div>
@@ -1452,6 +1570,12 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
         <p class="muted">Setiap sinyal punya bobot. Sinyal berbobot kecil hanya sedikit memengaruhi skor.</p>
       </article>
       <article class="card gcard">
+        <h2>Untuk jasa &amp; dosen</h2>
+        <p><b>Periksa banyak dokumen</b> memeriksa puluhan naskah sekaligus dan membandingkan naskah-naskah itu satu sama lain, sehingga tugas yang saling menyalin langsung terlihat. Semua laporan PDF bisa diunduh dalam satu ZIP, dan ringkasannya diekspor ke CSV/Excel.</p>
+        <p>Isi <b>batas kesamaan</b> kampus atau instansi di tab Sumber (mis. 25%). Hasil di layar, laporan PDF, dan pemeriksaan massal akan bertanda "Lolos" atau "Belum lolos".</p>
+        <p><b>Buat sitasi &amp; daftar pustaka</b> mengubah DOI atau judul menjadi sitasi APA 7, IEEE, Harvard, MLA, atau Chicago. Di panel "Bandingkan", bagian yang sama dengan sumber bisa langsung dijadikan kutipan bersitasi. Tekan <kbd>Ctrl</kbd> <kbd>K</kbd> untuk mencari menu dan perintah.</p>
+      </article>
+      <article class="card gcard">
         <h2>Alat naskah</h2>
         <p><b>Teks tersembunyi &amp; typo</b> menemukan trik yang sering dipakai untuk menurunkan skor kesamaan: karakter tak terlihat di antara huruf, huruf Kiril atau Yunani yang mirip huruf Latin, teks putih, teks bertanda tersembunyi, atau teks berukuran sangat kecil di Word dan PDF. Alat ini juga menandai kata ganda, spasi ganda, tanda baca, awalan di- yang terpisah, dan kata tidak baku (mis. aktifitas, analisa, resiko). Tombol "Bersihkan" menghapus karakter tersembunyi dari naskah.</p>
         <p><b>Buat daftar isi</b> menyusun daftar isi dari judul BAB, subbab bernomor (1.1, 1.1.1), subbab huruf (A., B.), dan judul seperti KATA PENGANTAR atau DAFTAR PUSTAKA, lengkap dengan nomor halaman PDF. Hasilnya bisa disalin atau diunduh sebagai dokumen Word dengan titik penghubung.</p>
@@ -1567,6 +1691,14 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
     </header>
     <div class="drawer-b" id="verBody"></div>
   </section>
+</div>
+<div class="cmdk" id="cmdk" hidden>
+  <div class="cmdk-bg" data-close="1"></div>
+  <div class="cmdk-box" role="dialog" aria-modal="true" aria-label="Cari menu dan perintah">
+    <input type="text" id="cmdIn" placeholder="Ketik perintah, mis. riwayat, unduh, sitasi…" autocomplete="off" spellcheck="false" aria-controls="cmdList" aria-label="Cari perintah">
+    <div class="cmdk-list" id="cmdList" role="listbox" aria-label="Perintah"></div>
+    <div class="cmdk-f"><span><kbd>↑</kbd><kbd>↓</kbd> pilih</span><span><kbd>Enter</kbd> jalankan</span><span><kbd>Esc</kbd> tutup</span></div>
+  </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
@@ -2031,7 +2163,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "3.9.0";
+var APP_VERSION = "4.0.0";
 var SITE_URL = "https://ferdynandekawijaya92821-create.github.io/kalori-cli/";
 function setBusy(msg, frac) {
   var b = $("#busy");
@@ -2067,6 +2199,8 @@ function showView(v, go) {
   if (v === "beranda" && typeof renderHome === "function") renderHome();
   if (v === "tersembunyi" && typeof renderHidden === "function") renderHidden();
   if (v === "daftarisi" && typeof renderToc === "function") renderToc();
+  if (v === "massal" && typeof renderBatch === "function") renderBatch();
+  if (v === "pustaka" && typeof renderRefs === "function") renderRefs();
   if (go) setTimeout(function () { goPanel(go); }, 30);
 }
 // Menu "Cek Sitasi" dan "Keterbacaan" membuka kartu terkait di panel hasil.
@@ -2450,6 +2584,7 @@ function run() {
       '<span class="who"><span class="kind" style="background:' + hexA(c[0], .16) + '">' + KIND_LABEL[s.group] + "</span><b>" + esc(s.domain) + "</b>" + (s.url && s.name !== s.domain ? "<small>" + esc(s.name) + "</small>" : s.sub ? "<small>" + esc(s.sub) + "</small>" : "") + (s.paraShare ? '<small class="parahint">termasuk ' + pctLabel(s.paraShare) + " parafrase</small>" : "") + "</span>" +
       '<span class="pct">' + pctLabel(s.share) + '</span><span class="bar"><i style="width:' + Math.min(100, s.share * 2) + "%;background:" + c[0] + '"></i></span></button>' +
       '<div class="srcact"><button type="button" class="btn sm" data-act="cmp" data-no="' + s.no + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/></svg>Bandingkan</button>' +
+      '<button type="button" class="btn sm" data-act="ref" data-no="' + s.no + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg>Sitasi</button>' +
       '<button type="button" class="btn sm" data-act="ex" data-no="' + s.no + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>Abaikan</button></div></div>';
   }).join("") + '<p class="muted" style="font-size:12px;margin:2px 0 0">Ketuk sumber untuk menyorot bagiannya di naskah.</p>'
     : '<div class="empty">' + (nWords ? "Tidak ada bagian yang sama dengan sumber." : "Belum ada naskah.") + "</div>";
@@ -2473,6 +2608,7 @@ function run() {
   var ph = a ? Object.keys(a.phrases).sort(function (x, y) { return a.phrases[y] - a.phrases[x]; }) : [];
   $("#phrases").innerHTML = ph.length ? ph.map(function (k) { return '<span class="chip">' + esc(k) + '<span class="num">×' + a.phrases[k] + "</span></span>"; }).join("") : '<span class="muted" style="font-size:13px">Tidak ada.</span>';
 
+  renderLimit(pv, nWords);
   // live bar
   $("#msChip").textContent = pctLabel(pv) + " · AI " + Math.round(av) + "%";
   $("#lbPlag").textContent = Math.round(pv) + "%"; $("#lbPlagDot").style.background = lvl(pv);
@@ -2526,6 +2662,331 @@ function renderHL() {
   $("#hl").innerHTML = html + esc(t.slice(pos));
   scheduleGutter();
 }
+/* ---- batas kesamaan kampus ---- */
+function limitOf() { var v = +(store("ct_svclimit") || 0); return v > 0 && v <= 100 ? v : 0; }
+function renderLimit(pv, nWords) {
+  var L = limitOf(), el = $("#limitPill"); el.hidden = !L || !nWords; if (el.hidden) return;
+  var ok = pv <= L; el.className = "limitpill " + (ok ? "ok" : "bad");
+  el.innerHTML = (ok ? "✓ <b>Lolos</b> batas kesamaan " + L + "%" : "✕ <b>Belum lolos</b> batas kesamaan " + L + "%: turunkan " + pctLabel(pv - L) + " lagi") + '<span class="muted" style="margin-left:auto;font-size:12px">atur di Sumber</span>';
+}
+
+/* ---- daftar pustaka & sitasi ---- */
+var REFS = []; try { REFS = JSON.parse(store("ct_refs") || "[]"); } catch (e) { REFS = []; }
+function saveRefs() { store("ct_refs", JSON.stringify(REFS)); }
+function splitName(full) {
+  full = String(full || "").replace(/\s+/g, " ").trim(); if (!full) return null;
+  if (full.indexOf(",") > 0) { var p = full.split(","); return { family: p[0].trim(), given: p.slice(1).join(" ").trim() }; }
+  var w = full.split(" "); return w.length === 1 ? { family: w[0], given: "" } : { family: w[w.length - 1], given: w.slice(0, -1).join(" ") };
+}
+function initials(g) { return String(g || "").split(/[\s-]+/).filter(Boolean).map(function (x) { return x[0].toUpperCase() + "."; }).join(" "); }
+function doiOf(e) { var m = /(10\.\d{4,9}\/[^\s"<>]+)/.exec((e.doi || "") + " " + (e.url || "")); return m ? m[1].replace(/[.,;]+$/, "") : ""; }
+function linkOf(e) { var d = doiOf(e); return d ? "https://doi.org/" + d : e.url || ""; }
+function joinNames(list, sep, last) { return list.length < 2 ? list.join("") : list.length === 2 ? list[0] + last + list[1] : list.slice(0, -1).join(sep) + sep.replace(/\s+$/, "") + last + list[list.length - 1]; }
+function refFormat(e, st, n) {
+  var A = e.authors || [], yr = e.year || "t.t.", T = esc(e.title || "Tanpa judul"), C = esc(e.container || ""), lk = linkOf(e), L = lk ? ' <a href="' + esc(lk) + '" target="_blank" rel="noopener">' + esc(lk) + "</a>" : "";
+  var vol = e.volume || "", iss = e.issue || "", pg = e.pages || "", pub = esc(e.publisher || ""), place = esc(e.place || "");
+  if (st === "apa") {
+    var an = A.map(function (a) { return esc(a.family) + (a.given ? ", " + initials(a.given) : ""); }), au = an.length > 20 ? an.slice(0, 19).join(", ") + ", … " + an[an.length - 1] : joinNames(an, ", ", ", & ");
+    var head = (au || T) + " (" + yr + "). ";
+    if (e.type === "book") return head + (au ? "<i>" + T + "</i>. " : "") + (pub ? pub + "." : "") + L;
+    if (e.type === "web") return head + (au ? "<i>" + T + "</i>. " : "") + (C ? C + ". " : "") + L;
+    if (e.type === "thesis") return head + (au ? "<i>" + T + "</i> " : "") + "[" + (e.genre || "Skripsi") + (pub ? ", " + pub : "") + "]." + L;
+    return head + (au ? T + ". " : "") + (C ? "<i>" + C + "</i>" + (vol ? ", <i>" + esc(vol) + "</i>" : "") + (iss ? "(" + esc(iss) + ")" : "") + (pg ? ", " + esc(pg) : "") + "." : "") + L;
+  }
+  if (st === "ieee") {
+    var ai = A.map(function (a) { return (a.given ? initials(a.given) + " " : "") + esc(a.family); }), au2 = ai.length > 6 ? ai[0] + " <i>et al.</i>" : joinNames(ai, ", ", ai.length > 2 ? ", and " : " and ");
+    var pre = "[" + n + "] " + (au2 ? au2 + ", " : "");
+    if (e.type === "book") return pre + "<i>" + T + "</i>. " + (place ? place + ": " : "") + (pub ? pub + ", " : "") + yr + ".";
+    if (e.type === "web") return pre + "“" + T + ",” " + (C ? "<i>" + C + "</i>, " : "") + yr + ". [Online]. Available:" + L;
+    if (e.type === "thesis") return pre + "“" + T + ",” " + (e.genre || "Skripsi") + ", " + (pub || "Universitas") + ", " + yr + "." + L;
+    return pre + "“" + T + ",” <i>" + C + "</i>" + (vol ? ", vol. " + esc(vol) : "") + (iss ? ", no. " + esc(iss) : "") + (pg ? ", pp. " + esc(pg) : "") + ", " + yr + (doiOf(e) ? ", doi: " + esc(doiOf(e)) : "") + ".";
+  }
+  if (st === "harvard") {
+    var ah = A.map(function (a) { return esc(a.family) + (a.given ? ", " + initials(a.given).replace(/ /g, "") : ""); }), au3 = joinNames(ah, ", ", " and ");
+    var hh = (au3 || "<i>" + T + "</i>") + " (" + yr + ") ";
+    if (e.type === "book") return hh + "<i>" + T + "</i>. " + (place ? place + ": " : "") + (pub ? pub + "." : "");
+    if (e.type === "web") return hh + "<i>" + T + "</i>. " + (lk ? "Tersedia di:" + L : "");
+    if (e.type === "thesis") return hh + "<i>" + T + "</i>. " + (e.genre || "Skripsi") + ". " + (pub ? pub + "." : "") + (lk ? " Tersedia di:" + L : "");
+    return hh + "‘" + T + "’, <i>" + C + "</i>" + (vol ? ", " + esc(vol) : "") + (iss ? "(" + esc(iss) + ")" : "") + (pg ? ", pp. " + esc(pg) : "") + "." + (lk ? (doiOf(e) ? " doi:" + esc(doiOf(e)) + "." : " Tersedia di:" + L) : "");
+  }
+  // MLA 9 dan Chicago penulis-tahun
+  var am = A.map(function (a, i) { return i === 0 ? esc(a.family) + (a.given ? ", " + esc(a.given) : "") : esc((a.given ? a.given + " " : "") + a.family); });
+  var au4 = am.length > 2 && st === "mla" ? am[0] + ", et al." : joinNames(am, ", ", am.length > 2 ? ", and " : " and ");
+  if (st === "mla") {
+    var mh = au4 ? au4.replace(/\.$/, "") + ". " : "";
+    if (e.type === "book") return mh + "<i>" + T + "</i>. " + (pub ? pub + ", " : "") + yr + ".";
+    if (e.type === "web" || e.type === "thesis") return mh + "“" + T + ".” " + (C || pub ? "<i>" + (C || pub) + "</i>, " : "") + yr + (lk ? "," + L : "") + ".";
+    return mh + "“" + T + ".” <i>" + C + "</i>" + (vol ? ", vol. " + esc(vol) : "") + (iss ? ", no. " + esc(iss) : "") + ", " + yr + (pg ? ", pp. " + esc(pg) : "") + "." + (lk ? L + "." : "");
+  }
+  var ch = (au4 ? au4.replace(/\.$/, "") + ". " : "") + yr + ". ";
+  if (e.type === "book") return ch + "<i>" + T + "</i>. " + (place ? place + ": " : "") + (pub ? pub + "." : "");
+  if (e.type === "web" || e.type === "thesis") return ch + "“" + T + ".” " + (C || pub ? (C || pub) + "." : "") + L;
+  return ch + "“" + T + ".” <i>" + C + "</i>" + (vol ? " " + esc(vol) : "") + (iss ? " (" + esc(iss) + ")" : "") + (pg ? ": " + esc(pg) : "") + "." + L;
+}
+function refInText(e, st, n) {
+  var A = e.authors || [], yr = e.year || "t.t.", f = A.map(function (a) { return a.family; });
+  var who = !f.length ? "“" + (e.title || "Tanpa judul").split(" ").slice(0, 4).join(" ") + "”" : f.length === 1 ? f[0] : f.length === 2 ? f[0] + (st === "apa" ? " & " : " dan ") + f[1] : f[0] + " et al.";
+  if (st === "ieee") return "[" + (n || 1) + "]";
+  if (st === "mla") return "(" + who + (e.pages ? " " + String(e.pages).split("-")[0] : "") + ")";
+  if (st === "chicago") return "(" + who + " " + yr + ")";
+  return "(" + who + ", " + yr + ")";
+}
+function sortedRefs(st) {
+  return st === "ieee" ? REFS.slice() : REFS.slice().sort(function (a, b) {
+    var ka = ((a.authors[0] || {}).family || a.title || "").toLowerCase(), kb = ((b.authors[0] || {}).family || b.title || "").toLowerCase(); return ka < kb ? -1 : ka > kb ? 1 : String(a.year).localeCompare(String(b.year));
+  });
+}
+function renderRefs() {
+  var st = $("#rfStyle").value, list = sortedRefs(st);
+  $("#rfCount").textContent = REFS.length; $("#rfClear").hidden = !REFS.length;
+  $("#rfList").innerHTML = list.length ? list.map(function (e, i) {
+    return '<div class="refi' + (st === "ieee" ? " ieee" : "") + '"><div class="reft">' + refFormat(e, st, i + 1) + '</div><div class="refc">Di naskah: ' + esc(refInText(e, st, i + 1)) + '</div><div class="refa"><button type="button" class="btn sm" data-rcopy="' + e.id + '">Salin</button><button type="button" class="btn sm icon-only" data-rdel="' + e.id + '" aria-label="Hapus">' + TRASH + "</button></div></div>";
+  }).join("") : '<div class="empty" style="font-family:inherit">Belum ada sumber. Cari DOI atau judul di sebelah kiri, atau tekan "Sitasi" pada sumber yang cocok di hasil pemeriksaan.</div>';
+}
+function plainRef(html) { var d = document.createElement("div"); d.innerHTML = html; return d.textContent; }
+function addRef(e) {
+  var key = (doiOf(e) || e.url || e.title || "").toLowerCase(), old = REFS.filter(function (x) { return (doiOf(x) || x.url || x.title || "").toLowerCase() === key; })[0];
+  if (old && key) return old;
+  e.id = e.id || newId().slice(0, 10); REFS.push(e); saveRefs(); renderRefs(); return e;
+}
+function fromCrossref(it) {
+  var dp = (it.issued && it.issued["date-parts"] && it.issued["date-parts"][0]) || (it.published && it.published["date-parts"] && it.published["date-parts"][0]) || [];
+  var ty = /book$/.test(it.type || "") && it.type !== "book-chapter" ? "book" : /dissertation/.test(it.type || "") ? "thesis" : "article";
+  return { type: ty, authors: (it.author || []).filter(function (a) { return a.family || a.name; }).map(function (a) { return { family: a.family || a.name, given: a.given || "" }; }),
+    year: dp[0] ? String(dp[0]) : "", title: stripTags((it.title || [])[0] || ""), container: stripTags((it["container-title"] || [])[0] || ""),
+    volume: it.volume || "", issue: it.issue || "", pages: (it.page || "").replace("--", "-"), doi: it.DOI || "", url: it.URL || "", publisher: it.publisher || "", place: it["publisher-location"] || "" };
+}
+function crossrefLookup(q) {
+  var d = /(10\.\d{4,9}\/[^\s"<>]+)/.exec(q);
+  if (d) return fetchJSON("https://api.crossref.org/works/" + encodeURIComponent(d[1].replace(/[.,;]+$/, ""))).then(function (x) { return [fromCrossref(x.message)]; });
+  return fetchJSON("https://api.crossref.org/works?rows=5&select=DOI,title,author,issued,published,container-title,volume,issue,page,URL,publisher,publisher-location,type&query.bibliographic=" + encodeURIComponent(q))
+    .then(function (x) { return ((x.message && x.message.items) || []).map(fromCrossref); });
+}
+function refFromSource(m) {
+  // Nama sumber berbentuk "Judul (2019)" atau "Judul (artikel)": tahun diambil, keterangan dalam kurung dibuang.
+  var src = S.plag.srcs[m.si] || {}, yr = (/\((\d{4})\)\s*$/.exec(m.name) || [])[1] || "", title = m.name.replace(/(\s*\([^()]*\))+\s*$/, "").replace(/^(Wikipedia|Wikibooks|Wikisource) \([A-Z]{2}\): /, "");
+  var d = /(10\.\d{4,9}\/[^\s"<>]+)/.exec(m.url || "");
+  var fallback = { type: m.group === "publikasi" ? "article" : "web", authors: [], year: yr, title: title, container: m.group === "publikasi" ? "" : m.domain, url: m.url || "", doi: d ? d[1] : "" };
+  if (!m.url && !src.url) fallback.type = "web";
+  var p = d && navigator.onLine !== false ? crossrefLookup(d[1]).then(function (r) { return r[0] || fallback; }, function () { return fallback; }) : Promise.resolve(fallback);
+  return p.then(addRef);
+}
+// Ubah bagian yang sama menjadi kutipan bersitasi (atau tambahkan sitasi saja) langsung di naskah.
+function fixPassage(kind, a, b, no) {
+  var m = S.plag.matched.filter(function (x) { return x.no === no; })[0]; if (!m) return;
+  refFromSource(m).then(function (e) {
+    var t = S.text, cite = refInText(e, "apa"), seg = t.slice(a, b).replace(/^[\s"“]+|[\s"”]+$/g, ""), s0 = t.indexOf(seg, Math.max(0, a - 2));
+    if (s0 < 0) return toast("Bagian naskah sudah berubah; periksa ulang dulu.");
+    var e0 = s0 + seg.length, tail = "";
+    var out = kind === "quote" ? t.slice(0, s0) + "“" + seg + "” " + cite + tail + t.slice(e0) : t.slice(0, e0) + " " + cite + t.slice(e0);
+    closeCompare(); setText(out); setMode("review");
+    toast(kind === "quote" ? "Dijadikan kutipan dengan sitasi " + cite + ". Sumber masuk daftar pustaka." : "Sitasi " + cite + " ditambahkan. Sumber masuk daftar pustaka.");
+  });
+}
+$("#rfStyle").value = store("ct_refstyle") || "apa";
+$("#rfStyle").onchange = function () { store("ct_refstyle", this.value); renderRefs(); };
+function rfMode(man) { $("#rfFind").hidden = man; $("#rfMan").hidden = !man; $("#rfModeFind").setAttribute("aria-pressed", !man); $("#rfModeMan").setAttribute("aria-pressed", man); }
+$("#rfModeFind").onclick = function () { rfMode(false); }; $("#rfModeMan").onclick = function () { rfMode(true); };
+$("#rfType").onchange = function () { $("#rfContL").textContent = { article: "Nama jurnal", book: "Penerbit", web: "Nama situs", thesis: "Universitas" }[this.value]; };
+$("#rfSearch").onclick = function () {
+  var q = $("#rfQuery").value.trim(); if (!q) return toast("Isi DOI atau judul.");
+  $("#rfResults").innerHTML = '<span class="muted">Mencari di Crossref…</span>';
+  crossrefLookup(q).then(function (list) {
+    rfSearch.list = list;
+    $("#rfResults").innerHTML = list.length ? list.map(function (e, i) {
+      return '<div class="rfres"><b>' + esc(e.title || "Tanpa judul") + "</b><span class=\"muted\">" + esc([e.authors.map(function (a) { return a.family; }).slice(0, 3).join(", "), e.container, e.year].filter(Boolean).join(" · ")) + '</span><button type="button" class="btn sm primary" data-radd="' + i + '">Tambahkan</button></div>';
+    }).join("") : '<span class="muted">Tidak ditemukan. Coba isi manual.</span>';
+  }, function () { $("#rfResults").innerHTML = '<span class="muted">Pencarian gagal. Periksa koneksi internet, atau isi manual.</span>'; });
+};
+var rfSearch = $("#rfSearch");
+$("#rfQuery").addEventListener("keydown", function (e) { if (e.key === "Enter") $("#rfSearch").click(); });
+$("#rfResults").addEventListener("click", function (e) { var b = e.target.closest("[data-radd]"); if (!b) return; addRef(rfSearch.list[+b.dataset.radd]); b.textContent = "Ditambahkan"; b.disabled = true; });
+$("#rfAdd").onclick = function () {
+  var title = $("#rfTitle").value.trim(); if (!title) return toast("Isi judul sumber.");
+  var ty = $("#rfType").value, cont = $("#rfCont").value.trim(), u = $("#rfUrl").value.trim();
+  addRef({ type: ty, authors: $("#rfAuthors").value.split("\n").map(splitName).filter(Boolean), year: $("#rfYear").value.trim(), title: title,
+    container: ty === "article" || ty === "web" ? cont : "", publisher: ty === "book" || ty === "thesis" ? cont : "", volume: $("#rfVol").value.trim(), issue: $("#rfIss").value.trim(),
+    pages: $("#rfPages").value.trim(), place: $("#rfPlace").value.trim(), doi: /10\.\d{4,9}\//.test(u) ? u : "", url: /10\.\d{4,9}\//.test(u) ? "" : u });
+  ["rfAuthors", "rfYear", "rfTitle", "rfCont", "rfVol", "rfIss", "rfPages", "rfPlace", "rfUrl"].forEach(function (id) { $("#" + id).value = ""; });
+  toast("Sumber ditambahkan.");
+};
+$("#rfList").addEventListener("click", function (e) {
+  var c = e.target.closest("[data-rcopy]"), d = e.target.closest("[data-rdel]"), st = $("#rfStyle").value;
+  if (d) { REFS = REFS.filter(function (x) { return x.id !== d.dataset.rdel; }); saveRefs(); renderRefs(); return; }
+  if (c) { var list = sortedRefs(st), i = list.findIndex(function (x) { return x.id === c.dataset.rcopy; }); copyText(plainRef(refFormat(list[i], st, i + 1)), "Sitasi disalin."); }
+});
+function copyText(t, msg) {
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { toast(msg); }, function () { toast("Browser menolak menyalin otomatis."); }); else toast("Browser menolak menyalin otomatis.");
+}
+$("#rfCopy").onclick = function () { if (!REFS.length) return toast("Daftar pustaka masih kosong."); var st = $("#rfStyle").value; copyText(sortedRefs(st).map(function (e, i) { return plainRef(refFormat(e, st, i + 1)); }).join("\n\n"), "Daftar pustaka disalin."); };
+$("#rfDoc").onclick = function () {
+  if (!REFS.length) return toast("Daftar pustaka masih kosong.");
+  var st = $("#rfStyle").value, ieee = st === "ieee";
+  var h = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'><title>Daftar Pustaka</title><style>body{font-family:'Times New Roman',serif;font-size:12pt}h1{text-align:center;font-size:12pt}p{line-height:1.5;margin:0 0 10pt;" + (ieee ? "" : "margin-left:36pt;text-indent:-36pt;") + "}a{color:inherit;text-decoration:none}</style></head><body><h1>DAFTAR PUSTAKA</h1>" +
+    sortedRefs(st).map(function (e, i) { return "<p>" + refFormat(e, st, i + 1) + "</p>"; }).join("") + "</body></html>";
+  download(new Blob(["﻿" + h], { type: "application/msword" }), "Daftar-Pustaka-" + st.toUpperCase() + ".doc");
+};
+$("#rfClear").onclick = function () { REFS = []; saveRefs(); renderRefs(); };
+renderRefs();
+
+/* ---- periksa banyak dokumen ---- */
+var BATCH = [];
+function batchBase() {
+  var list = S.userSources.filter(function (s) { return s.text && s.text.trim(); });
+  if ($("#useBank").checked) list = list.concat(BANK.map(function (e) { return e._src; }));
+  return $("#useCorpus").checked ? list.concat(CORPUS) : list;
+}
+function batchAnalyze() {
+  var base = batchBase(), opts = { excludeBib: $("#fBib").checked, excludeQuotes: $("#fQuote").checked, minWords: +$("#fMin").value, paraphrase: $("#fPara").checked }, n = +$("#ngram").value;
+  BATCH.forEach(function (it) {
+    var others = BATCH.filter(function (o) { return o !== it; }).map(function (o) { return { name: "Antrian: " + o.name, text: o.text, kind: "Naskah lain di antrian", group: "pengguna", batchId: o.id }; });
+    var p = checkPlagiarism(it.text, base.concat(others), n, opts);
+    it.score = p.score; it.words = p.word_count; it.ai = detectAI(it.text).score; it.top = p.matched[0] || null;
+    var peer = p.matched.filter(function (m) { return p.srcs[m.si] && p.srcs[m.si].batchId; })[0];
+    it.peer = peer ? { name: peer.name.replace(/^Antrian: /, ""), share: peer.share } : null;
+  });
+}
+function renderBatch() {
+  var L = limitOf(), list = BATCH.slice().sort(function (a, b) { return b.score - a.score; });
+  var risky = BATCH.filter(function (x) { return L ? x.score > L : x.score >= 25; }).length, pairs = BATCH.filter(function (x) { return x.peer && x.peer.share >= 15; }).length;
+  $("#bStats").innerHTML = !BATCH.length ? "" : [["Naskah", fmtNum(BATCH.length), "di antrian"], ["Rata-rata kesamaan", pctLabel(BATCH.reduce(function (a, x) { return a + x.score; }, 0) / BATCH.length), "offline + antar-naskah"],
+    [L ? "Belum lolos " + L + "%" : "Kesamaan ≥ 25%", fmtNum(risky), "naskah perlu ditinjau"], ["Saling mirip", fmtNum(pairs), "naskah mirip ≥ 15% dengan naskah lain"]]
+    .map(function (x) { return '<div class="stat card"><span class="eyebrow">' + x[0] + '</span><b class="num">' + x[1] + "</b><small>" + x[2] + "</small></div>"; }).join("");
+  $("#bList").innerHTML = list.length ? list.map(function (it) {
+    var bad = L ? it.score > L : it.score >= 25;
+    return '<div class="brow-i"><div class="bn"><b>' + esc(it.name) + "</b><small>" + fmtNum(it.words) + " kata" + (it.pages ? " · " + it.pages + " halaman" : "") + "</small></div>" +
+      '<div class="bs"><span class="bsh"><b style="color:' + lvl(it.score) + '">' + pctLabel(it.score) + "</b>" + (L ? '<span class="lpill ' + (bad ? "bad" : "ok") + '">' + (bad ? "Belum lolos" : "Lolos") + "</span>" : "") + '</span><div class="bar"><i style="width:' + Math.min(100, it.score) + "%;background:" + lvl(it.score) + '"></i></div></div>' +
+      '<div class="bai"><small class="muted">AI</small> <b class="num" style="color:' + lvl(it.ai) + '">' + Math.round(it.ai) + "%</b></div>" +
+      '<div class="bp">' + (it.peer ? '<small>Mirip <b class="' + (it.peer.share >= 15 ? "bwarn" : "") + '">' + pctLabel(it.peer.share) + "</b> dengan " + esc(it.peer.name) + "</small>" : it.top ? "<small>Sumber terbesar: " + esc(it.top.domain) + " (" + pctLabel(it.top.share) + ")</small>" : "<small class=\"muted\">Tidak ada sumber yang cocok</small>") + "</div>" +
+      '<div class="ba"><button type="button" class="btn sm primary" data-bopen="' + it.id + '">Buka</button><button type="button" class="btn sm icon-only" data-bdel="' + it.id + '" aria-label="Hapus dari antrian">' + TRASH + "</button></div></div>";
+  }).join("") : '<div class="empty">Belum ada naskah. Pilih beberapa berkas di atas.</div>';
+}
+function batchAdd(files) {
+  files = [].slice.call(files || []).slice(0, Math.max(0, 40 - BATCH.length)); if (!files.length) return;
+  var prog = $("#bProg"), bar = prog.querySelector("i"), done = 0, added = [];
+  prog.hidden = false; bar.style.width = "4%";
+  var chain = Promise.resolve();
+  files.forEach(function (f) {
+    chain = chain.then(function () {
+      $("#bStatus").textContent = "Membaca " + f.name + " (" + (done + 1) + "/" + files.length + ")…";
+      return readFileFull(f).then(function (r) {
+        var it = { id: newId().slice(0, 10), name: f.name, size: f.size, pages: r.pages || null, text: normalize(r.text), layout: r.layout || null, pdfBuf: r.pdfBuf || null };
+        BATCH.push(it); added.push(it);
+      }, function (e) { toast(f.name + ": " + e.message); }).then(function () { done++; bar.style.width = (4 + 86 * done / files.length) + "%"; });
+    });
+  });
+  chain.then(function () {
+    $("#bStatus").textContent = "Membandingkan " + BATCH.length + " naskah…";
+    return new Promise(function (ok) { setTimeout(ok, 30); });
+  }).then(function () {
+    batchAnalyze(); renderBatch();
+    if ($("#bToBank").checked && added.length) bankAdd(added.map(function (it) { return bankEntry(it.name, it.text, ""); })).catch(function () {});
+    bar.style.width = "100%"; setTimeout(function () { prog.hidden = true; }, 500);
+    $("#bStatus").textContent = added.length + " naskah ditambahkan. " + BATCH.length + " naskah di antrian.";
+  });
+}
+function batchLoad(it) {
+  S.doc = { name: it.name, size: it.size, pages: it.pages, layout: it.layout, pdfBuf: it.pdfBuf, hidden: [] }; S.focusNo = 0; S.excluded.clear(); resetWeb();
+}
+$("#bFiles").onchange = function (e) { batchAdd(e.target.files); e.target.value = ""; };
+(function () {
+  var d = $("#bDrop");
+  ["dragenter", "dragover"].forEach(function (ev) { d.addEventListener(ev, function (e) { e.preventDefault(); d.classList.add("over"); }); });
+  ["dragleave", "drop"].forEach(function (ev) { d.addEventListener(ev, function (e) { e.preventDefault(); d.classList.remove("over"); }); });
+  d.addEventListener("drop", function (e) { if (e.dataTransfer && e.dataTransfer.files.length) batchAdd(e.dataTransfer.files); });
+})();
+$("#bList").addEventListener("click", function (e) {
+  var o = e.target.closest("[data-bopen]"), d = e.target.closest("[data-bdel]");
+  if (d) { BATCH = BATCH.filter(function (x) { return x.id !== d.dataset.bdel; }); batchAnalyze(); renderBatch(); return; }
+  if (o) { var it = BATCH.filter(function (x) { return x.id === o.dataset.bopen; })[0]; batchLoad(it); setText(it.text); setMode("review"); showView("periksa"); toast(it.name + " dibuka. Tekan Cek di internet untuk pemeriksaan lengkap."); }
+});
+$("#bClear").onclick = function () { BATCH = []; renderBatch(); $("#bStatus").textContent = ""; };
+$("#bCsv").onclick = function () {
+  if (!BATCH.length) return toast("Antrian masih kosong.");
+  var L = limitOf(), q = function (v) { v = String(v == null ? "" : v); return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  var rows = [["Naskah", "Kata", "Halaman", "Kesamaan (%)", "Kemungkinan AI (%)", "Status batas", "Paling mirip dengan naskah", "Kemiripan antar-naskah (%)", "Sumber terbesar"]].concat(BATCH.map(function (it) {
+    return [it.name, it.words, it.pages || "", it.score, Math.round(it.ai), L ? (it.score > L ? "Belum lolos " : "Lolos ") + L + "%" : "", it.peer ? it.peer.name : "", it.peer ? it.peer.share : "", it.top ? it.top.domain : ""];
+  }));
+  download(new Blob(["﻿" + rows.map(function (r) { return r.map(q).join(","); }).join("\n")], { type: "text/csv;charset=utf-8" }), "Pemeriksaan-massal-" + new Date().toISOString().slice(0, 10) + ".csv");
+};
+// Semua laporan PDF: tiap naskah dimuat bergantian ke pemeriksa, laporan dibuat, lalu keadaan semula dikembalikan.
+$("#bZip").onclick = function () {
+  if (!BATCH.length) return toast("Antrian masih kosong.");
+  if (batchZip.busy) return; batchZip.busy = true;
+  var btn = $("#bZip"), old = btn.innerHTML, keep = { text: editor.value, doc: S.doc, sample: S.sample, web: S.webSources, checked: S.webChecked }, zip, names = {};
+  btn.disabled = true;
+  need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () {
+    zip = new window.JSZip(); var chain = Promise.resolve();
+    BATCH.forEach(function (it, i) {
+      chain = chain.then(function () {
+        btn.textContent = "Laporan " + (i + 1) + "/" + BATCH.length + "…";
+        batchLoad(it); editor.value = it.text; S.sample = false; run();
+        var r = buildReport(); if (!r) return;
+        return prepReport(r).then(function () { return reportPdf(r); }).then(function (b) {
+          var base = it.name.replace(/\.[^.]+$/, "").replace(/[^\w\-]+/g, "_").slice(0, 50) || "naskah", nm = base; var k = 2; while (names[nm]) nm = base + "-" + k++; names[nm] = 1;
+          zip.file("Laporan-" + nm + ".pdf", b); if (!IN_FRAME) return recordHistory(r);
+        });
+      });
+    });
+    return chain;
+  }).then(function () {
+    var csvRows = BATCH.map(function (it) { return [it.name, it.score, Math.round(it.ai)].join(","); });
+    zip.file("ringkasan.csv", "﻿Naskah,Kesamaan (%),Kemungkinan AI (%)\n" + csvRows.join("\n"));
+    return zip.generateAsync({ type: "blob" });
+  }).then(function (blob) { download(blob, "Laporan-CekTeks-massal-" + new Date().toISOString().slice(0, 10) + ".zip"); }, function (e) { toast("Gagal membuat ZIP: " + e.message); })
+    .then(function () {
+      S.doc = keep.doc; S.webSources = keep.web; S.webChecked = keep.checked; editor.value = keep.text; S.sample = keep.sample; run();
+      batchZip.busy = false; btn.disabled = false; btn.innerHTML = old;
+    });
+};
+var batchZip = $("#bZip");
+
+/* ---- palet perintah (Ctrl+K) ---- */
+function cmdList() {
+  var nav = [].slice.call(document.querySelectorAll(".side .tab")).map(function (b) {
+    return { t: b.querySelector("span").textContent, k: "Buka halaman", ic: b.querySelector("svg").outerHTML, run: function () { b.click(); } };
+  });
+  var IC = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
+  return nav.concat([
+    { t: "Unggah dokumen", k: "Perintah", ic: IC('<path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>'), run: function () { showView("periksa"); $("#mainFile").click(); } },
+    { t: "Tempel teks dari papan klip", k: "Perintah", ic: IC('<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9z"/>'), run: function () { showView("periksa"); $("#pasteBtn").click(); } },
+    { t: "Cek di internet", k: "Perintah", ic: IC('<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>'), run: function () { showView("periksa"); runWebSearch(); } },
+    { t: "Unduh laporan PDF", k: "Perintah", ic: IC('<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>'), run: function () { showView("periksa"); $("#dlPdf").click(); } },
+    { t: "Ganti tema terang/gelap", k: "Perintah", ic: IC('<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>'), run: function () { $("#themeBtn").click(); } },
+    { t: "Coba teks contoh", k: "Perintah", ic: IC('<path d="M6 3h9l4 4v14H6z"/>'), run: function () { showView("periksa"); $("#sampleBtn").click(); } }
+  ]);
+}
+var CMD = { items: [], sel: 0 };
+function renderCmd() {
+  var q = $("#cmdIn").value.toLowerCase().trim(), all = cmdList();
+  CMD.items = all.filter(function (c) { return !q || (c.t + " " + c.k).toLowerCase().indexOf(q) >= 0 || c.t.toLowerCase().split(/\W+/).some(function (w) { return w.indexOf(q) === 0; }); });
+  CMD.sel = Math.min(CMD.sel, Math.max(0, CMD.items.length - 1));
+  $("#cmdList").innerHTML = CMD.items.length ? CMD.items.map(function (c, i) { return '<button type="button" class="cmdi" role="option" id="cmd' + i + '" aria-selected="' + (i === CMD.sel) + '" data-cmd="' + i + '">' + c.ic + "<span>" + esc(c.t) + "</span><small>" + c.k + "</small></button>"; }).join("") : '<div class="empty">Tidak ada perintah yang cocok.</div>';
+  var cur = $("#cmd" + CMD.sel); if (cur) cur.scrollIntoView({ block: "nearest" });
+  $("#cmdIn").setAttribute("aria-activedescendant", CMD.items.length ? "cmd" + CMD.sel : "");
+}
+function openCmd() { closeMenu(true); lastFocus = document.activeElement; $("#cmdk").hidden = false; $("#cmdIn").value = ""; CMD.sel = 0; renderCmd(); $("#cmdIn").focus(); }
+function closeCmd() { $("#cmdk").hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+function runCmd(i) { var c = CMD.items[i]; if (!c) return; closeCmd(); c.run(); }
+$("#cmdBtn").onclick = openCmd;
+$("#cmdIn").addEventListener("input", function () { CMD.sel = 0; renderCmd(); });
+$("#cmdIn").addEventListener("keydown", function (e) {
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); CMD.sel = (CMD.sel + (e.key === "ArrowDown" ? 1 : -1) + CMD.items.length) % Math.max(1, CMD.items.length); renderCmd(); }
+  else if (e.key === "Enter") { e.preventDefault(); runCmd(CMD.sel); }
+  else if (e.key === "Escape") { e.preventDefault(); closeCmd(); }
+});
+$("#cmdList").addEventListener("click", function (e) { var b = e.target.closest("[data-cmd]"); if (b) runCmd(+b.dataset.cmd); });
+$("#cmdk").addEventListener("click", function (e) { if (e.target.closest("[data-close]")) closeCmd(); });
+document.addEventListener("keydown", function (e) {
+  if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); if ($("#cmdk").hidden) openCmd(); else closeCmd(); }
+});
+
+/* ---- pasang aplikasi (PWA) ---- */
+var installEvt = null;
+window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installEvt = e; $("#installBtn").hidden = false; });
+window.addEventListener("appinstalled", function () { $("#installBtn").hidden = true; toast("CekTeks terpasang di perangkat Anda."); });
+$("#svcLimit").addEventListener("input", function () { schedule(0); if (BATCH.length) renderBatch(); });
+$("#installBtn").onclick = function () { if (!installEvt) return; installEvt.prompt(); installEvt.userChoice.then(function () { installEvt = null; $("#installBtn").hidden = true; }); };
 /* ---- teks tersembunyi & typo ---- */
 var INVIS = { "​": "ZWSP", "‌": "ZWNJ", "‍": "ZWJ", "⁠": "WJ", "﻿": "BOM", "­": "SHY", "᠎": "MVS", "⁡": "FA", "⁢": "IT", "⁣": "IS", "⁤": "IP" };
 var INVIS_RE = /[​-‍⁠-⁤﻿­᠎]/g;
@@ -2907,7 +3368,8 @@ $("#srcRows").addEventListener("click", function (e) {
     if (act.dataset.act === "ex") {
       var src = S.plag.srcs[m.si]; S.excluded.set(srcKey(src), m.domain === m.name ? m.name : m.domain + " (" + m.name + ")");
       S.focusNo = 0; run(); toast("Sumber diabaikan. Skor dihitung ulang tanpa sumber ini.");
-    } else openCompare(m.no);
+    } else if (act.dataset.act === "ref") refFromSource(m).then(function (e) { toast("Ditambahkan ke daftar pustaka: " + refInText(e, "apa")); });
+    else openCompare(m.no);
     return;
   }
   var b = e.target.closest(".srcmain"); if (!b) return;
@@ -2954,7 +3416,7 @@ document.querySelectorAll("[data-goto]").forEach(function (b) {
     if (!armed) { armed = true; btn.textContent = "Tekan sekali lagi untuk menghapus"; btn.classList.add("danger"); tm = setTimeout(function () { armed = false; btn.textContent = "Hapus data tersimpan"; btn.classList.remove("danger"); }, 4000); return; }
     clearTimeout(tm);
     try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("ct_") === 0) localStorage.removeItem(k); }); } catch (e) {}
-    S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = ""; $("#svcName").value = ""; $("#svcContact").value = ""; ["kSerper", "kTavily", "kLang", "kCore", "oaKey", "signKey", "jbUrlIn", "jbKeyIn"].forEach(function (id) { $("#" + id).value = ""; }); $("#jbRepos").value = REPO_DEFAULT.join("\n"); updJbSum(); showLogo(); updKeys();
+    S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = ""; $("#svcName").value = ""; $("#svcContact").value = ""; ["kSerper", "kTavily", "kLang", "kCore", "oaKey", "signKey", "jbUrlIn", "jbKeyIn", "svcLimit"].forEach(function (id) { $("#" + id).value = ""; }); REFS = []; renderRefs(); BATCH = []; renderBatch(); $("#jbRepos").value = REPO_DEFAULT.join("\n"); updJbSum(); showLogo(); updKeys();
     bankReq("readwrite", function (st) { st.clear(); return null; }).then(loadBank, function () {});
     histReq("readwrite", function (st) { st.clear(); return null; }).then(loadHist, function () {}); $("#svcPrice").value = "";
     PAY = { qris: "", banks: [], unique: true, note: "" }; $("#payNote").value = ""; $("#payUnique").checked = true; renderQrisBox(); renderBanks(); renderPaySum();
@@ -3082,7 +3544,7 @@ $("#bankImport").onchange = function (e) {
   el.addEventListener("change", function () { store(k, el.checked ? "1" : "0"); if (id === "useBank") { renderBank(); schedule(0); } });
 });
 /* identitas jasa */
-["svcName", "svcContact", "svcPrice"].forEach(function (id) { var el = $("#" + id), k = "ct_" + id.toLowerCase(); el.value = store(k) || ""; el.oninput = function () { store(k, el.value.trim()); }; });
+["svcName", "svcContact", "svcPrice", "svcLimit"].forEach(function (id) { var el = $("#" + id), k = "ct_" + id.toLowerCase(); el.value = store(k) || ""; el.oninput = function () { store(k, el.value.trim()); }; });
 loadBank();
 /* ---- perbandingan berdampingan: naskah vs sumber ---- */
 function srcTokens(src) { return src._tok || (src._tok = tokenize(normalize(src.text))); }
@@ -3107,7 +3569,7 @@ function comparePassages(no) {
     if (m.para) {
       var A = canonSet(words(mine)), B = canonSet(words(m.srcSent)), common = new Set();
       A.forEach(function (k) { if (B.has(k)) common.add(k); });
-      list.push({ para: true, mine: markWords(mine, common), theirs: markWords(m.srcSent, common), n: words(mine).length });
+      list.push({ para: true, mine: markWords(mine, common), theirs: markWords(m.srcSent, common), n: words(mine).length, s: m.start, e: m.end });
       return;
     }
     var w = words(mine), n = p.ngram, first = srcFirstIndex(src, n), tk = srcTokens(src), st = -1;
@@ -3115,7 +3577,7 @@ function comparePassages(no) {
     if (st < 0) st = 0;
     st = Math.max(0, st); var en = Math.min(tk.length - 1, st + w.length - 1), st2 = Math.max(0, st - 14), en2 = Math.min(tk.length - 1, en + 14);
     var stxt = normalize(src.text);
-    list.push({ para: false, n: w.length, mine: "<mark>" + esc(mine) + "</mark>",
+    list.push({ para: false, n: w.length, s: m.start, e: m.end, mine: "<mark>" + esc(mine) + "</mark>",
       theirs: (st2 > 0 ? "… " : "") + esc(stxt.slice(tk[st2][1], tk[st][1])) + "<mark>" + esc(stxt.slice(tk[st][1], tk[en][2])) + "</mark>" + esc(stxt.slice(tk[en][2], tk[en2][2])) + (en2 < tk.length - 1 ? " …" : "") });
   });
   return list;
@@ -3132,13 +3594,18 @@ function openCompare(no) {
     '<span class="muted"> · sorotan menunjukkan kata yang sama di kedua sisi</span>';
   $("#drBody").innerHTML = list.map(function (x, i) {
     return '<article class="cmp" style="--c:' + c[0] + ';--t:' + hexA(c[0], .2) + '"><div class="cmp-h"><span>Bagian ' + (i + 1) + "</span>" + (x.para ? '<span class="tagp">Parafrase</span>' : '<span class="tage">Sama persis</span>') + '<span class="muted">' + x.n + " kata</span></div>" +
-      '<div class="cmp-cols"><div><div class="eyebrow">Naskah Anda</div><p>' + x.mine + '</p></div><div><div class="eyebrow">Sumber</div><p>' + x.theirs + "</p></div></div></article>";
+      '<div class="cmp-cols"><div><div class="eyebrow">Naskah Anda</div><p>' + x.mine + '</p></div><div><div class="eyebrow">Sumber</div><p>' + x.theirs + "</p></div></div>" +
+      '<div class="cmp-fix"><span class="muted">Cara memperbaiki:</span>' + (x.para ? '<button type="button" class="btn sm" data-fix="cite" data-s="' + x.s + '" data-e="' + x.e + '" data-no="' + no + '">Tambahkan sitasi</button><span class="muted">Parafrase tetap perlu menyebut sumbernya.</span>'
+        : '<button type="button" class="btn sm primary" data-fix="quote" data-s="' + x.s + '" data-e="' + x.e + '" data-no="' + no + '">Jadikan kutipan + sitasi</button><button type="button" class="btn sm" data-fix="cite" data-s="' + x.s + '" data-e="' + x.e + '" data-no="' + no + '">Tambahkan sitasi saja</button>') + "</div></article>";
   }).join("") || '<div class="empty">Tidak ada bagian untuk ditampilkan.</div>';
   lastFocus = document.activeElement; dr.hidden = false; document.body.classList.add("noscroll");
   $("#drBody").scrollTop = 0; $("#drClose").focus();
 }
 function closeCompare() { $("#drawer").hidden = true; document.body.classList.remove("noscroll"); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
-$("#drawer").addEventListener("click", function (e) { if (e.target.closest("[data-close]")) closeCompare(); });
+$("#drawer").addEventListener("click", function (e) {
+  if (e.target.closest("[data-close]")) return closeCompare();
+  var b = e.target.closest("[data-fix]"); if (b) fixPassage(b.dataset.fix, +b.dataset.s, +b.dataset.e, +b.dataset.no);
+});
 document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#drawer").hidden) closeCompare(); });
 /* ---- riwayat & pesanan ---- */
 var HIST = [];
@@ -3710,7 +4177,7 @@ function buildReport() {
     filters: filterList(), layout: layoutOk ? d.layout : null, pdfBuf: layoutOk ? d.pdfBuf : null,
     cite: S.cite, read: S.read,
     svc: ($("#svcName").value || "").trim(), contact: ($("#svcContact").value || "").trim(), client: ($("#clientName").value || "").trim(), method: coverage(),
-    opts: { quotes: $("#fQuote").checked, bib: $("#fBib").checked, minWords: +$("#fMin").value, small: +$("#fSmall").value, para: $("#fPara").checked }
+    limit: limitOf(), opts: { quotes: $("#fQuote").checked, bib: $("#fBib").checked, minWords: +$("#fMin").value, small: +$("#fSmall").value, para: $("#fPara").checked }
   };
 }
 var DISCLAIMER = "Deteksi AI bersifat perkiraan berdasarkan gaya tulisan dan bisa keliru. Cek plagiarisme hanya membandingkan dengan sumber yang dipilih. Jangan jadikan laporan ini satu-satunya dasar keputusan.";
@@ -3739,7 +4206,7 @@ function reportText(r) {
   var L = ["LAPORAN PLAGIARISME CEKTEKS", "=".repeat(27), "ID Pemeriksaan : " + r.id].concat(r.seal ? ["Kode verifikasi: " + r.seal.code + (r.seal.signed ? " (bertanda tangan digital)" : ""), "Verifikasi     : " + r.seal.url] : [], ["Dokumen        : " + r.doc]).concat(
     r.client ? ["Klien          : " + r.client] : [], r.svc ? ["Diperiksa oleh : " + r.svc + (r.contact ? " (" + r.contact + ")" : "")] : [], ["Tanggal        : " + fmtDate(r.date),
     "Panjang        : " + fmtNum(r.words) + " kata, " + fmtNum(r.chars) + " karakter" + (r.pages ? ", " + r.pages + " halaman" : ""), "",
-    "KESAMAAN       : " + pctLabel(p.score) + " (" + r.plagLabel + ")  =  " + pctLabel(p.exactScore) + " sama persis + " + pctLabel(p.paraScore) + " parafrase", "Sumber cocok   : " + p.matched.length,
+    "KESAMAAN       : " + pctLabel(p.score) + " (" + r.plagLabel + (r.limit ? "; " + (p.score <= r.limit ? "LOLOS" : "BELUM LOLOS") + " batas " + r.limit + "%" : "") + ")  =  " + pctLabel(p.exactScore) + " sama persis + " + pctLabel(p.paraScore) + " parafrase", "Sumber cocok   : " + p.matched.length,
     "Sitasi         : " + (r.cite ? r.cite.count + " di naskah, " + r.cite.entries + " entri daftar pustaka, " + r.cite.citedMatches + "/" + r.cite.totalMatches + " bagian sama bersitasi" : "-"),
     "  " + pctLabel(p.groups.internet) + " sumber internet, " + pctLabel(p.groups.publikasi) + " publikasi, " + pctLabel(p.groups.bank) + " bank naskah, " + pctLabel(p.groups.pengguna) + " karya pengguna", "",
     "Metode & cakupan:"].concat(r.method.map(function (x) { return "  - " + x; }), [""]));
@@ -3943,7 +4410,13 @@ function reportPdf(r, onProgress) {
   fnt(56, "bold", INK); doc.text(big, lx, y + 86); var bw0 = doc.getTextWidth(big);
   fnt(22, "normal", ACC); doc.text("%", lx + bw0 + 4, y + 62);
   fnt(8.5, "normal", MUTED); doc.text(pctLabel(p.score) + " isi dokumen sama dengan sumber lain" + (p.paraScore ? " (" + pctLabel(p.paraScore) + " parafrase)" : ""), lx, y + 106);
+  if (r.limit) {
+    var okL = p.score <= r.limit, lt = (okL ? "LOLOS" : "BELUM LOLOS") + " batas " + r.limit + "%", lc = okL ? [29, 127, 85] : [194, 57, 46];
+    fnt(7.5, "bold", [255, 255, 255]); var lw0 = doc.getTextWidth(lt) + 16; doc.setFillColor(lc[0], lc[1], lc[2]); doc.roundedRect(mid - 24 - lw0, y + 20, lw0, 15, 7.5, 7.5, "F");
+    doc.text(lt, mid - 24 - lw0 / 2, y + 30.5, { align: "center" });
+  }
   var sw = mid - 26 - lx, sy = y + 120; bar(lx, sy, sw, 0, ACC);
+  if (r.limit) { doc.setDrawColor(194, 57, 46); doc.setLineWidth(1.2); doc.line(lx + sw * r.limit / 100, sy - 5, lx + sw * r.limit / 100, sy + 9); }
   doc.setFillColor(ACC[0], ACC[1], ACC[2]); doc.circle(lx + sw * Math.min(100, p.score) / 100, sy + 2, 4.5, "F");
   fnt(6.5, "normal", MUTED); [0, 25, 50, 75, 100].forEach(function (v) { doc.text(String(v), lx + sw * v / 100, sy + 15, { align: v === 0 ? "left" : v === 100 ? "right" : "center" }); });
   doc.setDrawColor(LINE[0], LINE[1], LINE[2]); doc.setLineWidth(0.8); doc.line(mid, y + 22, mid, y + ch - 22);
