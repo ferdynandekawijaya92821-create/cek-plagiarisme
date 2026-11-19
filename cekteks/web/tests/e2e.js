@@ -386,6 +386,56 @@ async function download(page, selector) {
     await page.waitForFunction(() => S.doc && S.doc.layout, null, { timeout: 30000 }); await page.click("#tab-daftarisi");
     ok(/halaman PDF/.test(await page.textContent("#tocNote")), "mode nomor halaman PDF tidak aktif: " + await page.textContent("#tocNote"));
   });
+  await test("teks lengkap & repositori kampus: jembatan, EPrints, PDF skripsi, Zenodo PDF langsung", async () => {
+    await page.click("#tab-periksa");
+    const PDF = fs.readFileSync(path.join(FIX, "sample.pdf"));
+    // PDF skripsi tiruan dengan isi berbeda (dibuat langsung, satu halaman).
+    const SKR = "Stomata daun bayam paling banyak ditemukan pada permukaan bawah daun dan membuka lebar pada pagi hari ketika cahaya matahari mulai terang.";
+    const mkPdf = (line) => {
+      // Teks dipecah per ±70 karakter, satu baris PDF per potongan.
+      const rows = line.match(/.{1,70}(\s|$)/g).map((x) => x.trim().replace(/[()\\]/g, (c) => "\\" + c));
+      const stream = "BT /F1 11 Tf 14 TL 40 800 Td " + rows.map((x) => "(" + x + ") Tj T*").join(" ") + " ET";
+      const objs = ["<< /Type /Catalog /Pages 2 0 R >>", "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 842 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>",
+        "<< /Length " + stream.length + " >>\nstream\n" + stream + "\nendstream", "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"];
+      let out = "%PDF-1.4\n", offs = [];
+      objs.forEach((o, i) => { offs.push(out.length); out += (i + 1) + " 0 obj\n" + o + "\nendobj\n"; });
+      const x = out.length; out += "xref\n0 " + (objs.length + 1) + "\n0000000000 65535 f \n" + offs.map((o) => String(o).padStart(10, "0") + " 00000 n \n").join("");
+      return Buffer.from(out + "trailer\n<< /Size " + (objs.length + 1) + " /Root 1 0 R >>\nstartxref\n" + x + "\n%%EOF\n", "latin1");
+    };
+    const PDF2 = mkPdf(SKR + " " + SKR.replace("Stomata", "Jumlah stomata") + " Penelitian dilakukan di laboratorium biologi sekolah menengah atas negeri dengan tiga kali ulangan pada setiap perlakuan cahaya dan suhu ruang yang berbeda selama dua minggu.");
+    const KAL = "Saat praktikum kemarin kami mengamati daun bayam di bawah mikroskop sekolah yang lensanya agak buram, jadi hasil gambarnya kurang jelas dan harus diulang dua kali.";
+    const seen = { repo: 0, pdf: 0, zen: 0 };
+    await ctx.route(/^https:\/\/jb\.test\//, (r) => {
+      const q = new URL(r.request().url()).searchParams, H = { "access-control-allow-origin": "*" };
+      if (q.get("k") !== "kunci-uji-123") return r.fulfill({ status: 401, headers: H, contentType: "application/json", body: '{"error":"Kunci salah"}' });
+      if (q.get("ping")) return r.fulfill({ headers: H, contentType: "application/json", body: '{"ok":true}' });
+      const u = q.get("url") || "";
+      if (/export_cekteks_JSON/.test(u)) { seen.repo++; return r.fulfill({ headers: H, contentType: "application/json", body: JSON.stringify([{ eprintid: 4242, uri: "https://eprints.kampus.ac.id/id/eprint/4242", title: "Pengamatan stomata daun bayam", date: "2018-05-01", abstract: "Penelitian ini mengamati stomata pada daun bayam di laboratorium sekolah menengah.", documents: [{ mime_type: "application/pdf", security: "public", pos: 2, main: "BAB I.pdf" }, { mime_type: "application/pdf", security: "staffonly", pos: 3, main: "BAB IV.pdf" }] }]) }); }
+      if (u === "https://eprints.kampus.ac.id/4242/2/BAB%20I.pdf") { seen.pdf++; return r.fulfill({ headers: { ...H, "X-Jembatan-Type": "application/pdf" }, contentType: "application/pdf", body: PDF2 }); }
+      r.fulfill({ status: 502, headers: H, contentType: "application/json", body: '{"error":"tidak ada"}' });
+    });
+    await ctx.route(/zenodo\.org\/api\/records\?/, (r) => r.fulfill({ headers: { "access-control-allow-origin": "*" }, contentType: "application/json", body: JSON.stringify({ hits: { hits: [{ id: 9, doi_url: "https://doi.org/10.5281/zenodo.9", metadata: { title: "Praktikum biologi sekolah", publication_date: "2020-01-01", description: "Laporan singkat." }, files: [{ key: "laporan.pdf", size: 4000, links: { self: "https://zenodo.org/api/records/9/files/laporan.pdf/content" } }] }] } }) }));
+    await ctx.route(/zenodo\.org\/api\/records\/9\/files/, (r) => { seen.zen++; r.fulfill({ headers: { "access-control-allow-origin": "*" }, contentType: "application/octet-stream", body: PDF }); });
+    await page.click("#tab-sumber"); await page.click("#jbAcc summary");
+    await page.fill("#jbUrlIn", "https://jb.test"); await page.fill("#jbKeyIn", "kunci-uji-123"); await page.fill("#jbRepos", "eprints.kampus.ac.id\nbukan alamat\nhttps://eprints.kampus.ac.id/");
+    await page.click("#jbTest"); await page.waitForFunction(() => /siap/.test(document.getElementById("jbStatus").textContent));
+    ok(await page.evaluate(() => repoList().join(",")) === "eprints.kampus.ac.id", "daftar repositori tidak dirapikan: " + await page.evaluate(() => repoList().join(",")));
+    await page.click("#tab-periksa");
+    await srcOnly(page, ["wRepo", "wFull", "wZenodo"]); await page.evaluate(() => { document.getElementById("useCorpus").checked = false; });
+    const txt = "Laporan praktikum biologi kelas sebelas tentang daun bayam dan stomata daun bayam. " + KAL + " " + SKR + " Kelompok kami menggambar hasil pengamatan stomata daun bayam pada buku praktikum masing-masing.";
+    await page.evaluate((t) => { S.doc = null; setText(t); }, txt); await page.waitForTimeout(400);
+    await page.click("#webBtn");
+    await page.waitForFunction(() => document.getElementById("webProg").hidden && !runWebSearch.busy && S.webChecked, null, { timeout: 60000 });
+    const r = await page.evaluate(() => ({ full: S.lastFull, srcs: S.webSources.map((w) => w.kind + ":" + !!w.full), m: S.plag.matched.map((x) => x.kind + " " + x.share), st: document.getElementById("webStatus").textContent, cov: coverage().join(" | ") }));
+    ok(seen.repo >= 1 && seen.pdf === 1 && seen.zen === 1, "unduhan tidak sesuai: " + JSON.stringify(seen));
+    ok(r.full === 2 && r.srcs.includes("Repositori kampus:true") && r.srcs.includes("Zenodo:true"), "teks lengkap tidak terpakai: " + JSON.stringify(r).slice(0, 300));
+    ok(r.m.some((x) => /^Repositori kampus /.test(x)) && r.m.some((x) => /^Zenodo /.test(x)), "kalimat dari PDF skripsi/Zenodo tidak cocok: " + r.m.join(", "));
+    ok(/2 teks lengkap diunduh/.test(r.st) && /2 dokumen diunduh/.test(r.cov), "jumlah teks lengkap tidak dilaporkan: " + r.st);
+    for (const re of [/^https:\/\/jb\.test\//, /zenodo\.org\/api\/records\?/, /zenodo\.org\/api\/records\/9\/files/]) await ctx.unroute(re);
+    await page.evaluate(() => { ["ct_jb_url", "ct_jb_key", "ct_jb_repos"].forEach((k) => localStorage.removeItem(k)); document.getElementById("jbUrlIn").value = ""; document.getElementById("jbKeyIn").value = ""; document.getElementById("useCorpus").checked = true; updKeys(); resetWeb(); run(); });
+    await srcDefault(page);
+  });
   await test("deteksi AI terkalibrasi: abstrak manusia berdata rendah, teks AI generik tinggi", async () => {
     const HUMAN = "Penelitian ini bertujuan untuk mengetahui pengaruh pemberian pupuk kandang ayam terhadap pertumbuhan dan hasil tanaman jagung manis (Zea mays saccharata Sturt.) pada tanah PMK. Penelitian dilaksanakan di kebun percobaan Fakultas Pertanian Universitas Kapuas Sintang dari bulan Maret sampai Juni 2016. Rancangan yang digunakan adalah Rancangan Acak Lengkap (RAL) dengan 5 perlakuan dan 5 ulangan, yaitu tanpa pupuk kandang, 10 ton/ha, 20 ton/ha, 30 ton/ha, dan 40 ton/ha. Variabel yang diamati meliputi tinggi tanaman, diameter batang, berat tongkol berkelobot, dan berat tongkol tanpa kelobot. Hasil penelitian menunjukkan bahwa pemberian pupuk kandang ayam berpengaruh nyata terhadap semua variabel pengamatan. Dosis 30 ton/ha memberikan hasil terbaik dengan berat tongkol tanpa kelobot 312,4 g per tanaman.";
     const r = await page.evaluate(([h]) => [detectAI(h).score, detectAI(SAMPLE.split("\n\n").filter((p, i) => i !== 2).join("\n\n")).score, detectAI(h).signals.kekhususan], [HUMAN]);

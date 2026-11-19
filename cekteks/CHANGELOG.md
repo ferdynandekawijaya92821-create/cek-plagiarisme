@@ -2,6 +2,35 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [3.9.0] - 2026-11-19
+### Ditambahkan
+- **Teks lengkap sumber**: sumber tidak lagi hanya dibandingkan abstraknya.
+  - **Zenodo** (PDF) dan **Europe PMC** (teks lengkap artikel terbuka) diunduh langsung dari browser.
+  - Diuji dengan data asli: sebuah makalah Indonesia di Zenodo terunduh 2.625 kata (sebelumnya hanya abstrak),
+    dan satu artikel Europe PMC terunduh 11.762 kata.
+- **Jembatan** (`cekteks/jembatan/`): Cloudflare Worker gratis milik pengguna, dengan panduan pasang ±5 menit.
+  - Keamanan: wajib kunci, hanya http/https publik, batas 15 MB dan 25 detik, cache 1 hari, bisa dibatasi ke
+    asal situs sendiri.
+  - Bila jembatan aktif, CekTeks mengunduh teks lengkap (PDF/HTML) artikel yang ditemukan OpenAlex, Semantic
+    Scholar, DOAJ, Crossref, OpenAIRE, dan CORE.
+  - Halaman hasil Google (Serper) bisa diambil isinya tanpa Tavily.
+  - Sumber yang kalimatnya terbukti ada di dalamnya didahulukan. Batasnya 4, 12, atau 24 dokumen sesuai
+    kedalaman pencarian.
+- **Repositori kampus (EPrints)** lewat jembatan:
+  - Pencarian JSON di 9 repositori bawaan: UIN Sunan Kalijaga, UMS, UMM, UIN Ar-Raniry, IAIN Surakarta,
+    Undiksha, UIN Suska, UNY, dan Unram. Daftarnya bisa diubah di tab Sumber.
+  - Berkas PDF berstatus publik diunduh dan dibandingkan; berkas khusus staf dilewati.
+- Laporan mencatat jumlah dokumen yang diunduh utuh.
+
+### Diperbaiki
+- Teks lengkap kini ditambahkan ke abstrak, bukan menggantikannya. Berkas repositori sering hanya berisi BAB I,
+  sehingga kecocokan di abstrak sebelumnya bisa hilang.
+- Sumber dengan tautan teks lengkap tidak lagi dibuang hanya karena abstraknya pendek.
+
+### Lainnya
+- Uji jembatan (9 skenario, Node) masuk CI.
+- Uji e2e menjadi 40 skenario. Skenario baru: jembatan, EPrints, PDF skripsi, dan Zenodo PDF.
+
 ## [3.8.0] - 2026-11-18
 ### Diubah: tampilan dasbor
 - **Menu samping**:

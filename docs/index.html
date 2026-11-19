@@ -326,6 +326,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 .comp { padding: 0 16px 14px; }
 .compbar { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: var(--orig); }
 .keybox { display: grid; gap: 4px; }
+.hint a { color: var(--accent); font-weight: 600; }
 .logorow { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 2px; }
 .logorow img { max-height: 40px; max-width: 160px; border: 1px solid var(--line); border-radius: 6px; padding: 3px; background: #fff; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -930,7 +931,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       <div class="hero-t">
         <span class="eyebrow">Pemeriksa naskah</span>
         <h1>Periksa kesamaan &amp; tulisan AI dalam hitungan detik</h1>
-        <p>Dibandingkan dengan 19 sumber internet, jurnal, dan repositori. Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR. Naskah diproses di perangkat Anda.</p>
+        <p>Dibandingkan dengan lebih dari 20 sumber internet, jurnal, dan repositori kampus, termasuk teks lengkapnya. Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR. Naskah diproses di perangkat Anda.</p>
         <div class="hero-a">
           <label class="btn primary lg" for="homeFile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Unggah dokumen</label>
           <input type="file" id="homeFile" class="sr-only" accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,.csv,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
@@ -949,7 +950,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
     </div>
     <div class="stats" id="homeStats"></div>
     <h2 class="sec-h">Alat pemeriksaan</h2>
-    <div class="toolgrid"><button type="button" class="tool" data-nav="periksa"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg></span><b>Cek Plagiasi &amp; AI</b><small>Bandingkan naskah dengan 19 sumber internet dan jurnal, lalu nilai kemungkinan tulisan AI.</small></button><button type="button" class="tool" data-nav="bandingkan"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg></span><b>Bandingkan Dokumen</b><small>Temukan tugas yang saling mirip di antara beberapa dokumen sekaligus.</small></button><button type="button" class="tool" data-nav="periksa" data-go="cite"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg></span><b>Cek Sitasi</b><small>Cocokkan sitasi di naskah dengan daftar pustaka, temukan yang hilang atau tak dikutip.</small></button><button type="button" class="tool" data-nav="periksa" data-go="read"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg></span><b>Keterbacaan</b><small>Waktu baca, kalimat terlalu panjang, dan kata yang terlalu sering diulang.</small></button><button type="button" class="tool" data-nav="tersembunyi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg></span><b>Teks Tersembunyi &amp; Typo</b><small>Karakter tak terlihat, huruf aksara lain, teks putih, salah ketik, dan kata tidak baku.</small></button><button type="button" class="tool" data-nav="daftarisi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><b>Buat Daftar Isi</b><small>Susun daftar isi otomatis dari judul bab dan subbab, siap disalin ke Word.</small></button><button type="button" class="tool" id="homeVerify"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Verifikasi Laporan</b><small>Pindai QR laporan untuk memastikan naskah dan skor tidak diubah.</small></button></div>
+    <div class="toolgrid"><button type="button" class="tool" data-nav="periksa"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg></span><b>Cek Plagiasi &amp; AI</b><small>Bandingkan naskah dengan lebih dari 20 sumber internet, jurnal, dan repositori, lalu nilai kemungkinan tulisan AI.</small></button><button type="button" class="tool" data-nav="bandingkan"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg></span><b>Bandingkan Dokumen</b><small>Temukan tugas yang saling mirip di antara beberapa dokumen sekaligus.</small></button><button type="button" class="tool" data-nav="periksa" data-go="cite"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg></span><b>Cek Sitasi</b><small>Cocokkan sitasi di naskah dengan daftar pustaka, temukan yang hilang atau tak dikutip.</small></button><button type="button" class="tool" data-nav="periksa" data-go="read"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg></span><b>Keterbacaan</b><small>Waktu baca, kalimat terlalu panjang, dan kata yang terlalu sering diulang.</small></button><button type="button" class="tool" data-nav="tersembunyi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg></span><b>Teks Tersembunyi &amp; Typo</b><small>Karakter tak terlihat, huruf aksara lain, teks putih, salah ketik, dan kata tidak baku.</small></button><button type="button" class="tool" data-nav="daftarisi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><b>Buat Daftar Isi</b><small>Susun daftar isi otomatis dari judul bab dan subbab, siap disalin ke Word.</small></button><button type="button" class="tool" id="homeVerify"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Verifikasi Laporan</b><small>Pindai QR laporan untuk memastikan naskah dan skor tidak diubah.</small></button></div>
     <div class="card">
       <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Pemeriksaan terakhir</h2><button type="button" class="linkbtn" data-nav="riwayat">Lihat semua</button></div>
       <div class="card-b" id="homeRecent"></div>
@@ -1104,6 +1105,8 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
                 <label><input type="checkbox" id="wZenodo" checked> Zenodo</label>
                 <label><input type="checkbox" id="wDataCite" checked> DataCite <span class="muted">(DOI repositori &amp; data)</span></label>
                 <label><input type="checkbox" id="wCore"> CORE <span class="muted keyhint" data-key="ct_core">(repositori kampus)</span></label>
+                <label><input type="checkbox" id="wRepo"> Repositori kampus <span class="muted keyhint" data-key="ct_jb_url">(skripsi, lewat jembatan)</span></label>
+                <label><input type="checkbox" id="wFull" checked> Unduh teks lengkap sumber <span class="muted">(Zenodo &amp; Europe PMC langsung; jurnal lain lewat jembatan)</span></label>
                 <span class="chkgrp">Web umum: blog, berita, situs kampus</span>
                 <label><input type="checkbox" id="wSerper"> Google <span class="muted keyhint" data-key="ct_serper">(lewat Serper)</span></label>
                 <label><input type="checkbox" id="wTavily"> Tavily <span class="muted keyhint" data-key="ct_tavily">(isi halaman web)</span></label>
@@ -1310,6 +1313,19 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
           </div>
         </div>
         <div class="card">
+          <details class="acc" id="jbAcc">
+            <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="M5 18v-5a7 7 0 0 1 14 0v5"/><path d="M9 18v-4M15 18v-4M12 18v-5"/></svg></span><span><b>Jembatan teks lengkap &amp; repositori kampus</b><span class="muted" id="jbSum">opsional · unduh PDF jurnal &amp; skripsi</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="card-b stack">
+              <p class="hint" style="margin:0">Browser tidak diizinkan mengambil PDF jurnal kampus, skripsi di repositori, atau halaman web lain secara langsung, sehingga tanpa jembatan hanya abstraknya yang dibandingkan. Jembatan adalah server kecil gratis di akun Cloudflare milik Anda yang mengambilkan berkas itu, sehingga <b>seluruh isinya</b> ikut dibandingkan dan <b>repositori skripsi kampus</b> bisa dicari langsung. <a href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/blob/main/cekteks/jembatan/README.md" target="_blank" rel="noopener">Panduan pasang (±5 menit)</a></p>
+              <label class="field" for="jbUrlIn">Alamat jembatan<input type="url" id="jbUrlIn" autocomplete="off" spellcheck="false" placeholder="https://cekteks-jembatan.nama.workers.dev"></label>
+              <label class="field" for="jbKeyIn">Kunci jembatan<input type="password" id="jbKeyIn" autocomplete="off" placeholder="Sama dengan KUNCI di Cloudflare"></label>
+              <div class="logorow"><button type="button" class="btn" id="jbTest">Uji jembatan</button><span class="muted" id="jbStatus"></span></div>
+              <label class="field" for="jbRepos">Repositori kampus (EPrints), satu alamat per baris<textarea id="jbRepos" rows="7" spellcheck="false"></textarea></label>
+              <p class="hint" style="margin:0">Repositori berbasis EPrints, mis. eprints.ums.ac.id. Tambahkan repositori kampus klien Anda. Repositori yang memblokir permintaan otomatis dilewati dan ditandai di hasil pencarian.</p>
+            </div>
+          </details>
+        </div>
+        <div class="card">
           <details class="acc">
             <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11H4z"/><path d="M8 12h8M8 16h5"/></svg></span><span><b>Teks lengkap jurnal (OpenAlex)</b><span class="muted" id="oaHint">opsional · menambah kuota harian</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
             <div class="card-b stack">
@@ -1477,7 +1493,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
       </article>
       <article class="card gcard">
         <h2>Cek di internet</h2>
-        <p>Kalimat diambil merata dari seluruh naskah (Standar: satu kalimat tiap ±150 kata, maksimal 30; Mendalam: tiap ±70 kata, maksimal 60) lalu dicari persis di Wikipedia. Kata kunci tiap bagian naskah juga dicari, sehingga artikel bertopik sama diunduh utuh. Kalimat yang sama juga dicari persis di <b>teks lengkap</b> jutaan artikel ilmiah lewat OpenAlex, serta Europe PMC dan PLOS (naskah berbahasa Inggris), di Wikibooks dan Wikisource Indonesia, serta di abstrak jurnal dan repositori pada Semantic Scholar, OpenAIRE, Zenodo, DataCite, DOAJ, dan Crossref (termasuk banyak jurnal dan repositori kampus Indonesia). Dengan API key gratis milik Anda, kalimat juga dicari persis di Google (lewat Serper) dan LangSearch, isi halaman web diambil lewat Tavily, dan repositori kampus dicari lewat CORE. Setelah dokumen diunggah, pencarian berjalan otomatis bila sedang online.</p>
+        <p>Kalimat diambil merata dari seluruh naskah (Standar: satu kalimat tiap ±150 kata, maksimal 30; Mendalam: tiap ±70 kata, maksimal 60) lalu dicari persis di Wikipedia. Kata kunci tiap bagian naskah juga dicari, sehingga artikel bertopik sama diunduh utuh. Kalimat yang sama juga dicari persis di <b>teks lengkap</b> jutaan artikel ilmiah lewat OpenAlex, serta Europe PMC dan PLOS (naskah berbahasa Inggris), di Wikibooks dan Wikisource Indonesia, serta di abstrak jurnal dan repositori pada Semantic Scholar, OpenAIRE, Zenodo, DataCite, DOAJ, dan Crossref (termasuk banyak jurnal dan repositori kampus Indonesia). Dengan API key gratis milik Anda, kalimat juga dicari persis di Google (lewat Serper) dan LangSearch, isi halaman web diambil lewat Tavily, dan repositori kampus dicari lewat CORE. Dengan <b>jembatan</b> (server gratis Cloudflare milik Anda), PDF jurnal dan skripsi yang ditemukan diunduh lalu dibandingkan utuh, dan repositori skripsi kampus berbasis EPrints dicari langsung. Zenodo dan Europe PMC selalu dibandingkan teks lengkapnya. Setelah dokumen diunggah, pencarian berjalan otomatis bila sedang online.</p>
         <p><b>Peta naskah</b> membagi naskah panjang menjadi bagian ±250 kata dan menunjukkan kesamaan serta kemungkinan AI tiap bagian. Ketuk kotaknya untuk melompat ke bagian itu.</p>
         <p class="muted">Tanpa Serper atau Tavily, blog dan situs berita tidak terjangkau. Gunakan daftar "Periksa manual di Google" untuk itu.</p>
       </article>
@@ -2045,7 +2061,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "3.8.0";
+var APP_VERSION = "3.9.0";
 var SITE_URL = "https://ferdynandekawijaya92821-create.github.io/kalori-cli/";
 function setBusy(msg, frac) {
   var b = $("#busy");
@@ -2968,7 +2984,7 @@ document.querySelectorAll("[data-goto]").forEach(function (b) {
     if (!armed) { armed = true; btn.textContent = "Tekan sekali lagi untuk menghapus"; btn.classList.add("danger"); tm = setTimeout(function () { armed = false; btn.textContent = "Hapus data tersimpan"; btn.classList.remove("danger"); }, 4000); return; }
     clearTimeout(tm);
     try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("ct_") === 0) localStorage.removeItem(k); }); } catch (e) {}
-    S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = ""; $("#svcName").value = ""; $("#svcContact").value = ""; ["kSerper", "kTavily", "kLang", "kCore", "oaKey", "signKey"].forEach(function (id) { $("#" + id).value = ""; }); showLogo(); updKeys();
+    S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = ""; $("#svcName").value = ""; $("#svcContact").value = ""; ["kSerper", "kTavily", "kLang", "kCore", "oaKey", "signKey", "jbUrlIn", "jbKeyIn"].forEach(function (id) { $("#" + id).value = ""; }); $("#jbRepos").value = REPO_DEFAULT.join("\n"); updJbSum(); showLogo(); updKeys();
     bankReq("readwrite", function (st) { st.clear(); return null; }).then(loadBank, function () {});
     histReq("readwrite", function (st) { st.clear(); return null; }).then(loadHist, function () {}); $("#svcPrice").value = "";
     PAY = { qris: "", banks: [], unique: true, note: "" }; $("#payNote").value = ""; $("#payUnique").checked = true; renderQrisBox(); renderBanks(); renderPaySum();
@@ -3701,6 +3717,7 @@ function coverage() {
     "Pencocokan: rangkaian " + S.plag.ngram + " kata berurutan" + ($("#fPara").checked ? ", ditambah deteksi parafrase (kata dasar dan sinonim)" : ""),
     "Dibandingkan dengan " + fmtNum(all.length) + " dokumen: " + cnt.web + " dari internet, " + fmtNum(cnt.bank) + " dari bank naskah, " + cnt.user + " sumber tambahan, " + cnt.corpus + " korpus bawaan",
     "Pencarian internet: " + (S.webChecked && S.lastEngines && S.lastEngines.length ? S.lastQueries + " kalimat dari seluruh naskah dicari di " + S.lastEngines.join(", ") + "; " + S.webSources.length + " halaman dibandingkan" : "tidak dilakukan untuk naskah ini"),
+    "Teks lengkap sumber: " + (S.webChecked ? (S.lastFull ? S.lastFull + " dokumen diunduh dan dibandingkan utuh" : "tidak ada yang diunduh; sebagian sumber hanya dibandingkan abstraknya") : "-"),
     "CekTeks tidak terhubung dengan basis data Turnitin atau layanan sejenis, sehingga hasilnya dapat berbeda."
   ];
 }
@@ -4350,18 +4367,20 @@ function doaj(terms) {
   return fetchJSON(u).then(function (d) {
     return (d.results || []).map(function (x) {
       var b = x.bibjson || {}, doi = (b.identifier || []).filter(function (i) { return /doi/i.test(i.type); })[0], link = (b.link || [])[0];
-      return { name: (b.title || "Artikel jurnal") + (b.year ? " (" + b.year + ")" : ""), kind: "DOAJ", group: "publikasi",
+      var ftl = (b.link || []).filter(function (l) { return /fulltext/i.test(l.type || "") && l.url; })[0];
+      return { ft: ftl ? { url: ftl.url } : null, name: (b.title || "Artikel jurnal") + (b.year ? " (" + b.year + ")" : ""), kind: "DOAJ", group: "publikasi",
         url: doi ? "https://doi.org/" + doi.id : link && link.url ? link.url : "https://doaj.org/article/" + x.id, text: (b.title || "") + ". " + stripTags(b.abstract) };
     }).filter(function (src) { return words(src.text).length > 20; });
   });
 }
 // Crossref: metadata jurnal ber-DOI; hanya artikel yang menyertakan abstrak yang dipakai.
 function crossref(terms) {
-  var u = "https://api.crossref.org/works?rows=4&filter=has-abstract:true&select=DOI,title,abstract,URL,issued&query.bibliographic=" + encodeURIComponent(terms.join(" "));
+  var u = "https://api.crossref.org/works?rows=4&filter=has-abstract:true&select=DOI,title,abstract,URL,issued,link&query.bibliographic=" + encodeURIComponent(terms.join(" "));
   return fetchJSON(u).then(function (d) {
     return ((d.message && d.message.items) || []).filter(function (it) { return it.abstract; }).map(function (it) {
       var t = (it.title || [])[0] || "Artikel jurnal", yr = it.issued && it.issued["date-parts"] && it.issued["date-parts"][0] ? it.issued["date-parts"][0][0] : "";
-      return { name: t + (yr ? " (" + yr + ")" : ""), kind: "Crossref", group: "publikasi", url: it.URL || "https://doi.org/" + it.DOI, text: t + ". " + stripTags(it.abstract) };
+      var pl = (it.link || []).filter(function (l) { return /pdf/i.test(l["content-type"] || "") && l.URL; })[0];
+      return { ft: pl ? { url: pl.URL } : null, name: t + (yr ? " (" + yr + ")" : ""), kind: "Crossref", group: "publikasi", url: it.URL || "https://doi.org/" + it.DOI, text: t + ". " + stripTags(it.abstract) };
     }).filter(function (src) { return words(src.text).length > 20; });
   });
 }
@@ -4372,7 +4391,7 @@ function openAlexFull(sentence) {
   var key = store("ct_oakey");
   function q(a, b) {
     var phrase = tk.slice(a, b).map(function (t) { return t[0]; }).join(" ").replace(/["',:|]/g, " ");
-    var u = "https://api.openalex.org/works?per_page=3&select=id,doi,display_name,publication_year,abstract_inverted_index&filter=" +
+    var u = "https://api.openalex.org/works?per_page=3&select=id,doi,display_name,publication_year,abstract_inverted_index,best_oa_location&filter=" +
       encodeURIComponent('fulltext.search:"' + phrase + '"') + (key ? "&api_key=" + encodeURIComponent(key) : "");
     return fetchJSON(u, 15000, 0).then(function (d) { return d.results || []; });
   }
@@ -4386,7 +4405,8 @@ function openAlexFull(sentence) {
       return head.map(function (w) {
         var pos = []; if (w.abstract_inverted_index) Object.keys(w.abstract_inverted_index).forEach(function (word) { w.abstract_inverted_index[word].forEach(function (i) { pos[i] = word; }); });
         var whole = !tailIds || tailIds.indexOf(w.id) >= 0;
-        return { id: w.id, name: (w.display_name || "Artikel ilmiah") + (w.publication_year ? " (" + w.publication_year + ")" : ""), kind: "Teks lengkap jurnal", group: "publikasi",
+        var oa = w.best_oa_location || {}, ftu = oa.pdf_url || oa.landing_page_url;
+        return { id: w.id, ft: ftu ? { url: ftu } : null, name: (w.display_name || "Artikel ilmiah") + (w.publication_year ? " (" + w.publication_year + ")" : ""), kind: "Teks lengkap jurnal", group: "publikasi",
           url: w.doi || w.id, text: (w.display_name || "") + ". " + pos.filter(Boolean).join(" "), conf: whole ? sentence : sentence.slice(0, tk[n - 1][2]) };
       });
     });
@@ -4394,10 +4414,10 @@ function openAlexFull(sentence) {
 }
 // Semantic Scholar: banyak jurnal Indonesia (OJS) beserta abstraknya.
 function semScholar(terms) {
-  var u = "https://api.semanticscholar.org/graph/v1/paper/search?limit=4&fields=title,abstract,url,year&query=" + encodeURIComponent(terms.join(" "));
+  var u = "https://api.semanticscholar.org/graph/v1/paper/search?limit=4&fields=title,abstract,url,year,openAccessPdf&query=" + encodeURIComponent(terms.join(" "));
   return fetchJSON(u, 15000, 1).then(function (d) {
     return (d.data || []).filter(function (x) { return x.abstract; }).map(function (x) {
-      return { name: (x.title || "Artikel ilmiah") + (x.year ? " (" + x.year + ")" : ""), kind: "Semantic Scholar", group: "publikasi", url: x.url, text: (x.title || "") + ". " + stripTags(x.abstract) };
+      return { ft: x.openAccessPdf && x.openAccessPdf.url ? { url: x.openAccessPdf.url } : null, name: (x.title || "Artikel ilmiah") + (x.year ? " (" + x.year + ")" : ""), kind: "Semantic Scholar", group: "publikasi", url: x.url, text: (x.title || "") + ". " + stripTags(x.abstract) };
     }).filter(function (src) { return words(src.text).length > 20; });
   });
 }
@@ -4409,7 +4429,8 @@ function europePmc(sentence) {
   var u = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?format=json&pageSize=3&resultType=core&query=" + encodeURIComponent('"' + p.q + '"');
   return fetchJSON(u).then(function (d) {
     return ((d.resultList && d.resultList.result) || []).map(function (r) {
-      return { id: "epmc:" + r.source + r.id, name: (r.title || "Artikel").replace(/\.$/, "") + (r.pubYear ? " (" + r.pubYear + ")" : ""), kind: "Europe PMC", group: "publikasi",
+      var pmc = r.pmcid && r.isOpenAccess === "Y" ? "https://www.ebi.ac.uk/europepmc/webservices/rest/" + r.pmcid + "/fullTextXML" : "";
+      return { id: "epmc:" + r.source + r.id, ft: pmc ? { url: pmc, direct: true } : null, name: (r.title || "Artikel").replace(/\.$/, "") + (r.pubYear ? " (" + r.pubYear + ")" : ""), kind: "Europe PMC", group: "publikasi",
         url: r.doi ? "https://doi.org/" + r.doi : "https://europepmc.org/article/" + r.source + "/" + r.id, text: (r.title || "") + " " + stripTags(r.abstractText), conf: p.conf };
     });
   });
@@ -4430,7 +4451,7 @@ function openAire(terms) {
       var pid = [].concat(m.pid || []).filter(function (p) { return p && p["@classid"] === "doi"; })[0];
       var link = (/"(https?:\/\/[^"\s]+)"/.exec(JSON.stringify((m.children || {}).instance || "")) || [])[1];
       var yr = (/^(\d{4})/.exec(oaireVal(m.dateofacceptance)) || [])[1];
-      return { name: (t || "Artikel") + (yr ? " (" + yr + ")" : ""), kind: "OpenAIRE", group: "publikasi", url: pid ? "https://doi.org/" + pid.$ : link || "", text: t + ". " + ab };
+      return { ft: link ? { url: link } : null, name: (t || "Artikel") + (yr ? " (" + yr + ")" : ""), kind: "OpenAIRE", group: "publikasi", url: pid ? "https://doi.org/" + pid.$ : link || "", text: t + ". " + ab };
     }).filter(function (src) { return src.url && words(src.text).length > 20; });
   });
 }
@@ -4441,7 +4462,7 @@ function coreSearch(sentence) {
   return fetchJSON(u, 25000, 1, { headers: { Authorization: "Bearer " + store("ct_core") } }).then(function (d) {
     return (d.results || []).map(function (w) {
       var full = String(w.fullText || "");
-      return { id: "core:" + w.id, name: (w.title || "Dokumen repositori") + (w.yearPublished ? " (" + w.yearPublished + ")" : ""), kind: "CORE", group: "publikasi",
+      return { id: "core:" + w.id, ft: !full && w.downloadUrl ? { url: w.downloadUrl } : null, name: (w.title || "Dokumen repositori") + (w.yearPublished ? " (" + w.yearPublished + ")" : ""), kind: "CORE", group: "publikasi",
         url: "https://core.ac.uk/works/" + w.id, text: (w.title || "") + ". " + stripTags(w.abstract) + (full ? "\n\n" + full.slice(0, 150000) : ""), conf: full ? "" : p.conf };
     });
   });
@@ -4464,9 +4485,10 @@ function zenodo(terms) {
   return fetchJSON(u).then(function (d) {
     return ((d.hits && d.hits.hits) || []).map(function (h) {
       var m = h.metadata || {}, t = stripTags(m.title || "Dokumen Zenodo");
-      return { name: t + (m.publication_date ? " (" + String(m.publication_date).slice(0, 4) + ")" : ""), kind: "Zenodo", group: "publikasi",
+      var pf = (h.files || []).filter(function (f) { return /\.pdf$/i.test(f.key || "") && f.links && f.links.self && (f.size || 0) < 15e6; })[0];
+      return { ft: pf ? { url: pf.links.self, direct: true } : null, name: t + (m.publication_date ? " (" + String(m.publication_date).slice(0, 4) + ")" : ""), kind: "Zenodo", group: "publikasi",
         url: h.doi_url || (h.links && h.links.self_html) || "https://zenodo.org/records/" + h.id, text: t + ". " + stripTags(m.description) };
-    }).filter(function (src) { return words(src.text).length > 20; });
+    }).filter(function (src) { return src.ft || words(src.text).length > 20; });
   });
 }
 // DataCite: DOI dari repositori kampus, data penelitian, dan prosiding.
@@ -4488,6 +4510,58 @@ function langSearch(sentence) {
     var v = (d && d.data && d.data.webPages && d.data.webPages.value) || [];
     return v.map(function (it) { return { name: it.name || it.url, kind: "Web", url: it.url, snip: (it.name || "") + ". " + (it.summary || it.snippet || "") }; });
   });
+}
+// ---- Jembatan (Cloudflare Worker milik pengguna), teks lengkap, repositori kampus ----
+var REPO_DEFAULT = ["digilib.uin-suka.ac.id", "eprints.ums.ac.id", "eprints.umm.ac.id", "repository.ar-raniry.ac.id", "eprints.iain-surakarta.ac.id",
+  "repo.undiksha.ac.id", "repository.uin-suska.ac.id", "eprints.uny.ac.id", "eprints.unram.ac.id"];
+function jbReady() { return !!(store("ct_jb_url") && store("ct_jb_key")); }
+function jbUrl(u) { return String(store("ct_jb_url")).replace(/\/+$/, "") + "/?k=" + encodeURIComponent(store("ct_jb_key")) + "&url=" + encodeURIComponent(u); }
+function repoList() {
+  var v = store("ct_jb_repos"); var list = v == null ? REPO_DEFAULT : v.split(/[\s,]+/);
+  return list.map(function (h) { return h.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "").toLowerCase(); }).filter(function (h) { return /^[a-z0-9.-]+\.[a-z]{2,}$/.test(h); })
+    .filter(function (h, i, a) { return a.indexOf(h) === i; }).slice(0, 25);
+}
+// Mengunduh lalu mengubah PDF/HTML/XML menjadi teks. "direct": server sumber mengizinkan CORS (Zenodo, Europe PMC).
+function fetchFullText(ft) {
+  var url = ft.direct ? ft.url : jbUrl(ft.url);
+  return throttle(url).then(function () {
+    var ctl = window.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ctl) ctl.abort(); }, 45000);
+    return fetch(url, ctl ? { signal: ctl.signal } : {}).then(function (r) {
+      clearTimeout(tm); if (!r.ok) throw new Error("HTTP " + r.status);
+      var ty = r.headers.get("X-Jembatan-Type") || r.headers.get("Content-Type") || "";
+      return r.arrayBuffer().then(function (b) { return { b: b, ty: ty }; });
+    }, function (e) { clearTimeout(tm); throw e; });
+  }).then(function (x) {
+    if (x.b.byteLength > 15e6) throw new Error("terlalu besar");
+    var head = String.fromCharCode.apply(null, new Uint8Array(x.b.slice(0, 5)));
+    if (head === "%PDF-") return pdfExtract(x.b).then(function (r) { return r.text; });
+    var txt = new TextDecoder("utf-8").decode(x.b);
+    if (/<article[\s>]/i.test(txt) && /xml/i.test(x.ty)) { var bd = (/<body[\s\S]*<\/body>/i.exec(txt) || [txt])[0]; return bd.replace(/<\/(p|sec|title)>/gi, "\n\n").replace(/<[^>]+>/g, " ").replace(/[ \t]+/g, " "); }
+    if (/html/i.test(x.ty) || /^\s*<(!doctype|html)/i.test(txt)) return htmlToText(txt);
+    return txt;
+  }).then(function (t) { t = String(t || "").replace(/[ \t]+\n/g, "\n"); if (words(t).length < 60) throw new Error("isi terlalu sedikit"); return t.slice(0, 250000); });
+}
+// Repositori kampus berbasis EPrints: pencarian sederhana dengan keluaran JSON, lewat jembatan.
+function eprintsSearch(host, terms) {
+  var u = "https://" + host + "/cgi/search/archive/simple/export_cekteks_JSON.js?screen=Search&dataset=archive&_action_export=1&output=JSON&n=4&q=" + encodeURIComponent(terms.join(" "));
+  return fetchJSON(jbUrl(u), 30000, 0).then(function (d) {
+    return (Array.isArray(d) ? d : []).slice(0, 4).map(function (x) {
+      var docs = (x.documents || []).filter(function (dd) { return /pdf/i.test((dd.mime_type || "") + (dd.format || "") + (dd.main || "")) && (!dd.security || dd.security === "public"); });
+      // Unduhan berkas EPrints berpola /<eprintid>/<urutan>/<nama berkas>; tautan /id/file/ hanya berisi data berkas.
+      var f = docs[0], furl = f && x.eprintid && f.main ? "https://" + host + "/" + x.eprintid + "/" + (f.pos || 1) + "/" + encodeURIComponent(f.main) : "";
+      var t = stripTags(x.title || "Dokumen repositori"), yr = (/^(\d{4})/.exec(String(x.date || "")) || [])[1];
+      return { name: t + (yr ? " (" + yr + ")" : ""), kind: "Repositori kampus", group: "publikasi", sub: host,
+        url: x.uri || "https://" + host + "/id/eprint/" + x.eprintid, text: t + ". " + stripTags(x.abstract || ""), ft: furl ? { url: furl } : null };
+    }).filter(function (src) { return src.ft || words(src.text).length > 20; });
+  });
+}
+function testJembatan() {
+  var st = $("#jbStatus");
+  if (!jbReady()) { st.textContent = "Isi alamat dan kunci jembatan dulu."; return; }
+  st.textContent = "Menghubungi jembatan…";
+  fetch(String(store("ct_jb_url")).replace(/\/+$/, "") + "/?ping=1&k=" + encodeURIComponent(store("ct_jb_key"))).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (x) { st.textContent = x.ok && x.d.ok ? "Jembatan siap. Teks lengkap dan repositori kampus aktif." : "Jembatan menolak: " + (x.d.error || "tidak diketahui"); st.style.color = x.ok && x.d.ok ? "var(--ok)" : "var(--bad)"; },
+      function () { st.textContent = "Jembatan tidak bisa dihubungi. Periksa alamatnya."; st.style.color = "var(--bad)"; });
 }
 // Serper: hasil pencarian Google (frasa persis). Yang didapat cuplikan; isi halamannya diambil lewat Tavily bila ada.
 function serperSearch(sentence) {
@@ -4553,13 +4627,15 @@ function runWebSearch() {
   var useOA = $("#wOpenAlex").checked, useDoaj = $("#wDoaj").checked, useCr = $("#wCrossref").checked, useS2 = $("#wS2").checked;
   var useBooks = $("#wWikiBooks").checked && dl.indexOf("id") >= 0, useAire = $("#wOpenAire").checked, useEpmc = $("#wEpmc").checked && dl.indexOf("en") >= 0;
   var useCore = $("#wCore").checked && !!store("ct_core"), useSerper = $("#wSerper").checked && !!store("ct_serper"), useTav = $("#wTavily").checked && !!store("ct_tavily");
+  var useRepo = $("#wRepo").checked && jbReady(), useFull = $("#wFull").checked, repos = useRepo ? repoList() : [];
+  if ($("#wRepo").checked && !jbReady()) toast("Repositori kampus dilewati: pasang jembatan di tab Sumber.");
   var usePlos = $("#wPlos").checked && dl.indexOf("en") >= 0, useZen = $("#wZenodo").checked, useDc = $("#wDataCite").checked, useLang = $("#wLang").checked && !!store("ct_langsearch");
   var missing = [["wCore", "ct_core", "CORE"], ["wSerper", "ct_serper", "Serper"], ["wTavily", "ct_tavily", "Tavily"], ["wLang", "ct_langsearch", "LangSearch"]].filter(function (k) { return $("#" + k[0]).checked && !store(k[1]); }).map(function (k) { return k[2]; });
   if (missing.length) toast(missing.join(", ") + " dilewati: isi API key di tab Sumber.");
-  if (!want.length && !useOA && !useDoaj && !useCr && !useS2 && !useG && !useBooks && !useAire && !useEpmc && !useCore && !useSerper && !useTav && !usePlos && !useZen && !useDc && !useLang) return toast("Pilih minimal satu sumber pencarian.");
+  if (!want.length && !useOA && !useDoaj && !useCr && !useS2 && !useG && !useBooks && !useAire && !useEpmc && !useCore && !useSerper && !useTav && !usePlos && !useZen && !useDc && !useLang && !useRepo) return toast("Pilih minimal satu sumber pencarian.");
   S.lastEngines = [].concat(langs.map(function (l) { return "Wikipedia " + l.toUpperCase(); }), useBooks ? ["Wikibooks & Wikisource ID"] : [], useOA ? ["OpenAlex (teks lengkap)"] : [],
     useS2 ? ["Semantic Scholar"] : [], useAire ? ["OpenAIRE"] : [], useDoaj ? ["DOAJ"] : [], useCr ? ["Crossref"] : [], useEpmc ? ["Europe PMC (teks lengkap)"] : [], usePlos ? ["PLOS (teks lengkap)"] : [],
-    useZen ? ["Zenodo"] : [], useDc ? ["DataCite"] : [], useCore ? ["CORE"] : [],
+    useZen ? ["Zenodo"] : [], useDc ? ["DataCite"] : [], useCore ? ["CORE"] : [], useRepo ? ["Repositori kampus (" + repos.length + ")"] : [],
     useSerper ? ["Google (Serper)"] : [], useTav ? ["Tavily"] : [], useLang ? ["LangSearch"] : [], useG ? ["Google CSE"] : []);
   var bs = $("#fBib").checked ? findBibStart(text) : -1;
   var sents = pickSentences(text, webBudget(nW), bs, findBibEnd(text, bs));
@@ -4571,7 +4647,8 @@ function runWebSearch() {
   btn.disabled = true; prog.hidden = false; bar.style.width = "3%";
   var tasks = [], done = 0, found = new Map(), titles = new Map(), total = 0;
   function tick(label) { done++; bar.style.width = Math.min(97, 3 + 94 * done / Math.max(total, 1)) + "%"; $("#webStatus").textContent = label + " (" + done + "/" + total + ")"; }
-  function add(src) { if (src && src.text && words(src.text).length > 5 && !found.has(src.url)) found.set(src.url, src); }
+  // Sumber dengan tautan teks lengkap tetap disimpan walau abstraknya pendek; isinya diunduh belakangan.
+  function add(src) { if (src && src.text && (words(src.text).length > 5 || src.ft) && !found.has(src.url)) found.set(src.url, src); }
   function addAll(rs) { okCalls++; rs.forEach(add); }
   function fail() { errors++; }
   var oaWorks = new Map(), oaStop = false, oaHits = 0;
@@ -4579,7 +4656,7 @@ function runWebSearch() {
     okCalls++;
     rs.forEach(function (r) {
       var o = oaWorks.get(r.id);
-      if (!o) { o = { name: r.name, kind: r.kind, group: r.group, url: r.url, text: r.text, conf: [] }; oaWorks.set(r.id, o); }
+      if (!o) { o = { name: r.name, kind: r.kind, group: r.group, url: r.url, text: r.text, conf: [], ft: r.ft }; oaWorks.set(r.id, o); }
       if (o.conf.indexOf(r.conf) < 0) { o.conf.push(r.conf); oaHits++; }
     });
   }
@@ -4589,7 +4666,7 @@ function runWebSearch() {
     okCalls++;
     rs.forEach(function (r) {
       var o = oaWorks.get(r.id);
-      if (!o) { o = { name: r.name, kind: r.kind, group: r.group, url: r.url, text: r.text, conf: [] }; oaWorks.set(r.id, o); }
+      if (!o) { o = { name: r.name, kind: r.kind, group: r.group, url: r.url, text: r.text, conf: [], ft: r.ft }; oaWorks.set(r.id, o); }
       if (r.conf && o.conf.indexOf(r.conf) < 0) o.conf.push(r.conf);
     });
   }
@@ -4657,8 +4734,14 @@ function runWebSearch() {
       });
     });
   });
+  // Repositori kampus: kata kunci dari tiga bagian naskah (awal, tengah, akhir) dicari di tiap repositori.
+  var stAll = sectionTerms(text, secs, 5), repoQ = stAll.length ? [stAll[0], stAll[Math.floor(stAll.length / 2)], stAll[stAll.length - 1]].filter(function (q, i, a) { return a.indexOf(q) === i; }) : [];
+  repos.forEach(function (host) {
+    repoQ.forEach(function (q) { tasks.push(guard(host, "Mencari di repositori " + host + "…", function () { return eprintsSearch(host, q.slice(0, 4)).then(addAll); })); });
+  });
   var maxPages = Math.min(48, 8 + sents.length + (useBooks ? 8 : 0));
-  total = tasks.length + maxPages + (useSerper && useTav ? 1 : 0);
+  var depth = $("#wDepth").value, maxFull = useFull ? (depth === "quick" ? 4 : depth === "deep" ? 24 : 12) : 0;
+  total = tasks.length + maxPages + (useSerper && useTav ? 1 : 0) + maxFull;
   function runAll(list, limit) {
     var i = 0;
     function next() { if (i >= list.length) return Promise.resolve(); var f = list[i++]; return f().then(next); }
@@ -4676,18 +4759,33 @@ function runWebSearch() {
     if (!useTav || !urls.length || stopped.Tavily) return {};
     return guard("Tavily", "Mengambil isi halaman web…", function () { return tavilyExtract(urls).then(function (m) { okCalls++; webHits.full = m; }); })().then(function () { return webHits.full || {}; });
   }).then(function (full) {
+    // Teks lengkap: sumber yang kalimatnya terbukti ada di dalamnya didahulukan, lalu repositori kampus, lalu sisanya.
+    full = full || {}; S.lastFull = 0;
+    if (!maxFull) return full;
+    var jb = jbReady(), cand = [];
+    function push(holder, ft, pri, set) { if (ft && ft.url && (ft.direct || jb)) cand.push({ ft: ft, pri: pri, set: set, holder: holder }); }
+    // Teks lengkap ditambahkan ke abstrak, bukan menggantikannya (berkas repositori sering hanya BAB I).
+    oaWorks.forEach(function (o) { push(o, o.ft, 3 + o.conf.length, function (t) { o.text = o.text + "\n\n" + t; o.full = true; }); });
+    found.forEach(function (src) { if (!src.full && words(src.text).length < 3000) push(src, src.ft, src.kind === "Repositori kampus" ? 2 : 1, function (t) { src.text = src.text + "\n\n" + t; src.full = true; }); });
+    if (jb && !useTav) webHits.forEach(function (o) { if (!found.has(o.url) && !/wikipedia\.org/.test(o.url)) push(o, { url: o.url }, 2 + o.conf.length, function (t) { full[o.url] = t; }); });
+    var seen = {}, list = cand.sort(function (a, b) { return b.pri - a.pri; }).filter(function (c) { if (seen[c.ft.url]) return false; seen[c.ft.url] = 1; return true; }).slice(0, maxFull);
+    total = total - maxFull + list.length;
+    return runAll(list.map(function (c) {
+      return function () { return fetchFullText(c.ft).then(function (t) { c.set(t); S.lastFull++; okCalls++; }, function () {}).then(function () { tick("Mengunduh teks lengkap sumber…"); }); };
+    }), 3).then(function () { return full; });
+  }).then(function (full) {
     runWebSearch.busy = false;
     webHits.forEach(function (o) {
       if (found.has(o.url)) return;
       var body = full && full[o.url];
-      if (body) found.set(o.url, { name: o.name, kind: "Web", url: o.url, text: o.name + ". " + body });
+      if (body) { found.set(o.url, { name: o.name, kind: "Web", url: o.url, text: o.name + ". " + body }); return; }
       else if (o.conf.length) found.set(o.url, { name: o.name, kind: o.kind, url: o.url, text: o.snips.join(" ") + "\n\n" + o.conf.join(" … ") });
     });
     oaWorks.forEach(function (o) { if (!found.has(o.url)) found.set(o.url, { name: o.name, kind: o.kind, group: o.group, url: o.url, text: o.conf.join(" … ") + "\n\n" + o.text }); });
     S.webSources = Array.from(found.values()); S.webChecked = okCalls > 0; S.lastOA = { hits: oaHits, limited: oaStop };
     bar.style.width = "100%"; setTimeout(function () { prog.hidden = true; }, 600);
     btn.disabled = navigator.onLine === false;
-    $("#webStatus").textContent = okCalls ? sents.length + " kalimat dicari · " + S.webSources.length + " halaman ditemukan dan dibandingkan" + (errors ? " · " + errors + " permintaan gagal" : "") + "." :
+    $("#webStatus").textContent = okCalls ? sents.length + " kalimat dicari · " + S.webSources.length + " halaman ditemukan dan dibandingkan" + (S.lastFull ? " · " + S.lastFull + " teks lengkap diunduh" : "") + (errors ? " · " + errors + " permintaan gagal" : "") + "." :
       "Pencarian gagal. Periksa koneksi internet.";
     if (oaStop) $("#webStatus").textContent += " Kuota harian OpenAlex habis: isi API key gratis di tab Sumber agar teks lengkap jurnal ikut dicari.";
     var st = Object.keys(stopped); if (st.length) $("#webStatus").textContent += " " + st.map(function (k) { return k + ": " + stopped[k]; }).join("; ") + ".";
@@ -4725,12 +4823,13 @@ $("#wAuto").checked = store("ct_wauto") !== "0"; $("#wAuto").onchange = function
 });
 function updGHint() { var ok = store("ct_gkey") && store("ct_gcx"); $("#gHint").textContent = ok ? "(API siap)" : "(atur API di tab Sumber)"; if (ok && !$("#wGoogle").dataset.touched) $("#wGoogle").checked = true; updKeys(); }
 $("#wGoogle").onchange = function () { this.dataset.touched = "1"; };
-var KEYS = [["kSerper", "ct_serper", "wSerper", "Google lewat Serper"], ["kTavily", "ct_tavily", "wTavily", "Tavily"], ["kLang", "ct_langsearch", "wLang", "LangSearch"], ["kCore", "ct_core", "wCore", "CORE"]];
+var KEYS = [["jbUrlIn", "ct_jb_url", "wRepo", "Jembatan"], ["kSerper", "ct_serper", "wSerper", "Google lewat Serper"], ["kTavily", "ct_tavily", "wTavily", "Tavily"], ["kLang", "ct_langsearch", "wLang", "LangSearch"], ["kCore", "ct_core", "wCore", "CORE"]];
 function updKeys() {
   var ready = [];
   KEYS.forEach(function (k) {
     var ok = !!store(k[1]), cb = $("#" + k[2]), h = document.querySelector('.keyhint[data-key="' + k[1] + '"]');
-    if (h) { h.classList.toggle("ready", ok); h.textContent = ok ? "(API siap)" : "(atur API di tab Sumber)"; }
+    if (k[1] === "ct_jb_url") ok = jbReady();
+    if (h) { h.classList.toggle("ready", ok); h.textContent = k[1] === "ct_jb_url" ? (ok ? "(jembatan aktif)" : "(pasang jembatan di tab Sumber)") : ok ? "(API siap)" : "(atur API di tab Sumber)"; }
     if (ok) ready.push(k[3]);
     if (ok && !cb.dataset.touched) cb.checked = true;
     if (!ok && !cb.dataset.touched) cb.checked = false;
@@ -4745,6 +4844,13 @@ KEYS.forEach(function (k) {
   $("#" + k[2]).addEventListener("change", function () { this.dataset.touched = "1"; });
 });
 document.querySelectorAll("#srcPick .checks input").forEach(function (c) { c.addEventListener("change", updSrcSum); });
+$("#jbKeyIn").value = store("ct_jb_key") || ""; $("#jbKeyIn").oninput = function () { store("ct_jb_key", this.value.trim()); updKeys(); updJbSum(); };
+$("#jbUrlIn").addEventListener("input", updJbSum);
+$("#jbRepos").value = (store("ct_jb_repos") == null ? REPO_DEFAULT : repoList()).join("\n");
+$("#jbRepos").oninput = function () { store("ct_jb_repos", this.value); updJbSum(); };
+$("#jbTest").onclick = testJembatan;
+function updJbSum() { $("#jbSum").textContent = jbReady() ? "aktif · " + repoList().length + " repositori kampus" : "opsional · unduh PDF jurnal & skripsi"; }
+updJbSum();
 updGHint(); setNet();
 if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !IN_FRAME) navigator.serviceWorker.register("sw.js").catch(function () {});
 
