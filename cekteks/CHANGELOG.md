@@ -2,6 +2,31 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.2.0] - 2026-11-20
+### Ditambahkan
+- **Pilihan warna tema**: Teal, Biru, Ungu, Hijau, Marun, Oranye, dan Grafit, masing-masing dengan versi terang dan
+  gelap. Tombol palet di kanan atas membuka panel *Tampilan* (mode Otomatis/Terang/Gelap dan warna). Laporan PDF dan
+  warna bilah browser ikut menyesuaikan. Warna bawaan situs kini **Biru**.
+- **Pengaturan situs `cekteks/web/site.json`** untuk pemilik: warna bawaan, kontak CS (WhatsApp, email, jam layanan,
+  sapaan), teks berjalan, dan banner iklan. Ubah berkas ini langsung di GitHub; situs dan aplikasi dibangun ulang
+  otomatis. Formulir *Pengaturan situs* di halaman Sumber membantu membuat isinya, dengan pratinjau di perangkat sendiri.
+- **Iklan berjalan**: bilah info bergerak di atas halaman (berhenti saat disentuh atau disorot, bisa ditutup, diam bila
+  perangkat meminta gerakan dikurangi) dan **slot banner bergilir** di Beranda, panel hasil, dan halaman Bantuan.
+  Iklan bawaan berisi promosi layanan dan fitur CekTeks sendiri.
+- **Bubble chat customer service** di pojok kanan bawah: asisten menjawab otomatis 17 pertanyaan umum, lalu
+  meneruskan ke WhatsApp CS (pertanyaan ikut terisi) atau email bila kontak diisi di `site.json`.
+- **Halaman Bantuan & Kontak**: FAQ yang bisa dicari, kontak CS, **Kebijakan Privasi**, dan **Syarat & Ketentuan**.
+  Tautannya juga ada di footer.
+- **Pengecualian sumber permanen** (seperti *exclude sources* di layanan pemeriksa resmi): daftar domain atau alamat
+  yang selalu diabaikan di setiap pemeriksaan, plus tombol *Abaikan selalu* di panel Bandingkan. Tercatat di laporan.
+- **Perbandingan dengan pemeriksaan sebelumnya**: bila dokumen bernama sama pernah diperiksa, panel hasil menampilkan
+  skor lama dan selisihnya, mis. "32% → sekarang 18%, turun 14 poin".
+
+### Diubah
+- `pages.yml` membangun situs sebelum menayangkan, dan `apps.yml` membangun `CekTeks.html` sebelum membuat aplikasi,
+  sehingga perubahan `site.json` langsung terbit. Pemeriksaan "hasil build sudah di-commit" di CI kini hanya untuk
+  pull request.
+
 ## [4.1.0] - 2026-11-20
 ### Ditambahkan
 - **Cek plagiasi kode program** (menu baru), untuk tugas pemrograman:

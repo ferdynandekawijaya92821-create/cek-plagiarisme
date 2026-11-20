@@ -40,7 +40,21 @@ def write(path, data):
     print(f"  {os.path.relpath(path, REPO)}  ({len(data.encode()) / 1024:,.0f} KB)")
 
 
-def build_standalone(app, pwa):
+# Warna tema yang bisa dipilih di site.json (warna aksen terang). Harus sama dengan PRESET di app.html.
+ACCENTS = {"teal": "#0e6a86", "biru": "#1d4ed8", "ungu": "#6d3fd1", "hijau": "#0f7a4f", "marun": "#a5283a", "oranye": "#b5530e", "grafit": "#334155"}
+
+
+def load_site():
+    """Pengaturan situs milik pemilik: warna, kontak CS, dan iklan (cekteks/web/site.json)."""
+    site = json.loads(read(os.path.join(HERE, "site.json")))
+    site.pop("_petunjuk", None)
+    if site.get("warna") not in ACCENTS:
+        site["warna"] = "teal"
+    return site
+
+
+def build_standalone(app, pwa, site):
+    accent = ACCENTS[site["warna"]]
     head_end = app.index("</style>") + len("</style>")
     head, body = app[:head_end], app[head_end:]
     if pwa:
@@ -58,9 +72,11 @@ def build_standalone(app, pwa):
             vendor += f"<script>/* {name} */\n{js}\n</script>\n"
     marker = '<script>\n"use strict";'
     assert body.count(marker) == 1
-    body = body.replace(marker, vendor + marker)
-    extra = ('<meta name="theme-color" content="#0e6a86">\n'
-             '<link rel="icon" href="data:image/svg+xml,' + ICON.replace('"', "'").replace("#", "%23") + '">\n')
+    cfg = json.dumps(site, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    body = body.replace(marker, vendor + "<script>window.CEKTEKS_SITE = " + cfg + ";</script>\n" + marker)
+    icon = ICON.replace("#0e6a86", accent)
+    extra = (f'<meta name="theme-color" content="{accent}">\n'
+             '<link rel="icon" href="data:image/svg+xml,' + icon.replace('"', "'").replace("#", "%23") + '">\n')
     if pwa:
         og = SITE_URL + "og-image.png"
         extra += (
@@ -84,23 +100,24 @@ def build_standalone(app, pwa):
             f'<meta name="twitter:description" content="{SITE_DESC}">\n'
             f'<meta name="twitter:image" content="{og}">\n'
         )
-    return ('<!doctype html>\n<html lang="id">\n<head>\n<meta charset="utf-8">\n'
+    return (f'<!doctype html>\n<html lang="id" data-accent="{site["warna"]}">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             + extra + head + "\n</head>\n<body>\n" + body + "\n</body>\n</html>\n")
 
 
 def main():
     app = read(os.path.join(HERE, "src", "app.html"))
+    site = load_site()
     print("Membangun CekTeks:")
-    write(os.path.join(ROOT, "dist", "CekTeks.html"), build_standalone(app, pwa=False))
+    write(os.path.join(ROOT, "dist", "CekTeks.html"), build_standalone(app, pwa=False, site=site))
 
     docs = os.path.join(REPO, "docs")
-    write(os.path.join(docs, "index.html"), build_standalone(app, pwa=True))
-    write(os.path.join(docs, "icon.svg"), ICON)
+    write(os.path.join(docs, "index.html"), build_standalone(app, pwa=True, site=site))
+    write(os.path.join(docs, "icon.svg"), ICON.replace("#0e6a86", ACCENTS[site["warna"]]))
     write(os.path.join(docs, "manifest.webmanifest"), json.dumps({
         "name": "CekTeks - Cek Plagiarisme & AI", "short_name": "CekTeks", "lang": "id",
         "start_url": "./", "scope": "./", "display": "standalone",
-        "background_color": "#eef2f6", "theme_color": "#0e6a86",
+        "background_color": "#eef2f6", "theme_color": ACCENTS[site["warna"]],
         "description": SITE_DESC,
         "icons": [
             {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},

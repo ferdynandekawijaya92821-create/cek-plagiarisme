@@ -1,7 +1,7 @@
 {
   "name": "cekteks-desktop",
   "private": true,
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "CekTeks untuk Windows, macOS, dan Linux (Electron).",
   "author": "CekTeks",
   "license": "MIT",

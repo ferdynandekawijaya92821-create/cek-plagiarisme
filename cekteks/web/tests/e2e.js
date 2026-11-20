@@ -553,6 +553,68 @@ async function download(page, selector) {
     await page.click(".exchip"); await page.waitForTimeout(300);
     ok(await page.evaluate(() => S.plag.score) === before, "sumber tidak kembali setelah dikembalikan");
   });
+  await test("pengecualian permanen: situs di daftar selalu diabaikan, tombol Abaikan selalu, tercantum di laporan", async () => {
+    // Sumber web tiruan berisi sebagian naskah, seolah ditemukan oleh cek internet.
+    await page.evaluate(() => { S.webSources.push({ name: "Repositori uji", url: "https://www.repo.uji-kampus.ac.id/123/bab2.pdf", text: S.text.split(/\s+/).slice(40, 160).join(" ") }); schedule(0); }); await page.waitForTimeout(600);
+    const before = await page.evaluate(() => S.plag.score);
+    const m = await page.evaluate(() => { const x = S.plag.matched.filter((m) => m.url && /uji-kampus/.test(m.url))[0]; return x ? { no: x.no, host: new URL(x.url).hostname.replace(/^www\./, "") } : null; });
+    ok(m, "tidak ada sumber web untuk diuji");
+    await page.evaluate((no) => openCompare(no), m.no);
+    ok(await page.isVisible("#drBlock"), "tombol Abaikan selalu tidak tampil");
+    await page.click("#drBlock"); await page.waitForTimeout(400);
+    const after = await page.evaluate(() => [S.plag.score, S.plag.blockedN, localStorage.getItem("ct_block"), S.plag.matched.some((x) => /uji-kampus/.test(x.url || ""))]);
+    ok(!after[3] && after[1] >= 1 && after[2].includes(m.host), "sumber yang dikecualikan masih dihitung: " + JSON.stringify(after));
+    ok((await download(page, "#dlTxt")).buf.toString().includes("Pengecualian permanen"), "laporan tidak mencantumkan pengecualian permanen");
+    await page.evaluate(() => { document.querySelector("#blockList").value = ""; document.querySelector("#blockList").dispatchEvent(new Event("input")); });
+    await page.waitForTimeout(900);
+    ok(await page.evaluate(() => S.plag.blockedN === 0 && S.plag.matched.some((x) => /uji-kampus/.test(x.url || ""))), "sumber tidak kembali setelah daftar dikosongkan");
+    await page.evaluate(() => { S.webSources = S.webSources.filter((x) => !/uji-kampus/.test(x.url)); schedule(0); }); await page.waitForTimeout(600);
+  });
+  await test("pemeriksaan ulang: skor sebelumnya untuk dokumen yang sama ditampilkan", async () => {
+    const r = await page.evaluate(() => {
+      const keep = HIST, keepDoc = S.doc; S.doc = Object.assign({}, S.doc || {}, { name: "skripsi-bab2.docx" });
+      HIST = [{ id: "x", doc: "skripsi-bab2.docx", date: "2026-01-02T03:04:05.000Z", score: 99 }];
+      renderPrev(12, 500); const t = [document.querySelector("#prevPill").hidden, document.querySelector("#prevPill").textContent];
+      HIST = keep; S.doc = null; renderPrev(12, 500); const h = document.querySelector("#prevPill").hidden; S.doc = keepDoc; return t.concat(h);
+    });
+    ok(!r[0] && /99%/.test(r[1]) && /turun 87/.test(r[1]) && r[2], "jejak pemeriksaan sebelumnya salah: " + r[1]);
+  });
+  await test("tampilan: mode & warna tema disimpan, laporan PDF ikut warna tema", async () => {
+    await page.click("#themeBtn"); ok(await page.isVisible("#appear"), "panel Tampilan tidak terbuka");
+    await page.click('#swatches [data-acc="hijau"]'); await page.click('#modeSegs [data-mode="dark"]');
+    const r = await page.evaluate(() => [document.documentElement.dataset.accent, document.documentElement.dataset.theme, localStorage.ct_accent, accRGB().join(","), getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()]);
+    ok(r[0] === "hijau" && r[1] === "dark" && r[2] === "hijau" && r[3] === "15,122,79" && r[4] === "#4fd09a", "tema tidak diterapkan: " + r);
+    await page.keyboard.press("Escape"); ok(!(await page.isVisible("#appear")), "Esc tidak menutup panel");
+    await page.evaluate(() => { setThemeMode("auto"); setAccent(SITE.warna); });
+    ok(await page.evaluate(() => !document.documentElement.dataset.theme && !localStorage.ct_accent && document.documentElement.dataset.accent === SITE.warna), "tema tidak kembali ke bawaan situs");
+  });
+  await test("site.json: warna bawaan, teks berjalan, dan banner iklan tampil; tautan iklan membuka halaman", async () => {
+    const r = await page.evaluate(() => [!!window.CEKTEKS_SITE, document.documentElement.dataset.accent === CEKTEKS_SITE.warna, document.querySelectorAll("#tkTrack .tk-set").length, document.querySelectorAll("#adHome .ad").length]);
+    ok(r[0] && r[1] && r[2] === 2 && r[3] >= 1, "pengaturan situs tidak diterapkan: " + r);
+    await page.evaluate(() => showView("beranda"));
+    ok(await page.isVisible("#ticker") && await page.isVisible("#adHome"), "iklan tidak tampil di Beranda");
+    await page.evaluate(() => goLink("#kode")); ok(await page.isVisible("#view-kode"), "tautan #kode tidak membuka halaman");
+    await page.click("#tkClose"); ok(!(await page.isVisible("#ticker")), "teks berjalan tidak bisa ditutup");
+  });
+  await test("chat CS: sapaan, jawaban FAQ otomatis, tautan WhatsApp berisi pertanyaan, Esc menutup", async () => {
+    await page.click("#csFab"); ok(await page.isVisible("#csPanel"), "panel chat tidak terbuka");
+    await page.fill("#csIn", "kenapa hasilnya beda dengan turnitin"); await page.press("#csIn", "Enter");
+    ok(await page.evaluate(() => /Turnitin/.test([...document.querySelectorAll("#csLog .msg.bot")].map((x) => x.textContent).join(" "))), "jawaban FAQ tidak cocok");
+    await page.evaluate(() => { SITE.cs.whatsapp = "081234567890"; renderCS(); });
+    await page.fill("#csIn", "xyzzy qwerty"); await page.press("#csIn", "Enter");
+    const href = await page.evaluate(() => { const a = [...document.querySelectorAll("#csLog .msg.bot a.wa")].pop(); return a && a.href; });
+    ok(href && href.startsWith("https://wa.me/6281234567890?text=") && decodeURIComponent(href).includes("xyzzy qwerty"), "tautan WhatsApp salah: " + href);
+    await page.keyboard.press("Escape"); ok(!(await page.isVisible("#csPanel")), "Esc tidak menutup chat");
+    await page.evaluate(() => { SITE = siteCfg(); renderCS(); });
+  });
+  await test("Bantuan: FAQ bisa dicari, kebijakan privasi, syarat & ketentuan, kontak", async () => {
+    await page.evaluate(() => showView("bantuan"));
+    ok((await page.$$("#faqList details")).length >= 12, "FAQ kurang");
+    await page.fill("#faqSearch", "offline"); ok((await page.$$("#faqList details")).length === 1, "pencarian FAQ tidak menyaring");
+    await page.fill("#faqSearch", "");
+    ok(await page.isVisible("#kebijakan") && await page.isVisible("#syarat") && await page.isVisible("#helpContact .btn"), "bagian Bantuan tidak lengkap");
+    await page.evaluate(() => showView("periksa"));
+  });
   await test("riwayat & pesanan: unduhan PDF tercatat, tarif dan status lunas dihitung, ekspor Excel", async () => {
     await page.click("#tab-sumber"); await page.fill("#svcPrice", "15000"); await page.click("#tab-periksa");
     await page.fill("#clientName", "Klien Riwayat");
@@ -679,7 +741,7 @@ async function download(page, selector) {
     await test(name + ": tanpa scroll horizontal dan tumpang-tindih di semua halaman" + (AXE ? " dan lolos audit WCAG" : ""), async () => {
       const { ctx: c, page: p } = await newPage(browser, opts);
       await p.goto(SITE); await ready(p);
-      for (const v of ["beranda", "periksa", "massal", "kode", "sumber", "bandingkan", "tersembunyi", "pustaka", "daftarisi", "riwayat", "metode"]) {
+      for (const v of ["beranda", "periksa", "massal", "kode", "sumber", "bandingkan", "tersembunyi", "pustaka", "daftarisi", "riwayat", "metode", "bantuan"]) {
         await p.evaluate((v) => showView(v), v); await p.waitForTimeout(100);
         const w = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
         ok(w[0] <= w[1], v + ": lebar " + w[0] + " > layar " + w[1]);

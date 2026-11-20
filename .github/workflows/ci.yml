@@ -24,7 +24,10 @@ jobs:
       - name: Uji mesin Python
         run: python -m pytest -q cekteks/tests
 
+      # Hanya untuk pull request. Pemilik boleh mengubah site.json langsung di main lewat editor GitHub;
+      # situs dan aplikasi dibangun ulang otomatis oleh pages.yml dan apps.yml.
       - name: Hasil build harus sudah di-commit
+        if: github.event_name == 'pull_request'
         run: |
           python cekteks/web/build.py
           if ! git diff --quiet -- docs cekteks/dist; then

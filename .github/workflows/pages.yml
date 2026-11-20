@@ -1,10 +1,12 @@
-# Menayangkan folder docs/ (aplikasi CekTeks) ke GitHub Pages setiap ada perubahan di main.
+# Menayangkan CekTeks ke GitHub Pages setiap ada perubahan di main.
+# Situs dibangun ulang di sini, jadi mengubah cekteks/web/site.json (warna, kontak CS, iklan) langsung lewat
+# editor GitHub sudah cukup: situs ikut diperbarui tanpa perlu menjalankan build.py di komputer.
 name: Deploy CekTeks ke GitHub Pages
 
 on:
   push:
     branches: [main]
-    paths: ["docs/**", ".github/workflows/pages.yml"]
+    paths: ["docs/**", "cekteks/web/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -24,6 +26,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bangun situs (memakai site.json terbaru)
+        run: python cekteks/web/build.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

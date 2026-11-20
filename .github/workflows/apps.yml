@@ -9,7 +9,7 @@ on:
     branches: [main]
     paths: ["cekteks/web/**", "cekteks/dist/**", "cekteks/app/**", ".github/workflows/apps.yml"]
   pull_request:
-    paths: ["cekteks/web/src/**", "cekteks/app/**", ".github/workflows/apps.yml"]
+    paths: ["cekteks/web/src/**", "cekteks/web/site.json", "cekteks/app/**", ".github/workflows/apps.yml"]
   workflow_dispatch:
 
 permissions:
@@ -32,6 +32,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bangun CekTeks.html (memakai site.json terbaru)
+        run: python cekteks/web/build.py
       - name: Salin CekTeks.html ke proyek Android
         run: mkdir -p cekteks/app/mobile/www && cp cekteks/dist/CekTeks.html cekteks/app/mobile/www/index.html
       - name: Pasang Capacitor
@@ -90,6 +95,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bangun CekTeks.html (memakai site.json terbaru)
+        run: python cekteks/web/build.py
       - name: Salin CekTeks.html ke aplikasi desktop
         run: mkdir -p cekteks/app/desktop/app && cp cekteks/dist/CekTeks.html cekteks/app/desktop/app/index.html
       - name: Pasang Electron
