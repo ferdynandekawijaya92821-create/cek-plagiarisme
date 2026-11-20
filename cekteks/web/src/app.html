@@ -1128,6 +1128,10 @@ a.tk-i { text-decoration: none; }
 .howsteps li span { color: var(--muted); }
 .reflist, .refver { font-family: var(--f-body); }
 .ownerform label.toggle { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+
+/* v4.4: dibingkai situs lain */
+html.framed body > *:not(.framed-msg) { display: none !important; }
+.framed-msg { max-width: 460px; margin: 18vh auto; padding: 24px; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
 </style>
 
 <aside class="side" id="side" aria-label="Menu utama">
@@ -1165,7 +1169,7 @@ a.tk-i { text-decoration: none; }
       <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="var(--surface)"/><path d="M11 14h8M11 17h6M11 20h4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="3.3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M23 23l2.6 2.6" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
       <b>Cek<span>Teks</span></b>
     </div>
-    <button type="button" class="cmdbtn" id="cmdBtn" aria-label="Cari menu dan perintah (Ctrl+K)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>Cari menu &amp; perintah</span><kbd>Ctrl K</kbd></button>
+    <button type="button" class="cmdbtn" id="cmdBtn" aria-keyshortcuts="Control+K"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>Cari menu &amp; perintah</span><kbd>Ctrl K</kbd></button>
     <div class="top-r">
       <div class="status" id="status"><span class="dot" id="statusDot"></span><span id="statusText">Analisis langsung</span></div>
       <div class="miniscore" id="livebar">
@@ -2060,6 +2064,8 @@ a.tk-i { text-decoration: none; }
         <p>Saat cek internet berjalan, potongan kalimat dan kata kunci dikirim ke mesin pencari dan basis data yang Anda pilih (mis. Wikipedia, OpenAlex, Crossref, atau Google lewat Serper). Layanan itu tunduk pada kebijakan privasinya masing-masing. Matikan cek internet bila naskah sangat rahasia.</p>
         <h3>Data yang disimpan di perangkat</h3>
         <p>Draf, sumber pembanding, bank naskah, riwayat, kunci API, dan pilihan tampilan disimpan di penyimpanan browser atau aplikasi pada perangkat ini saja. Anda bisa menghapus semuanya lewat tombol "Hapus data tersimpan" di halaman Panduan.</p>
+        <h3>Keamanan</h3>
+        <p>Halaman dilindungi Content Security Policy sehingga skrip yang disisipkan pihak lain tidak bisa berjalan. Pustaka disimpan di situs ini sendiri atau diperiksa sidik digitalnya, CekTeks tidak bisa ditampilkan di dalam situs lain, dan berkas jahat seperti bom ZIP ditolak. Laporkan celah keamanan lewat GitHub: Security, Report a vulnerability.</p>
         <h3>Chat CS, iklan, dan tautan luar</h3>
         <p>Asisten chat menjawab dari daftar pertanyaan umum di perangkat Anda. Pesan baru terkirim ke CS hanya bila Anda menekan tombol WhatsApp atau email, dan pesan itu tunduk pada kebijakan layanan tersebut. CekTeks tidak memakai cookie pelacak, piksel iklan, atau analitik. Gambar iklan yang dimuat dari situs lain dapat membuat situs itu melihat alamat IP Anda.</p>
       </article>
@@ -2627,7 +2633,18 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.3.0";
+var APP_VERSION = "4.4.0";
+// Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
+(function () {
+  var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
+  if (!framed) return;
+  var sameOrigin = false; try { sameOrigin = window.top.location.origin === location.origin; } catch (e) { sameOrigin = false; }
+  if (sameOrigin) return;
+  document.documentElement.classList.add("framed");
+  var d = document.createElement("div"); d.className = "framed-msg";
+  d.innerHTML = '<p><b>CekTeks dibuka di dalam situs lain.</b> Demi keamanan, buka CekTeks langsung di tab sendiri.</p><a class="btn primary" target="_top" rel="noopener" href="' + location.href.replace(/"/g, "%22") + '">Buka CekTeks</a>';
+  document.body.appendChild(d);
+})();
 var SITE_URL = "https://ferdynandekawijaya92821-create.github.io/kalori-cli/";
 function setBusy(msg, frac) {
   var b = $("#busy");
@@ -2688,10 +2705,12 @@ $("#goSources").onclick = function () { showView("sumber"); };
 
 /* ---- file reading ---- */
 var loaded = {};
-function loadScript(src) {
+// integrity (SRI): skrip dari CDN hanya dijalankan bila isinya persis sama dengan versi yang sudah diperiksa.
+function loadScript(src, integrity) {
   if (loaded[src]) return loaded[src];
   return (loaded[src] = new Promise(function (res, rej) {
-    var s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = function () { delete loaded[src]; rej(new Error("Gagal memuat pustaka. Periksa koneksi internet.")); };
+    var s = document.createElement("script"); s.src = src; s.onload = res;
+    if (integrity) { s.integrity = integrity; s.crossOrigin = "anonymous"; } s.onerror = function () { delete loaded[src]; rej(new Error("Gagal memuat pustaka. Periksa koneksi internet.")); };
     document.head.appendChild(s);
   }));
 }
@@ -2701,8 +2720,18 @@ var CDN = "https://cdnjs.cloudflare.com/ajax/libs/";
 // 2. Situs web: dimuat dari folder vendor/ milik situs saat dibutuhkan, lalu disimpan service worker.
 // 3. Selain itu (pratinjau): dari CDN.
 var VENDOR = window.CEKTEKS_VENDOR || "";
+// Batas berkas terkompresi (DOCX, ODT, PPTX, ZIP): menolak "bom ZIP" yang membengkak saat dibuka.
+var ZIP_MAX_BYTES = 400 * 1048576, ZIP_MAX_FILES = 20000;
+function zipLoad(buf) {
+  return window.JSZip.loadAsync(buf).then(function (zip) {
+    var total = 0, n = 0;
+    zip.forEach(function (p, f) { n++; total += (f._data && f._data.uncompressedSize) || 0; });
+    if (n > ZIP_MAX_FILES || total > ZIP_MAX_BYTES) throw new Error("Berkas ini membengkak menjadi " + fmtSize(total) + " (" + fmtNum(n) + " berkas) saat dibuka, jauh di atas batas. Kemungkinan berkas rusak atau sengaja dibuat untuk membebani perangkat.");
+    return zip;
+  });
+}
 function libUrl(src) { return VENDOR ? VENDOR + src.split("/").pop() : /^https?:/.test(src) ? src : CDN + src; }
-var QR_LIB = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js", QR_READ_LIB = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
+var QR_LIB = "https://cdn.jsdelivr.net/npm/qrcode-generator@2.0.4/dist/qrcode.js", QR_READ_LIB = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
 function need(globalName, src) { return window[globalName] ? Promise.resolve() : loadScript(libUrl(src)); }
 function decodeText(buf) {
   var u = new Uint8Array(buf);
@@ -2745,13 +2774,17 @@ function legacyDocText(buf) {
   return best;
 }
 /* ---- PDF: teks + posisi di halaman (untuk laporan bersorot di atas halaman asli) ---- */
+// pdf.js 6 (build "legacy" agar tetap jalan di HP lama) berbentuk modul ES.
+// Situs web: modul dimuat dari vendor/ dan worker berjalan di latar belakang sehingga layar tetap responsif.
+// File mandiri & aplikasi: modul sudah tertanam (window.pdfjsLib & window.pdfjsWorker).
+var PDFJS_CDN = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.5.438/legacy/build/";
 function loadPdfLib() {
-  return need("pdfjsLib", "pdf.js/3.11.174/pdf.min.js").then(function () {
-    var opts = window.pdfjsLib.GlobalWorkerOptions, w = libUrl("pdf.js/3.11.174/pdf.worker.min.js");
-    if (opts.workerSrc) return;
-    // Situs web: worker dari asal yang sama berjalan di latar belakang sehingga layar tetap responsif.
-    if (VENDOR || window.pdfjsWorker) { opts.workerSrc = w; return; }
-    return loadScript(w).then(function () { opts.workerSrc = w; });
+  var base = new URL(VENDOR || PDFJS_CDN, location.href).href;   // import() butuh alamat lengkap, bukan "vendor/…"
+  var ready = window.pdfjsLib ? Promise.resolve() : import(base + "pdf.min.mjs").then(function (m) { window.pdfjsLib = m; },
+    function () { throw new Error("Gagal memuat pembaca PDF. Periksa koneksi internet lalu coba lagi."); });
+  return ready.then(function () {
+    var opts = window.pdfjsLib.GlobalWorkerOptions;
+    if (!opts.workerSrc && !window.pdfjsWorker) opts.workerSrc = base + "pdf.worker.min.mjs";
   });
 }
 function openPdf(buf) {
@@ -2802,13 +2835,13 @@ function pdfExtract(buf, onProgress) {
 }
 
 /* ---- OCR: PDF hasil pindaian (gambar) dikenali teksnya dengan Tesseract, di perangkat ---- */
-var TESS_LIB = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js", OCR_MAX = 120, OCR_SCALE = 2.2;
+var TESS_LIB = "https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js", TESS_SRI = "sha384-2BQ3U3OdKOb0Uczxqr41I9UvZkzr4V9Hv8uSzMMZAlmhsFClvdZX5wi5fDCzG+tM", OCR_MAX = 120, OCR_SCALE = 2.2;
 function ocrPdf(pdf, buf) {
   if (navigator.onLine === false && !window.Tesseract) return Promise.reject(new Error("PDF ini hasil pindaian (gambar). Pengenalan teks (OCR) perlu internet saat pertama kali dipakai untuk mengunduh data bahasa. Sambungkan internet lalu unggah ulang."));
   var n = Math.min(pdf.numPages, OCR_MAX), worker = null, parts = [], pos = 0, pages = [], confs = [];
   function push(x) { parts.push(x); pos += x.length; }
   setBusy("PDF hasil pindaian: menyiapkan pengenalan teks (OCR)…", 0);
-  return (window.Tesseract ? Promise.resolve() : loadScript(TESS_LIB)).then(function () { return window.Tesseract.createWorker("ind+eng", 1); }).then(function (w) {
+  return (window.Tesseract ? Promise.resolve() : loadScript(TESS_LIB, TESS_SRI)).then(function () { return window.Tesseract.createWorker("ind+eng", 1); }).then(function (w) {
     worker = w; var chain = Promise.resolve();
     for (var i = 1; i <= n; i++) chain = chain.then(ocrPage.bind(null, i));
     return chain;
@@ -2825,11 +2858,12 @@ function ocrPdf(pdf, buf) {
       var vp1 = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: OCR_SCALE }), c = document.createElement("canvas");
       c.width = Math.ceil(vp.width); c.height = Math.ceil(vp.height);
       var ctx = c.getContext("2d"); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
-      return pg.render({ canvasContext: ctx, viewport: vp }).promise.then(function () { return worker.recognize(c); }).then(function (res) {
+      return pg.render({ canvasContext: ctx, viewport: vp }).promise.then(function () { return worker.recognize(c, {}, { text: true, blocks: true }); }).then(function (res) {
         var d = res.data || {}, items = [];
         if (i > 1) push("\n\n");
         if (typeof d.confidence === "number") confs.push(d.confidence);
-        (d.paragraphs || []).forEach(function (para, pi) {
+        var paras = d.paragraphs || [].concat.apply([], (d.blocks || []).map(function (b) { return b.paragraphs || []; }));
+        paras.forEach(function (para, pi) {
           if (pi) push("\n\n");
           (para.lines || []).forEach(function (ln, li) {
             if (li) push("\n");
@@ -2858,16 +2892,16 @@ function readFileFull(file, onProgress) {
   return file.arrayBuffer().then(function (buf) {
     if (ext === "docx") {
       var pages = null;
-      return need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () { return window.JSZip.loadAsync(buf); })
+      return need("JSZip", "https://cdn.jsdelivr.net/npm/jszip@3.10.2/dist/jszip.min.js").then(function () { return zipLoad(buf); })
         .then(function (zip) { var f = zip.file("docProps/app.xml"); return f ? f.async("string") : ""; })
         .then(function (x) { var m = /<Pages>(\d+)<\/Pages>/.exec(x); pages = m ? +m[1] : null; }, function () {})
-        .then(function () { return need("mammoth", "mammoth/1.6.0/mammoth.browser.min.js"); })
+        .then(function () { return need("mammoth", "https://cdn.jsdelivr.net/npm/mammoth@1.13.0/mammoth.browser.min.js"); })
         .then(function () { return window.mammoth.extractRawText({ arrayBuffer: buf }); })
         .then(function (r) { return { text: r.value, pages: pages }; });
     }
     if (ext === "pdf") return pdfExtract(buf, onProgress);
     if (ext === "odt" || ext === "pptx") {
-      return need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () { return window.JSZip.loadAsync(buf); }).then(function (zip) {
+      return need("JSZip", "https://cdn.jsdelivr.net/npm/jszip@3.10.2/dist/jszip.min.js").then(function () { return zipLoad(buf); }).then(function (zip) {
         if (ext === "odt") return zip.file("content.xml").async("string").then(function (x) { return xmlText(x, "text:p"); });
         // pptx: satu slide dihitung satu halaman
         var slides = Object.keys(zip.files).filter(function (n) { return /^ppt\/slides\/slide\d+\.xml$/.test(n); })
@@ -3522,7 +3556,7 @@ function codeFromFiles(files) {
   var out = [];
   return Promise.all([].slice.call(files).map(function (f) {
     if (/\.zip$/i.test(f.name)) {
-      return need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () { return f.arrayBuffer(); }).then(function (b) { return window.JSZip.loadAsync(b); }).then(function (zip) {
+      return need("JSZip", "https://cdn.jsdelivr.net/npm/jszip@3.10.2/dist/jszip.min.js").then(function () { return f.arrayBuffer(); }).then(function (b) { return zipLoad(b); }).then(function (zip) {
         var groups = {}, jobs = [];
         zip.forEach(function (path, entry) {
           if (entry.dir || /(^|\/)(__MACOSX|\.git|node_modules|venv|\.venv|build|dist)\//.test(path) || /(^|\/)\./.test(path)) return;
@@ -3656,7 +3690,7 @@ $("#bZip").onclick = function () {
   if (batchZip.busy) return; batchZip.busy = true;
   var btn = $("#bZip"), old = btn.innerHTML, keep = { text: editor.value, doc: S.doc, sample: S.sample, web: S.webSources, checked: S.webChecked }, zip, names = {};
   btn.disabled = true;
-  need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () {
+  need("JSZip", "https://cdn.jsdelivr.net/npm/jszip@3.10.2/dist/jszip.min.js").then(function () {
     zip = new window.JSZip(); var chain = Promise.resolve();
     BATCH.forEach(function (it, i) {
       chain = chain.then(function () {
@@ -3823,7 +3857,7 @@ $("#hidClean").onclick = function () {
 };
 // Teks tersembunyi di DOCX: teks bertanda tersembunyi, berwarna putih, atau berukuran sangat kecil.
 function docxHidden(buf) {
-  return need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () { return window.JSZip.loadAsync(buf); })
+  return need("JSZip", "https://cdn.jsdelivr.net/npm/jszip@3.10.2/dist/jszip.min.js").then(function () { return zipLoad(buf); })
     .then(function (zip) { var f = zip.file("word/document.xml"); return f ? f.async("string") : ""; })
     .then(function (xml) {
       var out = [], runs = xml.match(/<w:r[ >][\s\S]*?<\/w:r>/g) || [], acc = null;
@@ -4986,7 +5020,7 @@ $("#billDrawer").addEventListener("click", function (e) { if (e.target.closest("
 document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#billDrawer").hidden) closeBill(); });
 
 function invoicePdf(e) {
-  return need("jspdf", "jspdf/2.5.1/jspdf.umd.min.js").then(function () {
+  return need("jspdf", "https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js").then(function () {
     return PAY.qris ? qrCanvas(QRIS.withAmount(PAY.qris, amountDue(e)), 360) : null;
   }).then(function (qr) {
     var doc = new window.jspdf.jsPDF({ unit: "pt", format: "a4" }), W = 595.28, M = 48, y = 64;
@@ -5564,7 +5598,7 @@ function renderPdfPages(r, cs, onPage) {
 
 function reportPdf(r, onProgress) {
   var J = window.jspdf && window.jspdf.jsPDF;
-  if (!J) return need("jspdf", "jspdf/2.5.1/jspdf.umd.min.js").then(function () { return reportPdf(r, onProgress); });
+  if (!J) return need("jspdf", "https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js").then(function () { return reportPdf(r, onProgress); });
   var doc = new J({ unit: "pt", format: "a4", compress: true }), W = 595.28, H = 841.89, M = 40, y = 0;
   var INK = [33, 37, 41], MUTED = [120, 126, 135], LINE = [222, 226, 230], ACC = accRGB(), p = r.plag;
   var reportPages = [];

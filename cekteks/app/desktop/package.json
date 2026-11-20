@@ -1,24 +1,67 @@
 {
   "name": "cekteks-desktop",
   "private": true,
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "CekTeks untuk Windows, macOS, dan Linux (Electron).",
   "author": "CekTeks",
   "license": "MIT",
   "main": "main.js",
   "devDependencies": {
-    "electron": "33.4.11",
-    "electron-builder": "25.1.8"
+    "electron": "45.4.1",
+    "electron-builder": "26.18.0"
   },
   "build": {
     "appId": "id.cekteks.desktop",
     "productName": "CekTeks",
-    "files": ["main.js", "app/**"],
-    "directories": { "buildResources": "build", "output": "dist" },
+    "files": [
+      "main.js",
+      "app/**"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
     "publish": null,
-    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }], "artifactName": "CekTeks-Windows.${ext}" },
-    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "shortcutName": "CekTeks" },
-    "mac": { "target": [{ "target": "dmg", "arch": ["universal"] }], "category": "public.app-category.education", "artifactName": "CekTeks-macOS.${ext}", "identity": null },
-    "linux": { "target": [{ "target": "AppImage", "arch": ["x64"] }], "category": "Education", "artifactName": "CekTeks-Linux.${ext}" }
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "CekTeks-Windows.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "CekTeks"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "category": "public.app-category.education",
+      "artifactName": "CekTeks-macOS.${ext}",
+      "identity": null
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Education",
+      "artifactName": "CekTeks-Linux.${ext}"
+    }
   }
 }

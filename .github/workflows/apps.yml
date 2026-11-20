@@ -24,15 +24,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: "17"
-      - uses: actions/setup-node@v4
+          java-version: "21"
+      - uses: actions/setup-node@v7
         with:
-          node-version: "20"
-      - uses: actions/setup-python@v5
+          node-version: "22"
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Bangun CekTeks.html (memakai site.json terbaru)
@@ -74,7 +74,7 @@ jobs:
             ./gradlew assembleDebug --no-daemon
             cp app/build/outputs/apk/debug/app-debug.apk ../../../../CekTeks-Android.apk
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: android
           path: CekTeks-Android.apk
@@ -91,11 +91,11 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: "20"
-      - uses: actions/setup-python@v5
+          node-version: "22"
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - name: Bangun CekTeks.html (memakai site.json terbaru)
@@ -114,7 +114,7 @@ jobs:
           npm pkg set version="$V"
           npx electron-builder --publish never
           ls -la dist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: desktop-${{ matrix.os }}
           path: |
@@ -130,8 +130,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           path: out
           merge-multiple: true

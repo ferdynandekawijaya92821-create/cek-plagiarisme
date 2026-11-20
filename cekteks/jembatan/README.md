@@ -36,3 +36,21 @@ Gratis hingga 100.000 permintaan per hari, cukup untuk ratusan naskah sehari.
 - CekTeks hanya mengambil beberapa berkas teratas per pemeriksaan. Jangan ubah kode agar mengambil
   massal, dan hormati aturan pakai setiap repositori. Sebagian kampus memblokir permintaan otomatis.
   Repositori seperti itu dilewati.
+
+## Pembatas permintaan (anti-bot, opsional tetapi disarankan)
+
+Tanpa pembatas, bot yang mengetahui alamat jembatan bisa menghabiskan kuota gratis harian atau mencoba menebak
+`KUNCI`. Cloudflare menyediakan pembatas gratis per alamat IP:
+
+1. Bila memakai Wrangler, tambahkan ke `wrangler.toml` lalu deploy ulang:
+   ```toml
+   [[ratelimits]]
+   name = "BATAS"
+   namespace_id = "1001"
+     [ratelimits.simple]
+     limit = 60      # maksimal 60 permintaan
+     period = 60     # per 60 detik per alamat IP
+   ```
+2. Bila memakai dasbor, buka **Settings → Bindings → Add → Rate limiting**, beri nama `BATAS`, batas 60 per 60 detik.
+
+Permintaan yang melewati batas dibalas `429` dan CekTeks mencoba lagi nanti. Jembatan tetap berjalan tanpa `BATAS`.
