@@ -1,3 +1,5 @@
+> 💰 **Baru: [Rekap Keuangan](rekap-keuangan/README.md)** — rekap pemasukan, pengeluaran & total uang dari aplikasi keuangan Anda (impor CSV/Excel atau tautan Google Sheets). Buka di `/keuangan/` pada situs GitHub Pages repo ini.
+
 # Kalori CLI Manager
 
 ![Banner](assets/banner.png)
