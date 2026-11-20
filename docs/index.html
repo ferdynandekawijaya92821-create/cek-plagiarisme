@@ -1089,8 +1089,8 @@ a.tk-i { text-decoration: none; }
 .cs-f button svg { width: 18px; height: 18px; }
 .cs-x { display: flex; gap: 6px; padding: 0 12px 12px; }
 .cs-x a, .cs-x button { flex: 1; justify-content: center; font-size: 13px; }
-.btn.wa { background: #1fa855; border-color: #1fa855; color: #fff; font-weight: 600; }
-.btn.wa:hover { background: #188c46; border-color: #188c46; }
+.btn.wa { background: #157a3c; border-color: #157a3c; color: #fff; font-weight: 600; }
+.btn.wa:hover { background: #10642f; border-color: #10642f; }
 .btn.wa svg, .cs-x svg { width: 16px; height: 16px; }
 @media (max-width: 1000px) { .toast { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); } }
 @media (max-width: 480px) { .cspanel { right: 8px; left: 8px; width: auto; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); height: min(560px, calc(100dvh - 150px)); } .cshint { display: none; } }
@@ -1121,6 +1121,39 @@ a.tk-i { text-decoration: none; }
 .ownerform textarea { min-height: 96px; font-family: var(--f-mono); font-size: 12.5px; resize: vertical; }
 .ownerform .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @media (max-width: 520px) { .ownerform .two { grid-template-columns: 1fr; } }
+
+/* v4.3: keaslian referensi, layanan */
+.refver { display: grid; gap: 10px; padding-top: 4px; border-top: 1px solid var(--line); }
+.refsum { display: flex; flex-wrap: wrap; gap: 6px; }
+.rv { display: inline-flex; align-items: center; white-space: nowrap; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.rv.ok { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); border-color: transparent; }
+.rv.warn { background: color-mix(in srgb, var(--warn) 16%, transparent); color: var(--warn); border-color: transparent; }
+.rv.bad { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); border-color: transparent; }
+.rv.nf { background: color-mix(in srgb, var(--bad) 8%, transparent); color: var(--bad); border-color: color-mix(in srgb, var(--bad) 30%, transparent); }
+.reflist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.reflist li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 13px; line-height: 1.45; }
+.reflist li .rv { justify-content: center; }
+.reflist small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; overflow-wrap: anywhere; }
+@media (max-width: 420px) { .reflist li { grid-template-columns: minmax(0, 1fr); gap: 4px; } .reflist li .rv { justify-self: start; } }
+
+.pricing { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 14px; margin-bottom: 12px; }
+.plan { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 20px 18px 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.plan.top { border: 2px solid var(--accent); box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 16%, transparent); }
+.plan-badge { position: absolute; top: -11px; left: 18px; padding: 2px 10px; border-radius: 99px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.plan h2 { font-size: 16.5px; }
+.plan .price { font-family: var(--f-display); font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
+.plan .price small { font-family: var(--f-body); font-size: 12.5px; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-left: 4px; }
+.plan .price.ask { font-size: 18px; color: var(--accent); }
+.plan ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 13.5px; flex: 1; }
+.plan li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 6px; line-height: 1.45; }
+.plan li::before { content: "✓"; color: var(--ok); font-weight: 800; }
+.plan .btn { justify-content: center; }
+.howsteps { margin: 0; padding: 14px 18px 18px 38px; display: grid; gap: 12px; }
+.howsteps li { padding-left: 4px; font-size: 13.5px; line-height: 1.5; }
+.howsteps li b { display: block; font-size: 14px; }
+.howsteps li span { color: var(--muted); }
+.reflist, .refver { font-family: var(--f-body); }
+.ownerform label.toggle { display: flex; align-items: center; gap: 10px; font-weight: 500; }
 </style>
 </head>
 <body>
@@ -1130,6 +1163,7 @@ a.tk-i { text-decoration: none; }
   <div class="side-h"><button type="button" class="logo logobtn" data-nav="beranda" aria-label="CekTeks, ke Beranda"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="var(--surface)"/><path d="M11 14h8M11 17h6M11 20h4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="3.3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M23 23l2.6 2.6" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg><b>Cek<span>Teks</span></b></button><button type="button" class="side-x" id="sideClose" aria-label="Tutup menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <nav class="side-nav">
       <button class="tab" type="button" id="tab-beranda" data-view="beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Beranda</span></button>
+      <button class="tab" type="button" id="tab-layanan" data-view="layanan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>Layanan &amp; Harga</span><span class="newtag">Baru</span></button>
       <span class="side-g">Pemeriksaan</span>
       <button class="tab" type="button" id="tab-periksa" data-view="periksa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg><span>Cek Plagiasi &amp; AI</span></button>
       <button class="tab" type="button" id="tab-massal" data-view="massal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg><span>Periksa Banyak Dokumen</span><span class="newtag">Baru</span></button>
@@ -1775,9 +1809,11 @@ a.tk-i { text-decoration: none; }
                 </div>
                 <label for="oJam">Jam layanan<input type="text" id="oJam" autocomplete="off"></label>
                 <label for="oSapa">Sapaan chat<input type="text" id="oSapa" autocomplete="off"></label>
+                <label class="toggle" for="oLyOn"><input type="checkbox" id="oLyOn"><span class="tr" aria-hidden="true"></span>Tampilkan halaman Layanan &amp; Harga</label>
+                <label for="oPaket"><span>Paket layanan <span class="muted" style="font-weight:400">· satu per baris: nama | harga | satuan | fitur1; fitur2 | unggulan (ya/kosong)</span></span><textarea id="oPaket" spellcheck="false" placeholder="Cek Plagiasi | 15000 | per dokumen | Laporan PDF; Kode verifikasi |"></textarea></label>
                 <label class="toggle" for="oAds"><input type="checkbox" id="oAds"><span class="tr" aria-hidden="true"></span>Tampilkan iklan berjalan &amp; banner</label>
-                <label for="oTicker">Teks berjalan <span class="muted" style="font-weight:400">· satu per baris: teks | tautan</span><textarea id="oTicker" spellcheck="false"></textarea></label>
-                <label for="oBanner">Banner <span class="muted" style="font-weight:400">· satu per baris: label | judul | teks | tombol | tautan | gambar (opsional)</span><textarea id="oBanner" spellcheck="false"></textarea></label>
+                <label for="oTicker"><span>Teks berjalan <span class="muted" style="font-weight:400">· satu per baris: teks | tautan</span></span><textarea id="oTicker" spellcheck="false"></textarea></label>
+                <label for="oBanner"><span>Banner <span class="muted" style="font-weight:400">· satu per baris: label | judul | teks | tombol | tautan | gambar (opsional)</span></span><textarea id="oBanner" spellcheck="false"></textarea></label>
               </div>
               <p class="hint" style="margin:0">Tautan: alamat web (<code>https://…</code>), halaman CekTeks (<code>#kode</code>, <code>#massal</code>, <code>#bantuan</code>), atau <code>cs</code> untuk membuka chat CS.</p>
               <div class="btnrow">
@@ -1968,7 +2004,7 @@ a.tk-i { text-decoration: none; }
       <article class="card gcard">
         <h2>Format berkas</h2>
         <p>PDF, Word (.docx, dan .doc lama secara terbatas), OpenDocument (.odt), PowerPoint (.pptx), RTF, HTML, Markdown, dan teks biasa.</p>
-        <p class="muted">PDF hasil pindaian berupa gambar tidak berisi teks sehingga tidak bisa dibaca.</p>
+        <p class="muted">PDF hasil pindaian (berupa gambar) dikenali teksnya otomatis dengan OCR di perangkat Anda. OCR perlu internet saat pertama kali dipakai untuk mengunduh data bahasa Indonesia dan Inggris (±5 MB). Hasil OCR bisa salah baca bila pindaian buram.</p>
       </article>
       <article class="card gcard">
         <h2>Batasan</h2>
@@ -1979,6 +2015,45 @@ a.tk-i { text-decoration: none; }
           <li>Teks di bawah 80 kata memberi hasil AI yang kurang andal.</li>
         </ul>
       </article>
+    </div>
+  </section>
+
+  <!-- ================= LAYANAN & HARGA ================= -->
+  <section class="view" id="view-layanan">
+    <div class="pagehead">
+      <h1 id="lyTitle">Layanan pemeriksaan naskah</h1>
+      <p>Ingin naskah diperiksakan oleh kami beserta laporan resminya? Pilih paket, kirim pesanan lewat WhatsApp, lalu kirim naskah setelah CS membalas.</p>
+    </div>
+    <div class="pricing" id="lyPaket"></div>
+    <p class="hint" id="lyNote" style="margin:0 0 18px"></p>
+    <div class="helpgrid">
+      <div class="card" id="pesan">
+        <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/></svg></span>Formulir pesanan</h2></div>
+        <form class="card-b ownerform" id="lyForm" novalidate>
+          <div class="two">
+            <label for="lyNama">Nama<input type="text" id="lyNama" autocomplete="name" required maxlength="80"></label>
+            <label for="lyPkg">Paket<select id="lyPkg"></select></label>
+          </div>
+          <div class="two">
+            <label for="lyHal">Jumlah halaman / naskah<input type="number" id="lyHal" min="1" max="10000" inputmode="numeric" placeholder="mis. 45"></label>
+            <label for="lyDl">Tenggat<select id="lyDl"><option>Tidak buru-buru</option><option>Hari ini</option><option>Besok</option><option>2–3 hari</option></select></label>
+          </div>
+          <label for="lyKampus"><span>Kampus / instansi <span class="muted" style="font-weight:400">· opsional, untuk batas kesamaan</span></span><input type="text" id="lyKampus" maxlength="120"></label>
+          <label for="lyNote2"><span>Catatan <span class="muted" style="font-weight:400">· opsional</span></span><textarea id="lyNote2" maxlength="600" style="min-height:70px;font-family:var(--f-body);font-size:13.5px" placeholder="mis. abaikan daftar pustaka, batas kampus 25%"></textarea></label>
+          <label class="toggle" for="lyAgree"><input type="checkbox" id="lyAgree"><span class="tr" aria-hidden="true"></span><span>Saya setuju dengan <button type="button" class="linkbtn" data-adgo="#syarat">Syarat &amp; Ketentuan</button></span></label>
+          <div class="btnrow" id="lySend"></div>
+          <p class="hint" style="margin:0">Pesan berisi data di atas akan terbuka di WhatsApp atau email Anda; tidak ada data yang dikirim ke server CekTeks.</p>
+        </form>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Cara memesan</h2></div>
+        <ol class="card-b howsteps">
+          <li><b>Pilih paket</b><span>Sesuaikan dengan kebutuhan: plagiasi saja, plagiasi dan AI, kode program, atau satu kelas.</span></li>
+          <li><b>Kirim pesanan</b><span>Isi formulir, lalu tekan Kirim lewat WhatsApp. CS membalas pada jam layanan.</span></li>
+          <li><b>Kirim naskah &amp; bayar</b><span>Kirim berkas PDF atau Word lewat WhatsApp atau email, lalu bayar lewat QRIS atau transfer.</span></li>
+          <li><b>Terima laporan</b><span>Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR yang bisa dicek siapa pun.</span></li>
+        </ol>
+      </div>
     </div>
   </section>
 
@@ -2121,7 +2196,7 @@ a.tk-i { text-decoration: none; }
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>window.CEKTEKS_VENDOR = "vendor/";</script>
-<script>window.CEKTEKS_SITE = {"warna":"biru","cs":{"nama":"CS CekTeks","whatsapp":"62859106977360","email":"jokosandhono@gmail.com","jam":"Setiap hari, 08.00–21.00 WIB","sapaan":"Halo! 👋 Saya asisten CekTeks. Pilih pertanyaan di bawah atau ketik pertanyaan Anda."},"iklan":{"aktif":true,"teks_berjalan":[{"teks":"Baru: pilih warna tema, chat CS, dan pusat Bantuan.","tautan":"#bantuan"},{"teks":"Cek plagiasi kode program Python, Java, C/C++, dan JavaScript dengan tampilan ala VS Code.","tautan":"#kode"},{"teks":"Aplikasi CekTeks untuk Android, Windows, macOS, dan Linux, gratis dan bisa offline.","tautan":"#beranda"},{"teks":"Butuh pemeriksaan naskah dengan laporan resmi? Chat CS kami.","tautan":"cs"},{"teks":"Naskah diproses di perangkat Anda dan tidak dikirim ke server.","tautan":"#bantuan"}],"banner":[{"label":"Layanan","judul":"Jasa cek plagiasi & AI","teks":"Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR. Hasil cepat, naskah dijaga kerahasiaannya.","tombol":"Chat CS","tautan":"cs"},{"label":"Fitur","judul":"Cek plagiasi kode program","teks":"Tetap terdeteksi walau nama variabel diganti. Unggah ZIP berisi folder per mahasiswa.","tombol":"Coba sekarang","tautan":"#kode"},{"label":"Fitur","judul":"Periksa puluhan naskah sekaligus","teks":"Naskah saling dibandingkan, laporan PDF semuanya diunduh dalam satu ZIP.","tombol":"Buka","tautan":"#massal"},{"label":"Iklan","judul":"Pasang iklan Anda di sini","teks":"Jangkau mahasiswa dan dosen yang memakai CekTeks setiap hari.","tombol":"Hubungi kami","tautan":"cs"}]}};</script>
+<script>window.CEKTEKS_SITE = {"warna":"biru","cs":{"nama":"CS CekTeks","whatsapp":"62859106977360","email":"jokosandhono@gmail.com","jam":"Setiap hari, 08.00–21.00 WIB","sapaan":"Halo! 👋 Saya asisten CekTeks. Pilih pertanyaan di bawah atau ketik pertanyaan Anda."},"layanan":{"aktif":true,"judul":"Layanan pemeriksaan naskah","catatan":"Naskah dijaga kerahasiaannya dan tidak disimpan ke bank naskah tanpa izin Anda. Setiap laporan memuat kode verifikasi dan QR.","paket":[{"nama":"Cek Plagiasi","harga":"","satuan":"per dokumen","fitur":["Indeks kesamaan dan daftar sumber","Naskah bersorot di laporan PDF","Kode verifikasi dan QR"],"unggulan":false},{"nama":"Cek Plagiasi + AI","harga":"","satuan":"per dokumen","fitur":["Semua isi paket Cek Plagiasi","Analisis kemungkinan tulisan AI per bagian","Cek keaslian daftar pustaka","Konsultasi hasil lewat WhatsApp"],"unggulan":true},{"nama":"Cek Kode Program","harga":"","satuan":"per tugas","fitur":["Python, Java, C/C++, JavaScript, PHP, dan lainnya","Tetap terdeteksi walau nama variabel diganti","Tampilan berdampingan ala VS Code"],"unggulan":false},{"nama":"Paket Kelas / Dosen","harga":"","satuan":"per kelas","fitur":["Puluhan naskah sekaligus","Naskah saling dibandingkan","Semua laporan dalam satu ZIP dan rekap Excel"],"unggulan":false}]},"iklan":{"aktif":true,"teks_berjalan":[{"teks":"Baru: pilih warna tema, chat CS, dan pusat Bantuan.","tautan":"#bantuan"},{"teks":"Cek plagiasi kode program Python, Java, C/C++, dan JavaScript dengan tampilan ala VS Code.","tautan":"#kode"},{"teks":"Aplikasi CekTeks untuk Android, Windows, macOS, dan Linux, gratis dan bisa offline.","tautan":"#beranda"},{"teks":"Butuh pemeriksaan naskah dengan laporan resmi? Chat CS kami.","tautan":"#layanan"},{"teks":"Naskah diproses di perangkat Anda dan tidak dikirim ke server.","tautan":"#bantuan"}],"banner":[{"label":"Layanan","judul":"Jasa cek plagiasi & AI","teks":"Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR. Hasil cepat, naskah dijaga kerahasiaannya.","tombol":"Lihat paket","tautan":"#layanan"},{"label":"Fitur","judul":"Cek plagiasi kode program","teks":"Tetap terdeteksi walau nama variabel diganti. Unggah ZIP berisi folder per mahasiswa.","tombol":"Coba sekarang","tautan":"#kode"},{"label":"Fitur","judul":"Periksa puluhan naskah sekaligus","teks":"Naskah saling dibandingkan, laporan PDF semuanya diunduh dalam satu ZIP.","tombol":"Buka","tautan":"#massal"},{"label":"Iklan","judul":"Pasang iklan Anda di sini","teks":"Jangkau mahasiswa dan dosen yang memakai CekTeks setiap hari.","tombol":"Hubungi kami","tautan":"cs"}]}};</script>
 <script>
 "use strict";
 /* =====================================================================
@@ -2583,7 +2658,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.2.0";
+var APP_VERSION = "4.3.0";
 var SITE_URL = "https://ferdynandekawijaya92821-create.github.io/kalori-cli/";
 function setBusy(msg, frac) {
   var b = $("#busy");
@@ -2750,13 +2825,61 @@ function pdfExtract(buf, onProgress) {
     for (var i = 1; i <= pdf.numPages; i++) chain = chain.then(doPage.bind(null, i));
     return chain.then(function () {
       var text = parts.join("");
-      if (words(text).length < 3) throw new Error("PDF ini tidak berisi teks (kemungkinan hasil pindaian/gambar).");
+      if (words(text).length < 3) return ocrPdf(pdf, buf);
       hidden.forEach(function (h, k) { if (k && hidden[k - 1].kind === h.kind) { h.text = hidden[k - 1].text + " " + h.text; hidden[k - 1].drop = 1; } });
       return { text: text, pages: pdf.numPages, layout: { pages: pages, text: text }, pdfBuf: buf, hidden: hidden.filter(function (h) { return !h.drop; }) };
     });
   });
 }
 
+/* ---- OCR: PDF hasil pindaian (gambar) dikenali teksnya dengan Tesseract, di perangkat ---- */
+var TESS_LIB = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js", OCR_MAX = 120, OCR_SCALE = 2.2;
+function ocrPdf(pdf, buf) {
+  if (navigator.onLine === false && !window.Tesseract) return Promise.reject(new Error("PDF ini hasil pindaian (gambar). Pengenalan teks (OCR) perlu internet saat pertama kali dipakai untuk mengunduh data bahasa. Sambungkan internet lalu unggah ulang."));
+  var n = Math.min(pdf.numPages, OCR_MAX), worker = null, parts = [], pos = 0, pages = [], confs = [];
+  function push(x) { parts.push(x); pos += x.length; }
+  setBusy("PDF hasil pindaian: menyiapkan pengenalan teks (OCR)…", 0);
+  return (window.Tesseract ? Promise.resolve() : loadScript(TESS_LIB)).then(function () { return window.Tesseract.createWorker("ind+eng", 1); }).then(function (w) {
+    worker = w; var chain = Promise.resolve();
+    for (var i = 1; i <= n; i++) chain = chain.then(ocrPage.bind(null, i));
+    return chain;
+  }).then(function () {
+    if (worker) worker.terminate();
+    var text = parts.join("");
+    if (words(text).length < 3) throw new Error("PDF ini berupa gambar dan teksnya tidak terbaca, bahkan dengan OCR. Pastikan hasil pindaian cukup jelas.");
+    var conf = confs.length ? Math.round(confs.reduce(function (a, b) { return a + b; }, 0) / confs.length) : 0;
+    return { text: text, pages: pdf.numPages, layout: { pages: pages, text: text }, pdfBuf: buf, hidden: [], ocr: { pages: n, total: pdf.numPages, conf: conf } };
+  }, function (e) { if (worker) worker.terminate(); throw new Error(/Gagal memuat|fetch|network/i.test(e && e.message || "") ? "PDF ini hasil pindaian. Pustaka OCR gagal diunduh; periksa koneksi internet lalu coba lagi." : (e && e.message) || String(e)); });
+  function ocrPage(i) {
+    setBusy("Mengenali teks hasil pindaian (OCR), halaman " + i + " dari " + n + "…", (i - 1) / n);
+    return pdf.getPage(i).then(function (pg) {
+      var vp1 = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: OCR_SCALE }), c = document.createElement("canvas");
+      c.width = Math.ceil(vp.width); c.height = Math.ceil(vp.height);
+      var ctx = c.getContext("2d"); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+      return pg.render({ canvasContext: ctx, viewport: vp }).promise.then(function () { return worker.recognize(c); }).then(function (res) {
+        var d = res.data || {}, items = [];
+        if (i > 1) push("\n\n");
+        if (typeof d.confidence === "number") confs.push(d.confidence);
+        (d.paragraphs || []).forEach(function (para, pi) {
+          if (pi) push("\n\n");
+          (para.lines || []).forEach(function (ln, li) {
+            if (li) push("\n");
+            (ln.words || []).forEach(function (wd, wi) {
+              var t = String(wd.text || "").normalize("NFKC"); if (!t) return;
+              if (wi) push(" ");
+              var b = wd.bbox || { x0: 0, y0: 0, x1: 0, y1: 0 };
+              items.push({ s: pos, e: pos + t.length, x: b.x0 / OCR_SCALE, y: b.y0 / OCR_SCALE, w: (b.x1 - b.x0) / OCR_SCALE, h: (b.y1 - b.y0) / OCR_SCALE });
+              push(t);
+            });
+          });
+        });
+        if (!items.length && d.text) push(String(d.text));
+        pages.push({ w: vp1.width, h: vp1.height, items: items });
+        c.width = c.height = 0;
+      });
+    });
+  }
+}
 function readFile(file) { return readFileFull(file).then(function (r) { return r.text; }); }
 var MAX_FILE_MB = 50;
 function readFileFull(file, onProgress) {
@@ -2816,9 +2939,9 @@ function loadMainFile(f) {
   setBusy("Membaca " + f.name + "…");
   readFileFull(f, function (i, n) { setBusy("Membaca halaman " + i + " dari " + n + "…", i / n); }).then(function (r) {
     setBusy(null);
-    S.doc = { name: f.name, size: f.size, pages: r.pages || null, layout: r.layout || null, pdfBuf: r.pdfBuf || null, hidden: r.hidden || [] };
+    S.doc = { name: f.name, size: f.size, pages: r.pages || null, layout: r.layout || null, pdfBuf: r.pdfBuf || null, hidden: r.hidden || [], ocr: r.ocr || null };
     if (/\.docx$/i.test(f.name)) f.arrayBuffer().then(docxHidden).then(function (h) { if (S.doc && S.doc.name === f.name) { S.doc.hidden = h; if (h.length) toast("Ditemukan teks tersembunyi di dokumen. Lihat menu Teks Tersembunyi & Typo."); } });
-    S.focusNo = 0; S.excluded.clear(); resetWeb(); setText(r.text); setMode("review"); toast(f.name + " dimuat" + (r.pages ? " (" + r.pages + " halaman)." : "."));
+    S.focusNo = 0; S.excluded.clear(); resetWeb(); setText(r.text); setMode("review"); toast(r.ocr ? f.name + ": teks hasil pindaian dikenali dengan OCR (" + r.ocr.pages + " halaman, keyakinan ±" + r.ocr.conf + "%). Periksa kemungkinan salah baca." : f.name + " dimuat" + (r.pages ? " (" + r.pages + " halaman)." : "."));
     if (autoWeb()) setTimeout(runWebSearch, 400);
     if ($("#bankAuto").checked) bankAdd([bankEntry(f.name, r.text, $("#clientName").value.trim())]).catch(function () {});
   }, function (err) { setBusy(null); toast(err.message); });
@@ -4204,7 +4327,7 @@ function renderAds() { ADS = []; mountAds($("#adHome"), 0); mountAds($("#adPanel
 var FAQ = [
   { c: "Umum", q: "Apa itu CekTeks?", k: "apa cekteks tentang fungsi kegunaan", a: "CekTeks memeriksa kesamaan naskah dengan sumber di internet, jurnal, repositori kampus, dan bank naskah Anda, lalu memperkirakan kemungkinan tulisan AI. Analisis berjalan di perangkat Anda dan hasilnya bisa diunduh sebagai laporan PDF." },
   { c: "Umum", q: "Bagaimana cara memeriksa naskah?", k: "cara cek periksa unggah upload mulai langkah pakai menggunakan", a: "Buka Cek Plagiasi & AI, lalu unggah PDF atau Word, atau tempel teks. Hasil langsung muncul. Tekan Cari untuk mencocokkan dengan sumber internet dan jurnal, lalu unduh laporan PDF.", go: ["#periksa", "Mulai periksa"] },
-  { c: "Umum", q: "Apakah CekTeks gratis?", k: "gratis bayar harga biaya tarif jasa berbayar langganan premium", a: "Semua fitur CekTeks gratis, tanpa akun dan tanpa langganan. Bila Anda ingin naskah diperiksakan oleh kami beserta laporannya, hubungi CS untuk layanan pemeriksaan berbayar." },
+  { c: "Umum", q: "Apakah CekTeks gratis?", k: "gratis bayar harga biaya tarif jasa berbayar langganan premium", a: "Semua fitur CekTeks gratis, tanpa akun dan tanpa langganan. Bila Anda ingin naskah diperiksakan oleh kami beserta laporannya, lihat paket di halaman Layanan & Harga.", go: ["#layanan", "Lihat layanan & harga"] },
   { c: "Hasil", q: "Kenapa skor saya berbeda dengan Turnitin atau situs lain?", k: "beda berbeda turnitin mulfu skor hasil lain selisih", a: "Setiap layanan memakai basis data dan aturan berbeda. Turnitin juga membandingkan dengan basis data tugas dan jurnal tertutup yang tidak terbuka untuk umum, sedangkan CekTeks memakai sumber terbuka dan bank naskah Anda. Pengaturan seperti mengabaikan daftar pustaka, kutipan, dan sumber kecil juga mengubah skor." },
   { c: "Hasil", q: "Kenapa kesamaan 0% padahal naskah panjang?", k: "nol 0 persen kosong tidak ada sumber rendah", a: "Pastikan cek internet sudah berjalan (tombol Cari) dan perangkat sedang online. Tanpa cek internet, naskah hanya dibandingkan dengan sumber di halaman Sumber dan bank naskah. Untuk naskah panjang, pilih kedalaman Mendalam.", go: ["#periksa", "Buka pemeriksaan"] },
   { c: "Hasil", q: "Seberapa akurat deteksi tulisan AI?", k: "ai akurat chatgpt gpt gemini deteksi buatan mesin", a: "Deteksi AI adalah perkiraan dari gaya tulisan, seperti keseragaman kalimat dan frasa khas AI. Tulisan manusia yang sangat formal bisa mendapat skor sedang, dan teks di bawah 80 kata kurang andal. Jangan jadikan skor AI satu-satunya dasar keputusan." },
@@ -4212,10 +4335,12 @@ var FAQ = [
   { c: "Hasil", q: "Bagaimana mengecualikan sumber tertentu?", k: "abaikan kecualikan exclude sumber sendiri repositori karya", a: "Tekan Abaikan pada sumber untuk pemeriksaan ini, atau Abaikan selalu di panel Bandingkan. Daftar pengecualian permanen, misalnya repositori kampus Anda sendiri, ada di halaman Sumber & Pengaturan.", go: ["#blockCard", "Atur pengecualian"] },
   { c: "Hasil", q: "Bagaimana memakai batas kesamaan kampus?", k: "batas kampus maksimal lolos syarat persen instansi", a: "Isi batas kesamaan (misalnya 25%) di halaman Sumber & Pengaturan. Hasil di layar, laporan PDF, dan pemeriksaan massal akan bertanda Lolos atau Belum lolos.", go: ["#sumber", "Buka pengaturan"] },
   { c: "Laporan", q: "Bagaimana memastikan laporan asli dan tidak diubah?", k: "laporan asli verifikasi qr palsu kode keaslian", a: "Setiap laporan PDF memuat kode verifikasi dan QR berisi sidik SHA-256 naskah. Pindai QR atau buka menu Verifikasi Laporan, lalu unggah naskahnya untuk memastikan naskah dan skor tidak diubah." },
-  { c: "Laporan", q: "Format berkas apa saja yang didukung?", k: "format pdf word docx doc berkas file odt pptx txt", a: "PDF, Word (.docx, dan .doc lama secara terbatas), OpenDocument (.odt), PowerPoint (.pptx), RTF, HTML, Markdown, dan teks biasa, hingga 50 MB. PDF hasil pindaian berupa gambar tidak bisa dibaca." },
+  { c: "Laporan", q: "Format berkas apa saja yang didukung?", k: "format pdf word docx doc berkas file odt pptx txt", a: "PDF, Word (.docx, dan .doc lama secara terbatas), OpenDocument (.odt), PowerPoint (.pptx), RTF, HTML, Markdown, dan teks biasa, hingga 50 MB. PDF hasil pindaian berupa gambar dibaca otomatis dengan OCR (perlu internet saat pertama kali)." },
   { c: "Privasi", q: "Apakah naskah saya disimpan atau dikirim ke server?", k: "privasi aman simpan server rahasia data bocor upload", a: "Tidak. Naskah diproses di perangkat Anda dan tidak diunggah ke server CekTeks. Saat cek internet berjalan, hanya potongan kalimat dan kata kunci yang dikirim ke mesin pencari yang Anda pilih.", go: ["#kebijakan", "Kebijakan Privasi"] },
   { c: "Aplikasi", q: "Apakah ada aplikasi Android atau Windows?", k: "aplikasi android apk windows mac macos linux iphone unduh install pasang hp laptop", a: "Ada, gratis: Android (APK), Windows, macOS, dan Linux. Tautan unduhan ada di Beranda. Di iPhone atau iPad, buka situs ini di Safari lalu pilih Bagikan, Tambahkan ke Layar Utama.", go: ["#appCard", "Unduh aplikasi"] },
   { c: "Aplikasi", q: "Apakah bisa dipakai tanpa internet?", k: "offline internet kuota sinyal", a: "Bisa. Setelah dibuka sekali, situs dan aplikasi tetap berjalan tanpa internet, kecuali fitur Cek di internet." },
+  { c: "Fitur", q: "Bisakah memeriksa PDF hasil scan atau foto?", k: "scan pindai pindaian foto gambar ocr kamera", a: "Bisa. PDF hasil pindaian dikenali teksnya otomatis dengan OCR di perangkat Anda, lalu diperiksa seperti biasa. OCR perlu internet saat pertama kali dipakai. Hasil OCR bisa salah baca bila pindaian buram, jadi periksa teksnya.", go: ["#periksa", "Unggah PDF"] },
+  { c: "Fitur", q: "Bagaimana mengecek referensi palsu buatan AI?", k: "referensi palsu halusinasi daftar pustaka doi fiktif asli", a: "Buka kartu Sitasi & daftar pustaka di panel hasil, lalu tekan Periksa keaslian referensi. Setiap entri dicari di Crossref dan OpenAlex. DOI yang tidak terdaftar, DOI milik karya lain, dan referensi yang tidak ditemukan diberi tanda. Buku dan jurnal lokal kadang tidak terdaftar, jadi periksa manual.", go: ["#periksa", "Buka pemeriksaan"] },
   { c: "Fitur", q: "Bisakah memeriksa kode program?", k: "kode program python java coding script source c++ javascript php", a: "Bisa. Cek Plagiasi Kode Program mendukung Python, Java, C/C++, JavaScript, PHP, dan lainnya. Salinan tetap terdeteksi walau nama variabel atau komentar diganti.", go: ["#kode", "Cek kode program"] },
   { c: "Fitur", q: "Bisakah memeriksa banyak naskah sekaligus?", k: "banyak massal sekaligus kelas dosen batch zip", a: "Bisa. Periksa Banyak Dokumen memeriksa puluhan naskah sekaligus, membandingkan naskah-naskah itu satu sama lain, dan mengunduh semua laporan dalam satu ZIP.", go: ["#massal", "Buka pemeriksaan massal"] },
   { c: "Lainnya", q: "Bagaimana cara memasang iklan di CekTeks?", k: "iklan pasang promosi sponsor kerja sama", a: "Hubungi CS lewat WhatsApp atau email untuk menanyakan slot iklan yang tersedia." }
@@ -4357,16 +4482,83 @@ function ownerFill() {
   var bn = SITE.iklan.aktif ? bannerItems() : (src.banner || []);
   $("#oTicker").value = tk.map(function (x) { return x.teks + (x.tautan ? " | " + x.tautan : ""); }).join("\n");
   $("#oBanner").value = bn.map(function (x) { return typeof x === "string" ? x : [x.label || "", x.judul || "", x.teks || "", x.tombol || "", x.tautan || ""].concat(x.gambar ? [x.gambar] : []).join(" | "); }).join("\n");
+  var L = lyCfg(); $("#oLyOn").checked = L.aktif;
+  $("#oPaket").value = L.paket.map(function (x) { return [x.nama, x.harga, x.satuan, x.fitur.join("; "), x.unggulan ? "ya" : ""].join(" | "); }).join("\n");
   $("#oReset").hidden = !SITE.preview;
 }
 function ownerCfg() {
   var lines = function (v) { return v.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean); };
   return { warna: $("#oWarna").value, cs: { nama: $("#oNama").value.trim() || "CS CekTeks", whatsapp: $("#oWa").value.replace(/[^\d]/g, ""), email: $("#oEmail").value.trim(), jam: $("#oJam").value.trim(), sapaan: $("#oSapa").value.trim() || SITE_DEF.cs.sapaan },
+    layanan: { aktif: $("#oLyOn").checked, judul: lyCfg().judul, catatan: lyCfg().catatan,
+      paket: lines($("#oPaket").value).map(function (l) { var p = splitBar(l); return { nama: p[0] || "", harga: p[1] || "", satuan: p[2] || "", fitur: (p[3] || "").split(";").map(function (f) { return f.trim(); }).filter(Boolean), unggulan: /^(ya|y|true|1)$/i.test(p[4] || "") }; }).filter(function (x) { return x.nama; }) },
     iklan: { aktif: $("#oAds").checked,
       teks_berjalan: lines($("#oTicker").value).map(function (l) { var p = splitBar(l); return { teks: p[0], tautan: p[1] || "" }; }),
       banner: lines($("#oBanner").value).map(function (l) { var p = splitBar(l), o = { label: p[0] || "Info", judul: p[1] || "", teks: p[2] || "", tombol: p[3] || "", tautan: p[4] || "" }; if (p[5]) o.gambar = p[5]; return o; }) } };
 }
-function applySite() { SITE = siteCfg(); applyTheme(); renderAds(); renderCS(); renderContact(); }
+
+/* ---- layanan & harga, formulir pesanan lewat WhatsApp ---- */
+function lyCfg() {
+  var base = (window.CEKTEKS_SITE || {}).layanan, prev = null;
+  try { prev = JSON.parse(store("ct_site_preview") || "null"); } catch (e) {}
+  var c = prev && prev.layanan ? prev.layanan : base || { aktif: false, paket: [] };
+  return { aktif: c.aktif !== false, judul: String(c.judul || "Layanan pemeriksaan naskah"), catatan: String(c.catatan || ""),
+    paket: (Array.isArray(c.paket) ? c.paket : []).map(function (x) {
+      if (typeof x === "string") { var p = splitBar(x); x = { nama: p[0], harga: p[1], satuan: p[2], fitur: (p[3] || "").split(";"), unggulan: /^(ya|y|true|1)$/i.test(p[4] || "") }; }
+      return { nama: String(x.nama || "").trim(), harga: String(x.harga == null ? "" : x.harga).trim(), satuan: String(x.satuan || "").trim(), fitur: (x.fitur || []).map(function (f) { return String(f).trim(); }).filter(Boolean), unggulan: !!x.unggulan };
+    }).filter(function (x) { return x.nama; }) };
+}
+function rupiah(h) { return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(+String(h).replace(/\./g, "")); }
+function lyPrice(p) {
+  if (!p.harga) return '<div class="price ask">Tanya harga</div>';
+  var h = /^\d+$/.test(p.harga.replace(/\./g, "")) ? rupiah(p.harga) : p.harga;
+  return '<div class="price">' + esc(h) + (p.satuan ? "<small>" + esc(p.satuan) + "</small>" : "") + "</div>";
+}
+function renderLayanan() {
+  var L = lyCfg(), on = L.aktif && L.paket.length;
+  $("#tab-layanan").hidden = !on;
+  if (!on) { $("#lyPaket").innerHTML = ""; return; }
+  $("#lyTitle").textContent = L.judul; $("#lyNote").textContent = L.catatan; $("#lyNote").hidden = !L.catatan;
+  $("#lyPaket").innerHTML = L.paket.map(function (p, i) {
+    return '<div class="plan' + (p.unggulan ? " top" : "") + '">' + (p.unggulan ? '<span class="plan-badge">Paling dipilih</span>' : "") + "<h2>" + esc(p.nama) + "</h2>" + lyPrice(p) +
+      "<ul>" + p.fitur.map(function (f) { return "<li><span>" + esc(f) + "</span></li>"; }).join("") + "</ul>" +
+      '<button type="button" class="btn' + (p.unggulan ? " primary" : "") + '" data-pkg="' + i + '">Pilih paket</button></div>';
+  }).join("");
+  var cur = $("#lyPkg").value;
+  $("#lyPkg").innerHTML = L.paket.map(function (p, i) { return '<option value="' + i + '">' + esc(p.nama) + (p.harga ? " · " + esc(/^\d+$/.test(p.harga.replace(/\./g, "")) ? rupiah(p.harga) : p.harga) : "") + "</option>"; }).join("");
+  if (cur && +cur < L.paket.length) $("#lyPkg").value = cur; else { var u = L.paket.findIndex(function (p) { return p.unggulan; }); $("#lyPkg").value = String(Math.max(0, u)); }
+  lySend();
+}
+function lyMsg() {
+  var L = lyCfg(), p = L.paket[+$("#lyPkg").value] || L.paket[0] || { nama: "" }, v = function (id) { return $(id).value.trim(); };
+  var lines = ["Halo " + SITE.cs.nama + ", saya ingin memesan layanan pemeriksaan naskah.", "", "• Paket: " + p.nama + (p.harga ? " (" + (/^\d+$/.test(p.harga.replace(/\./g, "")) ? rupiah(p.harga) : p.harga) + (p.satuan ? " " + p.satuan : "") + ")" : ""), "• Nama: " + (v("#lyNama") || "-")];
+  if (v("#lyHal")) lines.push("• Jumlah halaman/naskah: " + v("#lyHal"));
+  lines.push("• Tenggat: " + v("#lyDl"));
+  if (v("#lyKampus")) lines.push("• Kampus/instansi: " + v("#lyKampus"));
+  if (v("#lyNote2")) lines.push("• Catatan: " + v("#lyNote2"));
+  lines.push("", "Naskah akan saya kirim setelah dibalas. Terima kasih.");
+  return lines.join("\n");
+}
+function lySend() {
+  var wa = waNum(), ml = mailLink(), h = "";
+  if (wa) h += '<button type="submit" class="btn wa" data-via="wa">' + WA_IC + "Kirim lewat WhatsApp</button>";
+  if (ml) h += '<button type="submit" class="btn" data-via="mail">' + MAIL_IC + "Kirim lewat email</button>";
+  $("#lySend").innerHTML = h || '<p class="hint" style="margin:0">Kontak CS belum diatur oleh pemilik situs.</p>';
+}
+$("#lyPaket").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-pkg]"); if (!b) return;
+  $("#lyPkg").value = b.dataset.pkg; $("#pesan").scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(function () { $("#lyNama").focus({ preventScroll: true }); }, 350);
+});
+$("#lyForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var via = (e.submitter && e.submitter.dataset.via) || (waNum() ? "wa" : "mail");
+  if (!$("#lyNama").value.trim()) { toast("Isi nama Anda dulu."); return $("#lyNama").focus(); }
+  if (!$("#lyAgree").checked) { toast("Centang persetujuan Syarat & Ketentuan dulu."); return $("#lyAgree").focus(); }
+  var msg = lyMsg(), url = via === "wa" ? waLink(msg) : mailLink(msg).replace("Pertanyaan%20tentang%20CekTeks", "Pesanan%20layanan%20CekTeks");
+  if (!url) return toast("Kontak CS belum diatur.");
+  if (via === "wa") window.open(url, "_blank", "noopener"); else location.href = url;
+  toast("Pesanan dibuka di " + (via === "wa" ? "WhatsApp" : "aplikasi email") + ". Tekan kirim di sana.");
+});
+function applySite() { SITE = siteCfg(); applyTheme(); renderAds(); renderCS(); renderContact(); renderLayanan(); }
 $("#oPreview").onclick = function () { store("ct_site_preview", JSON.stringify(ownerCfg())); storeDel("ct_accent"); applySite(); ownerFill(); toast("Pratinjau diterapkan di perangkat ini saja. Salin site.json untuk menerbitkannya."); };
 $("#oReset").onclick = function () { storeDel("ct_site_preview"); applySite(); ownerFill(); toast("Pratinjau dihapus. Kembali ke pengaturan situs."); };
 $("#oCopy").onclick = function () {
@@ -4375,7 +4567,7 @@ $("#oCopy").onclick = function () {
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function () { fallbackCopy(txt); done(); }); else { fallbackCopy(txt); done(); }
 };
 function fallbackCopy(t) { var a = document.createElement("textarea"); a.value = t; a.style.position = "fixed"; a.style.opacity = "0"; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (e) {} a.remove(); }
-ownerFill(); renderFaq(); renderContact(); renderCS(); renderAds();
+ownerFill(); renderFaq(); renderContact(); renderCS(); renderAds(); renderLayanan();
 $("#hlPlag").onclick = function () { setHL("plag"); };
 $("#hlAi").onclick = function () { setHL("ai"); };
 var MOBILE = window.matchMedia ? matchMedia("(max-width: 1000px)") : { matches: false };
@@ -4919,7 +5111,7 @@ function analyzeCitations(text, p) {
     var startRe = new RegExp("^(\\[\\d+\\]|\\d{1,3}\\.)\\s+|^" + NAME + "(?:\\s" + NAME + ")?,\\s");
     lines.forEach(function (ln) {
       var t = ln.trim(); if (!t) return;
-      var isStart = startRe.test(t) || (cur && /\.\s*$/.test(cur.text) && /(19|20)\d{2}/.test(cur.text) && /^[A-Z]/.test(t) && /(19|20)\d{2}/.test(t.slice(0, 150)));
+      var isStart = startRe.test(t) || (cur && /(\.|https?:\/\/\S+|\b10\.\d{4,9}\/\S+)\s*$/.test(cur.text) && /(19|20)\d{2}/.test(cur.text) && /^[A-Z]/.test(t) && /(19|20)\d{2}/.test(t.slice(0, 150)));
       if (isStart || !cur) { cur = { text: t }; entries.push(cur); } else cur.text += " " + t;
     });
     entries.forEach(function (e) {
@@ -4949,7 +5141,7 @@ function analyzeCitations(text, p) {
       if (citedSent.has(i) || citedSent.has(i + 1)) { citedMatches++; mt.cited = true; return; }
     }
   });
-  return { count: cites.length, unique: Object.keys(uniq).length + (nums.length ? new Set(nums).size : 0), numeric: nums.length, entries: entries.length, bibFound: bib >= 0,
+  return { count: cites.length, unique: Object.keys(uniq).length + (nums.length ? new Set(nums).size : 0), numeric: nums.length, entries: entries.length, bibFound: bib >= 0, list: entries.map(function (e) { return { text: e.text, year: e.year, name: e.name, label: e.label }; }),
     missing: missing, uncited: uncited, citedMatches: citedMatches, totalMatches: p.matches.length };
 }
 function renderCite() {
@@ -4966,9 +5158,96 @@ function renderCite() {
   if (c.missing.length) html += '<div class="eyebrow">Dikutip tetapi mungkin tidak ada di daftar pustaka</div><div class="chips">' + c.missing.slice(0, 30).map(function (x) { return '<span class="chip warnchip">' + esc(x) + "</span>"; }).join("") + "</div>";
   if (c.uncited.length) html += '<div class="eyebrow">Ada di daftar pustaka tetapi tidak dikutip</div><ul class="uncited">' + c.uncited.slice(0, 20).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
   if (c.numeric) html += '<p class="hint">Sitasi bernomor seperti [1] terhitung ' + fmtNum(c.numeric) + " kali.</p>";
+  if (c.list.length) html += refVerHtml(c.list);
   if (!c.count && !c.entries) html += '<p class="hint">Sitasi dikenali dari pola seperti (Tomasi, 2004), Kennedy &amp; Davis (1992), atau [1]. Daftar pustaka dikenali dari judul DAFTAR PUSTAKA atau REFERENSI.</p>';
   body.innerHTML = html;
 }
+
+/* ---- keaslian daftar pustaka: setiap referensi dicari di Crossref & OpenAlex ---- */
+// Referensi buatan AI sering tampak meyakinkan tetapi tidak pernah terbit, atau DOI-nya milik karya lain.
+var REFV = new Map(), REFV_RUN = false, REFV_MAX = 80;
+function refTok(x) { return String(x || "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).filter(function (w) { return w.length > 3 && !STOPWORDS.has(w); }); }
+// Perkiraan judul di entri: teks sesudah "(2019)." sampai titik berikutnya (gaya APA/Harvard).
+function refTitleGuess(entry) { var m = /\(?(?:19|20)\d{2}[a-z]?\)?\.?\s+(.+?)[.?!](?:\s|$)/.exec(entry); return m && m[1].length > 12 ? m[1] : ""; }
+// Kecocokan judul dua arah: kata judul kandidat yang ada di entri, dan kata judul entri yang ada di kandidat.
+function titleCover(title, entry) {
+  var t = refTok(title); if (t.length < 2) return 0;
+  var e = new Set(refTok(entry)), hit = t.filter(function (w) { return e.has(w); }).length, c = hit / t.length;
+  var g = refTok(refTitleGuess(entry));
+  if (g.length >= 3) { var ts = new Set(t); c = Math.min(c, g.filter(function (w) { return ts.has(w); }).length / g.length); }
+  return c;
+}
+function refCand(e, list) {
+  // Pilih kandidat dengan judul paling banyak tercantum di entri, lalu cek tahun dan nama penulis.
+  var best = null, low = e.text.toLowerCase();
+  list.forEach(function (w) {
+    var x = Object.assign({ c: titleCover(w.title, e.text) }, w);
+    x.yearOk = !!(e.year && x.year && Math.abs(+e.year - +x.year) <= 1);
+    x.authOk = x.authors.some(function (a) { return a && a.length > 2 && low.indexOf(a.toLowerCase()) >= 0; });
+    x.rank = x.c + (x.c >= 0.5 ? (x.yearOk ? 0.3 : 0) + (x.authOk ? 0.2 : 0) : 0);
+    if (!best || x.rank > best.rank) best = x;
+  });
+  return best;
+}
+function verifyRef(e) {
+  var doi = /\b(10\.\d{4,9}\/[^\s"<>]+)/.exec(e.text);
+  if (doi) {
+    var d = doi[1].replace(/[.,;)\]]+$/, "");
+    return fetchJSON("https://api.crossref.org/works/" + encodeURIComponent(d), 15000).then(function (x) {
+      var m = x.message || {}, t = (m.title || [])[0] || "", c = titleCover(t, e.text);
+      return c >= 0.6 ? { st: "ok", why: "DOI terdaftar dan judulnya cocok", doi: d, title: t }
+        : { st: "bad", why: "DOI ini terdaftar untuk karya lain: “" + t + "”", doi: d, title: t };
+    }, function (err) { return /HTTP 404/.test(err.message) ? { st: "bad", why: "DOI " + d + " tidak terdaftar di Crossref" } : { st: "err", why: "Gagal memeriksa: " + err.message }; });
+  }
+  if (/https?:\/\//i.test(e.text) && !/(jurnal|journal|vol\.|volume|proceeding|prosiding)/i.test(e.text)) return Promise.resolve({ st: "skip", why: "Sumber situs web: buka tautannya untuk memastikan halaman masih ada" });
+  var q = e.text.replace(/https?:\/\/\S+/g, "").slice(0, 300);
+  return fetchJSON("https://api.crossref.org/works?rows=5&select=DOI,title,author,issued&query.bibliographic=" + encodeURIComponent(q), 15000).then(function (x) {
+    return ((x.message && x.message.items) || []).map(function (w) { return { title: (w.title || [])[0] || "", year: ((w.issued || {})["date-parts"] || [[]])[0][0] || "", authors: (w.author || []).map(function (a) { return a.family || ""; }), doi: w.DOI, via: "Crossref" }; });
+  }, function () { return []; }).then(function (list) {
+    var b = refCand(e, list);
+    if (b && b.c >= 0.75 && b.yearOk) return b;
+    return fetchJSON("https://api.openalex.org/works?per-page=5&select=doi,title,publication_year,authorships&search=" + encodeURIComponent((refTitleGuess(e.text) || q).replace(/[^\w\sÀ-ɏ]/g, " ").replace(/\s+/g, " ").slice(0, 220)) + (store("ct_oakey") ? "&api_key=" + encodeURIComponent(store("ct_oakey")) : ""), 15000).then(function (x) {
+      var b2 = refCand(e, (x.results || []).map(function (w) { return { title: w.title || "", year: w.publication_year || "", authors: (w.authorships || []).map(function (a) { var n = (a.author && a.author.display_name) || ""; return n.split(" ").pop(); }), doi: (w.doi || "").replace(/^https:\/\/doi\.org\//, ""), via: "OpenAlex" }; }));
+      return b2 && (!b || b2.rank > b.rank) ? b2 : b;
+    }, function () { return b; });
+  }).then(function (b) {
+    if (b && b.c >= 0.75 && (b.yearOk || b.authOk)) return { st: "ok", why: "Ditemukan di " + b.via + (b.yearOk ? "" : " (tahun berbeda: " + b.year + ")"), doi: b.doi, title: b.title };
+    if (b && b.c >= 0.75) return { st: "warn", why: "Judul ditemukan di " + b.via + ", tetapi penulis dan tahunnya berbeda (" + b.year + "). Periksa kembali.", doi: b.doi, title: b.title };
+    if (b && b.c >= 0.5) return { st: "warn", why: "Hanya ditemukan judul yang mirip: “" + b.title + "”. Periksa kembali.", doi: b.doi, title: b.title };
+    return { st: "nf", why: "Tidak ditemukan di Crossref maupun OpenAlex. Buku, laporan, skripsi, dan jurnal lokal sering tidak terdaftar, jadi periksa manual. Bila referensi ini dibuat oleh AI, kemungkinan karyanya tidak pernah ada." };
+  });
+}
+var REFV_LBL = { ok: ["Terverifikasi", "ok"], warn: ["Periksa", "warn"], bad: ["Bermasalah", "bad"], nf: ["Tidak ditemukan", "nf"], skip: ["Situs web", "skip"], err: ["Gagal", "skip"] };
+function refVerHtml(list) {
+  var done = list.filter(function (e) { return REFV.has(e.text); }), cnt = { ok: 0, warn: 0, bad: 0, nf: 0 };
+  done.forEach(function (e) { var r = REFV.get(e.text); if (cnt[r.st] != null) cnt[r.st]++; });
+  var h = '<div class="refver"><div class="eyebrow">Keaslian daftar pustaka</div>';
+  if (!done.length) h += '<p class="hint">Periksa apakah setiap referensi benar-benar terbit: dicari di Crossref dan OpenAlex (lebih dari 250 juta karya ilmiah). Referensi buatan AI sering tampak meyakinkan tetapi tidak pernah ada, atau DOI-nya milik karya lain.</p>';
+  else h += '<div class="refsum"><span class="rv ok">' + cnt.ok + " terverifikasi</span><span class=\"rv warn\">" + cnt.warn + " perlu dicek</span><span class=\"rv bad\">" + cnt.bad + " bermasalah</span><span class=\"rv nf\">" + cnt.nf + " tidak ditemukan</span></div>";
+  h += '<button type="button" class="btn sm" id="refVerBtn"' + (REFV_RUN ? " disabled" : "") + ">" + (REFV_RUN ? "Memeriksa " + done.length + " dari " + Math.min(list.length, REFV_MAX) + "…" : done.length ? "Periksa ulang" : "Periksa keaslian " + Math.min(list.length, REFV_MAX) + " referensi") + "</button>";
+  if (done.length) h += '<ul class="reflist">' + done.map(function (e) {
+    var r = REFV.get(e.text), l = REFV_LBL[r.st];
+    return '<li><span class="rv ' + l[1] + '">' + l[0] + "</span><div><span>" + esc(e.label) + "</span><small>" + esc(r.why) + (r.doi ? ' · <a href="https://doi.org/' + esc(r.doi) + '" target="_blank" rel="noopener">doi.org/' + esc(r.doi) + "</a>" : "") + "</small></div></li>";
+  }).join("") + "</ul>";
+  return h + "</div>";
+}
+function runRefVerify() {
+  var c = S.cite; if (!c || !c.list.length || REFV_RUN) return;
+  if (navigator.onLine === false) return toast("Pemeriksaan keaslian referensi perlu internet.");
+  REFV.clear(); REFV_RUN = true; renderCite();
+  var list = c.list.slice(0, REFV_MAX), i = 0;
+  function next() {
+    if (i >= list.length) return Promise.resolve();
+    var e = list[i++];
+    return verifyRef(e).then(function (r) { REFV.set(e.text, r); }, function (err) { REFV.set(e.text, { st: "err", why: "Gagal memeriksa: " + err.message }); }).then(function () { renderCite(); return next(); });
+  }
+  Promise.all([next(), next(), next()]).then(function () {
+    REFV_RUN = false; renderCite();
+    var bad = 0; REFV.forEach(function (r) { if (r.st === "bad" || r.st === "nf") bad++; });
+    toast(bad ? bad + " referensi tidak ditemukan atau bermasalah. Lihat kartu Sitasi & daftar pustaka." : "Pemeriksaan referensi selesai.");
+  });
+}
+document.addEventListener("click", function (e) { if (e.target.closest("#refVerBtn")) runRefVerify(); });
 
 /* ---- keterbacaan ---- */
 function analyzeReadability(text, bibStart, bibEnd) {
@@ -5083,6 +5362,7 @@ function filterList() {
   if ($("#fQuote").checked) f.push("Abaikan teks kutipan");
   var m = +$("#fMin").value; if (m) f.push("Abaikan kecocokan kurang dari " + m + " kata");
   var sc = +$("#fSmall").value; if (sc) f.push("Abaikan sumber dengan kesamaan di bawah " + sc + "%" + (S.plag.smallExcluded ? " (" + S.plag.smallExcluded + " sumber diabaikan)" : ""));
+  if (S.doc && S.doc.ocr) f.push("Teks dikenali dengan OCR dari PDF hasil pindaian (" + S.doc.ocr.pages + " halaman, keyakinan rata-rata " + S.doc.ocr.conf + "%)");
   f.push("Panjang n-gram " + S.plag.ngram + " kata");
   f.push("Sumber: " + S.plag.source_count + " dokumen (" + S.webSources.length + " dari internet)");
   if (S.excluded.size) f.push("Sumber diabaikan: " + Array.from(S.excluded.values()).join("; "));

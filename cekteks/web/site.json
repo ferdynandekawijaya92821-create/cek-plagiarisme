@@ -1,5 +1,5 @@
 {
-  "_petunjuk": "Pengaturan situs CekTeks. Ubah berkas ini lewat GitHub (ikon pensil), lalu Commit. Situs diperbarui otomatis dalam 1-2 menit. Pilihan warna: teal, biru, ungu, hijau, marun, oranye, grafit. Nomor WhatsApp ditulis dengan kode negara, mis. 6281234567890. Tautan bisa alamat web (https://...), halaman CekTeks (#kode, #massal, #bantuan), atau 'cs' untuk membuka chat CS.",
+  "_petunjuk": "Pengaturan situs CekTeks. Ubah berkas ini lewat GitHub (ikon pensil), lalu Commit. Situs diperbarui otomatis dalam 1-2 menit. Pilihan warna: teal, biru, ungu, hijau, marun, oranye, grafit. Nomor WhatsApp ditulis dengan kode negara, mis. 6281234567890. Tautan bisa alamat web (https://...), halaman CekTeks (#kode, #massal, #bantuan), atau 'cs' untuk membuka chat CS. Paket layanan: harga boleh dikosongkan (tampil 'Tanya harga'); 'unggulan': true menandai paket yang disarankan.",
   "warna": "biru",
   "cs": {
     "nama": "CS CekTeks",
@@ -8,20 +8,111 @@
     "jam": "Setiap hari, 08.00–21.00 WIB",
     "sapaan": "Halo! 👋 Saya asisten CekTeks. Pilih pertanyaan di bawah atau ketik pertanyaan Anda."
   },
+  "layanan": {
+    "aktif": true,
+    "judul": "Layanan pemeriksaan naskah",
+    "catatan": "Naskah dijaga kerahasiaannya dan tidak disimpan ke bank naskah tanpa izin Anda. Setiap laporan memuat kode verifikasi dan QR.",
+    "paket": [
+      {
+        "nama": "Cek Plagiasi",
+        "harga": "",
+        "satuan": "per dokumen",
+        "fitur": [
+          "Indeks kesamaan dan daftar sumber",
+          "Naskah bersorot di laporan PDF",
+          "Kode verifikasi dan QR"
+        ],
+        "unggulan": false
+      },
+      {
+        "nama": "Cek Plagiasi + AI",
+        "harga": "",
+        "satuan": "per dokumen",
+        "fitur": [
+          "Semua isi paket Cek Plagiasi",
+          "Analisis kemungkinan tulisan AI per bagian",
+          "Cek keaslian daftar pustaka",
+          "Konsultasi hasil lewat WhatsApp"
+        ],
+        "unggulan": true
+      },
+      {
+        "nama": "Cek Kode Program",
+        "harga": "",
+        "satuan": "per tugas",
+        "fitur": [
+          "Python, Java, C/C++, JavaScript, PHP, dan lainnya",
+          "Tetap terdeteksi walau nama variabel diganti",
+          "Tampilan berdampingan ala VS Code"
+        ],
+        "unggulan": false
+      },
+      {
+        "nama": "Paket Kelas / Dosen",
+        "harga": "",
+        "satuan": "per kelas",
+        "fitur": [
+          "Puluhan naskah sekaligus",
+          "Naskah saling dibandingkan",
+          "Semua laporan dalam satu ZIP dan rekap Excel"
+        ],
+        "unggulan": false
+      }
+    ]
+  },
   "iklan": {
     "aktif": true,
     "teks_berjalan": [
-      { "teks": "Baru: pilih warna tema, chat CS, dan pusat Bantuan.", "tautan": "#bantuan" },
-      { "teks": "Cek plagiasi kode program Python, Java, C/C++, dan JavaScript dengan tampilan ala VS Code.", "tautan": "#kode" },
-      { "teks": "Aplikasi CekTeks untuk Android, Windows, macOS, dan Linux, gratis dan bisa offline.", "tautan": "#beranda" },
-      { "teks": "Butuh pemeriksaan naskah dengan laporan resmi? Chat CS kami.", "tautan": "cs" },
-      { "teks": "Naskah diproses di perangkat Anda dan tidak dikirim ke server.", "tautan": "#bantuan" }
+      {
+        "teks": "Baru: pilih warna tema, chat CS, dan pusat Bantuan.",
+        "tautan": "#bantuan"
+      },
+      {
+        "teks": "Cek plagiasi kode program Python, Java, C/C++, dan JavaScript dengan tampilan ala VS Code.",
+        "tautan": "#kode"
+      },
+      {
+        "teks": "Aplikasi CekTeks untuk Android, Windows, macOS, dan Linux, gratis dan bisa offline.",
+        "tautan": "#beranda"
+      },
+      {
+        "teks": "Butuh pemeriksaan naskah dengan laporan resmi? Chat CS kami.",
+        "tautan": "#layanan"
+      },
+      {
+        "teks": "Naskah diproses di perangkat Anda dan tidak dikirim ke server.",
+        "tautan": "#bantuan"
+      }
     ],
     "banner": [
-      { "label": "Layanan", "judul": "Jasa cek plagiasi & AI", "teks": "Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR. Hasil cepat, naskah dijaga kerahasiaannya.", "tombol": "Chat CS", "tautan": "cs" },
-      { "label": "Fitur", "judul": "Cek plagiasi kode program", "teks": "Tetap terdeteksi walau nama variabel diganti. Unggah ZIP berisi folder per mahasiswa.", "tombol": "Coba sekarang", "tautan": "#kode" },
-      { "label": "Fitur", "judul": "Periksa puluhan naskah sekaligus", "teks": "Naskah saling dibandingkan, laporan PDF semuanya diunduh dalam satu ZIP.", "tombol": "Buka", "tautan": "#massal" },
-      { "label": "Iklan", "judul": "Pasang iklan Anda di sini", "teks": "Jangkau mahasiswa dan dosen yang memakai CekTeks setiap hari.", "tombol": "Hubungi kami", "tautan": "cs" }
+      {
+        "label": "Layanan",
+        "judul": "Jasa cek plagiasi & AI",
+        "teks": "Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR. Hasil cepat, naskah dijaga kerahasiaannya.",
+        "tombol": "Lihat paket",
+        "tautan": "#layanan"
+      },
+      {
+        "label": "Fitur",
+        "judul": "Cek plagiasi kode program",
+        "teks": "Tetap terdeteksi walau nama variabel diganti. Unggah ZIP berisi folder per mahasiswa.",
+        "tombol": "Coba sekarang",
+        "tautan": "#kode"
+      },
+      {
+        "label": "Fitur",
+        "judul": "Periksa puluhan naskah sekaligus",
+        "teks": "Naskah saling dibandingkan, laporan PDF semuanya diunduh dalam satu ZIP.",
+        "tombol": "Buka",
+        "tautan": "#massal"
+      },
+      {
+        "label": "Iklan",
+        "judul": "Pasang iklan Anda di sini",
+        "teks": "Jangkau mahasiswa dan dosen yang memakai CekTeks setiap hari.",
+        "tombol": "Hubungi kami",
+        "tautan": "cs"
+      }
     ]
   }
 }
