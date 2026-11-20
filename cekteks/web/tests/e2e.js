@@ -23,7 +23,7 @@ async function test(name, fn) {
 function ok(cond, msg) { if (!cond) throw new Error(msg); }
 
 function serve(dir) {
-  const types = { ".html": "text/html", ".js": "application/javascript", ".png": "image/png", ".svg": "image/svg+xml", ".webmanifest": "application/manifest+json", ".xml": "application/xml", ".txt": "text/plain" };
+  const types = { ".html": "text/html", ".js": "application/javascript", ".mjs": "text/javascript", ".png": "image/png", ".svg": "image/svg+xml", ".webmanifest": "application/manifest+json", ".xml": "application/xml", ".txt": "text/plain" };
   const srv = http.createServer((req, res) => {
     let f = path.join(dir, decodeURIComponent(req.url.split("?")[0]));
     if (!f.startsWith(dir)) { res.writeHead(403); return res.end(); }
@@ -39,6 +39,8 @@ async function newPage(browser, opts) {
   const page = await ctx.newPage();
   page.errors = [];
   page.on("pageerror", (e) => page.errors.push(e.message));
+  // Pelanggaran CSP (skrip/koneksi diblokir) dicatat sebagai galat agar ketahuan di uji.
+  page.on("console", (m) => { if (m.type() === "error" && /Content Security Policy/i.test(m.text())) page.errors.push("CSP: " + m.text().slice(0, 200)); });
   return { ctx, page };
 }
 // Daftar sumber cek internet ada di panel yang bisa dilipat; centang diatur langsung.
@@ -800,6 +802,29 @@ async function download(page, selector) {
       ok(u.startsWith("https://wa.me/6281234567890?text=") && u.includes("Paket: Cek Kode Program") && u.includes("Nama: Budi Santoso") && u.includes("halaman/naskah: 12"), "pesan WhatsApp salah: " + u);
       await p3.evaluate(() => { SITE = siteCfg(); renderLayanan(); });
     });
+    await test("keamanan: CSP menolak skrip sisipan (XSS), bom ZIP ditolak, tidak bisa dibingkai situs lain", async () => {
+      const csp = await p3.evaluate(() => (document.querySelector('meta[http-equiv="Content-Security-Policy"]') || {}).content || "");
+      ok(/script-src 'self' 'sha256-/.test(csp) && /object-src 'none'/.test(csp) && /base-uri 'none'/.test(csp) && !/unsafe-inline'[^;]*;\s*worker/.test(csp.split("style-src")[0]), "CSP tidak lengkap: " + csp.slice(0, 120));
+      const xss = await p3.evaluate(() => new Promise((res) => {
+        const s = document.createElement("script"); s.textContent = "window.__pwned = 1"; document.body.appendChild(s);
+        const i = document.createElement("img"); i.setAttribute("onerror", "window.__pwned2 = 1"); i.src = "data:,x"; document.body.appendChild(i);
+        setTimeout(() => res([window.__pwned, window.__pwned2]), 300);
+      }));
+      ok(!xss[0] && !xss[1], "skrip sisipan tetap berjalan: " + xss);
+      const bomb = await p3.evaluate(async () => {
+        await need("JSZip", "https://cdn.jsdelivr.net/npm/jszip@3.10.2/dist/jszip.min.js");
+        const z = new JSZip(); z.file("isi.txt", "0".repeat(3 * 1048576));
+        const buf = await z.generateAsync({ type: "arraybuffer", compression: "DEFLATE" });
+        const keep = ZIP_MAX_BYTES; ZIP_MAX_BYTES = 1048576;
+        try { await zipLoad(buf); return ["lolos", buf.byteLength]; } catch (e) { return [e.message, buf.byteLength]; } finally { ZIP_MAX_BYTES = keep; }
+      });
+      ok(/membengkak/.test(bomb[0]) && bomb[1] < 100000, "bom ZIP tidak ditolak: " + bomb);
+      const { ctx: c4, page: p4 } = await newPage(browser);
+      await p4.setContent('<iframe id="f" src="' + SITE + '" width="800" height="600"></iframe>');
+      const fr = await (await p4.$("#f")).contentFrame(); await fr.waitForFunction(() => document.querySelector(".framed-msg"), null, { timeout: 15000 });
+      ok(await fr.evaluate(() => document.documentElement.classList.contains("framed") && getComputedStyle(document.querySelector("main")).display === "none"), "CekTeks tetap tampil di dalam bingkai situs lain");
+      await c4.close();
+    });
     await c3.close();
   }
 
@@ -831,7 +856,7 @@ async function download(page, selector) {
         }
         if (panes[0]) await p.evaluate(() => setPane("doc"));
         if (AXE) {
-          await p.addScriptTag({ path: AXE });
+          await p.evaluate(fs.readFileSync(AXE, "utf8"));
           const r = await p.evaluate(() => axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "best-practice"] } }));
           ok(!r.violations.length, v + ": " + r.violations.map((x) => x.id + " (" + x.nodes[0].target.join(" ") + ")").join(", "));
         }

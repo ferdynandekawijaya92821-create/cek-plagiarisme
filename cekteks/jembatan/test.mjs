@@ -10,6 +10,9 @@ globalThis.caches = { default: { match: async (k) => store.get(k.url)?.clone(), 
 let upstream = [];
 globalThis.fetch = async (url) => {
   upstream.push(url);
+  if (url.includes("alih-dalam")) return new Response(null, { status: 302, headers: { Location: "http://169.254.169.254/latest/meta-data/" } });
+  if (url.includes("alih-luar")) return new Response(null, { status: 301, headers: { Location: "/artikel/asli.pdf" } });
+  if (url.includes("alih-terus")) return new Response(null, { status: 302, headers: { Location: url + "x" } });
   if (url.includes("besar")) return new Response(new Uint8Array(16 * 1024 * 1024), { headers: { "Content-Type": "application/pdf" } });
   if (url.includes("hilang")) return new Response("x", { status: 404 });
   return new Response("%PDF-1.4 isi", { headers: { "Content-Type": "application/pdf" } });
@@ -41,5 +44,28 @@ await t("berkas di atas 15 MB ditolak", async () => { const r = await call("k=ra
 await t("galat situs tujuan diteruskan sebagai 502", async () => { const r = await call("k=rahasia-uji-123456&url=" + encodeURIComponent("https://a.b/hilang")); ok(r.status === 502 && (await r.json()).status === 404, "status " + r.status); });
 await t("hanya GET", async () => { const r = await call("k=rahasia-uji-123456&ping=1", "https://situs.contoh", "POST"); ok(r.status === 405, "status " + r.status); });
 
+await t("pengalihan ke jaringan internal ditolak (SSRF)", async () => {
+  upstream = [];
+  const r = await call("k=rahasia-uji-123456&url=" + encodeURIComponent("https://jurnal.contoh/alih-dalam"));
+  ok(r.status === 400 && upstream.length === 1, "status " + r.status + ", permintaan " + upstream.length);
+});
+await t("pengalihan biasa diikuti, berantai dibatasi", async () => {
+  const r = await call("k=rahasia-uji-123456&url=" + encodeURIComponent("https://jurnal.contoh/alih-luar"));
+  ok(r.status === 200 && r.headers.get("X-Jembatan-Url") === "https://jurnal.contoh/artikel/asli.pdf", "status " + r.status + " " + r.headers.get("X-Jembatan-Url"));
+  const r2 = await call("k=rahasia-uji-123456&url=" + encodeURIComponent("https://jurnal.contoh/alih-terus"));
+  ok(r2.status === 502, "status " + r2.status);
+});
+await t("alamat IPv6 terpetakan & jaringan operator ditolak", async () => {
+  for (const u of ["http://[::ffff:127.0.0.1]/", "http://2130706433/", "http://100.64.0.1/"]) {
+    const r = await call("k=rahasia-uji-123456&url=" + encodeURIComponent(u)); ok(r.status === 400, u + " -> " + r.status);
+  }
+});
+await t("pembatas permintaan per IP (BATAS) memberi 429", async () => {
+  let n = 0; env.BATAS = { limit: async ({ key }) => ({ success: key === "1.2.3.4" && ++n <= 2 }) };
+  const req = () => worker.fetch(new Request("https://jembatan.test/?k=rahasia-uji-123456&ping=1", { headers: { Origin: "https://situs.contoh", "CF-Connecting-IP": "1.2.3.4" } }), env, ctx);
+  const st = [(await req()).status, (await req()).status, (await req()).status];
+  delete env.BATAS;
+  ok(st.join() === "200,200,429", "status " + st);
+});
 console.log("\n" + passed + " lolos, " + failed + " gagal");
 process.exit(failed ? 1 : 0);

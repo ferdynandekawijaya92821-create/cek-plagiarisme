@@ -7,15 +7,19 @@
 //   KUNCI   (wajib)  rahasia acak, mis. hasil `openssl rand -hex 16`. Isi yang sama di CekTeks.
 //   ASAL    (opsional) asal situs CekTeks yang boleh memakai jembatan, dipisah koma,
 //            mis. "https://namaanda.github.io". Kosong = semua asal (tetap butuh KUNCI).
+//   BATAS   (opsional, binding Rate Limiting) membatasi jumlah permintaan per alamat IP agar bot tidak
+//            bisa menghabiskan kuota harian atau menebak KUNCI. Lihat README.md.
 //
 // Pemakaian:  GET https://<jembatan>/?k=<KUNCI>&url=<alamat yang di-encode>
 //             GET https://<jembatan>/?k=<KUNCI>&ping=1   -> {"ok":true}
 //
 // Batasan keamanan: hanya GET, hanya http/https, tanpa cookie/kredensial, ukuran maks. 15 MB,
-// batas waktu 25 detik, hasil disimpan di cache Cloudflare selama 1 hari.
+// batas waktu 25 detik, hasil disimpan di cache Cloudflare selama 1 hari. Setiap pengalihan (redirect)
+// diperiksa ulang sehingga alamat jaringan internal tidak bisa dicapai lewat pengalihan (SSRF).
 
 const MAX_BYTES = 15 * 1024 * 1024;
 const TIMEOUT_MS = 25000;
+const MAX_REDIRECTS = 5;
 const UA = "Mozilla/5.0 (compatible; CekTeks-Jembatan/1.0; +https://github.com/ferdynandekawijaya92821-create/kalori-cli)";
 
 function cors(origin, env) {
@@ -41,7 +45,7 @@ function sameKey(a, b) {
 function badHost(h) {
   h = h.toLowerCase();
   return h === "localhost" || h.endsWith(".local") || h.endsWith(".internal") || /^(127|10|0)\./.test(h) || /^192\.168\./.test(h) ||
-    /^172\.(1[6-9]|2\d|3[01])\./.test(h) || /^169\.254\./.test(h) || h === "[::1]" || /^\[(fc|fd|fe80)/i.test(h);
+    /^172\.(1[6-9]|2\d|3[01])\./.test(h) || /^169\.254\./.test(h) || h === "[::1]" || h === "[::]" || /^\[(fc|fd|fe80|::ffff:)/i.test(h) || /^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./.test(h);
 }
 
 export default {
@@ -52,6 +56,11 @@ export default {
     if (request.method !== "GET") return json({ error: "Hanya GET" }, 405, H);
     if (!env.KUNCI) return json({ error: "KUNCI belum diatur di Cloudflare" }, 500, H);
     if (H["Access-Control-Allow-Origin"] === "null") return json({ error: "Asal situs tidak diizinkan" }, 403, H);
+    if (env.BATAS && typeof env.BATAS.limit === "function") {
+      const ip = request.headers.get("CF-Connecting-IP") || "tanpa-ip";
+      const { success } = await env.BATAS.limit({ key: ip });
+      if (!success) return json({ error: "Terlalu banyak permintaan. Coba lagi sebentar lagi." }, 429, { ...H, "Retry-After": "60" });
+    }
 
     const q = new URL(request.url).searchParams;
     if (!sameKey(q.get("k") || "", env.KUNCI)) return json({ error: "Kunci salah" }, 401, H);
@@ -66,10 +75,16 @@ export default {
     if (hit) { const r = new Response(hit.body, hit); Object.entries(H).forEach(([k, v]) => r.headers.set(k, v)); return r; }
 
     const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), TIMEOUT_MS);
-    let up;
+    let up, url = target;
     try {
-      up = await fetch(target.href, { redirect: "follow", signal: ctl.signal,
-        headers: { "User-Agent": UA, Accept: "application/pdf,text/html;q=0.9,application/xhtml+xml;q=0.9,*/*;q=0.5", "Accept-Language": "id,en;q=0.8" } });
+      for (let hop = 0; ; hop++) {
+        up = await fetch(url.href, { redirect: "manual", signal: ctl.signal,
+          headers: { "User-Agent": UA, Accept: "application/pdf,text/html;q=0.9,application/xhtml+xml;q=0.9,*/*;q=0.5", "Accept-Language": "id,en;q=0.8" } });
+        if (up.status < 300 || up.status > 399 || !up.headers.get("Location")) break;
+        if (hop >= MAX_REDIRECTS) { clearTimeout(tm); return json({ error: "Terlalu banyak pengalihan" }, 502, H); }
+        url = new URL(up.headers.get("Location"), url);
+        if (!/^https?:$/.test(url.protocol) || badHost(url.hostname) || url.username || url.password) { clearTimeout(tm); return json({ error: "Pengalihan ke alamat yang tidak diizinkan" }, 400, H); }
+      }
     } catch (e) { clearTimeout(tm); return json({ error: "Gagal mengambil: " + (e.name === "AbortError" ? "waktu habis" : e.message) }, 502, H); }
     if (!up.ok) { clearTimeout(tm); return json({ error: "Situs tujuan membalas HTTP " + up.status, status: up.status }, 502, H); }
     const len = +up.headers.get("Content-Length") || 0;
@@ -87,7 +102,7 @@ export default {
     clearTimeout(tm);
     const body = new Uint8Array(n); let o = 0; for (const p of parts) { body.set(p, o); o += p.byteLength; }
     const type = up.headers.get("Content-Type") || "application/octet-stream";
-    const out = new Response(body, { status: 200, headers: { ...H, "Content-Type": type, "X-Jembatan-Type": type, "X-Jembatan-Url": up.url, "Cache-Control": "public, max-age=86400" } });
+    const out = new Response(body, { status: 200, headers: { ...H, "Content-Type": type, "X-Jembatan-Type": type, "X-Jembatan-Url": url.href, "Cache-Control": "public, max-age=86400" } });
     ctx.waitUntil(cache.put(key, out.clone()));
     return out;
   },

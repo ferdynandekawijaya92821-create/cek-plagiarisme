@@ -2,6 +2,38 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.4.0] - 2026-11-20
+### Keamanan
+- **Content Security Policy** di situs, berkas mandiri, dan aplikasi. Skrip hanya jalan bila sidik SHA-256-nya sudah
+  dikenal (dihitung otomatis saat build). `object-src`, `base-uri`, dan `frame-src` dimatikan, koneksi dipaksa HTTPS,
+  dan `Referrer-Policy` diperketat. Uji otomatis membuktikan skrip sisipan (XSS) ditolak.
+- **Anti clickjacking**: CekTeks menolak tampil di dalam iframe situs lain.
+- **Bom ZIP ditolak**: DOCX, ODT, PPTX, atau ZIP yang membengkak di atas 400 MB atau 20.000 berkas saat dibuka.
+- **Tesseract dari CDN diperiksa dengan Subresource Integrity (SHA-384).**
+- **Jembatan: celah SSRF lewat pengalihan ditutup.**
+  - Setiap pengalihan kini diperiksa ulang (maks. 5).
+  - Alamat IPv6 terpetakan dan jaringan operator (100.64.0.0/10) ikut ditolak.
+  - Ada pembatas permintaan per IP opsional (`BATAS`, binding Rate Limiting Cloudflare) yang membalas 429.
+- **Aplikasi desktop**: izin hanya papan klip dan layar penuh; `<webview>` diblokir.
+- **Server Python (opsional)**: berjalan sebagai pengguna non-root di Docker, dengan batas waktu dan ukuran permintaan.
+- Dependabot memantau GitHub Actions, npm, dan pip setiap minggu. Kebijakan pelaporan celah ada di `.github/SECURITY.md`.
+
+### Diperbarui
+| Komponen | Sebelumnya | Sekarang |
+|---|---|---|
+| pdf.js (build `legacy`, tetap jalan di HP lama) | 3.11.174 | 6.5.438 |
+| mammoth (Word) | 1.6.0 | 1.13.0 |
+| jsPDF (laporan) | 2.5.1 | 4.2.1 |
+| JSZip | 3.10.1 | 3.10.2 |
+| qrcode-generator | 1.4.4 | 2.0.4 |
+| tesseract.js (OCR) | 5.1.1 | 7.0.0 |
+| Electron (Windows/macOS/Linux) | 33.4.11 | 45.4.1 |
+| electron-builder | 25.1.8 | 26.18.0 |
+| Capacitor (Android) | 6.2.1 | 8.6.2 (Java 21, Android 7.0+) |
+| Playwright / axe-core (uji) | 1.49.1 / 4.10.2 | 1.65.1 / 4.14.1 |
+| GitHub Actions | checkout v4, setup-node v4, … | checkout v7, setup-node v7, … (Node 22) |
+| Flask / pypdf / python-docx | ≥3.0 / ≥4.0 / ≥1.1 | ≥3.1.3 / ≥7.1.1 / ≥1.2.0, Python 3.13 |
+
 ## [4.3.0] - 2026-11-20
 ### Ditambahkan
 - **OCR untuk PDF hasil pindaian.** PDF berupa gambar (scan atau foto) kini dikenali teksnya otomatis dengan

@@ -1,0 +1,27 @@
+# Dependabot memeriksa pembaruan keamanan dan versi baru setiap minggu, lalu membuat pull request otomatis.
+# Setiap PR tetap harus lolos CI (uji situs, uji jembatan, build aplikasi) sebelum digabungkan.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+    groups:
+      actions: { patterns: ["*"] }
+  - package-ecosystem: npm
+    directory: /cekteks/app/desktop
+    schedule: { interval: weekly }
+    groups:
+      desktop: { patterns: ["*"] }
+  - package-ecosystem: npm
+    directory: /cekteks/app/mobile
+    schedule: { interval: weekly }
+    groups:
+      android: { patterns: ["*"] }
+  - package-ecosystem: npm
+    directory: /cekteks/web
+    schedule: { interval: weekly }
+    groups:
+      uji: { patterns: ["*"] }
+  - package-ecosystem: pip
+    directory: /cekteks
+    schedule: { interval: weekly }

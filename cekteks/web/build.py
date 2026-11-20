@@ -7,6 +7,8 @@ Hasil:
 Jalankan:  python build.py
 """
 
+import base64
+import hashlib
 import json
 import re
 import os
@@ -20,7 +22,8 @@ SITE_URL = os.environ.get("CEKTEKS_SITE_URL", "https://ferdynandekawijaya92821-c
 SITE_TITLE = "CekTeks - Cek Plagiarisme & Deteksi Tulisan AI"
 SITE_DESC = ("Cek plagiarisme dan deteksi tulisan AI gratis. Unggah PDF atau Word, lihat bagian yang mirip "
              "dengan sumbernya, lalu unduh laporan PDF. Bisa offline, naskah tetap privat.")
-VENDOR = ["pdf.min.js", "pdf.worker.min.js", "mammoth.browser.min.js", "jszip.min.js", "jspdf.umd.min.js", "qrcode.js", "jsQR.js"]
+# Pustaka pihak ketiga (versi tetap, diperbarui lewat cekteks/web/VENDOR.md). pdf.js berbentuk modul ES (.mjs).
+VENDOR = ["pdf.min.mjs", "pdf.worker.min.mjs", "mammoth.browser.min.js", "jszip.min.js", "jspdf.umd.min.js", "qrcode.js", "jsQR.js"]
 ICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0e6a86"/>'
         '<path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="#fff"/>'
         '<path d="M11 14h8M11 17h6M11 20h4" stroke="#0e6a86" stroke-width="1.6" stroke-linecap="round"/>'
@@ -53,6 +56,41 @@ def load_site():
     return site
 
 
+def module_inline(name, js):
+    """Modul ES pdf.js disisipkan sebagai <script type="module">; ekspornya dijadikan objek global."""
+    m = re.search(r"export\s*\{([^{}]*)\};?\s*$", js)
+    assert m, name
+    if name == "pdf.worker.min.mjs":
+        assert "globalThis.pdfjsWorker" in js
+        return js[:m.start()]
+    pairs = []
+    for part in m.group(1).split(","):
+        part = part.strip()
+        if not part:
+            continue
+        a, _, b = part.partition(" as ")
+        pairs.append(f"{(b or a).strip()}:{a.strip()}")
+    return js[:m.start()] + "globalThis.pdfjsLib={" + ",".join(pairs) + "};"
+
+
+# Kebijakan keamanan konten (CSP). Skrip inline hanya boleh jalan bila sidik SHA-256-nya cocok, sehingga skrip
+# yang disuntikkan penyerang (XSS) ditolak browser. Koneksi keluar hanya lewat HTTPS.
+CSP = ("default-src 'self'; script-src 'self' {hashes} https://cdn.jsdelivr.net 'wasm-unsafe-eval'; "
+       "worker-src 'self' blob: https://cdn.jsdelivr.net; connect-src 'self' https: data: blob:; "
+       "img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+       "font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: data:; object-src 'none'; "
+       "base-uri 'none'; form-action 'self'; frame-src 'none'; manifest-src 'self'; upgrade-insecure-requests")
+
+
+def add_csp(html):
+    hashes = []
+    for m in re.finditer(r"<script(?: type=\"module\")?>(.*?)</script>", html, re.S):
+        hashes.append("'sha256-" + base64.b64encode(hashlib.sha256(m.group(1).encode()).digest()).decode() + "'")
+    meta = ('<meta http-equiv="Content-Security-Policy" content="' + CSP.format(hashes=" ".join(sorted(set(hashes)))) + '">\n'
+            '<meta name="referrer" content="strict-origin-when-cross-origin">\n')
+    return html.replace('<meta charset="utf-8">\n', '<meta charset="utf-8">\n' + meta, 1)
+
+
 def build_standalone(app, pwa, site):
     accent = ACCENTS[site["warna"]]
     head_end = app.index("</style>") + len("</style>")
@@ -69,7 +107,10 @@ def build_standalone(app, pwa, site):
         for name in VENDOR:
             js = read(os.path.join(HERE, "vendor", name))
             assert "</script" not in js.lower(), name
-            vendor += f"<script>/* {name} */\n{js}\n</script>\n"
+            if name.endswith(".mjs"):
+                vendor += f'<script type="module">/* {name} */\n{module_inline(name, js)}\n</script>\n'
+            else:
+                vendor += f"<script>/* {name} */\n{js}\n</script>\n"
     marker = '<script>\n"use strict";'
     assert body.count(marker) == 1
     cfg = json.dumps(site, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -100,9 +141,9 @@ def build_standalone(app, pwa, site):
             f'<meta name="twitter:description" content="{SITE_DESC}">\n'
             f'<meta name="twitter:image" content="{og}">\n'
         )
-    return (f'<!doctype html>\n<html lang="id" data-accent="{site["warna"]}">\n<head>\n<meta charset="utf-8">\n'
-            '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
-            + extra + head + "\n</head>\n<body>\n" + body + "\n</body>\n</html>\n")
+    return add_csp(f'<!doctype html>\n<html lang="id" data-accent="{site["warna"]}">\n<head>\n<meta charset="utf-8">\n'
+                   '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+                   + extra + head + "\n</head>\n<body>\n" + body + "\n</body>\n</html>\n")
 
 
 def main():
