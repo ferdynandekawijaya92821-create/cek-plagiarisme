@@ -736,12 +736,79 @@ async function download(page, selector) {
   });
   await ctx.close();
 
+  console.log("Fitur 4.3");
+  {
+    const { ctx: c3, page: p3 } = await newPage(browser, { viewport: { width: 1366, height: 900 } });
+    // Tesseract tiruan: mengembalikan kata-kata dengan kotak posisi, seperti hasil OCR sungguhan.
+    await c3.addInitScript(() => {
+      const TXT = "Fotosintesis adalah proses biokimia pembentukan zat makanan berupa karbohidrat yang dilakukan oleh tumbuhan, terutama tumbuhan yang mengandung zat hijau daun atau klorofil. Proses ini memerlukan cahaya matahari, air, dan karbon dioksida, lalu menghasilkan glukosa dan oksigen.";
+      window.__ocrPages = 0;
+      window.Tesseract = { createWorker: async (lang) => { window.__ocrLang = lang; return {
+        recognize: async () => { window.__ocrPages++; const ws = TXT.split(" "), lines = [];
+          for (let i = 0; i < ws.length; i += 8) lines.push({ words: ws.slice(i, i + 8).map((t, k) => ({ text: t, bbox: { x0: 400 + k * 120, y0: 400 + lines.length * 70, x1: 500 + k * 120, y1: 440 + lines.length * 70 } })) });
+          return { data: { confidence: 91, paragraphs: [{ lines }] } }; },
+        terminate: async () => {} }; } };
+    });
+    const J = (r, body, status) => r.fulfill({ status: status || 200, contentType: "application/json", headers: { "access-control-allow-origin": "*" }, body: JSON.stringify(body) });
+    await c3.route(/api\.crossref\.org\/works\/10\.1038/, (r) => J(r, { message: { title: ["Deep learning"], DOI: "10.1038/nature14539" } }));
+    await c3.route(/api\.crossref\.org\/works\/10\.1234/, (r) => J(r, { message: "Resource not found." }, 404));
+    await c3.route(/api\.crossref\.org\/works\?/, (r) => {
+      const q = decodeURIComponent(r.request().url());
+      J(r, { message: { items: /Sugiyono/.test(q) ? [{ DOI: "10.9/metode", title: ["Metode Penelitian Kuantitatif, Kualitatif, dan R&D"], author: [{ family: "Sugiyono" }], issued: { "date-parts": [[2019]] } }]
+        : [{ DOI: "10.9/lain", title: ["Rancang bangun sistem informasi penggajian di perguruan tinggi swasta"], author: [{ family: "Lain" }], issued: { "date-parts": [[2016]] } }] } });
+    });
+    await c3.route(/api\.openalex\.org/, (r) => J(r, { results: [] }));
+    await p3.goto(SITE); await ready(p3);
+
+    await test("OCR: PDF hasil pindaian dikenali teksnya, dibandingkan, dan laporan PDF tetap memuat halaman asli", async () => {
+      await p3.setInputFiles("#mainFile", path.join(FIX, "pindaian.pdf"));
+      await p3.waitForFunction(() => S.doc && S.doc.ocr, null, { timeout: 60000 }); await p3.waitForTimeout(500);
+      const r = await p3.evaluate(() => [S.doc.ocr, window.__ocrPages, window.__ocrLang, S.plag.score, S.doc.layout.pages.length, S.doc.layout.pages[0].items.length, S.plag.matched.map((m) => m.name).join(",")]);
+      ok(r[0].pages === 2 && r[0].conf === 91 && r[1] === 2 && r[2] === "ind+eng", "OCR tidak berjalan per halaman: " + JSON.stringify(r));
+      ok(r[3] > 50 && /Fotosintesis/.test(r[6]), "teks OCR tidak cocok dengan sumber: " + r[3]);
+      ok(r[4] === 2 && r[5] > 20, "posisi kata OCR tidak dicatat");
+      const pdf = await download(p3, "#dlPdf");
+      ok(pdf.buf.length > 20000 && pdf.buf.slice(0, 4).toString() === "%PDF", "laporan PDF dari dokumen OCR gagal");
+      ok((await download(p3, "#dlTxt")).buf.toString().includes("dikenali dengan OCR"), "laporan tidak mencatat OCR");
+    });
+    await test("keaslian daftar pustaka: DOI cocok, DOI tidak terdaftar, DOI milik karya lain, referensi karangan", async () => {
+      const body = Array(14).fill("Bagian ini membahas latar belakang penelitian secara umum dan alasan pemilihan topik oleh penulis.").join(" ");
+      const TXT = "Pendahuluan\nPenelitian berkembang pesat (LeCun, 2015). Pengukuran diteliti oleh Sugiyono (2019). Temuan serupa (Hartono, 2021).\n\n" + body + "\n\nDAFTAR PUSTAKA\n" +
+        "LeCun, Y., Bengio, Y., & Hinton, G. (2015). Deep learning. Nature, 521(7553), 436–444. https://doi.org/10.1038/nature14539\n" +
+        "Sugiyono. (2019). Metode Penelitian Kuantitatif, Kualitatif, dan R&D. Bandung: Alfabeta.\n" +
+        "Hartono, B., & Wijaya, S. (2021). Pengaruh kecerdasan buatan kuantum terhadap motivasi belajar siswa. Jurnal Pendidikan Nusantara Digital, 12(3), 45–61. https://doi.org/10.1234/jpnd.2021.99887\n" +
+        "Hartono, B. (2020). Integrasi algoritma neuro-fuzzy untuk prediksi kelulusan mahasiswa di perguruan tinggi swasta. Jurnal Teknologi Informasi Mandiri, 8(2), 11–20.\n" +
+        "Page, M. J., & Bossuyt, P. M. (2021). The PRISMA 2020 statement: an updated guideline for reporting systematic reviews. BMJ, 372, n71. https://doi.org/10.1038/nature14539\n";
+      await p3.evaluate((t) => { S.doc = null; setText(t); }, TXT); await p3.waitForTimeout(800);
+      const nl = await p3.evaluate(() => S.cite.list.map((e) => e.text.slice(0, 30))); ok(nl.length === 5, "entri daftar pustaka tidak terbaca: " + JSON.stringify(nl));
+      await p3.evaluate(() => { $("#citeAcc").open = true; }); await p3.click("#refVerBtn");
+      await p3.waitForFunction(() => !REFV_RUN && REFV.size === 5, null, { timeout: 30000 });
+      const st = await p3.evaluate(() => S.cite.list.map((e) => REFV.get(e.text).st).join(","));
+      ok(st === "ok,ok,bad,nf,bad", "status referensi salah: " + st);
+      ok(await p3.isVisible(".reflist") && /2 bermasalah/.test(await p3.textContent(".refsum")), "ringkasan referensi tidak tampil");
+    });
+    await test("layanan & harga: paket dari site.json, formulir pesanan membuka WhatsApp berisi data pesanan", async () => {
+      await p3.evaluate(() => showView("layanan"));
+      ok(await p3.isVisible("#tab-layanan") && (await p3.$$("#lyPaket .plan")).length === 4, "paket layanan tidak tampil");
+      await p3.evaluate(() => { window.open = (u) => { window.__opened = u; }; SITE.cs.whatsapp = "6281234567890"; renderLayanan(); });
+      await p3.click('[data-pkg="2"]'); await p3.fill("#lyHal", "12");
+      await p3.click('#lySend [data-via="wa"]');
+      ok(!(await p3.evaluate(() => window.__opened)), "pesanan terkirim tanpa nama dan persetujuan");
+      await p3.fill("#lyNama", "Budi Santoso"); await p3.check("#lyAgree", { force: true });
+      await p3.click('#lySend [data-via="wa"]');
+      const u = decodeURIComponent(await p3.evaluate(() => window.__opened || ""));
+      ok(u.startsWith("https://wa.me/6281234567890?text=") && u.includes("Paket: Cek Kode Program") && u.includes("Nama: Budi Santoso") && u.includes("halaman/naskah: 12"), "pesan WhatsApp salah: " + u);
+      await p3.evaluate(() => { SITE = siteCfg(); renderLayanan(); });
+    });
+    await c3.close();
+  }
+
   console.log("Tampilan & aksesibilitas");
   for (const [name, opts] of [["HP 320px", devices["Galaxy S9+"]], ["iPhone", devices["iPhone 13"]], ["desktop gelap", { viewport: { width: 1366, height: 900 }, colorScheme: "dark" }]]) {
     await test(name + ": tanpa scroll horizontal dan tumpang-tindih di semua halaman" + (AXE ? " dan lolos audit WCAG" : ""), async () => {
       const { ctx: c, page: p } = await newPage(browser, opts);
       await p.goto(SITE); await ready(p);
-      for (const v of ["beranda", "periksa", "massal", "kode", "sumber", "bandingkan", "tersembunyi", "pustaka", "daftarisi", "riwayat", "metode", "bantuan"]) {
+      for (const v of ["beranda", "periksa", "massal", "kode", "sumber", "bandingkan", "tersembunyi", "pustaka", "daftarisi", "riwayat", "metode", "bantuan", "layanan"]) {
         await p.evaluate((v) => showView(v), v); await p.waitForTimeout(100);
         const w = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
         ok(w[0] <= w[1], v + ": lebar " + w[0] + " > layar " + w[1]);

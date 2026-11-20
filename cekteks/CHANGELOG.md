@@ -2,6 +2,30 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.3.0] - 2026-11-20
+### Ditambahkan
+- **OCR untuk PDF hasil pindaian.** PDF berupa gambar (scan atau foto) kini dikenali teksnya otomatis dengan
+  Tesseract (bahasa Indonesia dan Inggris) di perangkat pengguna.
+  - Teks lalu diperiksa seperti biasa, dan posisi kata dicatat sehingga laporan PDF tetap menyorot halaman aslinya.
+  - Butuh internet saat pertama kali dipakai untuk mengunduh pustaka dan data bahasa (±5 MB).
+  - Keyakinan OCR ditampilkan dan dicatat di laporan.
+- **Cek keaslian daftar pustaka.** Setiap entri dicari di Crossref dan OpenAlex lalu diberi tanda:
+  - **Terverifikasi**: ditemukan, dengan judul serta penulis atau tahun yang cocok.
+  - **Perlu dicek**: judul ditemukan, tetapi penulis atau tahunnya berbeda.
+  - **Bermasalah**: DOI tidak terdaftar, atau DOI terdaftar untuk karya lain.
+  - **Tidak ditemukan**: tidak ada di kedua basis data.
+
+  Berguna untuk menangkap referensi fiktif buatan AI.
+- **Halaman Layanan & Harga.** Kartu paket diambil dari `site.json` (harga boleh kosong, tampil "Tanya harga"), disertai
+  formulir pesanan yang membuka WhatsApp atau email CS dengan data pesanan terisi, dan langkah cara memesan.
+  Paket juga bisa diatur lewat formulir Pengaturan situs.
+- FAQ dan chat CS: pertanyaan tentang PDF hasil scan dan referensi palsu.
+
+### Diperbaiki
+- Entri daftar pustaka dengan penulis bernama tunggal (mis. "Sugiyono. (2019)") yang muncul sesudah entri berakhiran
+  tautan DOI tidak lagi tergabung ke entri sebelumnya.
+- Tombol WhatsApp memakai hijau yang lebih gelap agar kontras teksnya memenuhi WCAG AA.
+
 ## [4.2.0] - 2026-11-20
 ### Ditambahkan
 - **Pilihan warna tema**: Teal, Biru, Ungu, Hijau, Marun, Oranye, dan Grafit, masing-masing dengan versi terang dan
