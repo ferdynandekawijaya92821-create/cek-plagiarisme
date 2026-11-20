@@ -493,6 +493,31 @@ async function download(page, selector) {
     ok(await page.isVisible("#view-riwayat") && await page.isHidden("#cmdk"), "palet perintah tidak membuka Riwayat");
     await page.click("#tab-sumber"); await page.fill("#svcLimit", ""); await page.evaluate(() => { REFS = []; saveRefs(); renderRefs(); });
   });
+  await test("cek plagiasi kode: nama variabel diganti tetap terdeteksi, template diabaikan, ZIP per folder, penampil", async () => {
+    const K = path.join(FIX, "kode");
+    await page.click("#tab-kode"); await page.click("#kClear");
+    await page.setInputFiles("#kFiles", ["mhs1.py", "mhs2.py", "mhs3.py"].map((f) => path.join(K, f)));
+    await page.waitForFunction(() => KODE.subs.length === 3);
+    const pair = (a, b) => page.evaluate(([a, b]) => { const p = KODE.pairs.find((x) => [KODE.subs[x.i].name, KODE.subs[x.j].name].sort().join() === [a, b].sort().join()); return p.max; }, [a, b]);
+    ok(await pair("mhs1.py", "mhs2.py") > 85, "salinan dengan nama variabel diganti tidak terdeteksi: " + await pair("mhs1.py", "mhs2.py"));
+    await page.setInputFiles("#kTpl", path.join(K, "template.py")); await page.waitForTimeout(300);
+    const cp = await pair("mhs1.py", "mhs2.py"), un = await pair("mhs1.py", "mhs3.py");
+    ok(cp > 85 && un < 20, "template tidak diabaikan dengan benar: salinan " + cp + "%, berbeda " + un + "%");
+    await page.click("#kClear"); await page.setInputFiles("#kFiles", path.join(K, "kode.zip"));
+    await page.waitForFunction(() => KODE.subs.length === 3);
+    const subs = await page.evaluate(() => KODE.subs.map((x) => x.name + ":" + x.files).join(","));
+    ok(subs === "andi:2,budi:1,citra:1", "ZIP tidak dikelompokkan per folder: " + subs);
+    ok(await page.locator("#kMatrix td[data-kpair]").count() === 6, "matriks kemiripan tidak lengkap");
+    await page.click('#kPairs [data-kpair="0"]');
+    ok(await page.isVisible("#codeDrawer") && await page.locator("#cdA .ln.hit").count() > 10 && await page.locator("#cdA .tk-kw").count() > 5, "penampil kode tidak menyorot blok/sintaks");
+    await page.click('#cdSum [data-kjump="0"]'); ok(await page.locator("#cdB .ln.cur").count() === 1, "lompat ke blok tidak berfungsi");
+    await page.keyboard.press("Escape"); ok(await page.isHidden("#codeDrawer"), "Esc tidak menutup penampil");
+    const csv = await download(page, "#kCsv"); ok(/andi/.test(csv.buf.toString()) && /Blok sama/.test(csv.buf.toString()), "CSV kode tidak lengkap");
+    // Tokenisasi: komentar & nama variabel tidak berpengaruh, operator // Python bukan komentar
+    const t = await page.evaluate(() => [codeTokens("x = a // b  # bagi\ny = 2", "Python").map((x) => x.k + ":" + x.t).join(" "), codeTokens("int a = 1; // komentar\nb--;", "C").filter((x) => x.k === "com").length]);
+    ok(/op:\/\/ id:b com:# bagi/.test(t[0]) && t[1] === 1, "tokenisasi salah: " + t);
+    await page.click("#kClear"); await page.evaluate(() => { KODE.tplSubs = []; });
+  });
   await test("deteksi AI terkalibrasi: abstrak manusia berdata rendah, teks AI generik tinggi", async () => {
     const HUMAN = "Penelitian ini bertujuan untuk mengetahui pengaruh pemberian pupuk kandang ayam terhadap pertumbuhan dan hasil tanaman jagung manis (Zea mays saccharata Sturt.) pada tanah PMK. Penelitian dilaksanakan di kebun percobaan Fakultas Pertanian Universitas Kapuas Sintang dari bulan Maret sampai Juni 2016. Rancangan yang digunakan adalah Rancangan Acak Lengkap (RAL) dengan 5 perlakuan dan 5 ulangan, yaitu tanpa pupuk kandang, 10 ton/ha, 20 ton/ha, 30 ton/ha, dan 40 ton/ha. Variabel yang diamati meliputi tinggi tanaman, diameter batang, berat tongkol berkelobot, dan berat tongkol tanpa kelobot. Hasil penelitian menunjukkan bahwa pemberian pupuk kandang ayam berpengaruh nyata terhadap semua variabel pengamatan. Dosis 30 ton/ha memberikan hasil terbaik dengan berat tongkol tanpa kelobot 312,4 g per tanaman.";
     const r = await page.evaluate(([h]) => [detectAI(h).score, detectAI(SAMPLE.split("\n\n").filter((p, i) => i !== 2).join("\n\n")).score, detectAI(h).signals.kekhususan], [HUMAN]);
@@ -654,7 +679,7 @@ async function download(page, selector) {
     await test(name + ": tanpa scroll horizontal dan tumpang-tindih di semua halaman" + (AXE ? " dan lolos audit WCAG" : ""), async () => {
       const { ctx: c, page: p } = await newPage(browser, opts);
       await p.goto(SITE); await ready(p);
-      for (const v of ["beranda", "periksa", "sumber", "bandingkan", "tersembunyi", "daftarisi", "riwayat", "metode"]) {
+      for (const v of ["beranda", "periksa", "massal", "kode", "sumber", "bandingkan", "tersembunyi", "pustaka", "daftarisi", "riwayat", "metode"]) {
         await p.evaluate((v) => showView(v), v); await p.waitForTimeout(100);
         const w = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
         ok(w[0] <= w[1], v + ": lebar " + w[0] + " > layar " + w[1]);

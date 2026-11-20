@@ -2,6 +2,35 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.1.0] - 2026-11-20
+### Ditambahkan
+- **Cek plagiasi kode program** (menu baru), untuk tugas pemrograman:
+  - Mendukung Python, Jupyter Notebook, Java, C/C++, C#, JavaScript/TypeScript, PHP, Go, Kotlin, Swift, Rust,
+    Dart, Ruby, R, MATLAB, SQL, dan HTML/CSS.
+  - Kode diubah menjadi token: komentar dibuang, nama variabel/fungsi disamakan, teks dan angka dinormalkan.
+    Lalu k-gram berurutan dibandingkan (cara MOSS/JPlag), sehingga mengganti nama variabel, mengubah komentar,
+    atau merapikan spasi tidak menyembunyikan salinan. Operator `//` Python tidak dianggap komentar.
+  - ZIP dengan satu folder per mahasiswa menjadi satu kiriman per folder; `__MACOSX`, `.git`, dan
+    `node_modules` dilewati.
+  - Kode template dosen bisa dimuat: bagiannya tidak dihitung, dan persentase dihitung dari kode di luar template.
+  - Tiga kepekaan, matriks kemiripan, daftar pasangan, dan ekspor CSV.
+  - Penampil berdampingan **bertema VS Code Dark+**: nomor baris, pewarnaan sintaks, blok sama bernomor dan
+    berwarna, serta lompat ke blok.
+  - Uji berkas: salinan dengan nama variabel diganti 90%, program berbeda 8% (dengan template).
+- **Aplikasi Android, Windows, macOS, dan Linux** (`cekteks/app/`):
+  - Capacitor dan Electron membungkus CekTeks.html sehingga berjalan offline.
+  - Dibangun dan diterbitkan otomatis di GitHub Releases (`.github/workflows/apps.yml`) dengan nama berkas tetap.
+  - Kartu **Pasang CekTeks sebagai aplikasi** di Beranda menonjolkan platform pengguna dan menyertakan panduan
+    memasang.
+  - Di Android, unduhan laporan disimpan lewat menu Bagikan/Simpan, dan tautan luar dibuka di browser.
+  - Di desktop, tautan luar dibuka di browser biasa.
+  - Aplikasi Linux sudah dibangun dan dijalankan di sini (Electron 33): halaman terbuka dan analisis offline
+    berjalan.
+
+### Lainnya
+- Uji e2e menjadi 44 skenario. Audit tata letak dan WCAG kini juga mencakup Periksa Banyak Dokumen, Cek Kode,
+  dan Sitasi.
+
 ## [4.0.0] - 2026-11-19
 ### Ditambahkan
 - **Periksa banyak dokumen**:

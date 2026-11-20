@@ -903,6 +903,52 @@ kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border
 .rfres { display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
 .rfres b { font-size: 13.5px; } .rfres .btn { justify-self: start; }
 .cmp-fix { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px dashed var(--line); font-size: 12.5px; }
+
+
+/* kartu unduh aplikasi */
+.appcard { margin-bottom: 18px; }
+.appdl { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.appbtn { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); text-decoration: none; transition: border-color .15s, background .15s; }
+.appbtn:hover { border-color: var(--accent); background: var(--accent-soft); }
+.appbtn svg { width: 26px; height: 26px; color: var(--accent); flex: none; }
+.appbtn span { display: grid; } .appbtn b { font-size: 14.5px; } .appbtn small { color: var(--muted); font-size: 12px; }
+.appbtn.mine { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.howto code { font: 12px var(--f-mono); background: var(--surface-2); padding: 1px 5px; border-radius: 5px; }
+/* Cek plagiasi kode (tema ala VS Code Dark+) */
+.kgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 16px; }
+@media (max-width: 900px) { .kgrid { grid-template-columns: minmax(0, 1fr); } }
+.codearea { font: 13px/1.55 var(--f-mono); background: #1e1e1e !important; color: #d4d4d4; border-color: #333 !important; tab-size: 4; white-space: pre; }
+.klist { display: grid; gap: 6px; }
+.kitem { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; font-size: 13.5px; }
+.kitem b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.klang { font: 600 10.5px var(--f-mono); padding: 3px 7px; border-radius: 6px; background: #1e1e1e; color: #9cdcfe; white-space: nowrap; }
+.kitem small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.kmatrix { border-collapse: separate; border-spacing: 3px; font-size: 12px; }
+.kmatrix th { font-weight: 600; color: var(--muted); max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 2px 4px; text-align: left; }
+.kmatrix td { min-width: 44px; height: 30px; text-align: center; border-radius: 6px; font: 600 11.5px var(--f-mono); cursor: pointer; }
+.kmatrix td.self { background: var(--surface-2); cursor: default; }
+.kpair { display: grid; grid-template-columns: minmax(0, 1fr) 150px auto; gap: 6px 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.kpair:last-child { border-bottom: 0; }
+.kpair .kn { min-width: 0; overflow-wrap: anywhere; } .kpair .kn small { display: block; color: var(--muted); font-size: 12px; }
+.kpair .ks { display: grid; gap: 4px; } .kpair .ks b { font-family: var(--f-mono); }
+@media (max-width: 640px) { .kpair { grid-template-columns: minmax(0, 1fr) auto; } .kpair .ks { grid-column: 1 / -1; grid-row: 2; } }
+.codepanel { width: min(1280px, 100%); }
+.cdbody { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #333; }
+@media (max-width: 800px) { .cdbody { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; } }
+.cdpane { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: #1e1e1e; }
+.cdname { padding: 7px 12px; font: 600 12px var(--f-mono); color: #cccccc; background: #252526; border-bottom: 1px solid #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vscode, .codearea { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+.vscode { flex: 1; overflow: auto; font: 12.5px/1.6 var(--f-mono); color: #d4d4d4; background: #1e1e1e; tab-size: 4; -webkit-overflow-scrolling: touch; }
+.vscode .ln { display: grid; grid-template-columns: 3.4em 6px minmax(0, 1fr); white-space: pre; min-height: 1.6em; }
+.vscode .no { color: #858585; text-align: right; padding-right: 10px; user-select: none; }
+.vscode .gm { background: transparent; }
+.vscode .tx { padding-right: 16px; }
+.vscode .ln.hit .gm { background: var(--mc); } .vscode .ln.hit { background: var(--mt); }
+.vscode .ln.cur { outline: 1px solid var(--mc); outline-offset: -1px; }
+.vscode .tag { display: inline-block; font: 700 10px var(--f-mono); color: #1e1e1e; background: var(--mc); border-radius: 3px; padding: 0 4px; margin-right: 6px; }
+.tk-kw { color: #569cd6; } .tk-ct { color: #c586c0; } .tk-str { color: #ce9178; } .tk-com { color: #6a9955; font-style: italic; } .tk-num { color: #b5cea8; } .tk-fn { color: #dcdcaa; } .tk-ty { color: #4ec9b0; } .tk-id { color: #9cdcfe; } .tk-op { color: #d4d4d4; } .tk-file { color: #6a9955; }
+.kmatch { display: flex; flex-wrap: wrap; gap: 6px; }
+.kmatch button { font: 600 11.5px var(--f-mono); border: 0; border-radius: 6px; padding: 4px 8px; color: #1e1e1e; cursor: pointer; }
 /* Teks tersembunyi & daftar isi */
 .hidbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; margin-bottom: 14px; }
 .hidbar-t { display: grid; gap: 2px; min-width: 0; } .hidbar-t b { overflow-wrap: anywhere; }
@@ -940,6 +986,7 @@ kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border
       <span class="side-g">Pemeriksaan</span>
       <button class="tab" type="button" id="tab-periksa" data-view="periksa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg><span>Cek Plagiasi &amp; AI</span></button>
       <button class="tab" type="button" id="tab-massal" data-view="massal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg><span>Periksa Banyak Dokumen</span><span class="newtag">Baru</span></button>
+      <button class="tab" type="button" id="tab-kode" data-view="kode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg><span>Cek Plagiasi Kode Program</span><span class="newtag">Baru</span></button>
       <button class="tab" type="button" id="tab-bandingkan" data-view="bandingkan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg><span>Bandingkan Dokumen</span></button>
       <button class="tab" type="button" id="tab-sitasi" data-view="periksa" data-go="cite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg><span>Cek Sitasi</span></button>
       <button class="tab" type="button" id="tab-keterbacaan" data-view="periksa" data-go="read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg><span>Keterbacaan</span></button>
@@ -1006,7 +1053,26 @@ kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border
     </div>
     <div class="stats" id="homeStats"></div>
     <h2 class="sec-h">Alat pemeriksaan</h2>
-    <div class="toolgrid"><button type="button" class="tool" data-nav="periksa"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg></span><b>Cek Plagiasi &amp; AI</b><small>Bandingkan naskah dengan lebih dari 20 sumber internet, jurnal, dan repositori, lalu nilai kemungkinan tulisan AI.</small></button><button type="button" class="tool" data-nav="massal"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg></span><b>Periksa Banyak Dokumen</b><small>Puluhan naskah sekaligus, saling dibandingkan, laporan PDF dalam satu ZIP.</small></button><button type="button" class="tool" data-nav="bandingkan"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg></span><b>Bandingkan Dokumen</b><small>Temukan tugas yang saling mirip di antara beberapa dokumen sekaligus.</small></button><button type="button" class="tool" data-nav="periksa" data-go="cite"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg></span><b>Cek Sitasi</b><small>Cocokkan sitasi di naskah dengan daftar pustaka, temukan yang hilang atau tak dikutip.</small></button><button type="button" class="tool" data-nav="periksa" data-go="read"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg></span><b>Keterbacaan</b><small>Waktu baca, kalimat terlalu panjang, dan kata yang terlalu sering diulang.</small></button><button type="button" class="tool" data-nav="tersembunyi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg></span><b>Teks Tersembunyi &amp; Typo</b><small>Karakter tak terlihat, huruf aksara lain, teks putih, salah ketik, dan kata tidak baku.</small></button><button type="button" class="tool" data-nav="pustaka"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/><path d="M7 8h2M15 8h2"/></svg></span><b>Buat Sitasi &amp; Daftar Pustaka</b><small>DOI atau judul menjadi sitasi APA, IEEE, Harvard, MLA, atau Chicago.</small></button><button type="button" class="tool" data-nav="daftarisi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><b>Buat Daftar Isi</b><small>Susun daftar isi otomatis dari judul bab dan subbab, siap disalin ke Word.</small></button><button type="button" class="tool" id="homeVerify"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Verifikasi Laporan</b><small>Pindai QR laporan untuk memastikan naskah dan skor tidak diubah.</small></button></div>
+    <div class="toolgrid"><button type="button" class="tool" data-nav="periksa"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg></span><b>Cek Plagiasi &amp; AI</b><small>Bandingkan naskah dengan lebih dari 20 sumber internet, jurnal, dan repositori, lalu nilai kemungkinan tulisan AI.</small></button><button type="button" class="tool" data-nav="massal"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg></span><b>Periksa Banyak Dokumen</b><small>Puluhan naskah sekaligus, saling dibandingkan, laporan PDF dalam satu ZIP.</small></button><button type="button" class="tool" data-nav="kode"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg></span><b>Cek Plagiasi Kode Program</b><small>Python, Java, C/C++, JavaScript, PHP, dan lainnya. Tetap terdeteksi walau nama variabel diganti.</small></button><button type="button" class="tool" data-nav="bandingkan"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg></span><b>Bandingkan Dokumen</b><small>Temukan tugas yang saling mirip di antara beberapa dokumen sekaligus.</small></button><button type="button" class="tool" data-nav="periksa" data-go="cite"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg></span><b>Cek Sitasi</b><small>Cocokkan sitasi di naskah dengan daftar pustaka, temukan yang hilang atau tak dikutip.</small></button><button type="button" class="tool" data-nav="periksa" data-go="read"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg></span><b>Keterbacaan</b><small>Waktu baca, kalimat terlalu panjang, dan kata yang terlalu sering diulang.</small></button><button type="button" class="tool" data-nav="tersembunyi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg></span><b>Teks Tersembunyi &amp; Typo</b><small>Karakter tak terlihat, huruf aksara lain, teks putih, salah ketik, dan kata tidak baku.</small></button><button type="button" class="tool" data-nav="pustaka"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/><path d="M7 8h2M15 8h2"/></svg></span><b>Buat Sitasi &amp; Daftar Pustaka</b><small>DOI atau judul menjadi sitasi APA, IEEE, Harvard, MLA, atau Chicago.</small></button><button type="button" class="tool" data-nav="daftarisi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><b>Buat Daftar Isi</b><small>Susun daftar isi otomatis dari judul bab dan subbab, siap disalin ke Word.</small></button><button type="button" class="tool" id="homeVerify"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Verifikasi Laporan</b><small>Pindai QR laporan untuk memastikan naskah dan skor tidak diubah.</small></button></div>
+    <div class="card appcard" id="appCard">
+      <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span>Pasang CekTeks sebagai aplikasi</h2><span class="muted" style="font-size:12.5px">gratis · berjalan offline</span></div>
+      <div class="card-b stack">
+        <div class="appdl">
+          <a class="appbtn" data-os="android" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/releases/latest/download/CekTeks-Android.apk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg><span><b>Android</b><small>APK · Android 7 ke atas</small></span></a>
+          <a class="appbtn" data-os="windows" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/releases/latest/download/CekTeks-Windows.exe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span><b>Windows</b><small>Penginstal · Windows 10/11</small></span></a>
+          <a class="appbtn" data-os="mac" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/releases/latest/download/CekTeks-macOS.dmg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg><span><b>macOS</b><small>DMG · Intel &amp; Apple Silicon</small></span></a>
+          <a class="appbtn" data-os="linux" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/releases/latest/download/CekTeks-Linux.AppImage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span><b>Linux</b><small>AppImage</small></span></a>
+        </div>
+        <details class="more"><summary>Cara memasang <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <ul class="howto">
+            <li><b>Android</b>: unduh APK, buka berkasnya, lalu izinkan "Instal dari sumber ini" bila diminta. Aplikasi ini belum ada di Play Store, jadi Android mungkin menampilkan peringatan; itu wajar untuk aplikasi di luar Play Store.</li>
+            <li><b>Windows</b>: jalankan penginstal. Bila muncul "Windows melindungi PC Anda", pilih <i>Info selengkapnya → Tetap jalankan</i> (aplikasi belum ditandatangani sertifikat berbayar).</li>
+            <li><b>macOS</b>: buka DMG, seret CekTeks ke Applications, lalu klik kanan → <i>Buka</i> untuk pertama kali.</li>
+            <li><b>Linux</b>: beri izin jalan (<code>chmod +x CekTeks-Linux.AppImage</code>), lalu jalankan.</li>
+            <li><b>iPhone/iPad</b>: buka situs ini di Safari, ketuk Bagikan → <i>Tambahkan ke Layar Utama</i>.</li>
+          </ul></details>
+      </div>
+    </div>
     <div class="card">
       <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Pemeriksaan terakhir</h2><button type="button" class="linkbtn" data-nav="riwayat">Lihat semua</button></div>
       <div class="card-b" id="homeRecent"></div>
@@ -1226,6 +1292,43 @@ kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border
         </div>
       </section>
     </div>
+  </section>
+
+  <!-- ================= KODE PROGRAM ================= -->
+  <section class="view" id="view-kode">
+    <div class="pagehead">
+      <h1>Cek plagiasi kode program</h1>
+      <p>Untuk tugas pemrograman: setiap kiriman dibandingkan dengan kiriman lain. Kode diubah menjadi rangkaian token sehingga <b>mengganti nama variabel, mengubah komentar, atau merapikan spasi tidak menyembunyikan salinan</b>. Mendukung Python, Jupyter Notebook, Java, C/C++, C#, JavaScript/TypeScript, PHP, Go, Kotlin, Swift, Rust, Dart, Ruby, R, MATLAB, SQL, dan HTML/CSS.</p>
+    </div>
+    <div class="kgrid">
+      <div class="card">
+        <div class="card-h"><h2>Kiriman <span class="count" id="kCount">0</span></h2><button type="button" class="linkbtn" id="kClear">Kosongkan</button></div>
+        <div class="card-b stack">
+          <label class="bdrop" for="kFiles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg><b>Pilih berkas kode atau ZIP</b><span class="muted">Satu berkas = satu kiriman. Di dalam ZIP, tiap folder teratas = satu kiriman (mis. satu folder per mahasiswa).</span></label>
+          <input type="file" id="kFiles" class="sr-only" multiple accept=".py,.ipynb,.js,.jsx,.ts,.tsx,.java,.c,.h,.cpp,.cc,.hpp,.cs,.php,.go,.kt,.swift,.rs,.dart,.rb,.r,.m,.sql,.html,.css,.vue,.sh,.zip,.txt">
+          <details class="more"><summary>Tempel kode <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="stack" style="margin-top:8px">
+              <div class="rf2"><label class="field" for="kPasteName">Nama kiriman<input type="text" id="kPasteName" placeholder="mis. Andi - tugas3.py"></label>
+              <label class="field" for="kPasteLang">Bahasa<select id="kPasteLang"></select></label></div>
+              <label class="field" for="kPaste"><span class="sr-only">Kode</span><textarea id="kPaste" class="codearea" rows="9" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="def hitung(nilai):&#10;    return sum(nilai) / len(nilai)"></textarea></label>
+              <button type="button" class="btn" id="kPasteAdd">Tambahkan kiriman</button>
+            </div></details>
+          <div id="kList" class="klist"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>Pengaturan</h2></div>
+        <div class="card-b stack">
+          <label class="field" for="kSens">Kepekaan<select id="kSens"><option value="8">Tinggi · potongan pendek pun terdeteksi</option><option value="12" selected>Normal · disarankan</option><option value="18">Longgar · hanya blok panjang</option></select></label>
+          <label class="field" for="kTpl">Kode template dari dosen (diabaikan)<input type="file" id="kTpl" multiple accept=".py,.ipynb,.js,.jsx,.ts,.tsx,.java,.c,.h,.cpp,.cc,.hpp,.cs,.php,.go,.kt,.swift,.rs,.dart,.rb,.r,.m,.sql,.html,.css,.vue,.sh,.txt"></label>
+          <p class="hint" id="kTplNote" style="margin:0">Kode yang diberikan dosen sebagai kerangka tidak dihitung sebagai salinan.</p>
+          <div class="btnrow"><button type="button" class="btn" id="kCsv">Ekspor CSV</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="stats" id="kStats"></div>
+    <div class="card" id="kMatrixCard" hidden><div class="card-h"><h2>Matriks kemiripan</h2><span class="muted" style="font-size:12.5px">Persen kode baris yang juga ada di kiriman kolom</span></div><div class="card-b" style="overflow-x:auto"><table class="kmatrix" id="kMatrix"></table></div></div>
+    <div class="card"><div class="card-h"><h2>Pasangan paling mirip</h2></div><div class="card-b" id="kPairs"></div></div>
   </section>
 
   <!-- ================= MASSAL ================= -->
@@ -1599,6 +1702,11 @@ kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border
         <p class="muted">Setiap sinyal punya bobot. Sinyal berbobot kecil hanya sedikit memengaruhi skor.</p>
       </article>
       <article class="card gcard">
+        <h2>Cek plagiasi kode program</h2>
+        <p>Untuk tugas pemrograman. Setiap kiriman diubah menjadi rangkaian token: komentar dibuang, nama variabel dan fungsi disamakan, teks dan angka dinormalkan. Lalu potongan berurutan (k-gram, cara yang juga dipakai MOSS dan JPlag) dibandingkan antar-kiriman. Karena itu, mengganti nama variabel, mengubah komentar, merapikan spasi, atau menukar urutan fungsi tidak menyembunyikan salinan.</p>
+        <p class="muted">Unggah berkas satu per satu, atau satu ZIP berisi folder per mahasiswa. Kode kerangka dari dosen bisa dimuat sebagai template agar tidak dihitung. Hasilnya: daftar pasangan, matriks kemiripan, dan tampilan berdampingan bertema ala VS Code dengan nomor baris serta blok yang sama.</p>
+      </article>
+      <article class="card gcard">
         <h2>Untuk jasa &amp; dosen</h2>
         <p><b>Periksa banyak dokumen</b> memeriksa puluhan naskah sekaligus dan membandingkan naskah-naskah itu satu sama lain, sehingga tugas yang saling menyalin langsung terlihat. Semua laporan PDF bisa diunduh dalam satu ZIP, dan ringkasannya diekspor ke CSV/Excel.</p>
         <p>Isi <b>batas kesamaan</b> kampus atau instansi di tab Sumber (mis. 25%). Hasil di layar, laporan PDF, dan pemeriksaan massal akan bertanda "Lolos" atau "Belum lolos".</p>
@@ -1719,6 +1827,18 @@ kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border
       <button type="button" class="btn sm icon-only" data-close="1" id="verClose" aria-label="Tutup verifikasi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </header>
     <div class="drawer-b" id="verBody"></div>
+  </section>
+</div>
+<div class="drawer" id="codeDrawer" hidden>
+  <div class="drawer-bg" data-close="1"></div>
+  <section class="drawer-panel codepanel" role="dialog" aria-modal="true" aria-labelledby="cdTitle">
+    <header class="drawer-h">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg></span>
+      <div class="drawer-t"><b id="cdTitle">Bandingkan kode</b><span class="muted" id="cdSub"></span></div>
+      <button type="button" class="btn sm icon-only" data-close="1" id="cdClose" aria-label="Tutup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </header>
+    <div class="drawer-sum" id="cdSum"></div>
+    <div class="cdbody"><div class="cdpane"><div class="cdname" id="cdNameA"></div><div class="vscode" id="cdA"></div></div><div class="cdpane"><div class="cdname" id="cdNameB"></div><div class="vscode" id="cdB"></div></div></div>
   </section>
 </div>
 <div class="cmdk" id="cmdk" hidden>
@@ -2193,7 +2313,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.0.0";
+var APP_VERSION = "4.1.0";
 var SITE_URL = "https://ferdynandekawijaya92821-create.github.io/kalori-cli/";
 function setBusy(msg, frac) {
   var b = $("#busy");
@@ -2230,6 +2350,7 @@ function showView(v, go) {
   if (v === "tersembunyi" && typeof renderHidden === "function") renderHidden();
   if (v === "daftarisi" && typeof renderToc === "function") renderToc();
   if (v === "massal" && typeof renderBatch === "function") renderBatch();
+  if (v === "kode" && typeof renderKode === "function") renderKode();
   if (v === "pustaka" && typeof renderRefs === "function") renderRefs();
   if (go) setTimeout(function () { goPanel(go); }, 30);
 }
@@ -2859,6 +2980,233 @@ $("#rfDoc").onclick = function () {
 $("#rfClear").onclick = function () { REFS = []; saveRefs(); renderRefs(); };
 renderRefs();
 
+/* ---- cek plagiasi kode program ---- */
+var CODE_LANG = { py: "Python", ipynb: "Python", js: "JavaScript", jsx: "JavaScript", ts: "TypeScript", tsx: "TypeScript", java: "Java", c: "C", h: "C/C++", cpp: "C++", cc: "C++", hpp: "C++",
+  cs: "C#", php: "PHP", go: "Go", kt: "Kotlin", swift: "Swift", rs: "Rust", dart: "Dart", rb: "Ruby", r: "R", m: "MATLAB", sql: "SQL", html: "HTML", css: "CSS", vue: "Vue", sh: "Shell", txt: "Teks" };
+var HASH_COM = { Python: 1, Ruby: 1, R: 1, Shell: 1 };
+var CODE_KW = new Set(("if else elif for foreach while do return break continue switch case default try catch except finally throw throws raise new delete class def function func fn " +
+  "import from as package module use public private protected internal static final const let var val void int float double char bool boolean string str long short byte struct enum interface trait " +
+  "extends implements this self super null None nil undefined true false True False and or not in is lambda yield async await with pass global nonlocal print printf println echo " +
+  "range len include using namespace template typename sizeof auto unsigned signed goto where select insert update delete create table values into set join on group by order having " +
+  "end begin then elsif unless until loop match impl mut pub crate override virtual abstract sealed readonly get set object companion data suspend when is guard defer go chan map make " +
+  "list dict tuple input scanf cin cout endl std main println! vec fmt Println").split(" "));
+var CODE_CT = new Set("if else elif for foreach while do return break continue switch case default try catch except finally throw raise yield await pass goto match when guard defer".split(" "));
+// Tokenisasi sederhana untuk semua bahasa: komentar dibuang, nama variabel/fungsi disamakan ("V"), teks "S", angka "N".
+function codeTokens(src, lang) {
+  var out = [], re, m, hashC = !!HASH_COM[lang], sql = lang === "SQL", mat = lang === "MATLAB", html = lang === "HTML" || lang === "Vue";
+  re = /("""[\s\S]*?"""|'{3}[\s\S]*?'{3})|(\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->)|(\/\/[^\n]*)|(#[^\n]*)|(--[^\n]*)|(%[^\n]*)|("(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`)|(\d[\w.]*)|([A-Za-z_$][\w$]*)|(==|!=|<=|>=|=>|->|::|\+\+|--|&&|\|\||\+=|-=|\*=|\/=|\*\*|<<|>>|[^\s\w])/g;
+  while ((m = re.exec(src))) {
+    var k, t = m[0];
+    if (m[1]) k = "str";
+    else if (m[2]) { if (m[2][0] === "<" && !html) { k = "op"; re.lastIndex = m.index + 1; t = "<"; } else k = "com"; }
+    else if (m[3]) { if (hashC) { k = "op"; re.lastIndex = m.index + 2; t = "//"; } else k = "com"; }
+    else if (m[4]) { if (hashC || (lang === "PHP")) k = "com"; else if (lang === "C" || lang === "C++" || lang === "C/C++" || lang === "C#") k = "com"; else { k = "op"; re.lastIndex = m.index + 1; t = "#"; } }
+    else if (m[5]) { if (sql) k = "com"; else { k = "op"; re.lastIndex = m.index + 2; t = "--"; } }
+    else if (m[6]) { if (mat) k = "com"; else { k = "op"; re.lastIndex = m.index + 1; t = "%"; } }
+    else if (m[7]) k = "str"; else if (m[8]) k = "num";
+    else if (m[9]) k = CODE_KW.has(t) || CODE_KW.has(t.toLowerCase()) && sql ? (CODE_CT.has(t) ? "ct" : "kw") : "id";
+    else k = "op";
+    out.push({ k: k, t: t, s: m.index, e: m.index + t.length });
+  }
+  return out;
+}
+function codeNorm(tok) { return tok.k === "id" ? "V" : tok.k === "str" ? "S" : tok.k === "num" ? "N" : tok.k === "com" ? null : tok.k === "op" ? tok.t : tok.t.toLowerCase(); }
+function codePrepare(sub, k) {
+  var toks = codeTokens(sub.code, sub.lang).filter(function (x) { return x.k !== "com"; }), norm = toks.map(codeNorm), lineOf = [], ls = [0];
+  for (var i = 0; i < sub.code.length; i++) if (sub.code.charCodeAt(i) === 10) ls.push(i + 1);
+  toks.forEach(function (x) { var lo = 0, hi = ls.length - 1; while (lo < hi) { var mid = (lo + hi + 1) >> 1; if (ls[mid] <= x.s) lo = mid; else hi = mid - 1; } lineOf.push(lo); });
+  var hashes = [], first = new Map();
+  for (var j = 0; j + k <= norm.length; j++) {
+    var h = 2166136261; for (var q = j; q < j + k; q++) { var w = norm[q]; for (var c = 0; c < w.length; c++) { h ^= w.charCodeAt(c); h = Math.imul(h, 16777619); } h ^= 31; h = Math.imul(h, 16777619); }
+    h = h >>> 0; hashes.push(h); if (!first.has(h)) first.set(h, j);
+  }
+  sub.toks = toks; sub.lineOf = lineOf; sub.hashes = hashes; sub.first = first; sub.set = new Set(hashes); sub.nTok = toks.length;
+}
+var KODE = { subs: [], tpl: new Set(), pairs: [], k: 12 };
+function codeCompare(A, B, k) {
+  var tpl = KODE.tpl, markA = new Uint8Array(A.nTok), markB = new Uint8Array(B.nTok), regions = [], i = 0;
+  while (i < A.hashes.length) {
+    var h = A.hashes[i];
+    if (!B.set.has(h) || tpl.has(h)) { i++; continue; }
+    var j = B.first.get(h), len = 1;
+    while (i + len < A.hashes.length && j + len < B.hashes.length && A.hashes[i + len] === B.hashes[j + len] && !tpl.has(A.hashes[i + len])) len++;
+    var a1 = i + len - 1 + k - 1, b1 = j + len - 1 + k - 1;
+    for (var x = i; x <= a1; x++) markA[x] = 1;
+    for (var y = j; y <= b1; y++) markB[y] = 1;
+    regions.push({ a0: A.lineOf[i], a1: A.lineOf[a1], b0: B.lineOf[j], b1: B.lineOf[b1], n: a1 - i + 1 });
+    i += len;
+  }
+  // sisa kecocokan tak berurutan (urutan fungsi ditukar) tetap dihitung lewat himpunan k-gram
+  for (var p = 0; p < A.hashes.length; p++) if (!markA[p] && B.set.has(A.hashes[p]) && !tpl.has(A.hashes[p])) for (var z = p; z < p + k; z++) markA[z] = 1;
+  // Persentase dihitung dari kode di luar template dosen.
+  var cA = 0, cB = 0; markA.forEach(function (v, i) { if (v && !A.tplMask[i]) cA++; }); markB.forEach(function (v, i) { if (v && !B.tplMask[i]) cB++; });
+  regions = regions.filter(function (r) { return r.n >= k; }).sort(function (x, y) { return x.a0 - y.a0; });
+  return { a: A.nEff ? 100 * cA / A.nEff : 0, b: B.nEff ? 100 * cB / B.nEff : 0, regions: regions };
+}
+function codeAnalyze() {
+  var k = KODE.k = +$("#kSens").value;
+  KODE.subs.forEach(function (s) { codePrepare(s, k); });
+  KODE.tpl = new Set(); (KODE.tplSubs || []).forEach(function (t) { codePrepare(t, k); t.hashes.forEach(function (h) { KODE.tpl.add(h); }); });
+  KODE.subs.forEach(function (s) {
+    s.tplMask = new Uint8Array(s.nTok);
+    s.hashes.forEach(function (h, j) { if (KODE.tpl.has(h)) for (var q = j; q < j + k; q++) s.tplMask[q] = 1; });
+    var m = 0; s.tplMask.forEach(function (v) { m += v; }); s.nEff = s.nTok - m < k ? 0 : s.nTok - m;
+  });
+  var pairs = [];
+  for (var i = 0; i < KODE.subs.length; i++) for (var j = i + 1; j < KODE.subs.length; j++) {
+    var A = KODE.subs[i], B = KODE.subs[j], r = codeCompare(A, B, k);
+    pairs.push({ i: i, j: j, a: r.a, b: r.b, max: Math.max(r.a, r.b), regions: r.regions });
+  }
+  KODE.pairs = pairs.sort(function (x, y) { return y.max - x.max; });
+  KODE.subs.forEach(function (s, i) { s.best = 0; s.bestWith = ""; });
+  pairs.forEach(function (p) {
+    var A = KODE.subs[p.i], B = KODE.subs[p.j];
+    if (p.a > A.best) { A.best = p.a; A.bestWith = B.name; } if (p.b > B.best) { B.best = p.b; B.bestWith = A.name; }
+  });
+}
+function kColor(v) { return v >= 70 ? "var(--bad)" : v >= 40 ? "var(--warn)" : "var(--ok)"; }
+function renderKode() {
+  var subs = KODE.subs, pairs = KODE.pairs;
+  $("#kCount").textContent = subs.length;
+  $("#kTplNote").textContent = KODE.tplSubs && KODE.tplSubs.length ? KODE.tplSubs.length + " berkas template dimuat; bagiannya tidak dihitung sebagai salinan." : "Kode yang diberikan dosen sebagai kerangka tidak dihitung sebagai salinan.";
+  $("#kList").innerHTML = subs.map(function (s, i) {
+    return '<div class="kitem"><span class="klang">' + esc(s.lang) + "</span><b>" + esc(s.name) + "</b><small>" + fmtNum(s.lines) + " baris" + (s.files > 1 ? " · " + s.files + " berkas" : "") + '</small><button type="button" class="btn sm icon-only" data-kdel="' + i + '" aria-label="Hapus ' + esc(s.name) + '">' + TRASH + "</button></div>";
+  }).join("");
+  var high = pairs.filter(function (p) { return p.max >= 50; }).length;
+  $("#kStats").innerHTML = subs.length < 2 ? "" : [["Kiriman", fmtNum(subs.length), "dibandingkan satu sama lain"], ["Pasangan dicek", fmtNum(pairs.length), "setiap kiriman dengan yang lain"],
+    ["Pasangan mirip ≥ 50%", fmtNum(high), "perlu ditinjau"], ["Kemiripan tertinggi", pairs.length ? pctLabel(pairs[0].max) : "-", pairs.length ? esc(subs[pairs[0].i].name) + " ↔ " + esc(subs[pairs[0].j].name) : ""]]
+    .map(function (x) { return '<div class="stat card"><span class="eyebrow">' + x[0] + '</span><b class="num">' + x[1] + "</b><small>" + x[2] + "</small></div>"; }).join("");
+  $("#kPairs").innerHTML = subs.length < 2 ? '<div class="empty">Tambahkan minimal dua kiriman untuk dibandingkan.</div>' : pairs.slice(0, 60).map(function (p, n) {
+    var A = subs[p.i], B = subs[p.j];
+    return '<div class="kpair"><div class="kn"><b>' + esc(A.name) + "</b> ↔ <b>" + esc(B.name) + "</b><small>" + pctLabel(p.a) + " kode " + esc(A.name) + " ada di " + esc(B.name) + " · " + pctLabel(p.b) + " sebaliknya · " + p.regions.length + " blok sama</small></div>" +
+      '<div class="ks"><b style="color:' + kColor(p.max) + '">' + pctLabel(p.max) + '</b><div class="bar"><i style="width:' + Math.min(100, p.max) + "%;background:" + kColor(p.max) + '"></i></div></div>' +
+      '<button type="button" class="btn sm' + (p.max >= 50 ? " primary" : "") + '" data-kpair="' + n + '">Bandingkan</button></div>';
+  }).join("") + (pairs.length > 60 ? '<p class="muted" style="font-size:12.5px">Menampilkan 60 dari ' + pairs.length + " pasangan.</p>" : "");
+  var mc = $("#kMatrixCard"); mc.hidden = subs.length < 3 || subs.length > 16;
+  if (!mc.hidden) {
+    var M = {}; pairs.forEach(function (p, n) { M[p.i + "-" + p.j] = { v: p.a, n: n }; M[p.j + "-" + p.i] = { v: p.b, n: n }; });
+    $("#kMatrix").innerHTML = "<tr><th></th>" + subs.map(function (s) { return '<th title="' + esc(s.name) + '">' + esc(s.name.slice(0, 14)) + "</th>"; }).join("") + "</tr>" + subs.map(function (s, i) {
+      return '<tr><th title="' + esc(s.name) + '">' + esc(s.name.slice(0, 18)) + "</th>" + subs.map(function (t, j) {
+        if (i === j) return '<td class="self">—</td>';
+        var c = M[i + "-" + j], v = c.v, bg = v >= 70 ? "rgba(194,57,46," : v >= 40 ? "rgba(181,112,12," : "rgba(29,127,85,";
+        return '<td data-kpair="' + c.n + '" style="background:' + bg + (0.15 + 0.6 * Math.min(1, v / 100)).toFixed(2) + ')" title="' + esc(s.name) + " → " + esc(t.name) + ": " + pctLabel(v) + '">' + Math.round(v) + "</td>";
+      }).join("") + "</tr>";
+    }).join("");
+  }
+}
+// Pewarnaan sintaks ala VS Code Dark+ per baris, dengan tanda blok yang sama.
+function codeLinesHtml(sub, hits) {
+  var src = sub.code, toks = codeTokens(src, sub.lang), html = "", pos = 0;
+  toks.forEach(function (t, i) {
+    if (t.s < pos) return;
+    var cls = t.k === "com" ? (/^\/\/ ===|^# ===/.test(t.t) ? "tk-file" : "tk-com") : t.k === "str" ? "tk-str" : t.k === "num" ? "tk-num" : t.k === "kw" ? "tk-kw" : t.k === "ct" ? "tk-ct" : t.k === "op" ? "tk-op" :
+      (toks[i + 1] && toks[i + 1].t === "(" ? "tk-fn" : /^[A-Z][a-z]/.test(t.t) ? "tk-ty" : "tk-id");
+    html += esc(src.slice(pos, t.s)) + '<span class="' + cls + '">' + esc(t.t) + "</span>"; pos = t.e;
+  });
+  html += esc(src.slice(pos));
+  // Pecah per baris tanpa merusak <span> yang melintasi baris (komentar/teks banyak baris).
+  var lines = [], open = null, cur = "";
+  html.split("\n").forEach(function (seg) {
+    var line = (open ? '<span class="' + open + '">' : "") + seg, depth = 0, last = open;
+    var re = /<span class="([^"]+)">|<\/span>/g, mm, stack = open ? [open] : [];
+    while ((mm = re.exec(seg))) { if (mm[1]) stack.push(mm[1]); else stack.pop(); }
+    open = stack.length ? stack[stack.length - 1] : null;
+    lines.push(line + (open ? "</span>" : ""));
+  });
+  return lines.map(function (l, n) {
+    var h = hits[n];
+    return '<div class="ln' + (h ? " hit" : "") + '" data-line="' + n + '"' + (h ? ' data-m="' + h.id + '" style="--mc:' + h.c + ";--mt:" + h.t + '"' : "") + '><span class="no">' + (n + 1) + '</span><span class="gm"></span><span class="tx">' +
+      (h && h.start ? '<span class="tag">' + h.id + "</span>" : "") + (l || " ") + "</span></div>";
+  }).join("");
+}
+function openCodePair(n) {
+  var p = KODE.pairs[n]; if (!p) return;
+  var A = KODE.subs[p.i], B = KODE.subs[p.j], hA = {}, hB = {};
+  p.regions.forEach(function (r, idx) {
+    var id = idx + 1, c = SRC_COLORS[idx % SRC_COLORS.length][0], t = hexA(c, .18);
+    for (var x = r.a0; x <= r.a1; x++) if (!hA[x]) hA[x] = { id: id, c: c, t: t, start: x === r.a0 };
+    for (var y = r.b0; y <= r.b1; y++) if (!hB[y]) hB[y] = { id: id, c: c, t: t, start: y === r.b0 };
+  });
+  $("#cdTitle").textContent = A.name + " ↔ " + B.name;
+  $("#cdSub").textContent = A.lang + (A.lang !== B.lang ? " / " + B.lang : "") + " · kepekaan " + KODE.k + " token";
+  $("#cdNameA").textContent = A.name + " · " + pctLabel(p.a) + " sama"; $("#cdNameB").textContent = B.name + " · " + pctLabel(p.b) + " sama";
+  $("#cdSum").innerHTML = p.regions.length ? '<div class="kmatch">' + p.regions.map(function (r, idx) {
+    var c = SRC_COLORS[idx % SRC_COLORS.length][0];
+    return '<button type="button" data-kjump="' + idx + '" style="background:' + c + '">' + (idx + 1) + ": baris " + (r.a0 + 1) + "–" + (r.a1 + 1) + " ↔ " + (r.b0 + 1) + "–" + (r.b1 + 1) + "</button>";
+  }).join("") + "</div>" : "Tidak ada blok kode yang sama.";
+  $("#cdA").innerHTML = codeLinesHtml(A, hA); $("#cdB").innerHTML = codeLinesHtml(B, hB);
+  KODE.open = p;
+  lastFocus = document.activeElement; $("#codeDrawer").hidden = false; document.body.classList.add("noscroll"); $("#cdClose").focus();
+  $("#cdA").scrollTop = $("#cdB").scrollTop = 0;
+}
+function closeCode() { $("#codeDrawer").hidden = true; document.body.classList.remove("noscroll"); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+function codeJump(idx) {
+  var r = KODE.open && KODE.open.regions[idx]; if (!r) return;
+  [["#cdA", r.a0], ["#cdB", r.b0]].forEach(function (x) {
+    var pane = $(x[0]), el = pane.querySelector('[data-line="' + x[1] + '"]'); if (!el) return;
+    pane.querySelectorAll(".cur").forEach(function (c) { c.classList.remove("cur"); }); el.classList.add("cur");
+    pane.scrollTop = el.offsetTop - pane.clientHeight / 3;
+  });
+}
+$("#codeDrawer").addEventListener("click", function (e) { if (e.target.closest("[data-close]")) return closeCode(); var b = e.target.closest("[data-kjump]"); if (b) codeJump(+b.dataset.kjump); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#codeDrawer").hidden) closeCode(); });
+function codeLangOf(name) { var ext = (name.split(".").pop() || "").toLowerCase(); return CODE_LANG[ext] || null; }
+function notebookCode(txt) {
+  try { var nb = JSON.parse(txt); return (nb.cells || []).filter(function (c) { return c.cell_type === "code"; }).map(function (c) { return [].concat(c.source || []).join(""); }).join("\n\n"); } catch (e) { return txt; }
+}
+// Berkas kode -> kiriman. ZIP: tiap folder teratas satu kiriman; berkas di akar ZIP masing-masing satu kiriman.
+function codeFromFiles(files) {
+  var out = [];
+  return Promise.all([].slice.call(files).map(function (f) {
+    if (/\.zip$/i.test(f.name)) {
+      return need("JSZip", "jszip/3.10.1/jszip.min.js").then(function () { return f.arrayBuffer(); }).then(function (b) { return window.JSZip.loadAsync(b); }).then(function (zip) {
+        var groups = {}, jobs = [];
+        zip.forEach(function (path, entry) {
+          if (entry.dir || /(^|\/)(__MACOSX|\.git|node_modules|venv|\.venv|build|dist)\//.test(path) || /(^|\/)\./.test(path)) return;
+          var lang = codeLangOf(path); if (!lang || lang === "Teks") return;
+          var parts = path.split("/"), key = parts.length > 1 ? parts[0] : path;
+          jobs.push(entry.async("string").then(function (txt) { (groups[key] = groups[key] || []).push({ path: parts.length > 1 ? parts.slice(1).join("/") : path, lang: lang, code: /\.ipynb$/i.test(path) ? notebookCode(txt) : txt }); }));
+        });
+        return Promise.all(jobs).then(function () {
+          Object.keys(groups).sort().forEach(function (key) {
+            var g = groups[key].sort(function (a, b) { return a.path < b.path ? -1 : 1; }), lang = g[0].lang, hc = HASH_COM[lang] ? "# " : "// ";
+            var code = g.length === 1 ? g[0].code : g.map(function (x) { return hc + "=== " + x.path + " ===\n" + x.code; }).join("\n\n");
+            out.push({ name: key, lang: lang, code: code, files: g.length });
+          });
+        });
+      });
+    }
+    var lang = codeLangOf(f.name) || "Teks";
+    return f.text().then(function (txt) { out.push({ name: f.name, lang: lang, code: /\.ipynb$/i.test(f.name) ? notebookCode(txt) : txt, files: 1 }); });
+  })).then(function () { return out; });
+}
+function codeAdd(list) {
+  list.forEach(function (s) { s.code = s.code.replace(/\r\n?/g, "\n"); s.lines = s.code.split("\n").length; if (s.code.trim() && KODE.subs.length < 80) KODE.subs.push(s); });
+  codeAnalyze(); renderKode();
+}
+$("#kFiles").onchange = function (e) { var fs = e.target.files; codeFromFiles(fs).then(function (l) { e.target.value = ""; if (!l.length) return toast("Tidak ada berkas kode yang dikenali."); codeAdd(l); toast(l.length + " kiriman ditambahkan."); }, function (err) { toast("Gagal membaca: " + err.message); }); };
+$("#kTpl").onchange = function (e) { codeFromFiles(e.target.files).then(function (l) { KODE.tplSubs = l; codeAnalyze(); renderKode(); }); };
+$("#kSens").onchange = function () { if (KODE.subs.length) { codeAnalyze(); renderKode(); } };
+$("#kPasteLang").innerHTML = ["Python", "Java", "C", "C++", "C#", "JavaScript", "TypeScript", "PHP", "Go", "Kotlin", "Swift", "Rust", "Dart", "Ruby", "R", "MATLAB", "SQL", "HTML", "CSS"].map(function (l) { return "<option>" + l + "</option>"; }).join("");
+$("#kPasteAdd").onclick = function () {
+  var c = $("#kPaste").value; if (!c.trim()) return toast("Tempel kodenya dulu.");
+  codeAdd([{ name: $("#kPasteName").value.trim() || "Kiriman " + (KODE.subs.length + 1), lang: $("#kPasteLang").value, code: c, files: 1 }]);
+  $("#kPaste").value = ""; $("#kPasteName").value = ""; toast("Kiriman ditambahkan.");
+};
+$("#kPaste").addEventListener("keydown", function (e) {
+  if (e.key === "Tab") { e.preventDefault(); var t = this, a = t.selectionStart; t.value = t.value.slice(0, a) + "    " + t.value.slice(t.selectionEnd); t.selectionStart = t.selectionEnd = a + 4; }
+});
+$("#kList").addEventListener("click", function (e) { var b = e.target.closest("[data-kdel]"); if (!b) return; KODE.subs.splice(+b.dataset.kdel, 1); codeAnalyze(); renderKode(); });
+$("#kClear").onclick = function () { KODE.subs = []; KODE.pairs = []; renderKode(); };
+document.addEventListener("click", function (e) { var b = e.target.closest("#kPairs [data-kpair], #kMatrix [data-kpair]"); if (b) openCodePair(+b.dataset.kpair); });
+$("#kCsv").onclick = function () {
+  if (KODE.subs.length < 2) return toast("Tambahkan minimal dua kiriman.");
+  var q = function (v) { v = String(v == null ? "" : v); return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  var rows = [["Kiriman A", "Kiriman B", "Bahasa", "% A ada di B", "% B ada di A", "Tertinggi", "Blok sama"]].concat(KODE.pairs.map(function (p) {
+    var A = KODE.subs[p.i], B = KODE.subs[p.j]; return [A.name, B.name, A.lang, p.a.toFixed(1), p.b.toFixed(1), p.max.toFixed(1), p.regions.length];
+  }));
+  download(new Blob(["﻿" + rows.map(function (r) { return r.map(q).join(","); }).join("\n")], { type: "text/csv;charset=utf-8" }), "Cek-kode-" + new Date().toISOString().slice(0, 10) + ".csv");
+};
 /* ---- periksa banyak dokumen ---- */
 var BATCH = [];
 function batchBase() {
@@ -3013,7 +3361,7 @@ document.addEventListener("keydown", function (e) {
 
 /* ---- pasang aplikasi (PWA) ---- */
 var installEvt = null;
-window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installEvt = e; $("#installBtn").hidden = false; });
+window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installEvt = e; if (!IS_APP) $("#installBtn").hidden = false; });
 window.addEventListener("appinstalled", function () { $("#installBtn").hidden = true; toast("CekTeks terpasang di perangkat Anda."); });
 $("#svcLimit").addEventListener("input", function () { schedule(0); if (BATCH.length) renderBatch(); });
 $("#installBtn").onclick = function () { if (!installEvt) return; installEvt.prompt(); installEvt.userChoice.then(function () { installEvt = null; $("#installBtn").hidden = true; }); };
@@ -4212,7 +4560,27 @@ function buildReport() {
 }
 var DISCLAIMER = "Deteksi AI bersifat perkiraan berdasarkan gaya tulisan dan bisa keliru. Cek plagiarisme hanya membandingkan dengan sumber yang dipilih. Jangan jadikan laporan ini satu-satunya dasar keputusan.";
 function fileBase() { return "Laporan-CekTeks-" + (S.doc ? S.doc.name.replace(/\.[^.]+$/, "").replace(/[^\w\-]+/g, "_").slice(0, 40) + "-" : "") + new Date().toISOString().slice(0, 10); }
+// Di aplikasi Android (Capacitor) WebView tidak bisa mengunduh blob: berkas disimpan lalu dibuka lewat menu Bagikan/Simpan.
+var CAP = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() ? window.Capacitor : null;
+var IS_APP = !!CAP || /Electron\//.test(navigator.userAgent);
+function capSave(blob, name) {
+  var P = CAP.Plugins || {};
+  if (!P.Filesystem) return toast("Penyimpanan berkas belum tersedia di aplikasi ini.");
+  var rd = new FileReader();
+  rd.onload = function () {
+    P.Filesystem.writeFile({ path: name, data: String(rd.result).split(",")[1], directory: "CACHE" }).then(function (r) {
+      toast("Laporan siap. Pilih Simpan ke perangkat, Drive, atau kirim lewat WhatsApp.");
+      if (P.Share) return P.Share.share({ title: name, files: [r.uri], dialogTitle: "Simpan atau bagikan " + name });
+    }).catch(function (e) { if (!/cancel/i.test((e && e.message) || "")) toast("Gagal menyimpan: " + ((e && e.message) || e)); });
+  };
+  rd.readAsDataURL(blob);
+}
+if (CAP) document.addEventListener("click", function (e) {
+  var a = e.target.closest('a[target="_blank"]'); if (!a || !/^https?:/.test(a.href)) return;
+  e.preventDefault(); window.location.href = a.href; // Capacitor membuka alamat luar di browser sistem
+});
 function download(blob, name) {
+  if (CAP) return capSave(blob, name);
   try {
     var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.rel = "noopener";
     document.body.appendChild(a); a.click(); a.remove();
@@ -5334,6 +5702,12 @@ if (draft && draft.trim()) setText(draft, false); else setText(SAMPLE, true);
 setMode("review");
 var h0 = location.hash.slice(1); if (/^[a-z]+$/.test(h0) && $("#view-" + h0)) showView(h0); else showView("periksa");
 $("#sideVer").textContent = "v" + APP_VERSION;
+// Kartu unduh aplikasi: disembunyikan di dalam aplikasi; platform pengguna ditonjolkan.
+(function () {
+  if (IS_APP) { $("#appCard").hidden = true; $("#installBtn").hidden = true; return; }
+  var ua = navigator.userAgent, os = /Android/i.test(ua) ? "android" : /Windows/i.test(ua) ? "windows" : /Mac OS X|Macintosh/i.test(ua) && !/iPhone|iPad/.test(ua) ? "mac" : /Linux/i.test(ua) && !/Android/.test(ua) ? "linux" : "";
+  var b = os && document.querySelector('.appbtn[data-os="' + os + '"]'); if (b) { b.classList.add("mine"); b.parentNode.insertBefore(b, b.parentNode.firstChild); }
+})();
 </script>
 
 </body>

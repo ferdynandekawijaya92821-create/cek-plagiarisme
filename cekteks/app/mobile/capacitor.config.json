@@ -1,0 +1,12 @@
+{
+  "appId": "id.cekteks.app",
+  "appName": "CekTeks",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#f4f6f9"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}
