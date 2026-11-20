@@ -15,3 +15,9 @@ Thumbs.db
 
 # Dependensi pengembangan
 node_modules/
+
+# Hasil build aplikasi (dibuat di GitHub Actions)
+cekteks/app/desktop/dist/
+cekteks/app/desktop/app/
+cekteks/app/mobile/www/
+cekteks/app/mobile/android/
