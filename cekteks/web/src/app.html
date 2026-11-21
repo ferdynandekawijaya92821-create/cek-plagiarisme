@@ -1925,7 +1925,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
           <details class="acc" id="jbAcc">
             <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="M5 18v-5a7 7 0 0 1 14 0v5"/><path d="M9 18v-4M15 18v-4M12 18v-5"/></svg></span><span><b>Jembatan teks lengkap &amp; repositori kampus</b><span class="muted" id="jbSum">opsional · unduh PDF jurnal &amp; skripsi</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
             <div class="card-b stack">
-              <p class="hint" style="margin:0">Browser tidak diizinkan mengambil PDF jurnal kampus, skripsi di repositori, atau halaman web lain secara langsung, sehingga tanpa jembatan hanya abstraknya yang dibandingkan. Jembatan adalah server kecil gratis di akun Cloudflare milik Anda yang mengambilkan berkas itu, sehingga <b>seluruh isinya</b> ikut dibandingkan dan <b>repositori skripsi kampus</b> bisa dicari langsung. <a href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/blob/main/cekteks/jembatan/README.md" target="_blank" rel="noopener">Panduan pasang (±5 menit)</a></p>
+              <p class="hint" style="margin:0">Browser tidak diizinkan mengambil PDF jurnal kampus, skripsi di repositori, atau halaman web lain secara langsung, sehingga tanpa jembatan hanya abstraknya yang dibandingkan. Jembatan adalah server kecil gratis di akun Cloudflare milik Anda yang mengambilkan berkas itu, sehingga <b>seluruh isinya</b> ikut dibandingkan dan <b>repositori skripsi kampus</b> bisa dicari langsung. <a href="https://github.com/ferdynandekawijaya92821-create/cek-plagiarisme/blob/main/cekteks/jembatan/README.md" target="_blank" rel="noopener">Panduan pasang (±5 menit)</a></p>
               <label class="field" for="jbUrlIn">Alamat jembatan<input type="url" id="jbUrlIn" autocomplete="off" spellcheck="false" placeholder="https://cekteks-jembatan.nama.workers.dev"></label>
               <label class="field" for="jbKeyIn">Kunci jembatan<input type="password" id="jbKeyIn" autocomplete="off" placeholder="Sama dengan KUNCI di Cloudflare"></label>
               <div class="logorow"><button type="button" class="btn" id="jbTest">Uji jembatan</button><span class="muted" id="jbStatus"></span></div>
@@ -2013,7 +2013,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
               <div class="btnrow">
                 <button type="button" class="btn primary" id="oPreview">Pratinjau di perangkat ini</button>
                 <button type="button" class="btn" id="oCopy">Salin site.json</button>
-                <a class="btn" id="oEdit" target="_blank" rel="noopener" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/edit/main/cekteks/web/site.json">Buka editor GitHub</a>
+                <a class="btn" id="oEdit" target="_blank" rel="noopener" href="https://github.com/ferdynandekawijaya92821-create/cek-plagiarisme/edit/main/cekteks/web/site.json">Buka editor GitHub</a>
                 <button type="button" class="linkbtn" id="oReset" hidden>Hapus pratinjau</button>
               </div>
             </div>
@@ -2314,7 +2314,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
       <button class="linkbtn" type="button" data-goto="bantuan" data-anchor="kontak">Kontak</button>
       <button class="linkbtn" type="button" data-goto="bantuan" data-anchor="kebijakan">Kebijakan Privasi</button>
       <button class="linkbtn" type="button" data-goto="bantuan" data-anchor="syarat">Syarat &amp; Ketentuan</button>
-      <a href="https://github.com/ferdynandekawijaya92821-create/kalori-cli" target="_blank" rel="noopener">Kode sumber</a>
+      <a href="https://github.com/ferdynandekawijaya92821-create/cek-plagiarisme" target="_blank" rel="noopener">Kode sumber</a>
     </nav>
   </footer>
 </main>
@@ -2933,7 +2933,7 @@ function recDec(list) {
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.7.0";
+var APP_VERSION = "4.7.1";
 // Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
 (function () {
   var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
@@ -2945,7 +2945,7 @@ var APP_VERSION = "4.7.0";
   d.innerHTML = '<p><b>CekTeks dibuka di dalam situs lain.</b> Demi keamanan, buka CekTeks langsung di tab sendiri.</p><a class="btn primary" target="_top" rel="noopener" href="' + location.href.replace(/"/g, "%22") + '">Buka CekTeks</a>';
   document.body.appendChild(d);
 })();
-var SITE_URL = "https://ferdynandekawijaya92821-create.github.io/kalori-cli/";
+var SITE_URL = "https://ferdynandekawijaya92821-create.github.io/cek-plagiarisme/";
 function setBusy(msg, frac) {
   var b = $("#busy");
   if (!msg) { b.hidden = true; return; }
@@ -4694,7 +4694,7 @@ function renderContact() {
   if (mailLink()) h += row(MAIL_IC, '<a href="' + esc(mailLink()) + '">' + esc(ml) + "</a>", "Email");
   if (SITE.cs.jam) h += row('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>', esc(SITE.cs.jam), "Jam layanan");
   if (!wa && !mailLink()) h += '<p class="hint" style="margin:0">Ajukan pertanyaan lewat asisten chat. Jawaban untuk pertanyaan umum tersedia kapan saja.</p>';
-  h += '<div class="btnrow"><button type="button" class="btn primary" data-adgo="cs">Buka chat</button><a class="btn" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/issues" target="_blank" rel="noopener">Laporkan masalah aplikasi</a></div>';
+  h += '<div class="btnrow"><button type="button" class="btn primary" data-adgo="cs">Buka chat</button><a class="btn" href="https://github.com/ferdynandekawijaya92821-create/cek-plagiarisme/issues" target="_blank" rel="noopener">Laporkan masalah aplikasi</a></div>';
   $("#helpContact").innerHTML = h;
 }
 

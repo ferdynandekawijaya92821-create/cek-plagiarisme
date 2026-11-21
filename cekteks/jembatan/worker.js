@@ -20,7 +20,7 @@
 const MAX_BYTES = 15 * 1024 * 1024;
 const TIMEOUT_MS = 25000;
 const MAX_REDIRECTS = 5;
-const UA = "Mozilla/5.0 (compatible; CekTeks-Jembatan/1.0; +https://github.com/ferdynandekawijaya92821-create/kalori-cli)";
+const UA = "Mozilla/5.0 (compatible; CekTeks-Jembatan/1.0; +https://github.com/ferdynandekawijaya92821-create/cek-plagiarisme)";
 
 function cors(origin, env) {
   const allow = String(env.ASAL || "").split(",").map((s) => s.trim()).filter(Boolean);

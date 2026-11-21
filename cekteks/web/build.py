@@ -18,8 +18,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)  # folder cekteks/
 REPO = os.path.dirname(ROOT)
 # Alamat situs publik (GitHub Pages). Ganti bila situs dipindah ke alamat lain.
-DEFAULT_SITE_URL = "https://ferdynandekawijaya92821-create.github.io/kalori-cli/"
-DEFAULT_REPO_URL = "https://github.com/ferdynandekawijaya92821-create/kalori-cli"
+DEFAULT_SITE_URL = "https://ferdynandekawijaya92821-create.github.io/cek-plagiarisme/"
+DEFAULT_REPO_URL = "https://github.com/ferdynandekawijaya92821-create/cek-plagiarisme"
 # Di GitHub Actions kedua alamat diisi otomatis dari nama repositori, jadi mengganti nama repo
 # (Settings -> General -> Repository name) langsung mengubah alamat situs, tautan kanonis, sitemap, dan QR laporan.
 SITE_URL = (os.environ.get("CEKTEKS_SITE_URL") or DEFAULT_SITE_URL).rstrip("/") + "/"

@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://ferdynandekawijaya92821-create.github.io/kalori-cli/sitemap.xml
+Sitemap: https://ferdynandekawijaya92821-create.github.io/cek-plagiarisme/sitemap.xml
