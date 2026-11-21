@@ -1,6 +1,6 @@
 # Membangun aplikasi CekTeks: Android (APK, Capacitor) serta Windows, macOS, dan Linux (Electron).
 # Pull request: hanya memastikan semua aplikasi berhasil dibangun.
-# Push ke main: hasilnya diterbitkan sebagai GitHub Release "v<versi>" dengan nama berkas tetap,
+# Jalankan manual (workflow_dispatch): hasilnya diterbitkan sebagai GitHub Release "v<versi>" dengan nama berkas tetap,
 # sehingga tautan .../releases/latest/download/CekTeks-Android.apk selalu mengarah ke versi terbaru.
 name: Aplikasi
 
@@ -123,8 +123,10 @@ jobs:
             cekteks/app/desktop/dist/CekTeks-Linux.AppImage
           if-no-files-found: error
 
+  # Rilis publik hanya bila dijalankan manual (Actions -> Aplikasi -> Run workflow). Push ke main tetap
+  # membangun dan menguji semua aplikasi, tetapi tidak menerbitkannya sebagai unduhan gratis.
   release:
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'workflow_dispatch'
     needs: [android, desktop]
     runs-on: ubuntu-latest
     permissions:

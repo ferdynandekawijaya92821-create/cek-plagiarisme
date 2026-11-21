@@ -104,6 +104,11 @@ def build_standalone(app, pwa, site):
     st = app.index("<style>") + len("<style>")
     en = app.index("</style>")
     app = app[:st] + "\n" + minify_css(app[st:en]) + "\n" + app[en:]
+    # Komentar JavaScript satu baris penuh dibuang dari skrip aplikasi (aman: skrip tidak memakai template literal).
+    js0 = app.index('<script>\n"use strict";')
+    js1 = app.index("</script>", js0)
+    script = app[js0:js1]
+    app = app[:js0] + re.sub(r"(?m)^[ \t]*//[^\n]*\n", "", script) + app[js1:]
     head_end = app.index("</style>") + len("</style>")
     head, body = app[:head_end], app[head_end:]
     if pwa:
@@ -129,6 +134,9 @@ def build_standalone(app, pwa, site):
     icon = ICON.replace("#0e6a86", accent)
     extra = (f'<meta name="theme-color" content="{accent}">\n'
              '<link rel="icon" href="data:image/svg+xml,' + icon.replace('"', "'").replace("#", "%23") + '">\n')
+    gv = re.sub(r"[^\w-]", "", str(site.get("google_verifikasi") or ""))
+    if pwa and gv:
+        extra += f'<meta name="google-site-verification" content="{gv}">\n'
     if pwa:
         og = SITE_URL + "og-image.png"
         extra += (

@@ -799,8 +799,24 @@ async function download(page, selector) {
       await p3.fill("#lyNama", "Budi Santoso"); await p3.check("#lyAgree", { force: true });
       await p3.click('#lySend [data-via="wa"]');
       const u = decodeURIComponent(await p3.evaluate(() => window.__opened || ""));
-      ok(u.startsWith("https://wa.me/6281234567890?text=") && u.includes("Paket: Cek Kode Program") && u.includes("Nama: Budi Santoso") && u.includes("halaman/naskah: 12"), "pesan WhatsApp salah: " + u);
+      ok(u.startsWith("https://wa.me/6281234567890?text=") && u.includes("Paket: Cek Kode Program") && u.includes("Nama: Budi Santoso") && u.includes("Jumlah tugas: 12"), "pesan WhatsApp salah: " + u);
       await p3.evaluate(() => { SITE = siteCfg(); renderLayanan(); });
+    });
+    await test("pembayaran QRIS: total + kode unik, QR dinamis bernominal pas dan CRC valid, bukti lewat WhatsApp", async () => {
+      await p3.evaluate(() => showView("layanan"));
+      ok(/Rp\s?20\.000/.test(await p3.textContent("#lyPaket")), "harga paket tidak tampil");
+      await p3.click('[data-pkg="1"]'); await p3.fill("#lyNama", "Sari"); await p3.fill("#lyHal", "3"); await p3.dispatchEvent("#lyHal", "input");
+      ok(/Rp\s?60\.000/.test(await p3.textContent("#lyTotal")), "total tidak dihitung: " + await p3.textContent("#lyTotal"));
+      if (!(await p3.isChecked("#lyAgree"))) await p3.check("#lyAgree", { force: true });
+      await p3.click('#lySend [data-via="qris"]');
+      await p3.waitForFunction(() => document.querySelector("#payQr canvas"), null, { timeout: 15000 });
+      const r = await p3.evaluate(() => { const c = document.querySelector("#payQr canvas"), i = QRIS.info(c.dataset.payload); return [PAYST.order, i.amount, i.dynamic, i.merchant, /^CT-\d{6}-[A-Z2-9]{4}$/.test(PAYST.order.id)]; });
+      ok(r[0].subtotal === 60000 && r[0].kode >= 1 && r[0].kode < 300 && r[0].total === 60000 + r[0].kode, "rincian salah: " + JSON.stringify(r[0]));
+      ok(+r[1] === r[0].total && r[2] && r[3] && r[4], "QRIS tidak bernominal/dinamis: " + JSON.stringify(r.slice(1)));
+      const wa = decodeURIComponent(await p3.getAttribute("#payWa", "href"));
+      ok(wa.includes(r[0].id) && wa.includes("Jumlah naskah: 3") && /Total dibayar: Rp\s?60\./.test(wa), "pesan bukti bayar salah: " + wa.slice(0, 200));
+      const dl = await download(p3, "#payDl"); ok(dl.name === "QRIS-" + r[0].id + ".png" && dl.buf.length > 3000, "gambar QR tidak terunduh");
+      await p3.keyboard.press("Escape"); ok(!(await p3.isVisible("#payDrawer")), "panel pembayaran tidak tertutup");
     });
     await test("keamanan: CSP menolak skrip sisipan (XSS), bom ZIP ditolak, tidak bisa dibingkai situs lain", async () => {
       const csp = await p3.evaluate(() => (document.querySelector('meta[http-equiv="Content-Security-Policy"]') || {}).content || "");
@@ -835,7 +851,7 @@ async function download(page, selector) {
       await p.goto(SITE); await ready(p);
       for (const v of ["beranda", "periksa", "massal", "kode", "sumber", "bandingkan", "tersembunyi", "pustaka", "daftarisi", "riwayat", "metode", "bantuan", "layanan"]) {
         await p.evaluate((v) => showView(v), v); await p.waitForTimeout(100);
-        const w = await p.evaluate(() => [document.documentElement.scrollWidth, innerWidth]);
+        const w = await p.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
         ok(w[0] <= w[1], v + ": lebar " + w[0] + " > layar " + w[1]);
         const panes = v === "periksa" && (await p.isVisible("#msRes")) ? ["doc", "res"] : [null];
         for (const pane of panes) {
