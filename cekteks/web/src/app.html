@@ -1317,6 +1317,18 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 .accme { display: flex; align-items: center; gap: 12px; }
 .accme b { display: block; font-size: 16px; } .accme small { font-size: 12.5px; }
 .accav { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font: 600 18px var(--f-display); }
+
+/* v4.7.2: kaki halaman */
+.foot { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr); gap: 28px 48px; align-items: start; }
+.foot-brand { display: grid; gap: 8px; }
+.foot-brand .colo { margin: 0; }
+.foot-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 32px; }
+.foot-cols > div { display: grid; gap: 9px; justify-items: start; align-content: start; }
+.foot-h { margin: 0 0 4px; font: italic 500 14.5px var(--f-display); color: var(--muted); }
+.foot-cols .linkbtn { color: var(--ink); font-weight: 500; font-size: 14px; text-align: left; }
+.foot-base { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 20px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+.foot-base .num { margin-left: auto; }
+@media (max-width: 760px) { .foot { grid-template-columns: minmax(0, 1fr); } .foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-base .num { margin-left: 0; } }
 </style>
 
 <aside class="side" id="side" aria-label="Menu utama">
@@ -1925,7 +1937,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
           <details class="acc" id="jbAcc">
             <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="M5 18v-5a7 7 0 0 1 14 0v5"/><path d="M9 18v-4M15 18v-4M12 18v-5"/></svg></span><span><b>Jembatan teks lengkap &amp; repositori kampus</b><span class="muted" id="jbSum">opsional · unduh PDF jurnal &amp; skripsi</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
             <div class="card-b stack">
-              <p class="hint" style="margin:0">Browser tidak diizinkan mengambil PDF jurnal kampus, skripsi di repositori, atau halaman web lain secara langsung, sehingga tanpa jembatan hanya abstraknya yang dibandingkan. Jembatan adalah server kecil gratis di akun Cloudflare milik Anda yang mengambilkan berkas itu, sehingga <b>seluruh isinya</b> ikut dibandingkan dan <b>repositori skripsi kampus</b> bisa dicari langsung. <a href="https://github.com/ferdynandekawijaya92821-create/cek-plagiarisme/blob/main/cekteks/jembatan/README.md" target="_blank" rel="noopener">Panduan pasang (±5 menit)</a></p>
+              <p class="hint" style="margin:0">Browser tidak diizinkan mengambil PDF jurnal kampus, skripsi di repositori, atau halaman web lain secara langsung, sehingga tanpa jembatan hanya abstraknya yang dibandingkan. Jembatan adalah server kecil gratis di akun Cloudflare milik Anda yang mengambilkan berkas itu, sehingga <b>seluruh isinya</b> ikut dibandingkan dan <b>repositori skripsi kampus</b> bisa dicari langsung.</p>
               <label class="field" for="jbUrlIn">Alamat jembatan<input type="url" id="jbUrlIn" autocomplete="off" spellcheck="false" placeholder="https://cekteks-jembatan.nama.workers.dev"></label>
               <label class="field" for="jbKeyIn">Kunci jembatan<input type="password" id="jbKeyIn" autocomplete="off" placeholder="Sama dengan KUNCI di Cloudflare"></label>
               <div class="logorow"><button type="button" class="btn" id="jbTest">Uji jembatan</button><span class="muted" id="jbStatus"></span></div>
@@ -1984,7 +1996,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
             <label class="field" for="blockList"><span>Daftar pengecualian</span><textarea id="blockList" rows="4" spellcheck="false" placeholder="contoh.ac.id&#10;https://jurnal.contoh.id/artikel/123"></textarea></label>
           </div>
         </div>
-        <div class="card">
+        <div class="card" id="ownerCard" hidden>
           <details class="acc" id="ownerAcc">
             <summary><span class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span><span><b>Pengaturan situs (untuk pemilik)</b><span class="muted">warna bawaan, kontak CS, iklan berjalan &amp; banner</span></span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
             <div class="card-b stack">
@@ -2109,8 +2121,8 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
   <!-- ================= PANDUAN ================= -->
   <section class="view" id="view-metode">
     <div class="pagehead">
-      <h1>Panduan</h1>
-      <p>Cara memakai CekTeks dan cara membaca hasilnya.</p>
+      <h1>Panduan pemakaian</h1>
+      <p>Empat langkah memeriksa naskah, lalu penjelasan cara membaca setiap bagian hasilnya.</p>
     </div>
     <div class="card steps">
       <div class="step"><span class="stepno">1</span><div><b>Masukkan naskah</b><p>Unggah PDF atau Word, atau tempel teks di halaman Periksa. Hasil langsung muncul.</p></div></div>
@@ -2255,7 +2267,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
   <section class="view" id="view-bantuan">
     <div class="pagehead">
       <h1>Bantuan &amp; Kontak</h1>
-      <p>Jawaban pertanyaan yang sering diajukan, cara menghubungi kami, kebijakan privasi, serta syarat dan ketentuan.</p>
+      <p>Cari jawaban cepat di pertanyaan umum, hubungi CS bila perlu bantuan langsung, dan baca kebijakan privasi serta syarat dan ketentuan layanan.</p>
     </div>
     <div class="helpgrid">
       <div class="card">
@@ -2276,46 +2288,89 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
     <div class="guide">
       <article class="card gcard legal" id="kebijakan">
         <h2>Kebijakan Privasi</h2>
-        <p class="upd">Berlaku sejak 20 November 2026</p>
-        <h3>Naskah Anda</h3>
-        <p>Naskah dan berkas yang Anda periksa diproses di perangkat Anda sendiri. CekTeks tidak punya server penyimpanan, tidak mengunggah naskah, dan tidak membuat akun.</p>
-        <h3>Data yang dikirim saat cek internet</h3>
-        <p>Saat cek internet berjalan, potongan kalimat dan kata kunci dikirim ke mesin pencari dan basis data yang Anda pilih (mis. Wikipedia, OpenAlex, Crossref, atau Google lewat Serper). Layanan itu tunduk pada kebijakan privasinya masing-masing. Matikan cek internet bila naskah sangat rahasia.</p>
-        <h3>Akun</h3>
-        <p>Akun CekTeks dibuat dan disimpan di perangkat Anda, tanpa email dan tanpa server. Naskah, riwayat, bank naskah, dan pengaturan sebuah akun dienkripsi (AES-256) dengan kunci dari kata sandi akun, sehingga pengguna lain di perangkat yang sama tidak bisa membukanya. Kata sandi tidak bisa dipulihkan. Akun terkunci otomatis setelah 30 menit tanpa aktivitas.</p>
-        <h3>Data yang disimpan di perangkat</h3>
-        <p>Draf, sumber pembanding, bank naskah, riwayat, kunci API, dan pilihan tampilan disimpan di penyimpanan browser atau aplikasi pada perangkat ini saja. Anda bisa menghapus semuanya lewat tombol "Hapus data tersimpan" di halaman Panduan.</p>
-        <h3>Keamanan</h3>
-        <p>Halaman dilindungi Content Security Policy sehingga skrip yang disisipkan pihak lain tidak bisa berjalan. Pustaka disimpan di situs ini sendiri atau diperiksa sidik digitalnya, CekTeks tidak bisa ditampilkan di dalam situs lain, dan berkas jahat seperti bom ZIP ditolak. Laporkan celah keamanan lewat GitHub: Security, Report a vulnerability.</p>
-        <h3>Chat CS, iklan, dan tautan luar</h3>
-        <p>Asisten chat menjawab dari daftar pertanyaan umum di perangkat Anda. Pesan baru terkirim ke CS hanya bila Anda menekan tombol WhatsApp atau email, dan pesan itu tunduk pada kebijakan layanan tersebut. CekTeks tidak memakai cookie pelacak, piksel iklan, atau analitik. Gambar iklan yang dimuat dari situs lain dapat membuat situs itu melihat alamat IP Anda.</p>
+        <p class="upd">Terakhir diperbarui 21 November 2026</p>
+        <p>Naskah Anda adalah karya Anda. CekTeks dirancang supaya pemeriksaan bisa dilakukan tanpa menyerahkan naskah ke pihak lain.</p>
+        <h3>1. Naskah yang Anda periksa sendiri</h3>
+        <p>Berkas dan teks yang Anda unggah dibaca serta dihitung langsung di browser perangkat Anda. Kami tidak mengunggah naskah ke server, tidak menyimpannya, dan tidak bisa membacanya.</p>
+        <h3>2. Cek di internet</h3>
+        <p>Untuk mencari kemiripan di internet, potongan kalimat dan kata kunci dari naskah dikirim ke layanan pencarian yang Anda aktifkan, seperti Wikipedia, OpenAlex, Crossref, DOAJ, atau Google lewat Serper. Naskah utuh tidak pernah dikirim. Bila naskah sangat rahasia, matikan cek internet dan periksa dengan sumber yang Anda tambahkan sendiri.</p>
+        <h3>3. Akun</h3>
+        <p>Akun CekTeks dibuat di perangkat Anda, tanpa email dan tanpa server. Naskah, riwayat, bank naskah, dan pengaturan sebuah akun dienkripsi dengan kata sandinya (AES-256), sehingga orang lain yang memakai perangkat yang sama tidak bisa membukanya. Kami tidak menyimpan kata sandi Anda, jadi kata sandi yang lupa tidak bisa dipulihkan.</p>
+        <h3>4. Layanan pemeriksaan berbayar</h3>
+        <p>Saat memesan, nama, nomor WhatsApp, dan naskah yang Anda kirim kepada CS hanya dipakai untuk mengerjakan pesanan itu dan menghubungi Anda tentangnya. Naskah pesanan tidak dimasukkan ke bank naskah tanpa izin Anda, tidak dibagikan ke pihak lain, dan bisa Anda minta dihapus kapan saja. Pembayaran QRIS diproses oleh aplikasi bank atau e-wallet Anda; kami hanya menerima nama pengirim dan nominal pembayaran.</p>
+        <h3>5. Penyimpanan di perangkat</h3>
+        <p>Draf, riwayat, bank naskah, kunci API, dan pilihan tampilan disimpan di browser perangkat ini. Anda bisa menghapus semuanya kapan saja lewat tombol "Hapus data tersimpan" di halaman Panduan.</p>
+        <h3>6. Cookie dan pelacakan</h3>
+        <p>CekTeks tidak memakai cookie pelacak, piksel iklan, atau analitik. Huruf tampilan dimuat dari Google Fonts, dan gambar iklan dari situs lain bila ada, sehingga layanan tersebut dapat melihat alamat IP Anda seperti saat Anda membuka situs biasa.</p>
+        <h3>7. Keamanan</h3>
+        <p>Halaman dilindungi Content Security Policy sehingga skrip sisipan tidak bisa berjalan, pustaka diperiksa sidik digitalnya, dan berkas berbahaya seperti bom ZIP ditolak. Bila menemukan celah keamanan, kabari kami lewat kontak di bawah.</p>
+        <h3>8. Kontak</h3>
+        <p>Pertanyaan atau permintaan penghapusan data dapat dikirim ke CS lewat WhatsApp atau email di bagian Hubungi kami.</p>
       </article>
       <article class="card gcard legal" id="syarat">
         <h2>Syarat &amp; Ketentuan</h2>
-        <p class="upd">Berlaku sejak 20 November 2026</p>
+        <p class="upd">Terakhir diperbarui 21 November 2026</p>
+        <p>Dengan memakai CekTeks atau memesan layanan pemeriksaan, Anda menyetujui ketentuan berikut.</p>
+        <h3>1. Tentang CekTeks</h3>
+        <p>CekTeks adalah alat bantu untuk memeriksa kemiripan naskah dan memperkirakan tulisan buatan AI. CekTeks tidak berafiliasi dengan, tidak disponsori, dan tidak memakai mesin Turnitin atau layanan pemeriksa lain yang disebut di situs ini.</p>
+        <h3>2. Hasil pemeriksaan</h3>
         <ul>
-          <li><b>Alat bantu, bukan keputusan.</b> Skor kesamaan dan kemungkinan AI adalah perkiraan berbasis algoritma. Keputusan akademik tetap harus melalui penilaian manusia yang membaca bagian bersorot dan sumbernya.</li>
-          <li><b>Cakupan sumber terbatas.</b> CekTeks memeriksa sumber terbuka di internet, jurnal, repositori, dan bank naskah Anda. Basis data tertutup, misalnya milik Turnitin, tidak termasuk, sehingga hasilnya bisa berbeda dengan layanan lain.</li>
-          <li><b>Hak atas naskah.</b> Unggah hanya naskah yang Anda tulis sendiri atau yang Anda berhak periksa. Untuk jasa pengecekan, simpan naskah klien ke bank hanya dengan persetujuan klien.</li>
-          <li><b>Penggunaan yang dilarang.</b> Jangan memakai CekTeks untuk menyembunyikan plagiarisme, misalnya dengan karakter tersembunyi atau huruf aksara lain, atau untuk memalsukan laporan. Laporan memuat kode verifikasi agar perubahan dapat dikenali.</li>
-          <li><b>Layanan berbayar.</b> Jasa pengecekan berbayar diselenggarakan oleh pemilik situs dengan tarif di halaman Layanan &amp; Harga. Pembayaran lewat QRIS dicek manual oleh CS; pekerjaan dimulai setelah pembayaran diterima. Pembatalan dan pengembalian dana dibicarakan langsung dengan CS.</li>
-          <li><b>Tanpa jaminan.</b> CekTeks disediakan "apa adanya". Pengembang dan pemilik situs tidak bertanggung jawab atas keputusan yang diambil hanya berdasarkan skor.</li>
-          <li><b>Iklan.</b> Konten bertanda "Iklan" berasal dari pemilik situs atau mitranya. Periksa sendiri sebelum bertransaksi dengan pihak yang diiklankan.</li>
+          <li>Skor kesamaan bergantung pada sumber yang dapat dijangkau, yaitu sumber terbuka di internet, jurnal, repositori kampus, dan bank naskah Anda. Basis data tertutup tidak termasuk, sehingga hasilnya bisa berbeda dengan pemeriksaan di kampus.</li>
+          <li>Skor kemungkinan AI adalah perkiraan dari gaya tulisan, bukan bukti. Jangan menjadikannya satu-satunya dasar keputusan akademik.</li>
+          <li>Keputusan akhir tetap berada pada dosen, pembimbing, atau lembaga yang menilai naskah.</li>
         </ul>
+        <h3>3. Kewajiban pengguna</h3>
+        <ul>
+          <li>Unggah hanya naskah yang Anda tulis sendiri atau yang Anda berhak periksa.</li>
+          <li>Dilarang memakai CekTeks untuk menyamarkan plagiarisme, misalnya dengan karakter tersembunyi atau huruf aksara lain, dan dilarang memalsukan atau mengubah laporan. Setiap laporan memuat kode verifikasi agar perubahan dapat dikenali.</li>
+          <li>Pemilik akun bertanggung jawab menjaga kata sandinya dan menekan Keluar di perangkat bersama.</li>
+        </ul>
+        <h3>4. Layanan pemeriksaan berbayar</h3>
+        <ul>
+          <li>Harga yang berlaku tercantum di halaman Layanan &amp; Harga pada saat pemesanan.</li>
+          <li>Pembayaran dilakukan lewat QRIS dengan nominal pas yang memuat kode unik, lalu bukti bayar dikirim ke CS lewat WhatsApp. Pembayaran dicek manual pada jam layanan.</li>
+          <li>Pengerjaan dimulai setelah pembayaran diterima dan naskah lengkap. Tenggat dihitung sejak saat itu.</li>
+          <li>Laporan dikirim dalam bentuk PDF lewat WhatsApp atau email.</li>
+        </ul>
+        <h3>5. Pembatalan dan pengembalian dana</h3>
+        <p>Bila pesanan tidak dapat kami kerjakan, dana dikembalikan penuh. Pesanan yang laporannya sudah dikirim tidak dapat dibatalkan. Bila laporan keliru karena kesalahan kami, pemeriksaan diulang tanpa biaya.</p>
+        <h3>6. Iklan</h3>
+        <p>Konten bertanda "Iklan" berasal dari pemilik situs atau mitranya. Periksa sendiri sebelum bertransaksi dengan pihak yang diiklankan.</p>
+        <h3>7. Batas tanggung jawab</h3>
+        <p>CekTeks disediakan apa adanya. Kami berusaha menjaga hasil seakurat mungkin, tetapi tidak bertanggung jawab atas keputusan yang diambil semata-mata berdasarkan skor, maupun atas gangguan layanan pencarian pihak ketiga.</p>
+        <h3>8. Perubahan ketentuan</h3>
+        <p>Ketentuan ini dapat diperbarui sewaktu-waktu. Tanggal pembaruan terakhir tercantum di bagian atas.</p>
       </article>
     </div>
   </section>
 
   <footer class="foot">
-    <div><b>CekTeks</b> <span class="num muted" id="appVersion"></span><span class="colo">Dibuat di Indonesia untuk mahasiswa, dosen, dan siapa pun yang perlu memeriksa naskah. Naskah dihitung di perangkat Anda dan tidak dikirim ke server.</span></div>
-    <nav class="foot-links" aria-label="Tautan bawah">
-      <button class="linkbtn" type="button" data-goto="metode">Panduan</button>
-      <button class="linkbtn" type="button" data-goto="bantuan">Bantuan</button>
-      <button class="linkbtn" type="button" data-goto="bantuan" data-anchor="kontak">Kontak</button>
-      <button class="linkbtn" type="button" data-goto="bantuan" data-anchor="kebijakan">Kebijakan Privasi</button>
-      <button class="linkbtn" type="button" data-goto="bantuan" data-anchor="syarat">Syarat &amp; Ketentuan</button>
-      <a href="https://github.com/ferdynandekawijaya92821-create/cek-plagiarisme" target="_blank" rel="noopener">Kode sumber</a>
+    <div class="foot-brand">
+      <b>CekTeks</b>
+      <span class="colo">Cek plagiarisme dan deteksi tulisan AI untuk skripsi, tesis, jurnal, dan tugas kuliah. Naskah diperiksa langsung di perangkat Anda.</span>
+    </div>
+    <nav class="foot-cols" aria-label="Tautan bawah">
+      <div>
+        <p class="foot-h">Layanan</p>
+        <button class="linkbtn" type="button" data-goto="periksa">Cek plagiasi &amp; AI</button>
+        <button class="linkbtn" type="button" data-goto="layanan">Layanan &amp; harga</button>
+        <button class="linkbtn" type="button" data-goto="kode">Cek kode program</button>
+        <button class="linkbtn" type="button" id="footVerify">Verifikasi laporan</button>
+      </div>
+      <div>
+        <p class="foot-h">Bantuan</p>
+        <button class="linkbtn" type="button" data-goto="metode">Panduan pemakaian</button>
+        <button class="linkbtn" type="button" data-goto="bantuan">Pertanyaan umum</button>
+        <button class="linkbtn" type="button" data-goto="bantuan" data-anchor="kontak">Hubungi kami</button>
+        <button class="linkbtn" type="button" data-adgo="cs">Chat dengan CS</button>
+      </div>
+      <div>
+        <p class="foot-h">Legal</p>
+        <button class="linkbtn" type="button" data-goto="bantuan" data-anchor="kebijakan">Kebijakan privasi</button>
+        <button class="linkbtn" type="button" data-goto="bantuan" data-anchor="syarat">Syarat &amp; ketentuan</button>
+      </div>
     </nav>
+    <div class="foot-base"><span>© 2026 CekTeks · Dibuat di Indonesia</span><span>Tidak berafiliasi dengan Turnitin.</span><span class="num" id="appVersion"></span></div>
   </footer>
 </main>
 
@@ -2875,7 +2930,7 @@ function lvl(v) { return v < 35 ? "var(--ok)" : v < 65 ? "var(--warn)" : "var(--
 /* ---- akun di perangkat ini: data tiap akun terenkripsi (AES-GCM, kunci dari kata sandi lewat PBKDF2) ---- */
 // Sesi tersimpan di sessionStorage (hanya tab ini, hilang saat tab ditutup). Tanpa akun = mode tamu seperti biasa.
 var ACC = null, ACC_MEM = null, ACC_DIRTY = null;
-var GLOBAL_KEYS = /^ct_(theme|accent|cshint|tip|site_preview|accounts|acc_.*)$/;
+var GLOBAL_KEYS = /^ct_(theme|accent|cshint|tip|site_preview|owner|accounts|acc_.*)$/;
 (function () {
   try {
     var s = JSON.parse(sessionStorage.getItem("ct_sess") || "null");
@@ -2933,7 +2988,7 @@ function recDec(list) {
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.7.1";
+var APP_VERSION = "4.7.2";
 // Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
 (function () {
   var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
@@ -4482,6 +4537,7 @@ $("#srcRows").addEventListener("click", function (e) {
 })();
 /* footer, privasi, hapus data */
 $("#appVersion").textContent = "v" + APP_VERSION;
+$("#footVerify").onclick = function () { $("#sideVerify").click(); };
 document.querySelectorAll("[data-goto]").forEach(function (b) {
   b.addEventListener("click", function () {
     showView(b.dataset.goto);
@@ -4694,7 +4750,7 @@ function renderContact() {
   if (mailLink()) h += row(MAIL_IC, '<a href="' + esc(mailLink()) + '">' + esc(ml) + "</a>", "Email");
   if (SITE.cs.jam) h += row('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>', esc(SITE.cs.jam), "Jam layanan");
   if (!wa && !mailLink()) h += '<p class="hint" style="margin:0">Ajukan pertanyaan lewat asisten chat. Jawaban untuk pertanyaan umum tersedia kapan saja.</p>';
-  h += '<div class="btnrow"><button type="button" class="btn primary" data-adgo="cs">Buka chat</button><a class="btn" href="https://github.com/ferdynandekawijaya92821-create/cek-plagiarisme/issues" target="_blank" rel="noopener">Laporkan masalah aplikasi</a></div>';
+  h += '<div class="btnrow"><button type="button" class="btn primary" data-adgo="cs">Buka chat</button>' + (waNum() ? '<a class="btn" href="' + esc(waLink("Halo " + SITE.cs.nama + ", saya ingin melaporkan masalah di situs CekTeks: ")) + '" target="_blank" rel="noopener">Laporkan masalah</a>' : '') + '</div>';
   $("#helpContact").innerHTML = h;
 }
 
@@ -7090,6 +7146,8 @@ setMode("review");
 var h0 = location.hash.slice(1); if (/^[a-z]+$/.test(h0) && $("#view-" + h0)) showView(h0); else showView("beranda");
 $("#sideVer").textContent = "v" + APP_VERSION;
 if (IS_APP) $("#installBtn").hidden = true;
+// Panel pengaturan situs hanya untuk pemilik: buka sekali alamat …/#pemilik di perangkat pemilik.
+(function () { if (location.hash === "#pemilik") { store("ct_owner", "1"); showView("sumber"); setTimeout(function () { $("#ownerCard").scrollIntoView({ block: "start" }); }, 80); } $("#ownerCard").hidden = store("ct_owner") !== "1"; })();
 // QRIS didefinisikan sesudah modul Layanan; render ulang agar tombol Bayar dengan QRIS dan isian pemilik lengkap.
 renderLayanan(); ownerFill();
 </script>

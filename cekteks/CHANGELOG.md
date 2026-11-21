@@ -2,6 +2,17 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.7.2] - 2026-11-21
+### Diubah
+- **Kaki halaman ditulis ulang.** Tiga kolom (Layanan, Bantuan, Legal) dan baris "© 2026 CekTeks · Dibuat di
+  Indonesia · Tidak berafiliasi dengan Turnitin". Tautan *Kode sumber* ke GitHub dihapus.
+- **Kebijakan Privasi dan Syarat & Ketentuan ditulis ulang**, mencakup akun terenkripsi, layanan berbayar, pembayaran
+  QRIS, pembatalan dan pengembalian dana, iklan, serta keterangan tidak berafiliasi dengan Turnitin.
+- Kontak: tombol *Laporkan masalah* lewat WhatsApp menggantikan tautan GitHub. Tautan panduan jembatan ke GitHub
+  dihapus.
+- Panel *Pengaturan situs (untuk pemilik)* disembunyikan dari pengunjung. Pemilik membukanya sekali lewat alamat
+  `…/#pemilik`, lalu panel tetap tampil di perangkat itu.
+
 ## [4.7.1] - 2026-11-21
 ### Diubah
 - Repositori diganti nama menjadi `cek-plagiarisme`. Alamat situs sekarang

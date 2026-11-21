@@ -1,5 +1,5 @@
 // Service worker CekTeks: menyimpan aplikasi di perangkat agar tetap bisa dibuka tanpa internet.
-const CACHE = "cekteks-v12";
+const CACHE = "cekteks-v13";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png", "./icon-180.png"];
 const VENDOR = [/*VENDOR_FILES*/];
 
