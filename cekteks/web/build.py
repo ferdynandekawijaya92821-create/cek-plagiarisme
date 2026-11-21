@@ -18,7 +18,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)  # folder cekteks/
 REPO = os.path.dirname(ROOT)
 # Alamat situs publik (GitHub Pages). Ganti bila situs dipindah ke alamat lain.
-SITE_URL = os.environ.get("CEKTEKS_SITE_URL", "https://ferdynandekawijaya92821-create.github.io/kalori-cli/")
+DEFAULT_SITE_URL = "https://ferdynandekawijaya92821-create.github.io/kalori-cli/"
+DEFAULT_REPO_URL = "https://github.com/ferdynandekawijaya92821-create/kalori-cli"
+# Di GitHub Actions kedua alamat diisi otomatis dari nama repositori, jadi mengganti nama repo
+# (Settings -> General -> Repository name) langsung mengubah alamat situs, tautan kanonis, sitemap, dan QR laporan.
+SITE_URL = (os.environ.get("CEKTEKS_SITE_URL") or DEFAULT_SITE_URL).rstrip("/") + "/"
+REPO_URL = (os.environ.get("CEKTEKS_REPO_URL") or DEFAULT_REPO_URL).rstrip("/")
 SITE_TITLE = "Cek Plagiarisme Online & Deteksi AI, Alternatif Turnitin | CekTeks"
 SITE_DESC = ("Cek plagiarisme online dan deteksi tulisan AI untuk skripsi, jurnal, dan tugas. Alternatif Turnitin "
              "mulai Rp3.000, laporan PDF ber-QR, bisa dicoba gratis. Tidak berafiliasi dengan Turnitin.")
@@ -119,6 +124,7 @@ def minify_css(css):
 
 def build_standalone(app, pwa, site):
     accent = ACCENTS[site["warna"]]
+    app = app.replace(DEFAULT_SITE_URL, SITE_URL).replace(DEFAULT_REPO_URL, REPO_URL)
     st = app.index("<style>") + len("<style>")
     en = app.index("</style>")
     app = app[:st] + "\n" + minify_css(app[st:en]) + "\n" + app[en:]
@@ -126,7 +132,9 @@ def build_standalone(app, pwa, site):
     js0 = app.index('<script>\n"use strict";')
     js1 = app.index("</script>", js0)
     script = app[js0:js1]
-    app = app[:js0] + re.sub(r"(?m)^[ \t]*//[^\n]*\n", "", script) + app[js1:]
+    script = re.sub(r"(?m)^[ \t]*//[^\n]*\n", "", script)
+    script = re.sub(r"(?m)^[ \t]+", "", script)  # indentasi awal baris (tidak ada string yang melintasi baris)
+    app = app[:js0] + script + app[js1:]
     head_end = app.index("</style>") + len("</style>")
     head, body = app[:head_end], app[head_end:]
     if pwa:

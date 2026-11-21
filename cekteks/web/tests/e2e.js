@@ -74,7 +74,8 @@ async function download(page, selector) {
   await test("halaman pertama ringan (pustaka dimuat terpisah)", async () => {
     // Yang diunduh browser adalah versi terkompresi (GitHub Pages mengirim gzip); pustaka besar dimuat terpisah.
     const raw = fs.readFileSync(path.join(DOCS, "index.html")), gz = require("zlib").gzipSync(raw, { level: 6 }).length;
-    ok(gz < 160 * 1024, "docs/index.html terkompresi " + Math.round(gz / 1024) + " KB, lebih dari 160 KB");
+    // Anggaran 180 KB (naik dari 160 KB di v4.7 untuk pembayaran QRIS & akun terenkripsi); tetap lebih kecil dari satu pustaka PDF.
+    ok(gz < 180 * 1024, "docs/index.html terkompresi " + Math.round(gz / 1024) + " KB, lebih dari 180 KB");
     ok(!/pdf\.worker|mammoth\.browser/.test(raw.toString().slice(0, 200000)) || raw.length < 900 * 1024, "pustaka besar ikut tertanam di halaman situs");
   });
   await test("SEO: judul & deskripsi berkata kunci, data terstruktur valid, pengunjung baru melihat Beranda", async () => {
@@ -852,6 +853,36 @@ async function download(page, selector) {
       const fr = await (await p4.$("#f")).contentFrame(); await fr.waitForFunction(() => document.querySelector(".framed-msg"), null, { timeout: 15000 });
       ok(await fr.evaluate(() => document.documentElement.classList.contains("framed") && getComputedStyle(document.querySelector("main")).display === "none"), "CekTeks tetap tampil di dalam bingkai situs lain");
       await c4.close();
+    });
+    await test("akun: data tamu dipindah & dienkripsi, keluar menyembunyikan naskah, kata sandi salah ditolak", async () => {
+      const { ctx: c6, page: p6 } = await newPage(browser, { viewport: { width: 1280, height: 860 } });
+      await p6.goto(SITE + "#periksa"); await ready(p6);
+      const RAHASIA = "Naskah rahasia milik Rina tentang budidaya lele bioflok di kolam terpal. ".repeat(4);
+      await p6.evaluate((t) => { S.doc = null; setText(t); }, RAHASIA); await p6.waitForTimeout(500);
+      await p6.evaluate(() => bankAdd([bankEntry("Skripsi Rina", S.text, "Rina")]));
+      await p6.waitForFunction(() => BANK.length >= 1);
+      await p6.click("#accBtn"); await p6.fill("#accName", "Rina"); await p6.fill("#accP1", "rahasia123"); await p6.fill("#accP2", "rahasia123");
+      await Promise.all([p6.waitForEvent("load", { timeout: 30000 }), p6.click('#accNewF [type="submit"]')]); await ready(p6);
+      let r = await p6.evaluate(() => [ACC && ACC.name, S.text.slice(0, 20), BANK.length, Object.keys(localStorage).filter((k) => /^ct_(draft|sources)$/.test(k)).length]);
+      ok(r[0] === "Rina" && r[1] === "Naskah rahasia milik" && r[2] === 1 && r[3] === 0, "data tamu tidak pindah ke akun: " + JSON.stringify(r));
+      await p6.evaluate(() => accFlush());
+      const raw = await p6.evaluate(async () => {
+        const blob = Object.keys(localStorage).filter((k) => k.indexOf("ct_acc_") === 0).map((k) => localStorage.getItem(k)).join("");
+        const rec = await new Promise((res) => { const q = indexedDB.open("cekteks-" + ACC.id, 2); q.onsuccess = () => { const g = q.result.transaction("bank").objectStore("bank").getAll(); g.onsuccess = () => res(JSON.stringify(g.result)); }; });
+        return [blob.length, /lele|Rina/.test(blob), /lele|Rina/.test(rec)];
+      });
+      ok(raw[0] > 50 && !raw[1] && !raw[2], "data akun tersimpan tanpa enkripsi: " + JSON.stringify(raw));
+      await Promise.all([p6.waitForEvent("load", { timeout: 30000 }), p6.evaluate(() => accLogout())]); await ready(p6);
+      r = await p6.evaluate(() => [!!ACC, S.text.indexOf("lele") >= 0, BANK.length, document.body.innerText.indexOf("budidaya lele") >= 0]);
+      ok(!r[0] && !r[1] && r[2] === 0 && !r[3], "naskah akun masih terlihat setelah keluar: " + JSON.stringify(r));
+      await p6.click("#accBtn"); await p6.fill("#accPass", "salah-sekali"); await p6.click('#accInF [type="submit"]');
+      await p6.waitForFunction(() => /Kata sandi salah/.test(document.querySelector("#toast").textContent), null, { timeout: 15000 });
+      await p6.fill("#accPass", "rahasia123");
+      await Promise.all([p6.waitForEvent("load", { timeout: 30000 }), p6.click('#accInF [type="submit"]')]); await ready(p6);
+      await p6.waitForFunction(() => BANK.length === 1, null, { timeout: 10000 });
+      r = await p6.evaluate(() => [ACC && ACC.name, S.text.indexOf("lele") >= 0, BANK[0].name]);
+      ok(r[0] === "Rina" && r[1] && r[2] === "Skripsi Rina", "masuk ulang tidak membuka data: " + JSON.stringify(r));
+      await c6.close();
     });
     await c3.close();
   }
