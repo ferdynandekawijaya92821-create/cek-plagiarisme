@@ -15,7 +15,7 @@
     "paket": [
       {
         "nama": "Cek Plagiasi",
-        "harga": "10000",
+        "harga": "3000",
         "satuan": "per naskah",
         "fitur": [
           "Indeks kesamaan dan daftar sumber",
@@ -26,7 +26,7 @@
       },
       {
         "nama": "Cek Plagiasi + AI",
-        "harga": "20000",
+        "harga": "5000",
         "satuan": "per naskah",
         "fitur": [
           "Semua isi paket Cek Plagiasi",
@@ -38,7 +38,7 @@
       },
       {
         "nama": "Cek Kode Program",
-        "harga": "15000",
+        "harga": "1000",
         "satuan": "per tugas",
         "fitur": [
           "Python, Java, C/C++, JavaScript, PHP, dan lainnya",
@@ -49,7 +49,7 @@
       },
       {
         "nama": "Paket Kelas / Dosen",
-        "harga": "150000",
+        "harga": "50000",
         "satuan": "per kelas",
         "fitur": [
           "Hingga 40 naskah per kelas",
@@ -77,7 +77,7 @@
         "tautan": "#kode"
       },
       {
-        "teks": "Jasa cek plagiasi & AI mulai Rp10.000 per naskah. Bayar lewat QRIS.",
+        "teks": "Jasa cek plagiasi & AI mulai Rp3.000 per naskah. Bayar lewat QRIS.",
         "tautan": "#layanan"
       },
       {
@@ -89,7 +89,7 @@
       {
         "label": "Layanan",
         "judul": "Jasa cek plagiasi & AI",
-        "teks": "Mulai Rp10.000 per naskah. Laporan PDF dengan naskah bersorot, kode verifikasi, dan QR. Bayar lewat QRIS.",
+        "teks": "Mulai Rp3.000 per naskah. Laporan PDF dengan naskah bersorot, kode verifikasi, dan QR. Bayar lewat QRIS.",
         "tombol": "Lihat paket",
         "tautan": "#layanan"
       },

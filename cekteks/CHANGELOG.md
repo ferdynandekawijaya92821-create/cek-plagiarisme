@@ -2,6 +2,19 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.6.1] - 2026-11-21
+### Diubah
+- **Harga baru**: Cek Plagiasi Rp3.000/naskah, Cek Plagiasi + AI Rp5.000/naskah, Cek Kode Program Rp1.000/tugas,
+  Paket Kelas/Dosen Rp50.000/kelas (hingga 40 naskah).
+- **Agar mudah ditemukan di Google**:
+  - Judul halaman "Cek Plagiarisme Online & Deteksi AI, Alternatif Turnitin | CekTeks", dan deskripsi yang memuat kata
+    kunci serta harga.
+  - Judul Beranda "Cek plagiarisme naskah Anda *sebelum* dikumpulkan".
+  - Data terstruktur JSON-LD: WebApplication dengan rentang harga, dan FAQPage.
+  - Pengunjung tanpa alamat halaman tertentu kini membuka Beranda.
+  - CekTeks disebut sebagai *alternatif*, dengan keterangan tidak berafiliasi dengan Turnitin, di Beranda, FAQ, dan
+    deskripsi. Turnitin adalah merek dagang pihak lain.
+
 ## [4.6.0] - 2026-11-21
 ### Ditambahkan
 - **Pembayaran QRIS di halaman Layanan & Harga.**

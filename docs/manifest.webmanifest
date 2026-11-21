@@ -1,5 +1,5 @@
 {
-  "name": "CekTeks - Cek Plagiarisme & AI",
+  "name": "CekTeks - Cek Plagiarisme Online & AI",
   "short_name": "CekTeks",
   "lang": "id",
   "start_url": "./",
@@ -7,7 +7,7 @@
   "display": "standalone",
   "background_color": "#eef2f6",
   "theme_color": "#234a8c",
-  "description": "Cek plagiarisme dan deteksi tulisan AI gratis. Unggah PDF atau Word, lihat bagian yang mirip dengan sumbernya, lalu unduh laporan PDF. Bisa offline, naskah tetap privat.",
+  "description": "Cek plagiarisme online dan deteksi tulisan AI untuk skripsi, jurnal, dan tugas. Alternatif Turnitin mulai Rp3.000, laporan PDF ber-QR, bisa dicoba gratis. Tidak berafiliasi dengan Turnitin.",
   "icons": [
     {
       "src": "icon-192.png",

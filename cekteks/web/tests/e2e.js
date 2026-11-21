@@ -61,7 +61,7 @@ async function download(page, selector) {
   console.log("Situs web (docs/)");
   const { ctx, page } = await newPage(browser, { viewport: { width: 1366, height: 900 } });
   await test("halaman terbuka, contoh dianalisis, tanpa error", async () => {
-    await page.goto(SITE); await ready(page);
+    await page.goto(SITE + "#periksa"); await ready(page);
     // Skor dibaca dari hasil analisis; angka di layar beranimasi naik sekitar 0,6 detik.
     ok(await page.evaluate(() => S.ai.score) > 65, "teks contoh seharusnya cenderung AI");
     ok(await page.evaluate(() => S.plag.score) > 5, "teks contoh seharusnya cocok dengan korpus");
@@ -76,6 +76,18 @@ async function download(page, selector) {
     const raw = fs.readFileSync(path.join(DOCS, "index.html")), gz = require("zlib").gzipSync(raw, { level: 6 }).length;
     ok(gz < 160 * 1024, "docs/index.html terkompresi " + Math.round(gz / 1024) + " KB, lebih dari 160 KB");
     ok(!/pdf\.worker|mammoth\.browser/.test(raw.toString().slice(0, 200000)) || raw.length < 900 * 1024, "pustaka besar ikut tertanam di halaman situs");
+  });
+  await test("SEO: judul & deskripsi berkata kunci, data terstruktur valid, pengunjung baru melihat Beranda", async () => {
+    const html = fs.readFileSync(path.join(DOCS, "index.html"), "utf8");
+    const title = (/<title>([^<]*)<\/title>/.exec(html) || [])[1] || "", desc = (/<meta name="description" content="([^"]*)"/.exec(html) || [])[1] || "";
+    ok(/Cek Plagiarisme/i.test(title) && title.length <= 70 && /tidak berafiliasi dengan Turnitin/i.test(desc) && desc.length <= 200, "judul/deskripsi: " + title + " | " + desc);
+    const ld = JSON.parse((/<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html) || [])[1]);
+    const types = ld["@graph"].map((x) => x["@type"]);
+    ok(types.includes("WebApplication") && types.includes("FAQPage") && ld["@graph"][0].offers.lowPrice > 0, "JSON-LD tidak lengkap: " + types);
+    const { ctx: c5, page: p5 } = await newPage(browser);
+    await p5.goto(SITE); await ready(p5);
+    ok(await p5.isVisible("#view-beranda") && /Cek plagiarisme/.test(await p5.textContent("#view-beranda h1")), "pengunjung baru tidak melihat Beranda");
+    await c5.close();
   });
   await test("pratinjau tautan (Open Graph) lengkap", async () => {
     for (const prop of ["og:title", "og:description", "og:image", "twitter:card"]) {
@@ -352,7 +364,7 @@ async function download(page, selector) {
     ok((await page.textContent("#topTitle")).includes("Sitasi"), "judul halaman tidak diperbarui");
     // HP: menu dibuka lewat tombol, tertutup setelah memilih
     const { ctx: c, page: m } = await newPage(browser, devices["Pixel 7"]);
-    await m.goto(SITE); await ready(m);
+    await m.goto(SITE + "#periksa"); await ready(m);
     ok(!(await m.isVisible("#tab-riwayat")), "menu samping terlihat di HP sebelum dibuka");
     await m.click("#menuBtn"); await m.click("#tab-riwayat");
     ok(await m.isVisible("#view-riwayat") && !(await m.evaluate(() => document.body.classList.contains("menu-open"))), "menu HP tidak menutup setelah memilih");
@@ -760,7 +772,7 @@ async function download(page, selector) {
         : [{ DOI: "10.9/lain", title: ["Rancang bangun sistem informasi penggajian di perguruan tinggi swasta"], author: [{ family: "Lain" }], issued: { "date-parts": [[2016]] } }] } });
     });
     await c3.route(/api\.openalex\.org/, (r) => J(r, { results: [] }));
-    await p3.goto(SITE); await ready(p3);
+    await p3.goto(SITE + "#periksa"); await ready(p3);
 
     await test("OCR: PDF hasil pindaian dikenali teksnya, dibandingkan, dan laporan PDF tetap memuat halaman asli", async () => {
       await p3.setInputFiles("#mainFile", path.join(FIX, "pindaian.pdf"));
@@ -804,17 +816,17 @@ async function download(page, selector) {
     });
     await test("pembayaran QRIS: total + kode unik, QR dinamis bernominal pas dan CRC valid, bukti lewat WhatsApp", async () => {
       await p3.evaluate(() => showView("layanan"));
-      ok(/Rp\s?20\.000/.test(await p3.textContent("#lyPaket")), "harga paket tidak tampil");
+      ok(/Rp\s?5\.000/.test(await p3.textContent("#lyPaket")), "harga paket tidak tampil");
       await p3.click('[data-pkg="1"]'); await p3.fill("#lyNama", "Sari"); await p3.fill("#lyHal", "3"); await p3.dispatchEvent("#lyHal", "input");
-      ok(/Rp\s?60\.000/.test(await p3.textContent("#lyTotal")), "total tidak dihitung: " + await p3.textContent("#lyTotal"));
+      ok(/Rp\s?15\.000/.test(await p3.textContent("#lyTotal")), "total tidak dihitung: " + await p3.textContent("#lyTotal"));
       if (!(await p3.isChecked("#lyAgree"))) await p3.check("#lyAgree", { force: true });
       await p3.click('#lySend [data-via="qris"]');
       await p3.waitForFunction(() => document.querySelector("#payQr canvas"), null, { timeout: 15000 });
       const r = await p3.evaluate(() => { const c = document.querySelector("#payQr canvas"), i = QRIS.info(c.dataset.payload); return [PAYST.order, i.amount, i.dynamic, i.merchant, /^CT-\d{6}-[A-Z2-9]{4}$/.test(PAYST.order.id)]; });
-      ok(r[0].subtotal === 60000 && r[0].kode >= 1 && r[0].kode < 300 && r[0].total === 60000 + r[0].kode, "rincian salah: " + JSON.stringify(r[0]));
+      ok(r[0].subtotal === 15000 && r[0].kode >= 1 && r[0].kode < 300 && r[0].total === 15000 + r[0].kode, "rincian salah: " + JSON.stringify(r[0]));
       ok(+r[1] === r[0].total && r[2] && r[3] && r[4], "QRIS tidak bernominal/dinamis: " + JSON.stringify(r.slice(1)));
       const wa = decodeURIComponent(await p3.getAttribute("#payWa", "href"));
-      ok(wa.includes(r[0].id) && wa.includes("Jumlah naskah: 3") && /Total dibayar: Rp\s?60\./.test(wa), "pesan bukti bayar salah: " + wa.slice(0, 200));
+      ok(wa.includes(r[0].id) && wa.includes("Jumlah naskah: 3") && /Total dibayar: Rp\s?15\./.test(wa), "pesan bukti bayar salah: " + wa.slice(0, 200));
       const dl = await download(p3, "#payDl"); ok(dl.name === "QRIS-" + r[0].id + ".png" && dl.buf.length > 3000, "gambar QR tidak terunduh");
       await p3.keyboard.press("Escape"); ok(!(await p3.isVisible("#payDrawer")), "panel pembayaran tidak tertutup");
     });
@@ -848,7 +860,7 @@ async function download(page, selector) {
   for (const [name, opts] of [["HP 320px", devices["Galaxy S9+"]], ["iPhone", devices["iPhone 13"]], ["desktop gelap", { viewport: { width: 1366, height: 900 }, colorScheme: "dark" }]]) {
     await test(name + ": tanpa scroll horizontal dan tumpang-tindih di semua halaman" + (AXE ? " dan lolos audit WCAG" : ""), async () => {
       const { ctx: c, page: p } = await newPage(browser, opts);
-      await p.goto(SITE); await ready(p);
+      await p.goto(SITE + "#periksa"); await ready(p);
       for (const v of ["beranda", "periksa", "massal", "kode", "sumber", "bandingkan", "tersembunyi", "pustaka", "daftarisi", "riwayat", "metode", "bantuan", "layanan"]) {
         await p.evaluate((v) => showView(v), v); await p.waitForTimeout(100);
         const w = await p.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
@@ -886,7 +898,7 @@ async function download(page, selector) {
   await test("berjalan penuh offline, termasuk PDF dan laporan", async () => {
     const { ctx: c, page: p } = await newPage(browser, { viewport: { width: 1280, height: 900 } });
     await c.route("**/*", (r) => (r.request().url().startsWith("file:") ? r.continue() : r.abort()));
-    await p.goto("file://" + DIST); await ready(p);
+    await p.goto("file://" + DIST + "#periksa"); await ready(p);
     await p.setInputFiles("#mainFile", path.join(FIX, "sample.pdf"));
     await p.waitForFunction(() => S.doc && S.doc.layout, null, { timeout: 30000 });
     const r = await download(p, "#dlPdf");
