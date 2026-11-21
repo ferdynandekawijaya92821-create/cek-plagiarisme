@@ -44,7 +44,7 @@ def write(path, data):
 
 
 # Warna tema yang bisa dipilih di site.json (warna aksen terang). Harus sama dengan PRESET di app.html.
-ACCENTS = {"teal": "#0e6a86", "biru": "#1d4ed8", "ungu": "#6d3fd1", "hijau": "#0f7a4f", "marun": "#a5283a", "oranye": "#b5530e", "grafit": "#334155"}
+ACCENTS = {"teal": "#0f5f6e", "biru": "#234a8c", "ungu": "#5a3d8f", "hijau": "#23704c", "marun": "#8e2c3b", "oranye": "#a9501c", "grafit": "#2f3338"}
 
 
 def load_site():
@@ -91,8 +91,19 @@ def add_csp(html):
     return html.replace('<meta charset="utf-8">\n', '<meta charset="utf-8">\n' + meta, 1)
 
 
+def minify_css(css):
+    """Buang komentar dan spasi berlebih di CSS (hanya di hasil build; sumber tetap rapi dibaca)."""
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    css = re.sub(r"\s+", " ", css)
+    css = re.sub(r"\s*([{};,>])\s*", r"\1", css)
+    return css.replace(";}", "}").strip()
+
+
 def build_standalone(app, pwa, site):
     accent = ACCENTS[site["warna"]]
+    st = app.index("<style>") + len("<style>")
+    en = app.index("</style>")
+    app = app[:st] + "\n" + minify_css(app[st:en]) + "\n" + app[en:]
     head_end = app.index("</style>") + len("</style>")
     head, body = app[:head_end], app[head_end:]
     if pwa:

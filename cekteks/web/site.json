@@ -6,7 +6,7 @@
     "whatsapp": "62859106977360",
     "email": "jokosandhono@gmail.com",
     "jam": "Setiap hari, 08.00–21.00 WIB",
-    "sapaan": "Halo! 👋 Saya asisten CekTeks. Pilih pertanyaan di bawah atau ketik pertanyaan Anda."
+    "sapaan": "Halo, ada yang bisa kami bantu? Pilih salah satu pertanyaan di bawah, atau tulis sendiri."
   },
   "layanan": {
     "aktif": true,
@@ -64,8 +64,8 @@
     "aktif": true,
     "teks_berjalan": [
       {
-        "teks": "Baru: pilih warna tema, chat CS, dan pusat Bantuan.",
-        "tautan": "#bantuan"
+        "teks": "Baru: cek referensi palsu, baca PDF hasil scan, dan halaman Layanan & Harga.",
+        "tautan": "#layanan"
       },
       {
         "teks": "Cek plagiasi kode program Python, Java, C/C++, dan JavaScript dengan tampilan ala VS Code.",
