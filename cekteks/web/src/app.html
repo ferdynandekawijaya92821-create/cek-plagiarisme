@@ -412,7 +412,6 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 .acc .chev { width: 18px; height: 18px; color: var(--muted); transition: transform .2s; flex: none; }
 .acc[open] .chev { transform: rotate(180deg); }
 .acc[open] summary { border-bottom: 1px solid var(--line); }
-.howto { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
 
 /* daftar dokumen (sumber & bandingkan) */
 .doclist, #srcList { display: grid; gap: 8px; }
@@ -844,17 +843,6 @@ kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border
 .rfres { display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
 .rfres b { font-size: 13.5px; } .rfres .btn { justify-self: start; }
 .cmp-fix { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px dashed var(--line); font-size: 12.5px; }
-
-
-/* kartu unduh aplikasi */
-.appcard { margin-bottom: 18px; }
-.appdl { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
-.appbtn { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); text-decoration: none; transition: border-color .15s, background .15s; }
-.appbtn:hover { border-color: var(--accent); background: var(--accent-soft); }
-.appbtn svg { width: 26px; height: 26px; color: var(--accent); flex: none; }
-.appbtn span { display: grid; } .appbtn b { font-size: 14.5px; } .appbtn small { color: var(--muted); font-size: 12px; }
-.appbtn.mine { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.howto code { font: 12px var(--f-mono); background: var(--surface-2); padding: 1px 5px; border-radius: 5px; }
 /* Cek plagiasi kode (tema ala VS Code Dark+) */
 .kgrid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 16px; }
 @media (max-width: 900px) { .kgrid { grid-template-columns: minmax(0, 1fr); } }
@@ -1190,26 +1178,24 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 .hero-n { margin-top: 14px !important; font-size: 13px !important; color: var(--muted); }
 .btn.lg { min-height: 48px; padding: 0 22px; border-radius: 9px; }
 
-.hsheet { position: relative; margin: 0; justify-self: center; width: min(360px, 100%); aspect-ratio: 1 / 1.22; }
-.sheet-p { position: absolute; inset: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 3px; padding: 34px 30px; transform: rotate(-2.2deg);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 18px 40px -18px rgba(40, 30, 10, .35), 12px 14px 0 -6px color-mix(in srgb, var(--line) 70%, transparent); display: flex; flex-direction: column; gap: 11px; overflow: hidden; }
-.sheet-p::before { content: ""; position: absolute; left: 20px; top: 0; bottom: 0; border-left: 1px solid color-mix(in srgb, var(--bad) 30%, transparent); }
-.ln { display: block; height: 7px; border-radius: 4px; background: color-mix(in srgb, var(--ink) 11%, transparent); width: 100%; }
-.ln:first-child { height: 10px; background: color-mix(in srgb, var(--ink) 22%, transparent); margin-bottom: 8px; }
-.ln:has(.mk) { height: auto; background: none; }
-.mk { font: italic 400 13.5px/1.35 "Source Serif 4", Georgia, serif; color: var(--ink); background: linear-gradient(transparent 12%, #f6d66b 12%, #f6d66b 88%, transparent 88%); padding: 0 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-.mk.b { background: linear-gradient(transparent 12%, #f4b7b0 12%, #f4b7b0 88%, transparent 88%); }
-:root[data-theme="dark"] .mk { color: #1d1b17; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mk { color: #1d1b17; } }
-.marginnote { position: absolute; font: 600 21px/1.1 var(--f-hand); color: var(--accent); white-space: nowrap; }
-.marginnote.n1 { right: -6px; top: 31%; transform: rotate(-6deg); }
-.marginnote.n1::before { content: ""; position: absolute; left: -26px; top: 12px; width: 22px; border-top: 1.5px solid currentColor; transform: rotate(14deg); }
-.marginnote.n2 { left: 34px; bottom: 25%; transform: rotate(-3deg); color: var(--bad); }
-.stamp { position: absolute; right: -10px; bottom: -14px; width: 104px; height: 104px; border-radius: 50%; border: 2.5px solid var(--bad); color: var(--bad);
-  display: grid; place-content: center; text-align: center; transform: rotate(-14deg); background: color-mix(in srgb, var(--paper) 70%, transparent);
-  box-shadow: inset 0 0 0 5px color-mix(in srgb, var(--paper) 70%, transparent), inset 0 0 0 6.5px var(--bad); opacity: .9; }
-.stamp b { font: 700 28px/1 var(--f-display); letter-spacing: -.02em; }
-.stamp small { font: 600 10.5px var(--f-body); letter-spacing: .14em; text-transform: uppercase; }
+.hsheet { margin: 0; justify-self: center; width: min(430px, 100%); }
+.hsheet svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 18px 24px rgba(40, 30, 10, .14)); }
+.hs-paper { fill: var(--paper); stroke: var(--line); }
+.hs-back { fill: color-mix(in srgb, var(--line) 75%, var(--paper)); }
+.hs-margin { stroke: color-mix(in srgb, var(--bad) 28%, transparent); stroke-width: 1; }
+.hs-l { fill: color-mix(in srgb, var(--ink) 11%, transparent); }
+.hs-l2 { fill: color-mix(in srgb, var(--ink) 24%, transparent); }
+.hs-hl1 { fill: #f3d36a; } .hs-hl2 { fill: #f2b4ad; }
+.hs-tx { font: italic 400 13.5px "Source Serif 4", Georgia, serif; fill: #1d1b17; }
+.hs-b1 { fill: #c08a14; } .hs-b2 { fill: #c2473d; }
+.hs-bn { font: 700 10px var(--f-body); fill: #fff; text-anchor: middle; } .hs-bn.s { font-size: 9px; }
+.hs-cardbg { fill: var(--surface); stroke: var(--line); }
+.hs-cap { font: 600 11.5px var(--f-body); fill: var(--muted); }
+.hs-big { font: 600 38px var(--f-display); fill: var(--ink); letter-spacing: -.02em; }
+.hs-track { fill: color-mix(in srgb, var(--ink) 10%, transparent); } .hs-fill { fill: var(--accent); }
+.hs-rule { stroke: var(--line); }
+.hs-row { font: 500 12.5px var(--f-body); fill: var(--ink); }
+.hs-pct { font: 600 12px var(--f-mono); fill: var(--muted); text-anchor: end; }
 
 .facts { list-style: none; margin: 8px 0 0; padding: 18px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1.5px solid var(--ink); }
 .facts li { padding: 2px 22px 0 0; display: grid; gap: 5px; align-content: start; }
@@ -1217,7 +1203,8 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 .facts b { font: 600 17px/1.25 var(--f-display); letter-spacing: -.01em; }
 .facts span { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
 
-.stats { margin-top: 28px; }
+.stats { margin-top: 28px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important; }
+.stat .eyebrow { white-space: normal; }
 .stat.card { padding: 16px 18px; }
 
 .index { margin-top: 8px; }
@@ -1244,12 +1231,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 .ad-t p { font-size: 14px; }
 .adslot.compact .ad { grid-template-columns: minmax(0, 1fr); }
 @media (max-width: 640px) { .ad { grid-template-columns: minmax(0, 1fr); } }
-
-/* aplikasi & riwayat */
-.appcard, #homeRecent { }
 #view-beranda > .card { margin-top: 34px; }
-.appbtn { border-radius: 8px; background: transparent; border-color: var(--line); }
-.appbtn:hover { border-color: var(--accent); background: var(--surface-2); }
 .recent-i { border-bottom-color: var(--line); }
 
 /* catatan, petunjuk */
@@ -1260,7 +1242,8 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 .foot { margin-top: 64px; padding-top: 22px; border-top: 1.5px solid var(--ink); font-size: 13.5px; align-items: flex-start; }
 .foot b { font-family: var(--f-display); font-size: 17px; font-weight: 650; }
 .foot .colo { display: block; max-width: 48ch; margin-top: 4px; color: var(--muted); }
-.foot-links { gap: 6px 18px; }
+.foot-links { gap: 6px 18px; flex-wrap: wrap; }
+.foot-links > * { white-space: nowrap; }
 .foot-links .linkbtn, .foot-links a { color: var(--ink); font-weight: 500; }
 
 /* tombol chat CS: pil berlabel, bukan gelembung bertitik hijau */
@@ -1294,7 +1277,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 
 @media (max-width: 1000px) {
   .hero { grid-template-columns: minmax(0, 1fr); padding-top: 12px; gap: 28px; }
-  .hsheet { width: min(300px, 78vw); order: 2; margin-top: 6px; }
+  .hsheet { width: min(400px, 96%); }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
   .facts li:nth-child(3) { padding-left: 0; border-left: 0; }
   .index-cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
@@ -1309,9 +1292,21 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
   .facts li:last-child { border-bottom: 0; }
   .csfab .cs-lbl { display: none; }
   .csfab { padding: 0 13px; height: 50px; }
-  .marginnote { font-size: 18px; }
-  .marginnote.n2 { left: 26px; }
 }
+
+/* v4.6: ringkasan harga & pembayaran QRIS */
+.lytotal { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 12px 14px; border: 1px dashed var(--line); border-radius: 8px; background: var(--surface-2); font-size: 13.5px; color: var(--muted); }
+.lytotal b { font-size: 18px; color: var(--ink); }
+.paysum { display: grid; gap: 8px; }
+.prow { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.prow.tot { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 2px; align-items: baseline; }
+.prow.tot b { font-size: 22px; }
+.payqr { display: grid; justify-items: center; gap: 10px; text-align: center; }
+.qrbox { min-height: 200px; display: grid; place-items: center; }
+.qrbox canvas { width: min(260px, 70vw); height: auto; image-rendering: pixelated; border-radius: 6px; border: 1px solid var(--line); }
+.payto { margin: 0; font-size: 13.5px; color: var(--muted); }
+.paysteps { margin: 14px 0; padding-left: 20px; display: grid; gap: 8px; font-size: 13.5px; line-height: 1.55; }
+#payWa { width: 100%; justify-content: center; min-height: 46px; }
 </style>
 
 <aside class="side" id="side" aria-label="Menu utama">
@@ -1392,18 +1387,36 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
         <p class="hero-n">PDF (termasuk hasil scan), Word, ODT, PPTX, RTF, atau TXT. Maksimal 50 MB.</p>
       </div>
       <figure class="hsheet" aria-hidden="true">
-        <div class="sheet-p">
-          <span class="ln" style="width:42%"></span>
-          <span class="ln t" style="width:94%"></span><span class="ln t" style="width:88%"></span>
-          <span class="ln t"><i class="mk">kecerdasan buatan mengubah cara siswa belajar</i></span>
-          <span class="ln t" style="width:91%"></span><span class="ln t" style="width:64%"></span>
-          <span class="ln t" style="width:96%"></span>
-          <span class="ln t"><i class="mk b">data dikumpulkan melalui angket tertutup</i></span>
-          <span class="ln t" style="width:83%"></span><span class="ln t" style="width:72%"></span>
-        </div>
-        <span class="marginnote n1">mirip: Jurnal Pendidikan, 2021</span>
-        <span class="marginnote n2">tambahkan sitasi?</span>
-        <span class="stamp"><b>12%</b><small>kesamaan</small></span>
+        <svg viewBox="0 0 440 470" role="presentation" focusable="false">
+          <g transform="rotate(-2.4 190 220)">
+            <rect x="34" y="28" width="300" height="384" rx="3" class="hs-back"/>
+            <rect x="24" y="16" width="300" height="384" rx="3" class="hs-paper"/>
+            <line x1="56" y1="16" x2="56" y2="400" class="hs-margin"/>
+            <rect x="74" y="50" width="118" height="9" rx="4.5" class="hs-l2"/>
+            <rect x="74" y="80" width="222" height="6" rx="3" class="hs-l"/><rect x="74" y="96" width="206" height="6" rx="3" class="hs-l"/>
+            <rect x="72" y="113" width="206" height="17" class="hs-hl1"/><rect x="72" y="133" width="104" height="17" class="hs-hl1"/>
+            <text x="76" y="126" class="hs-tx" textLength="196" lengthAdjust="spacingAndGlyphs">kecerdasan buatan mengubah</text><text x="76" y="146" class="hs-tx" textLength="94" lengthAdjust="spacingAndGlyphs">cara siswa belajar</text>
+            <rect x="182" y="141" width="96" height="6" rx="3" class="hs-l"/>
+            <circle cx="40" cy="122" r="8" class="hs-b1"/><text x="40" y="126" class="hs-bn">1</text>
+            <rect x="74" y="166" width="216" height="6" rx="3" class="hs-l"/><rect x="74" y="182" width="190" height="6" rx="3" class="hs-l"/><rect x="74" y="198" width="222" height="6" rx="3" class="hs-l"/>
+            <rect x="72" y="215" width="212" height="17" class="hs-hl2"/>
+            <text x="76" y="228" class="hs-tx" textLength="202" lengthAdjust="spacingAndGlyphs">data dikumpulkan melalui angket</text>
+            <circle cx="40" cy="224" r="8" class="hs-b2"/><text x="40" y="228" class="hs-bn">2</text>
+            <rect x="74" y="244" width="200" height="6" rx="3" class="hs-l"/><rect x="74" y="260" width="222" height="6" rx="3" class="hs-l"/>
+            <rect x="74" y="276" width="168" height="6" rx="3" class="hs-l"/><rect x="74" y="300" width="214" height="6" rx="3" class="hs-l"/><rect x="74" y="316" width="140" height="6" rx="3" class="hs-l"/>
+          </g>
+          <g class="hs-card">
+            <rect x="212" y="292" width="214" height="164" rx="10" class="hs-cardbg"/>
+            <text x="230" y="320" class="hs-cap">Indeks kesamaan</text>
+            <text x="230" y="358" class="hs-big">12%</text>
+            <rect x="318" y="342" width="90" height="7" rx="3.5" class="hs-track"/><rect x="318" y="342" width="11" height="7" rx="3.5" class="hs-fill"/>
+            <line x1="230" y1="376" x2="408" y2="376" class="hs-rule"/>
+            <circle cx="238" cy="398" r="7" class="hs-b1"/><text x="238" y="401.5" class="hs-bn s">1</text>
+            <text x="252" y="402" class="hs-row" textLength="128" lengthAdjust="spacingAndGlyphs">Jurnal Pendidikan, 2021</text><text x="408" y="402" class="hs-pct">7%</text>
+            <circle cx="238" cy="428" r="7" class="hs-b2"/><text x="238" y="431.5" class="hs-bn s">2</text>
+            <text x="252" y="432" class="hs-row" textLength="104" lengthAdjust="spacingAndGlyphs">Repositori kampus</text><text x="408" y="432" class="hs-pct">5%</text>
+          </g>
+        </svg>
       </figure>
     </div>
     <ul class="facts" aria-label="Tentang CekTeks">
@@ -1435,25 +1448,6 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
         </div>
       </div>
     </section>
-    <div class="card appcard" id="appCard">
-      <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span>Pasang CekTeks sebagai aplikasi</h2><span class="muted" style="font-size:12.5px">gratis · berjalan offline</span></div>
-      <div class="card-b stack">
-        <div class="appdl">
-          <a class="appbtn" data-os="android" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/releases/latest/download/CekTeks-Android.apk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg><span><b>Android</b><small>APK · Android 7 ke atas</small></span></a>
-          <a class="appbtn" data-os="windows" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/releases/latest/download/CekTeks-Windows.exe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span><b>Windows</b><small>Penginstal · Windows 10/11</small></span></a>
-          <a class="appbtn" data-os="mac" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/releases/latest/download/CekTeks-macOS.dmg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg><span><b>macOS</b><small>DMG · Intel &amp; Apple Silicon</small></span></a>
-          <a class="appbtn" data-os="linux" href="https://github.com/ferdynandekawijaya92821-create/kalori-cli/releases/latest/download/CekTeks-Linux.AppImage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span><b>Linux</b><small>AppImage</small></span></a>
-        </div>
-        <details class="more"><summary>Cara memasang <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>
-          <ul class="howto">
-            <li><b>Android</b>: unduh APK, buka berkasnya, lalu izinkan "Instal dari sumber ini" bila diminta. Aplikasi ini belum ada di Play Store, jadi Android mungkin menampilkan peringatan; itu wajar untuk aplikasi di luar Play Store.</li>
-            <li><b>Windows</b>: jalankan penginstal. Bila muncul "Windows melindungi PC Anda", pilih <i>Info selengkapnya → Tetap jalankan</i> (aplikasi belum ditandatangani sertifikat berbayar).</li>
-            <li><b>macOS</b>: buka DMG, seret CekTeks ke Applications, lalu klik kanan → <i>Buka</i> untuk pertama kali.</li>
-            <li><b>Linux</b>: beri izin jalan (<code>chmod +x CekTeks-Linux.AppImage</code>), lalu jalankan.</li>
-            <li><b>iPhone/iPad</b>: buka situs ini di Safari, ketuk Bagikan → <i>Tambahkan ke Layar Utama</i>.</li>
-          </ul></details>
-      </div>
-    </div>
     <div class="card">
       <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Pemeriksaan terakhir</h2><button type="button" class="linkbtn" data-nav="riwayat">Lihat semua</button></div>
       <div class="card-b" id="homeRecent"></div>
@@ -1995,6 +1989,9 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
                 </div>
                 <label for="oJam">Jam layanan<input type="text" id="oJam" autocomplete="off"></label>
                 <label for="oSapa">Sapaan chat<input type="text" id="oSapa" autocomplete="off"></label>
+                <label for="oQris"><span>Kode QRIS toko <span class="muted" style="font-weight:400">· untuk tombol Bayar dengan QRIS</span></span><textarea id="oQris" spellcheck="false" style="min-height:64px" placeholder="000201010211…"></textarea></label>
+                <div class="btnrow"><label class="btn sm" for="oQrisImg">Baca dari gambar QRIS</label><input type="file" id="oQrisImg" class="sr-only" accept="image/*"><span class="hint" id="oQrisInfo" style="margin:0;align-self:center"></span></div>
+                <label for="oGoogle"><span>Kode verifikasi Google <span class="muted" style="font-weight:400">· opsional, dari Google Search Console</span></span><input type="text" id="oGoogle" autocomplete="off" spellcheck="false" placeholder="mis. AbCdEf123…"></label>
                 <label class="toggle" for="oLyOn"><input type="checkbox" id="oLyOn"><span class="tr" aria-hidden="true"></span>Tampilkan halaman Layanan &amp; Harga</label>
                 <label for="oPaket"><span>Paket layanan <span class="muted" style="font-weight:400">· satu per baris: nama | harga | satuan | fitur1; fitur2 | unggulan (ya/kosong)</span></span><textarea id="oPaket" spellcheck="false" placeholder="Cek Plagiasi | 15000 | per dokumen | Laporan PDF; Kode verifikasi |"></textarea></label>
                 <label class="toggle" for="oAds"><input type="checkbox" id="oAds"><span class="tr" aria-hidden="true"></span>Tampilkan iklan berjalan &amp; banner</label>
@@ -2185,7 +2182,6 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
       <article class="card gcard">
         <h2>Pakai offline</h2>
         <p>Setelah situs dibuka sekali, CekTeks tetap berjalan tanpa internet, kecuali fitur Cek di internet. Pasang ke layar utama lewat menu browser agar terasa seperti aplikasi.</p>
-        <p class="muted">File CekTeks.html berisi seluruh aplikasi. Simpan, lalu buka dengan browser kapan saja tanpa akun, langganan, atau internet.</p>
       </article>
       <article class="card gcard">
         <h2>Format berkas</h2>
@@ -2208,7 +2204,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
   <section class="view" id="view-layanan">
     <div class="pagehead">
       <h1 id="lyTitle">Layanan pemeriksaan naskah</h1>
-      <p>Ingin naskah diperiksakan oleh kami beserta laporan resminya? Pilih paket, kirim pesanan lewat WhatsApp, lalu kirim naskah setelah CS membalas.</p>
+      <p>Ingin naskah diperiksakan oleh kami beserta laporannya? Pilih paket, bayar dengan QRIS dari aplikasi bank atau e-wallet apa pun, lalu kirim naskah lewat WhatsApp.</p>
     </div>
     <div class="pricing" id="lyPaket"></div>
     <p class="hint" id="lyNote" style="margin:0 0 18px"></p>
@@ -2221,22 +2217,23 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
             <label for="lyPkg">Paket<select id="lyPkg"></select></label>
           </div>
           <div class="two">
-            <label for="lyHal">Jumlah halaman / naskah<input type="number" id="lyHal" min="1" max="10000" inputmode="numeric" placeholder="mis. 45"></label>
+            <label for="lyHal"><span id="lyQtyL">Jumlah naskah</span><input type="number" id="lyHal" min="1" max="500" inputmode="numeric" value="1"></label>
             <label for="lyDl">Tenggat<select id="lyDl"><option>Tidak buru-buru</option><option>Hari ini</option><option>Besok</option><option>2–3 hari</option></select></label>
           </div>
           <label for="lyKampus"><span>Kampus / instansi <span class="muted" style="font-weight:400">· opsional, untuk batas kesamaan</span></span><input type="text" id="lyKampus" maxlength="120"></label>
           <label for="lyNote2"><span>Catatan <span class="muted" style="font-weight:400">· opsional</span></span><textarea id="lyNote2" maxlength="600" style="min-height:70px;font-family:var(--f-body);font-size:13.5px" placeholder="mis. abaikan daftar pustaka, batas kampus 25%"></textarea></label>
           <label class="toggle" for="lyAgree"><input type="checkbox" id="lyAgree"><span class="tr" aria-hidden="true"></span><span>Saya setuju dengan <button type="button" class="linkbtn" data-adgo="#syarat">Syarat &amp; Ketentuan</button></span></label>
+          <div class="lytotal" id="lyTotal" aria-live="polite"></div>
           <div class="btnrow" id="lySend"></div>
-          <p class="hint" style="margin:0">Pesan berisi data di atas akan terbuka di WhatsApp atau email Anda; tidak ada data yang dikirim ke server CekTeks.</p>
+          <p class="hint" style="margin:0">QR pembayaran dibuat di perangkat Anda. Bukti bayar dan naskah dikirim lewat WhatsApp; tidak ada data yang dikirim ke server CekTeks.</p>
         </form>
       </div>
       <div class="card">
         <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Cara memesan</h2></div>
         <ol class="card-b howsteps">
           <li><b>Pilih paket</b><span>Sesuaikan dengan kebutuhan: plagiasi saja, plagiasi dan AI, kode program, atau satu kelas.</span></li>
-          <li><b>Kirim pesanan</b><span>Isi formulir, lalu tekan Kirim lewat WhatsApp. CS membalas pada jam layanan.</span></li>
-          <li><b>Kirim naskah &amp; bayar</b><span>Kirim berkas PDF atau Word lewat WhatsApp atau email, lalu bayar lewat QRIS atau transfer.</span></li>
+          <li><b>Bayar dengan QRIS</b><span>Isi formulir dan tekan Bayar dengan QRIS. Nominal sudah terisi di QR; cukup pindai dan bayar.</span></li>
+          <li><b>Kirim bukti &amp; naskah</b><span>Tekan Saya sudah bayar. WhatsApp terbuka dengan nomor pesanan; lampirkan bukti bayar dan berkas PDF atau Word.</span></li>
           <li><b>Terima laporan</b><span>Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR yang bisa dicek siapa pun.</span></li>
         </ol>
       </div>
@@ -2288,7 +2285,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
           <li><b>Cakupan sumber terbatas.</b> CekTeks memeriksa sumber terbuka di internet, jurnal, repositori, dan bank naskah Anda. Basis data tertutup, misalnya milik Turnitin, tidak termasuk, sehingga hasilnya bisa berbeda dengan layanan lain.</li>
           <li><b>Hak atas naskah.</b> Unggah hanya naskah yang Anda tulis sendiri atau yang Anda berhak periksa. Untuk jasa pengecekan, simpan naskah klien ke bank hanya dengan persetujuan klien.</li>
           <li><b>Penggunaan yang dilarang.</b> Jangan memakai CekTeks untuk menyembunyikan plagiarisme, misalnya dengan karakter tersembunyi atau huruf aksara lain, atau untuk memalsukan laporan. Laporan memuat kode verifikasi agar perubahan dapat dikenali.</li>
-          <li><b>Layanan berbayar.</b> Jasa pengecekan berbayar diselenggarakan oleh pemilik situs, dengan tarif dan ketentuan yang disepakati langsung bersama klien.</li>
+          <li><b>Layanan berbayar.</b> Jasa pengecekan berbayar diselenggarakan oleh pemilik situs dengan tarif di halaman Layanan &amp; Harga. Pembayaran lewat QRIS dicek manual oleh CS; pekerjaan dimulai setelah pembayaran diterima. Pembatalan dan pengembalian dana dibicarakan langsung dengan CS.</li>
           <li><b>Tanpa jaminan.</b> CekTeks disediakan "apa adanya". Pengembang dan pemilik situs tidak bertanggung jawab atas keputusan yang diambil hanya berdasarkan skor.</li>
           <li><b>Iklan.</b> Konten bertanda "Iklan" berasal dari pemilik situs atau mitranya. Periksa sendiri sebelum bertransaksi dengan pihak yang diiklankan.</li>
         </ul>
@@ -2323,6 +2320,17 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
     </header>
     <div class="drawer-sum" id="drSum"></div>
     <div class="drawer-b" id="drBody"></div>
+  </section>
+</div>
+<div class="drawer" id="payDrawer" hidden>
+  <div class="drawer-bg" data-close="1"></div>
+  <section class="drawer-panel billpanel" role="dialog" aria-modal="true" aria-labelledby="payTitle">
+    <header class="drawer-h">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></span>
+      <div class="drawer-t"><b id="payTitle">Bayar dengan QRIS</b><span class="muted" id="paySub"></span></div>
+      <button type="button" class="btn sm icon-only" data-close="1" id="payClose" aria-label="Tutup pembayaran"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </header>
+    <div class="drawer-b" id="payBody"></div>
   </section>
 </div>
 <div class="drawer" id="billDrawer" hidden>
@@ -2844,7 +2852,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.5.0";
+var APP_VERSION = "4.6.0";
 // Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
 (function () {
   var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
@@ -4551,12 +4559,13 @@ var FAQ = [
   { c: "Laporan", q: "Bagaimana memastikan laporan asli dan tidak diubah?", k: "laporan asli verifikasi qr palsu kode keaslian", a: "Setiap laporan PDF memuat kode verifikasi dan QR berisi sidik SHA-256 naskah. Pindai QR atau buka menu Verifikasi Laporan, lalu unggah naskahnya untuk memastikan naskah dan skor tidak diubah." },
   { c: "Laporan", q: "Format berkas apa saja yang didukung?", k: "format pdf word docx doc berkas file odt pptx txt", a: "PDF, Word (.docx, dan .doc lama secara terbatas), OpenDocument (.odt), PowerPoint (.pptx), RTF, HTML, Markdown, dan teks biasa, hingga 50 MB. PDF hasil pindaian berupa gambar dibaca otomatis dengan OCR (perlu internet saat pertama kali)." },
   { c: "Privasi", q: "Apakah naskah saya disimpan atau dikirim ke server?", k: "privasi aman simpan server rahasia data bocor upload", a: "Tidak. Naskah diproses di perangkat Anda dan tidak diunggah ke server CekTeks. Saat cek internet berjalan, hanya potongan kalimat dan kata kunci yang dikirim ke mesin pencari yang Anda pilih.", go: ["#kebijakan", "Kebijakan Privasi"] },
-  { c: "Aplikasi", q: "Apakah ada aplikasi Android atau Windows?", k: "aplikasi android apk windows mac macos linux iphone unduh install pasang hp laptop", a: "Ada, gratis: Android (APK), Windows, macOS, dan Linux. Tautan unduhan ada di Beranda. Di iPhone atau iPad, buka situs ini di Safari lalu pilih Bagikan, Tambahkan ke Layar Utama.", go: ["#appCard", "Unduh aplikasi"] },
+  { c: "Aplikasi", q: "Bisakah dipasang di HP seperti aplikasi?", k: "aplikasi android apk iphone hp pasang install layar utama", a: "Bisa. Buka situs ini di Chrome atau Safari, lalu pilih menu Tambahkan ke Layar Utama. CekTeks akan terbuka seperti aplikasi dan tetap berjalan tanpa internet, kecuali cek internet." },
   { c: "Aplikasi", q: "Apakah bisa dipakai tanpa internet?", k: "offline internet kuota sinyal", a: "Bisa. Setelah dibuka sekali, situs dan aplikasi tetap berjalan tanpa internet, kecuali fitur Cek di internet." },
   { c: "Fitur", q: "Bisakah memeriksa PDF hasil scan atau foto?", k: "scan pindai pindaian foto gambar ocr kamera", a: "Bisa. PDF hasil pindaian dikenali teksnya otomatis dengan OCR di perangkat Anda, lalu diperiksa seperti biasa. OCR perlu internet saat pertama kali dipakai. Hasil OCR bisa salah baca bila pindaian buram, jadi periksa teksnya.", go: ["#periksa", "Unggah PDF"] },
   { c: "Fitur", q: "Bagaimana mengecek referensi palsu buatan AI?", k: "referensi palsu halusinasi daftar pustaka doi fiktif asli", a: "Buka kartu Sitasi & daftar pustaka di panel hasil, lalu tekan Periksa keaslian referensi. Setiap entri dicari di Crossref dan OpenAlex. DOI yang tidak terdaftar, DOI milik karya lain, dan referensi yang tidak ditemukan diberi tanda. Buku dan jurnal lokal kadang tidak terdaftar, jadi periksa manual.", go: ["#periksa", "Buka pemeriksaan"] },
   { c: "Fitur", q: "Bisakah memeriksa kode program?", k: "kode program python java coding script source c++ javascript php", a: "Bisa. Cek Plagiasi Kode Program mendukung Python, Java, C/C++, JavaScript, PHP, dan lainnya. Salinan tetap terdeteksi walau nama variabel atau komentar diganti.", go: ["#kode", "Cek kode program"] },
   { c: "Fitur", q: "Bisakah memeriksa banyak naskah sekaligus?", k: "banyak massal sekaligus kelas dosen batch zip", a: "Bisa. Periksa Banyak Dokumen memeriksa puluhan naskah sekaligus, membandingkan naskah-naskah itu satu sama lain, dan mengunduh semua laporan dalam satu ZIP.", go: ["#massal", "Buka pemeriksaan massal"] },
+  { c: "Layanan", q: "Bagaimana cara membayar layanan pemeriksaan?", k: "bayar pembayaran qris transfer gopay ovo dana shopeepay harga", a: "Pilih paket di halaman Layanan & Harga, isi formulir, lalu tekan Bayar dengan QRIS. QR yang muncul sudah berisi nominal pas dan bisa dibayar dari aplikasi bank atau e-wallet apa pun. Setelah membayar, kirim bukti bayar dan naskah lewat WhatsApp. Pembayaran dicek manual oleh CS.", go: ["#layanan", "Lihat paket"] },
   { c: "Lainnya", q: "Bagaimana cara memasang iklan di CekTeks?", k: "iklan pasang promosi sponsor kerja sama", a: "Hubungi CS lewat WhatsApp atau email untuk menanyakan slot iklan yang tersedia." }
 ];
 var FAQ_STOP = new Set("apa apakah bagaimana gimana kenapa mengapa saya aku kak min admin yang dan atau bisa ada untuk ini itu cara dengan di ke dari mau ingin tolong dong ya kah tidak".split(" "));
@@ -4627,7 +4636,7 @@ function csReply(q) {
 function renderCS() {
   $("#csName").textContent = SITE.cs.nama || "Customer service";
   $("#csJam").textContent = (waNum() || mailLink() ? "Online · " : "Asisten otomatis · ") + (SITE.cs.jam || "jawaban instan 24 jam");
-  $("#csChips").innerHTML = FAQ.filter(function (f, i) { return [1, 3, 4, 5, 11, 12].indexOf(i) >= 0; }).map(function (f) { return '<button type="button" data-q="' + esc(f.q) + '">' + esc(f.q) + "</button>"; }).join("");
+  $("#csChips").innerHTML = FAQ.filter(function (f) { return /cara memeriksa|berbeda dengan Turnitin|0% padahal|akurat deteksi|disimpan atau dikirim|seperti aplikasi/.test(f.q); }).map(function (f) { return '<button type="button" data-q="' + esc(f.q) + '">' + esc(f.q) + "</button>"; }).join("");
   var x = contactBtns(); $("#csX").innerHTML = x || '<button type="button" class="btn" data-adgo="#bantuan">Pusat bantuan</button>'; $("#csX").hidden = false;
 }
 function openCS() {
@@ -4696,7 +4705,8 @@ function ownerFill() {
   var bn = SITE.iklan.aktif ? bannerItems() : (src.banner || []);
   $("#oTicker").value = tk.map(function (x) { return x.teks + (x.tautan ? " | " + x.tautan : ""); }).join("\n");
   $("#oBanner").value = bn.map(function (x) { return typeof x === "string" ? x : [x.label || "", x.judul || "", x.teks || "", x.tombol || "", x.tautan || ""].concat(x.gambar ? [x.gambar] : []).join(" | "); }).join("\n");
-  var L = lyCfg(); $("#oLyOn").checked = L.aktif;
+  var L = lyCfg(), P = payCfg(); $("#oLyOn").checked = L.aktif; $("#oQris").value = P.qris; $("#oQrisInfo").textContent = P.merchant ? "Penerima: " + P.merchant : "";
+  $("#oGoogle").value = String(((window.CEKTEKS_SITE || {}).google_verifikasi) || "");
   $("#oPaket").value = L.paket.map(function (x) { return [x.nama, x.harga, x.satuan, x.fitur.join("; "), x.unggulan ? "ya" : ""].join(" | "); }).join("\n");
   $("#oReset").hidden = !SITE.preview;
 }
@@ -4705,6 +4715,8 @@ function ownerCfg() {
   return { warna: $("#oWarna").value, cs: { nama: $("#oNama").value.trim() || "CS CekTeks", whatsapp: $("#oWa").value.replace(/[^\d]/g, ""), email: $("#oEmail").value.trim(), jam: $("#oJam").value.trim(), sapaan: $("#oSapa").value.trim() || SITE_DEF.cs.sapaan },
     layanan: { aktif: $("#oLyOn").checked, judul: lyCfg().judul, catatan: lyCfg().catatan,
       paket: lines($("#oPaket").value).map(function (l) { var p = splitBar(l); return { nama: p[0] || "", harga: p[1] || "", satuan: p[2] || "", fitur: (p[3] || "").split(";").map(function (f) { return f.trim(); }).filter(Boolean), unggulan: /^(ya|y|true|1)$/i.test(p[4] || "") }; }).filter(function (x) { return x.nama; }) },
+    pembayaran: { qris: $("#oQris").value.trim(), kode_unik: true },
+    google_verifikasi: $("#oGoogle").value.trim(),
     iklan: { aktif: $("#oAds").checked,
       teks_berjalan: lines($("#oTicker").value).map(function (l) { var p = splitBar(l); return { teks: p[0], tautan: p[1] || "" }; }),
       banner: lines($("#oBanner").value).map(function (l) { var p = splitBar(l), o = { label: p[0] || "Info", judul: p[1] || "", teks: p[2] || "", tombol: p[3] || "", tautan: p[4] || "" }; if (p[5]) o.gambar = p[5]; return o; }) } };
@@ -4742,36 +4754,116 @@ function renderLayanan() {
   if (cur && +cur < L.paket.length) $("#lyPkg").value = cur; else { var u = L.paket.findIndex(function (p) { return p.unggulan; }); $("#lyPkg").value = String(Math.max(0, u)); }
   lySend();
 }
-function lyMsg() {
-  var L = lyCfg(), p = L.paket[+$("#lyPkg").value] || L.paket[0] || { nama: "" }, v = function (id) { return $(id).value.trim(); };
-  var lines = ["Halo " + SITE.cs.nama + ", saya ingin memesan layanan pemeriksaan naskah.", "", "• Paket: " + p.nama + (p.harga ? " (" + (/^\d+$/.test(p.harga.replace(/\./g, "")) ? rupiah(p.harga) : p.harga) + (p.satuan ? " " + p.satuan : "") + ")" : ""), "• Nama: " + (v("#lyNama") || "-")];
-  if (v("#lyHal")) lines.push("• Jumlah halaman/naskah: " + v("#lyHal"));
+function lyNum(h) { var n = +String(h || "").replace(/[^\d]/g, ""); return /^\s*[\d.]+\s*$/.test(String(h || "")) && n > 0 ? n : 0; }
+function lyPick() { var L = lyCfg(); return L.paket[+$("#lyPkg").value] || L.paket[0] || { nama: "", harga: "", satuan: "" }; }
+function lyQty() { return Math.max(1, Math.min(500, Math.round(+$("#lyHal").value || 1))); }
+function lyUnit(p) { var m = /per\s+(\S+)/i.exec(p.satuan || ""); return m ? m[1] : "naskah"; }
+function lyTotal() {
+  var p = lyPick(), n = lyNum(p.harga), q = lyQty(), u = lyUnit(p);
+  $("#lyQtyL").textContent = "Jumlah " + u;
+  $("#lyTotal").innerHTML = n ? '<span>' + esc(p.nama) + " · " + q + " " + esc(u) + " × " + rupiah(n) + '</span><b class="num">' + rupiah(n * q) + "</b>" : '<span>Harga paket ini dikonfirmasi oleh CS.</span>';
+}
+function lyMsg(order) {
+  var p = lyPick(), v = function (id) { return $(id).value.trim(); }, n = lyNum(p.harga);
+  var lines = [order ? "Halo " + SITE.cs.nama + ", saya sudah membayar pesanan " + order.id + " lewat QRIS." : "Halo " + SITE.cs.nama + ", saya ingin memesan layanan pemeriksaan naskah.", "",
+    "• Paket: " + p.nama + (n ? " (" + rupiah(n) + (p.satuan ? " " + p.satuan : "") + ")" : ""), "• Nama: " + (v("#lyNama") || "-"), "• Jumlah " + lyUnit(p) + ": " + lyQty()];
   lines.push("• Tenggat: " + v("#lyDl"));
   if (v("#lyKampus")) lines.push("• Kampus/instansi: " + v("#lyKampus"));
   if (v("#lyNote2")) lines.push("• Catatan: " + v("#lyNote2"));
-  lines.push("", "Naskah akan saya kirim setelah dibalas. Terima kasih.");
+  if (order) lines.push("• Total dibayar: " + rupiah(order.total), "", "Bukti bayar dan naskah saya lampirkan di chat ini. Terima kasih.");
+  else lines.push("", "Naskah akan saya kirim setelah dibalas. Terima kasih.");
   return lines.join("\n");
 }
-function lySend() {
-  var wa = waNum(), ml = mailLink(), h = "";
-  if (wa) h += '<button type="submit" class="btn wa" data-via="wa">' + WA_IC + "Kirim lewat WhatsApp</button>";
-  if (ml) h += '<button type="submit" class="btn" data-via="mail">' + MAIL_IC + "Kirim lewat email</button>";
-  $("#lySend").innerHTML = h || '<p class="hint" style="margin:0">Kontak CS belum diatur oleh pemilik situs.</p>';
+// QRIS toko dari site.json (pembayaran.qris); tidak ada nominal -> diubah menjadi QRIS dinamis bernominal pas.
+function payCfg() {
+  var base = (window.CEKTEKS_SITE || {}).pembayaran, prev = null;
+  try { prev = JSON.parse(store("ct_site_preview") || "null"); } catch (e) {}
+  var c = (prev && prev.pembayaran) || base || {}, info = null;
+  try { info = c.qris ? QRIS.info(c.qris) : null; } catch (e) { info = null; }
+  return { qris: info ? info.payload : "", merchant: info ? info.merchant : "", kodeUnik: c.kode_unik !== false };
 }
+function lySend() {
+  var wa = waNum(), ml = mailLink(), pay = payCfg(), p = lyPick(), h = "";
+  if (pay.qris && lyNum(p.harga)) h += '<button type="submit" class="btn primary" data-via="qris"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>Bayar dengan QRIS</button>';
+  if (wa) h += '<button type="submit" class="btn wa" data-via="wa">' + WA_IC + (pay.qris ? "Tanya dulu lewat WhatsApp" : "Kirim lewat WhatsApp") + "</button>";
+  if (ml && !pay.qris) h += '<button type="submit" class="btn" data-via="mail">' + MAIL_IC + "Kirim lewat email</button>";
+  $("#lySend").innerHTML = h || '<p class="hint" style="margin:0">Kontak CS belum diatur oleh pemilik situs.</p>';
+  lyTotal();
+}
+$("#lyPkg").addEventListener("change", lySend);
+$("#lyHal").addEventListener("input", lyTotal);
 $("#lyPaket").addEventListener("click", function (e) {
   var b = e.target.closest("[data-pkg]"); if (!b) return;
-  $("#lyPkg").value = b.dataset.pkg; $("#pesan").scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(function () { $("#lyNama").focus({ preventScroll: true }); }, 350);
+  $("#lyPkg").value = b.dataset.pkg; lySend(); $("#pesan").scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(function () { $("#lyNama").focus({ preventScroll: true }); }, 350);
 });
 $("#lyForm").addEventListener("submit", function (e) {
   e.preventDefault();
-  var via = (e.submitter && e.submitter.dataset.via) || (waNum() ? "wa" : "mail");
+  var via = (e.submitter && e.submitter.dataset.via) || (payCfg().qris ? "qris" : waNum() ? "wa" : "mail");
   if (!$("#lyNama").value.trim()) { toast("Isi nama Anda dulu."); return $("#lyNama").focus(); }
   if (!$("#lyAgree").checked) { toast("Centang persetujuan Syarat & Ketentuan dulu."); return $("#lyAgree").focus(); }
+  if (via === "qris") return openPay();
   var msg = lyMsg(), url = via === "wa" ? waLink(msg) : mailLink(msg).replace("Pertanyaan%20tentang%20CekTeks", "Pesanan%20layanan%20CekTeks");
   if (!url) return toast("Kontak CS belum diatur.");
   if (via === "wa") window.open(url, "_blank", "noopener"); else location.href = url;
   toast("Pesanan dibuka di " + (via === "wa" ? "WhatsApp" : "aplikasi email") + ". Tekan kirim di sana.");
 });
+
+/* ---- pembayaran QRIS: nominal pas + kode unik, bukti dikirim lewat WhatsApp ---- */
+var PAYST = { order: null, canvas: null };
+function newOrderId() {
+  var d = new Date(), ab = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", r = "", a = new Uint8Array(4);
+  (window.crypto || {}).getRandomValues ? crypto.getRandomValues(a) : a.forEach(function (x, i) { a[i] = Math.random() * 256; });
+  a.forEach(function (x) { r += ab[x % ab.length]; });
+  return "CT-" + String(d.getFullYear()).slice(2) + ("0" + (d.getMonth() + 1)).slice(-2) + ("0" + d.getDate()).slice(-2) + "-" + r;
+}
+function openPay() {
+  var pay = payCfg(), p = lyPick(), n = lyNum(p.harga), q = lyQty();
+  if (!pay.qris || !n) return toast("Pembayaran QRIS belum tersedia untuk paket ini. Tanyakan lewat WhatsApp.");
+  var kode = pay.kodeUnik ? 1 + Math.floor(Math.random() * 299) : 0, o = { id: newOrderId(), paket: p.nama, unit: lyUnit(p), qty: q, harga: n, subtotal: n * q, kode: kode, total: n * q + kode };
+  PAYST.order = o; PAYST.canvas = null;
+  try { store("ct_order_last", JSON.stringify(Object.assign({ date: new Date().toISOString() }, o))); } catch (e) {}
+  $("#paySub").textContent = "Pesanan " + o.id;
+  var waBtn = waNum() ? '<a class="btn wa" id="payWa" target="_blank" rel="noopener" href="' + esc(waLink(lyMsg(o))) + '">' + WA_IC + "Saya sudah bayar, kirim bukti</a>" : "";
+  $("#payBody").innerHTML =
+    '<div class="card billcard paysum">' +
+      '<div class="prow"><span>' + esc(o.paket) + " × " + o.qty + " " + esc(o.unit) + '</span><span class="num">' + rupiah(o.subtotal) + "</span></div>" +
+      (o.kode ? '<div class="prow"><span>Kode unik <small class="muted">(agar pembayaran Anda mudah dikenali)</small></span><span class="num">' + rupiah(o.kode) + "</span></div>" : "") +
+      '<div class="prow tot"><span>Total dibayar</span><b class="num" id="payTotal">' + rupiah(o.total) + '</b></div></div>' +
+    '<div class="card billcard payqr"><div id="payQr" class="qrbox"><span class="spin" aria-hidden="true"></span></div>' +
+      '<p class="payto">Penerima: <b>' + esc(pay.merchant || "toko") + '</b> · QRIS</p>' +
+      '<div class="btnrow"><button type="button" class="btn" id="payDl">Simpan gambar QR</button><button type="button" class="btn" id="payCopy">Salin nominal</button></div></div>' +
+    '<ol class="paysteps">' +
+      "<li>Buka aplikasi pembayaran apa pun yang mendukung QRIS: GoPay, OVO, DANA, ShopeePay, LinkAja, atau m-banking.</li>" +
+      "<li>Pindai QR di atas. Bila Anda membuka halaman ini di HP yang sama, tekan <b>Simpan gambar QR</b>, lalu pilih gambar dari galeri di aplikasi pembayaran.</li>" +
+      "<li>Pastikan nominalnya <b>" + rupiah(o.total) + "</b> dan nama penerima <b>" + esc(pay.merchant || "toko") + "</b>, lalu bayar.</li>" +
+      "<li>Tekan tombol di bawah, lalu lampirkan tangkapan layar bukti bayar dan berkas naskah Anda di WhatsApp.</li></ol>" +
+    waBtn +
+    '<p class="hint">Pembayaran dicek manual oleh CS' + (SITE.cs.jam ? " (" + esc(SITE.cs.jam) + ")" : "") + ". Jangan membayar dua kali untuk pesanan yang sama. Simpan nomor pesanan <b class=\"num\">" + esc(o.id) + "</b>.</p>";
+  lastFocus = document.activeElement; $("#payDrawer").hidden = false; document.body.classList.add("noscroll"); $("#payClose").focus();
+  var payload = QRIS.withAmount(pay.qris, o.total);
+  qrCanvas(payload, 280).then(function (c) {
+    PAYST.canvas = c; c.setAttribute("role", "img"); c.setAttribute("aria-label", "Kode QRIS untuk membayar " + rupiah(o.total)); c.dataset.payload = payload;
+    var w = $("#payQr"); if (w) { w.innerHTML = ""; w.appendChild(c); }
+  }, function () { var w = $("#payQr"); if (w) w.innerHTML = '<div class="warn">Pembuat QR gagal dimuat. Periksa koneksi lalu coba lagi.</div>'; });
+  $("#payCopy").onclick = function () { copyText(String(o.total), "Nominal " + rupiah(o.total) + " disalin."); };
+  $("#payDl").onclick = function () {
+    if (!PAYST.canvas) return;
+    // Gambar QR untuk disimpan: QR + nominal + nama penerima, agar mudah dipilih dari galeri.
+    var q = PAYST.canvas, W = q.width + 80, H = q.height + 190, c = document.createElement("canvas"), x = c.getContext("2d");
+    c.width = W; c.height = H; x.fillStyle = "#ffffff"; x.fillRect(0, 0, W, H); x.drawImage(q, 40, 70);
+    x.fillStyle = "#1d1b17"; x.textAlign = "center"; x.font = "600 20px sans-serif"; x.fillText("CekTeks · " + o.id, W / 2, 42);
+    x.font = "700 30px sans-serif"; x.fillText(rupiah(o.total), W / 2, q.height + 118);
+    x.font = "500 16px sans-serif"; x.fillStyle = "#645e55"; x.fillText("Penerima: " + (pay.merchant || "toko") + " · QRIS", W / 2, q.height + 150);
+    c.toBlob(function (b) { download(b, "QRIS-" + o.id + ".png"); });
+  };
+}
+function closePay() { $("#payDrawer").hidden = true; document.body.classList.remove("noscroll"); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+$("#payDrawer").addEventListener("click", function (e) { if (e.target.closest("[data-close]")) closePay(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#payDrawer").hidden) closePay(); });
+$("#oQrisImg").onchange = function (e) {
+  var f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  readQrImage(f).then(function (t) { var i = QRIS.info(t); $("#oQris").value = i.payload; $("#oQrisInfo").textContent = "Penerima: " + i.merchant; toast("QRIS terbaca: " + i.merchant + ". Tekan Pratinjau atau Salin site.json."); }, function (err) { toast(err.message); }).catch(function (err) { toast(err.message); });
+};
 function applySite() { SITE = siteCfg(); applyTheme(); renderAds(); renderCS(); renderContact(); renderLayanan(); }
 $("#oPreview").onclick = function () { store("ct_site_preview", JSON.stringify(ownerCfg())); storeDel("ct_accent"); applySite(); ownerFill(); toast("Pratinjau diterapkan di perangkat ini saja. Salin site.json untuk menerbitkannya."); };
 $("#oReset").onclick = function () { storeDel("ct_site_preview"); applySite(); ownerFill(); toast("Pratinjau dihapus. Kembali ke pengaturan situs."); };
@@ -6760,10 +6852,7 @@ if (draft && draft.trim()) setText(draft, false); else setText(SAMPLE, true);
 setMode("review");
 var h0 = location.hash.slice(1); if (/^[a-z]+$/.test(h0) && $("#view-" + h0)) showView(h0); else showView("periksa");
 $("#sideVer").textContent = "v" + APP_VERSION;
-// Kartu unduh aplikasi: disembunyikan di dalam aplikasi; platform pengguna ditonjolkan.
-(function () {
-  if (IS_APP) { $("#appCard").hidden = true; $("#installBtn").hidden = true; return; }
-  var ua = navigator.userAgent, os = /Android/i.test(ua) ? "android" : /Windows/i.test(ua) ? "windows" : /Mac OS X|Macintosh/i.test(ua) && !/iPhone|iPad/.test(ua) ? "mac" : /Linux/i.test(ua) && !/Android/.test(ua) ? "linux" : "";
-  var b = os && document.querySelector('.appbtn[data-os="' + os + '"]'); if (b) { b.classList.add("mine"); b.parentNode.insertBefore(b, b.parentNode.firstChild); }
-})();
+if (IS_APP) $("#installBtn").hidden = true;
+// QRIS didefinisikan sesudah modul Layanan; render ulang agar tombol Bayar dengan QRIS dan isian pemilik lengkap.
+renderLayanan(); ownerFill();
 </script>

@@ -2,6 +2,34 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.6.0] - 2026-11-21
+### Ditambahkan
+- **Pembayaran QRIS di halaman Layanan & Harga.**
+  - Setelah mengisi formulir, pelanggan menekan *Bayar dengan QRIS* dan mendapat QR dinamis dengan nominal pas:
+    harga × jumlah ditambah kode unik Rp1–299 agar pembayaran mudah dikenali. Ada juga nomor pesanan, tombol
+    *Simpan gambar QR* (untuk dibayar dari galeri di HP yang sama), dan *Salin nominal*.
+  - Tombol *Saya sudah bayar* membuka WhatsApp CS berisi rincian pesanan.
+  - QR dibuat di perangkat dari QRIS statis toko (`pembayaran.qris` di `site.json`), mengikuti standar EMV dengan
+    CRC yang diperiksa. Konfirmasi pembayaran tetap manual oleh CS.
+- **Harga paket**: Cek Plagiasi Rp10.000/naskah, Cek Plagiasi + AI Rp20.000/naskah, Cek Kode Program Rp15.000/tugas,
+  dan Paket Kelas/Dosen Rp150.000/kelas (hingga 40 naskah). Total dihitung langsung di formulir.
+- Formulir Pengaturan situs bisa membaca QRIS dari gambar dan menyimpan kode verifikasi Google Search Console
+  (`google_verifikasi`, dipasang sebagai meta tag saat build).
+- FAQ "Bagaimana cara membayar layanan pemeriksaan?" dan ketentuan pembayaran di Syarat & Ketentuan.
+
+### Diubah
+- **Ilustrasi Beranda** dibuat ulang sebagai SVG berskala: sorotan bernomor dan kartu indeks kesamaan, tanpa coretan
+  tangan, sehingga tidak bertumpuk di layar mana pun.
+- **Menu unduh aplikasi dihapus** dari Beranda, FAQ, Panduan, dan teks berjalan. Aplikasi tetap dibangun dan diuji di
+  CI, tetapi rilis publik hanya terbit bila workflow *Aplikasi* dijalankan manual.
+- Statistik Beranda menyesuaikan lebar layar.
+
+### Diperbaiki
+- Tautan kaki halaman tidak turun baris, sehingga di HP halaman melebar 29px dan tampak mengecil; panel pembayaran
+  dan kotak statistik ikut terpotong. Uji tata letak kini membandingkan dengan lebar layar sebenarnya
+  (`clientWidth`), sehingga kasus seperti ini tertangkap.
+- Ukuran halaman tetap di bawah 160 KB: komentar JavaScript satu baris dan CSS kartu unduh dibuang saat build.
+
 ## [4.5.0] - 2026-11-21
 ### Diubah: tampilan baru
 - **Identitas visual baru bergaya editorial**, seperti meja penguji naskah:

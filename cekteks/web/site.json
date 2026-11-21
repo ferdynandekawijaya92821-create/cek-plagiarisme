@@ -1,5 +1,5 @@
 {
-  "_petunjuk": "Pengaturan situs CekTeks. Ubah berkas ini lewat GitHub (ikon pensil), lalu Commit. Situs diperbarui otomatis dalam 1-2 menit. Pilihan warna: teal, biru, ungu, hijau, marun, oranye, grafit. Nomor WhatsApp ditulis dengan kode negara, mis. 6281234567890. Tautan bisa alamat web (https://...), halaman CekTeks (#kode, #massal, #bantuan), atau 'cs' untuk membuka chat CS. Paket layanan: harga boleh dikosongkan (tampil 'Tanya harga'); 'unggulan': true menandai paket yang disarankan.",
+  "_petunjuk": "Pengaturan situs CekTeks. Ubah berkas ini lewat GitHub (ikon pensil), lalu Commit. Situs diperbarui otomatis dalam 1-2 menit. Pilihan warna: teal, biru, ungu, hijau, marun, oranye, grafit. Nomor WhatsApp ditulis dengan kode negara, mis. 6281234567890. Tautan bisa alamat web (https://...), halaman CekTeks (#kode, #massal, #bantuan), atau 'cs' untuk membuka chat CS. Paket layanan: harga diisi angka rupiah tanpa titik (mis. 20000) atau dikosongkan (tampil 'Tanya harga'); 'unggulan': true menandai paket yang disarankan. Pembayaran: isi 'qris' dengan kode QRIS statis toko Anda (dibaca otomatis dari formulir Pengaturan situs). 'google_verifikasi': kode dari Google Search Console (opsional).",
   "warna": "biru",
   "cs": {
     "nama": "CS CekTeks",
@@ -11,12 +11,12 @@
   "layanan": {
     "aktif": true,
     "judul": "Layanan pemeriksaan naskah",
-    "catatan": "Naskah dijaga kerahasiaannya dan tidak disimpan ke bank naskah tanpa izin Anda. Setiap laporan memuat kode verifikasi dan QR.",
+    "catatan": "Harga sudah termasuk laporan PDF ber-QR. Pembayaran lewat QRIS (semua e-wallet dan m-banking), dicek oleh CS pada jam layanan. Naskah tidak disimpan ke bank naskah tanpa izin Anda.",
     "paket": [
       {
         "nama": "Cek Plagiasi",
-        "harga": "",
-        "satuan": "per dokumen",
+        "harga": "10000",
+        "satuan": "per naskah",
         "fitur": [
           "Indeks kesamaan dan daftar sumber",
           "Naskah bersorot di laporan PDF",
@@ -26,8 +26,8 @@
       },
       {
         "nama": "Cek Plagiasi + AI",
-        "harga": "",
-        "satuan": "per dokumen",
+        "harga": "20000",
+        "satuan": "per naskah",
         "fitur": [
           "Semua isi paket Cek Plagiasi",
           "Analisis kemungkinan tulisan AI per bagian",
@@ -38,7 +38,7 @@
       },
       {
         "nama": "Cek Kode Program",
-        "harga": "",
+        "harga": "15000",
         "satuan": "per tugas",
         "fitur": [
           "Python, Java, C/C++, JavaScript, PHP, dan lainnya",
@@ -49,9 +49,10 @@
       },
       {
         "nama": "Paket Kelas / Dosen",
-        "harga": "",
+        "harga": "150000",
         "satuan": "per kelas",
         "fitur": [
+          "Hingga 40 naskah per kelas",
           "Puluhan naskah sekaligus",
           "Naskah saling dibandingkan",
           "Semua laporan dalam satu ZIP dan rekap Excel"
@@ -59,6 +60,10 @@
         "unggulan": false
       }
     ]
+  },
+  "pembayaran": {
+    "qris": "00020101021126610016ID.CO.SHOPEE.WWW01189360091800230079480208230079480303UMI51440014ID.CO.QRIS.WWW0215ID10265149044100303UMI5204599553033605802ID5910Dain Finch6006BEKASI61051715662070703A016304D38F",
+    "kode_unik": true
   },
   "iklan": {
     "aktif": true,
@@ -72,11 +77,7 @@
         "tautan": "#kode"
       },
       {
-        "teks": "Aplikasi CekTeks untuk Android, Windows, macOS, dan Linux, gratis dan bisa offline.",
-        "tautan": "#beranda"
-      },
-      {
-        "teks": "Butuh pemeriksaan naskah dengan laporan resmi? Chat CS kami.",
+        "teks": "Jasa cek plagiasi & AI mulai Rp10.000 per naskah. Bayar lewat QRIS.",
         "tautan": "#layanan"
       },
       {
@@ -88,7 +89,7 @@
       {
         "label": "Layanan",
         "judul": "Jasa cek plagiasi & AI",
-        "teks": "Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR. Hasil cepat, naskah dijaga kerahasiaannya.",
+        "teks": "Mulai Rp10.000 per naskah. Laporan PDF dengan naskah bersorot, kode verifikasi, dan QR. Bayar lewat QRIS.",
         "tombol": "Lihat paket",
         "tautan": "#layanan"
       },
@@ -114,5 +115,6 @@
         "tautan": "cs"
       }
     ]
-  }
+  },
+  "google_verifikasi": ""
 }
