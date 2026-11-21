@@ -151,6 +151,6 @@ jobs:
           ls -la out
           if ! gh release view "v$V" >/dev/null 2>&1; then
             gh release create "v$V" --target "$GITHUB_SHA" --title "CekTeks $V" --latest \
-              --notes "Aplikasi CekTeks $V untuk Android, Windows, macOS, dan Linux. Berjalan offline. Situs: https://ferdynandekawijaya92821-create.github.io/kalori-cli/ · Catatan perubahan: cekteks/CHANGELOG.md"
+              --notes "Aplikasi CekTeks $V untuk Android, Windows, macOS, dan Linux. Berjalan offline. Situs: https://ferdynandekawijaya92821-create.github.io/cek-plagiarisme/ · Catatan perubahan: cekteks/CHANGELOG.md"
           fi
           gh release upload "v$V" out/* --clobber

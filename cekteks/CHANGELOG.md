@@ -2,6 +2,12 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.7.1] - 2026-11-21
+### Diubah
+- Repositori diganti nama menjadi `cek-plagiarisme`. Alamat situs sekarang
+  https://ferdynandekawijaya92821-create.github.io/cek-plagiarisme/ dan menjadi alamat bawaan untuk build lokal,
+  berkas mandiri, catatan rilis, dan User-Agent jembatan.
+
 ## [4.7.0] - 2026-11-21
 ### Ditambahkan
 - **Akun di perangkat (terenkripsi).**
