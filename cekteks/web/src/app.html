@@ -1307,6 +1307,16 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 .payto { margin: 0; font-size: 13.5px; color: var(--muted); }
 .paysteps { margin: 14px 0; padding-left: 20px; display: grid; gap: 8px; font-size: 13.5px; line-height: 1.55; }
 #payWa { width: 100%; justify-content: center; min-height: 46px; }
+
+/* v4.7: akun */
+.accbtn { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 12px 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font-weight: 600; font-size: 13.5px; max-width: 180px; }
+.accbtn svg { width: 17px; height: 17px; flex: none; }
+.accbtn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.signed-in .accbtn { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); color: var(--accent); }
+@media (max-width: 560px) { .accbtn { width: 36px; padding: 0; justify-content: center; } .accbtn span { display: none; } }
+.accme { display: flex; align-items: center; gap: 12px; }
+.accme b { display: block; font-size: 16px; } .accme small { font-size: 12.5px; }
+.accav { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font: 600 18px var(--f-display); }
 </style>
 
 <aside class="side" id="side" aria-label="Menu utama">
@@ -1354,6 +1364,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
         </button>
       </div>
       <span class="net" id="net" title="Status koneksi"><i></i><span id="netText">Online</span></span>
+      <button class="accbtn" id="accBtn" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span id="accLbl">Masuk</span></button>
       <button class="themebtn" id="themeBtn" type="button" aria-label="Tampilan: tema dan warna" title="Tampilan: tema &amp; warna" aria-haspopup="dialog" aria-expanded="false" aria-controls="appear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.8-.5-1.2 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10.5" cy="7.5" r="1.2" fill="currentColor"/><circle cx="15" cy="7.8" r="1.2" fill="currentColor"/></svg></button>
     </div>
   </div>
@@ -2270,6 +2281,8 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
         <p>Naskah dan berkas yang Anda periksa diproses di perangkat Anda sendiri. CekTeks tidak punya server penyimpanan, tidak mengunggah naskah, dan tidak membuat akun.</p>
         <h3>Data yang dikirim saat cek internet</h3>
         <p>Saat cek internet berjalan, potongan kalimat dan kata kunci dikirim ke mesin pencari dan basis data yang Anda pilih (mis. Wikipedia, OpenAlex, Crossref, atau Google lewat Serper). Layanan itu tunduk pada kebijakan privasinya masing-masing. Matikan cek internet bila naskah sangat rahasia.</p>
+        <h3>Akun</h3>
+        <p>Akun CekTeks dibuat dan disimpan di perangkat Anda, tanpa email dan tanpa server. Naskah, riwayat, bank naskah, dan pengaturan sebuah akun dienkripsi (AES-256) dengan kunci dari kata sandi akun, sehingga pengguna lain di perangkat yang sama tidak bisa membukanya. Kata sandi tidak bisa dipulihkan. Akun terkunci otomatis setelah 30 menit tanpa aktivitas.</p>
         <h3>Data yang disimpan di perangkat</h3>
         <p>Draf, sumber pembanding, bank naskah, riwayat, kunci API, dan pilihan tampilan disimpan di penyimpanan browser atau aplikasi pada perangkat ini saja. Anda bisa menghapus semuanya lewat tombol "Hapus data tersimpan" di halaman Panduan.</p>
         <h3>Keamanan</h3>
@@ -2320,6 +2333,17 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
     </header>
     <div class="drawer-sum" id="drSum"></div>
     <div class="drawer-b" id="drBody"></div>
+  </section>
+</div>
+<div class="drawer" id="accDrawer" hidden>
+  <div class="drawer-bg" data-close="1"></div>
+  <section class="drawer-panel billpanel" role="dialog" aria-modal="true" aria-labelledby="accTitle">
+    <header class="drawer-h">
+      <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+      <div class="drawer-t"><b id="accTitle">Akun</b><span class="muted">Terenkripsi di perangkat ini</span></div>
+      <button type="button" class="btn sm icon-only" data-close="1" aria-label="Tutup akun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </header>
+    <div class="drawer-b" id="accBody"></div>
   </section>
 </div>
 <div class="drawer" id="payDrawer" hidden>
@@ -2848,11 +2872,68 @@ var SAMPLE = "Di era digital saat ini, teknologi memainkan peran penting dalam k
 function $(s) { return document.querySelector(s); }
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 function lvl(v) { return v < 35 ? "var(--ok)" : v < 65 ? "var(--warn)" : "var(--bad)"; }
-function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+/* ---- akun di perangkat ini: data tiap akun terenkripsi (AES-GCM, kunci dari kata sandi lewat PBKDF2) ---- */
+// Sesi tersimpan di sessionStorage (hanya tab ini, hilang saat tab ditutup). Tanpa akun = mode tamu seperti biasa.
+var ACC = null, ACC_MEM = null, ACC_DIRTY = null;
+var GLOBAL_KEYS = /^ct_(theme|accent|cshint|tip|site_preview|accounts|acc_.*)$/;
+(function () {
+  try {
+    var s = JSON.parse(sessionStorage.getItem("ct_sess") || "null");
+    if (s && s.id && s.key) { ACC = { id: s.id, name: s.name, key: s.key }; ACC_MEM = JSON.parse(sessionStorage.getItem("ct_sess_data") || "{}") || {}; }
+  } catch (e) { ACC = null; ACC_MEM = null; }
+})();
+function store(k, v) {
+  try {
+    if (ACC && !GLOBAL_KEYS.test(k)) {
+      if (v === undefined) return Object.prototype.hasOwnProperty.call(ACC_MEM, k) ? ACC_MEM[k] : null;
+      ACC_MEM[k] = String(v); accDirty(); return;
+    }
+    if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v);
+  } catch (e) { return null; }
+}
+function storeDel(k) {
+  try { if (ACC && !GLOBAL_KEYS.test(k)) { delete ACC_MEM[k]; accDirty(); } else localStorage.removeItem(k); } catch (e) {}
+}
+function accDirty() {
+  try { sessionStorage.setItem("ct_sess_data", JSON.stringify(ACC_MEM)); } catch (e) {}
+  clearTimeout(accDirty.t); accDirty.t = setTimeout(accFlush, 250);
+}
+function accFlush() {
+  if (!ACC) return Promise.resolve();
+  clearTimeout(accDirty.t);
+  return (ACC_DIRTY = accKey().then(function (k) { return encStr(k, JSON.stringify(ACC_MEM)); }).then(function (blob) { localStorage.setItem("ct_acc_" + ACC.id, blob); }));
+}
+function b64e(u8) { var s = ""; for (var i = 0; i < u8.length; i += 32768) s += String.fromCharCode.apply(null, u8.subarray(i, i + 32768)); return btoa(s); }
+function b64d(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+function accKey() {
+  if (!ACC) return Promise.reject(new Error("Belum masuk."));
+  return accKey.p && accKey.id === ACC.id ? accKey.p : (accKey.id = ACC.id, accKey.p = crypto.subtle.importKey("raw", b64d(ACC.key), "AES-GCM", false, ["encrypt", "decrypt"]));
+}
+function accDerive(pass, salt) {
+  return crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"]).then(function (k) {
+    return crypto.subtle.deriveKey({ name: "PBKDF2", salt: b64d(salt), iterations: 250000, hash: "SHA-256" }, k, { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+  });
+}
+function encStr(key, str) {
+  var iv = crypto.getRandomValues(new Uint8Array(12));
+  return crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, new TextEncoder().encode(str)).then(function (c) { return b64e(iv) + "." + b64e(new Uint8Array(c)); });
+}
+function decStr(key, s) {
+  var p = String(s || "").split(".");
+  return crypto.subtle.decrypt({ name: "AES-GCM", iv: b64d(p[0]) }, key, b64d(p[1])).then(function (b) { return new TextDecoder().decode(b); });
+}
+// Rekaman IndexedDB (bank naskah, riwayat): isi dienkripsi, hanya id yang terbaca.
+function recEnc(rec) { return ACC ? accKey().then(function (k) { return encStr(k, JSON.stringify(rec)); }).then(function (enc) { return { id: rec.id, enc: enc }; }) : Promise.resolve(rec); }
+function recDec(list) {
+  if (!ACC) return Promise.resolve(list || []);
+  return accKey().then(function (k) {
+    return Promise.all((list || []).map(function (r) { return r && r.enc ? decStr(k, r.enc).then(JSON.parse, function () { return null; }) : null; }));
+  }).then(function (xs) { return xs.filter(Boolean); });
+}
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.6.1";
+var APP_VERSION = "4.7.0";
 // Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
 (function () {
   var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
@@ -4313,9 +4394,9 @@ $("#logoFile").onchange = function (e) {
   img.onerror = function () { URL.revokeObjectURL(url); toast("Gambar logo tidak bisa dibaca."); };
   img.src = url;
 };
-$("#logoDel").onclick = function () { localStorage.removeItem("ct_logo"); localStorage.removeItem("ct_logo_wh"); showLogo(); };
+$("#logoDel").onclick = function () { storeDel("ct_logo"); storeDel("ct_logo_wh"); showLogo(); };
 $("#signKey").value = store("ct_sign") || "";
-$("#signKey").oninput = function () { var v = this.value; if (v && v.length < 8) return; store("ct_sign", v); if (!v) localStorage.removeItem("ct_sign"); };
+$("#signKey").oninput = function () { var v = this.value; if (v && v.length < 8) return; store("ct_sign", v); if (!v) storeDel("ct_sign"); };
 showLogo();
 function scheduleGutter() { cancelAnimationFrame(scheduleGutter.r); scheduleGutter.r = requestAnimationFrame(layoutGutter); }
 function layoutGutter() {
@@ -4412,7 +4493,10 @@ document.querySelectorAll("[data-goto]").forEach(function (b) {
   btn.onclick = function () {
     if (!armed) { armed = true; btn.textContent = "Tekan sekali lagi untuk menghapus"; btn.classList.add("danger"); tm = setTimeout(function () { armed = false; btn.textContent = "Hapus data tersimpan"; btn.classList.remove("danger"); }, 4000); return; }
     clearTimeout(tm);
-    try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("ct_") === 0) localStorage.removeItem(k); }); } catch (e) {}
+    try {
+      if (ACC) { ACC_MEM = {}; accDirty(); }
+      else Object.keys(localStorage).forEach(function (k) { if (k.indexOf("ct_") === 0 && !/^ct_(accounts|acc_)/.test(k)) localStorage.removeItem(k); });
+    } catch (e) {}
     S.userSources = []; S.webSources = []; S.doc = null; renderSources(); $("#gKey").value = ""; $("#gCx").value = ""; $("#svcName").value = ""; $("#svcContact").value = ""; ["kSerper", "kTavily", "kLang", "kCore", "oaKey", "signKey", "jbUrlIn", "jbKeyIn", "svcLimit"].forEach(function (id) { $("#" + id).value = ""; }); REFS = []; renderRefs(); BATCH = []; renderBatch(); $("#jbRepos").value = REPO_DEFAULT.join("\n"); updJbSum(); showLogo(); updKeys();
     bankReq("readwrite", function (st) { st.clear(); return null; }).then(loadBank, function () {});
     histReq("readwrite", function (st) { st.clear(); return null; }).then(loadHist, function () {}); $("#svcPrice").value = "";
@@ -4429,7 +4513,6 @@ $("#tipGuide").onclick = function () { showView("metode"); };
 // Warna tema: [nama, aksen terang, aksen gelap]. Harus sama dengan ACCENTS di build.py dan CSS data-accent.
 var PRESET = { teal: ["Teal", "#0f5f6e", "#6cc3cf"], biru: ["Biru", "#234a8c", "#93b2ec"], ungu: ["Ungu", "#5a3d8f", "#bba5ec"], hijau: ["Hijau", "#23704c", "#82cfa5"], marun: ["Marun", "#8e2c3b", "#ec98a5"], oranye: ["Oranye", "#a9501c", "#f0a46d"], grafit: ["Grafit", "#2f3338", "#bcc2ca"] };
 var SITE_DEF = { warna: "teal", cs: { nama: "CS CekTeks", whatsapp: "", email: "", jam: "", sapaan: "Halo! Ada yang bisa kami bantu? Pilih pertanyaan di bawah atau ketik pertanyaan Anda." }, iklan: { aktif: false, teks_berjalan: [], banner: [] } };
-function storeDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
 function siteCfg() {
   // Bawaan dari site.json (disisipkan saat build). Pemilik bisa mencoba perubahan di perangkatnya lewat "Pratinjau".
   var base = window.CEKTEKS_SITE || SITE_DEF, prev = null;
@@ -4559,6 +4642,7 @@ var FAQ = [
   { c: "Hasil", q: "Bagaimana memakai batas kesamaan kampus?", k: "batas kampus maksimal lolos syarat persen instansi", a: "Isi batas kesamaan (misalnya 25%) di halaman Sumber & Pengaturan. Hasil di layar, laporan PDF, dan pemeriksaan massal akan bertanda Lolos atau Belum lolos.", go: ["#sumber", "Buka pengaturan"] },
   { c: "Laporan", q: "Bagaimana memastikan laporan asli dan tidak diubah?", k: "laporan asli verifikasi qr palsu kode keaslian", a: "Setiap laporan PDF memuat kode verifikasi dan QR berisi sidik SHA-256 naskah. Pindai QR atau buka menu Verifikasi Laporan, lalu unggah naskahnya untuk memastikan naskah dan skor tidak diubah." },
   { c: "Laporan", q: "Format berkas apa saja yang didukung?", k: "format pdf word docx doc berkas file odt pptx txt", a: "PDF, Word (.docx, dan .doc lama secara terbatas), OpenDocument (.odt), PowerPoint (.pptx), RTF, HTML, Markdown, dan teks biasa, hingga 50 MB. PDF hasil pindaian berupa gambar dibaca otomatis dengan OCR (perlu internet saat pertama kali)." },
+  { c: "Privasi", q: "Apakah orang lain bisa melihat dokumen saya?", k: "akun orang lain lihat dokumen login masuk kata sandi perangkat bersama", a: "Tidak lewat internet: naskah hanya tersimpan di browser perangkat Anda, jadi pengguna lain di perangkatnya sendiri tidak bisa melihatnya. Bila memakai perangkat bersama, tekan Masuk lalu buat akun. Data akun dienkripsi dengan kata sandi Anda, dan setelah Keluar orang berikutnya tidak bisa membukanya." },
   { c: "Privasi", q: "Apakah naskah saya disimpan atau dikirim ke server?", k: "privasi aman simpan server rahasia data bocor upload", a: "Tidak. Naskah diproses di perangkat Anda dan tidak diunggah ke server CekTeks. Saat cek internet berjalan, hanya potongan kalimat dan kata kunci yang dikirim ke mesin pencari yang Anda pilih.", go: ["#kebijakan", "Kebijakan Privasi"] },
   { c: "Aplikasi", q: "Bisakah dipasang di HP seperti aplikasi?", k: "aplikasi android apk iphone hp pasang install layar utama", a: "Bisa. Buka situs ini di Chrome atau Safari, lalu pilih menu Tambahkan ke Layar Utama. CekTeks akan terbuka seperti aplikasi dan tetap berjalan tanpa internet, kecuali cek internet." },
   { c: "Aplikasi", q: "Apakah bisa dipakai tanpa internet?", k: "offline internet kuota sinyal", a: "Bisa. Setelah dibuka sekali, situs dan aplikasi tetap berjalan tanpa internet, kecuali fitur Cek di internet." },
@@ -4898,7 +4982,7 @@ var BANK = [];
 function bankDB() {
   return new Promise(function (res, rej) {
     if (!window.indexedDB) return rej(new Error("Browser ini tidak mendukung bank naskah."));
-    var r = indexedDB.open("cekteks", 2);
+    var r = indexedDB.open(ACC ? "cekteks-" + ACC.id : "cekteks", 2);
     r.onupgradeneeded = function () {
       var db = r.result;
       if (!db.objectStoreNames.contains("bank")) db.createObjectStore("bank", { keyPath: "id" });
@@ -4923,13 +5007,15 @@ function bankEntry(name, text, client, added) {
   return { id: h, hash: h, name: name || "Tanpa nama", client: client || "", text: text, words: words(text).length, added: added || new Date().toISOString() };
 }
 function loadBank() {
-  return bankReq("readonly", function (st) { return st.getAll(); }).then(function (all) {
+  return bankReq("readonly", function (st) { return st.getAll(); }).then(recDec).then(function (all) {
     BANK = (all || []).sort(function (a, b) { return a.added < b.added ? 1 : -1; });
     BANK.forEach(function (e) { e._src = bankSource(e); });
     renderBank(); schedule(0);
   }, function () { BANK = []; renderBank(); });
 }
-function bankAdd(entries) { return bankReq("readwrite", function (st) { entries.forEach(function (e) { st.put(e); }); return null; }).then(loadBank); }
+function bankAdd(entries) {
+  return Promise.all(entries.map(recEnc)).then(function (recs) { return bankReq("readwrite", function (st) { recs.forEach(function (e) { st.put(e); }); return null; }); }).then(loadBank);
+}
 function renderBank() {
   $("#bankCount").textContent = fmtNum(BANK.length) + " naskah";
   $("#srcBadge").textContent = allSources().length;
@@ -5051,8 +5137,8 @@ document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$
 var HIST = [];
 var RP = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
 function histReq(mode, fn) { return bankReq(mode, fn, "history"); }
-function loadHist() { return histReq("readonly", function (st) { return st.getAll(); }).then(function (all) { HIST = (all || []).sort(function (a, b) { return a.date < b.date ? 1 : -1; }); renderHist(); if (S.lastPv != null) renderPrev(S.lastPv, S.lastN); }, function () { HIST = []; renderHist(); }); }
-function histPut(e) { return histReq("readwrite", function (st) { st.put(e); return null; }).then(loadHist); }
+function loadHist() { return histReq("readonly", function (st) { return st.getAll(); }).then(recDec).then(function (all) { HIST = (all || []).sort(function (a, b) { return a.date < b.date ? 1 : -1; }); renderHist(); if (S.lastPv != null) renderPrev(S.lastPv, S.lastN); }, function () { HIST = []; renderHist(); }); }
+function histPut(e) { return recEnc(e).then(function (r) { return histReq("readwrite", function (st) { st.put(r); return null; }); }).then(loadHist); }
 function recordHistory(r) {
   var e = { id: r.id, date: new Date().toISOString(), client: r.client, doc: r.doc, words: r.words, score: r.plag.score, exact: r.plag.exactScore, para: r.plag.paraScore,
     ai: r.ai.score, sources: r.plag.matched.slice(0, 3).map(function (s) { return s.domain; }), price: +($("#svcPrice").value || 0) || 0, paid: false, note: "",
@@ -6846,6 +6932,156 @@ updJbSum();
 updGHint(); setNet();
 if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !IN_FRAME) navigator.serviceWorker.register("sw.js").catch(function () {});
 
+/* ---- akun: masuk, buat, keluar, hapus ---- */
+function accList() { try { var a = JSON.parse(localStorage.getItem("ct_accounts") || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+function accSaveList(a) { localStorage.setItem("ct_accounts", JSON.stringify(a)); }
+function accRand(n) { return b64e(crypto.getRandomValues(new Uint8Array(n))); }
+function accStart(acc, key, mem) {
+  return crypto.subtle.exportKey("raw", key).then(function (raw) {
+    sessionStorage.setItem("ct_sess", JSON.stringify({ id: acc.id, name: acc.name, key: b64e(new Uint8Array(raw)) }));
+    sessionStorage.setItem("ct_sess_data", JSON.stringify(mem || {}));
+    location.reload();
+  });
+}
+function idbAll(dbName, storeName) {
+  return new Promise(function (res) {
+    var r = indexedDB.open(dbName, 2);
+    r.onupgradeneeded = function () { var db = r.result; ["bank", "history"].forEach(function (n) { if (!db.objectStoreNames.contains(n)) db.createObjectStore(n, { keyPath: "id" }); }); };
+    r.onerror = function () { res([]); };
+    r.onsuccess = function () {
+      var db = r.result, tx = db.transaction(storeName, "readonly"), q = tx.objectStore(storeName).getAll();
+      q.onsuccess = function () { res(q.result || []); db.close(); }; q.onerror = function () { res([]); db.close(); };
+    };
+  });
+}
+function idbPutAll(dbName, storeName, recs, clearFirst) {
+  return new Promise(function (res, rej) {
+    var r = indexedDB.open(dbName, 2);
+    r.onupgradeneeded = function () { var db = r.result; ["bank", "history"].forEach(function (n) { if (!db.objectStoreNames.contains(n)) db.createObjectStore(n, { keyPath: "id" }); }); };
+    r.onerror = function () { rej(r.error); };
+    r.onsuccess = function () {
+      var db = r.result, tx = db.transaction(storeName, "readwrite"), st = tx.objectStore(storeName);
+      if (clearFirst) st.clear(); recs.forEach(function (x) { st.put(x); });
+      tx.oncomplete = function () { db.close(); res(); }; tx.onerror = function () { db.close(); rej(tx.error); };
+    };
+  });
+}
+function accCreate(name, pass, moveGuest) {
+  var acc = { id: accRand(6).replace(/[^A-Za-z0-9]/g, "x"), name: name, salt: accRand(16), created: new Date().toISOString() }, key, mem = {};
+  if (moveGuest) Object.keys(localStorage).forEach(function (k) { if (k.indexOf("ct_") === 0 && !GLOBAL_KEYS.test(k)) mem[k] = localStorage.getItem(k); });
+  return accDerive(pass, acc.salt).then(function (k) { key = k; return encStr(key, "cekteks-akun"); }).then(function (check) {
+    acc.check = check;
+    if (!moveGuest) return;
+    // Pindahkan bank naskah & riwayat tamu ke basis data akun (terenkripsi), lalu kosongkan milik tamu.
+    return Promise.all(["bank", "history"].map(function (sn) {
+      return idbAll("cekteks", sn).then(function (recs) {
+        return Promise.all(recs.map(function (rec) { return encStr(key, JSON.stringify(rec)).then(function (enc) { return { id: rec.id, enc: enc }; }); }))
+          .then(function (encd) { return idbPutAll("cekteks-" + acc.id, sn, encd, true); })
+          .then(function () { return idbPutAll("cekteks", sn, [], true); });
+      });
+    }));
+  }).then(function () { return encStr(key, JSON.stringify(mem)); }).then(function (blob) {
+    localStorage.setItem("ct_acc_" + acc.id, blob);
+    if (moveGuest) Object.keys(mem).forEach(function (k) { localStorage.removeItem(k); });
+    accSaveList(accList().concat([acc]));
+    return accStart(acc, key, mem);
+  });
+}
+function accLogin(id, pass) {
+  var acc = accList().filter(function (a) { return a.id === id; })[0], key;
+  if (!acc) return Promise.reject(new Error("Akun tidak ditemukan di perangkat ini."));
+  return accDerive(pass, acc.salt).then(function (k) { key = k; return decStr(key, acc.check); })
+    .then(function (v) { if (v !== "cekteks-akun") throw new Error("x"); }, function () { throw new Error("Kata sandi salah."); })
+    .then(function () { var blob = localStorage.getItem("ct_acc_" + acc.id); return blob ? decStr(key, blob).then(JSON.parse) : {}; })
+    .then(function (mem) { return accStart(acc, key, mem); });
+}
+function accLogout(reason) {
+  return Promise.resolve(ACC_DIRTY).then(accFlush).catch(function () {}).then(function () {
+    try { sessionStorage.removeItem("ct_sess"); sessionStorage.removeItem("ct_sess_data"); if (reason) sessionStorage.setItem("ct_lock_note", reason); } catch (e) {}
+    location.hash = "beranda"; location.reload();
+  });
+}
+function accDelete(pass) {
+  var acc = accList().filter(function (a) { return ACC && a.id === ACC.id; })[0];
+  if (!acc) return Promise.reject(new Error("Akun tidak ditemukan."));
+  return accDerive(pass, acc.salt).then(function (k) { return decStr(k, acc.check); }).then(function () {
+    localStorage.removeItem("ct_acc_" + acc.id);
+    accSaveList(accList().filter(function (a) { return a.id !== acc.id; }));
+    try { indexedDB.deleteDatabase("cekteks-" + acc.id); } catch (e) {}
+    try { sessionStorage.removeItem("ct_sess"); sessionStorage.removeItem("ct_sess_data"); } catch (e) {}
+    location.hash = "beranda"; location.reload();
+  }, function () { throw new Error("Kata sandi salah."); });
+}
+function renderAcc(mode) {
+  var list = accList(), b = $("#accBody"), h;
+  if (ACC) {
+    h = '<div class="card billcard"><div class="accme"><span class="accav" aria-hidden="true">' + esc(ACC.name.slice(0, 1).toUpperCase()) + "</span><div><b>" + esc(ACC.name) + '</b><small class="muted">Masuk di tab ini</small></div></div>' +
+      '<p class="hint" style="margin:0">Naskah, riwayat, bank naskah, dan pengaturan akun ini tersimpan terenkripsi di perangkat ini. Orang lain yang memakai perangkat ini tidak bisa membukanya tanpa kata sandi Anda.</p>' +
+      '<button type="button" class="btn primary" id="accOut">Keluar</button></div>' +
+      '<details class="more"><summary>Hapus akun <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></summary>' +
+      '<form class="ownerform" id="accDelF" style="margin-top:10px"><p class="hint" style="margin:0">Semua data akun ini di perangkat ini akan dihapus permanen.</p>' +
+      '<label for="accDelP"><span>Kata sandi</span><input type="password" id="accDelP" autocomplete="current-password" required></label>' +
+      '<button type="submit" class="btn danger">Hapus akun ini</button></form></details>';
+  } else {
+    var creating = mode === "new" || !list.length;
+    h = (list.length ? '<div class="segs" style="grid-template-columns:1fr 1fr;margin-bottom:14px"><button type="button" data-accmode="in" aria-pressed="' + !creating + '">Masuk</button><button type="button" data-accmode="new" aria-pressed="' + creating + '">Buat akun</button></div>' : "") +
+      (creating ?
+        '<form class="ownerform card billcard" id="accNewF" novalidate>' +
+          '<label for="accName"><span>Nama</span><input type="text" id="accName" autocomplete="username" maxlength="40" required placeholder="mis. Rina"></label>' +
+          '<label for="accP1"><span>Kata sandi <span class="muted" style="font-weight:400">· minimal 6 karakter</span></span><input type="password" id="accP1" autocomplete="new-password" minlength="6" required></label>' +
+          '<label for="accP2"><span>Ulangi kata sandi</span><input type="password" id="accP2" autocomplete="new-password" minlength="6" required></label>' +
+          '<label class="toggle" for="accMove"><input type="checkbox" id="accMove" checked><span class="tr" aria-hidden="true"></span><span>Pindahkan data yang sudah ada di perangkat ini ke akun baru</span></label>' +
+          '<button type="submit" class="btn primary">Buat akun &amp; masuk</button>' +
+          '<p class="hint" style="margin:0">Kata sandi tidak bisa dipulihkan. Bila lupa, data akun tidak bisa dibuka lagi.</p></form>'
+      : '<form class="ownerform card billcard" id="accInF" novalidate>' +
+          '<label for="accPick"><span>Akun</span><select id="accPick">' + list.map(function (a) { return '<option value="' + esc(a.id) + '">' + esc(a.name) + "</option>"; }).join("") + "</select></label>" +
+          '<label for="accPass"><span>Kata sandi</span><input type="password" id="accPass" autocomplete="current-password" required></label>' +
+          '<button type="submit" class="btn primary">Masuk</button></form>') +
+      '<p class="hint">Akun hanya ada di perangkat ini, tanpa email dan tanpa server. Di perangkat sendiri Anda boleh tetap memakai CekTeks tanpa akun; di komputer bersama (lab, warnet, laptop pinjaman) sebaiknya masuk dengan akun lalu tekan Keluar setelah selesai.</p>';
+  }
+  b.innerHTML = h;
+}
+function openAcc(mode) {
+  if (!window.crypto || !crypto.subtle) return toast("Browser ini tidak mendukung akun terenkripsi. Buka CekTeks lewat https di browser terbaru.");
+  renderAcc(mode); lastFocus = document.activeElement; $("#accDrawer").hidden = false; document.body.classList.add("noscroll");
+  var f = $("#accDrawer input:not([type=checkbox]), #accDrawer select, #accOut"); if (f) f.focus();
+}
+function closeAcc() { $("#accDrawer").hidden = true; document.body.classList.remove("noscroll"); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+$("#accDrawer").addEventListener("click", function (e) {
+  if (e.target.closest("[data-close]")) return closeAcc();
+  var m = e.target.closest("[data-accmode]"); if (m) return renderAcc(m.dataset.accmode);
+  if (e.target.closest("#accOut")) accLogout();
+});
+$("#accDrawer").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var f = e.target, btn = f.querySelector('[type="submit"]'), busy = function (on, t) { btn.disabled = on; if (t) btn.textContent = t; };
+  if (f.id === "accNewF") {
+    var n = $("#accName").value.trim(), p1 = $("#accP1").value, p2 = $("#accP2").value;
+    if (!n) return toast("Isi nama akun."), $("#accName").focus();
+    if (accList().some(function (a) { return a.name.toLowerCase() === n.toLowerCase(); })) return toast("Nama itu sudah dipakai di perangkat ini."), $("#accName").focus();
+    if (p1.length < 6) return toast("Kata sandi minimal 6 karakter."), $("#accP1").focus();
+    if (p1 !== p2) return toast("Ulangan kata sandi tidak sama."), $("#accP2").focus();
+    busy(true, "Membuat akun…"); accCreate(n, p1, $("#accMove").checked).catch(function (err) { busy(false, "Buat akun & masuk"); toast("Gagal membuat akun: " + err.message); });
+  } else if (f.id === "accInF") {
+    busy(true, "Membuka…"); accLogin($("#accPick").value, $("#accPass").value).catch(function (err) { busy(false, "Masuk"); toast(err.message); $("#accPass").select(); });
+  } else if (f.id === "accDelF") {
+    accDelete($("#accDelP").value).catch(function (err) { toast(err.message); });
+  }
+});
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#accDrawer").hidden) closeAcc(); });
+$("#accBtn").onclick = function () { openAcc(); };
+(function () {
+  var lbl = $("#accLbl");
+  lbl.textContent = ACC ? ACC.name : "Masuk";
+  $("#accBtn").setAttribute("aria-label", ACC ? "Akun: " + ACC.name : "Masuk atau buat akun");
+  document.documentElement.classList.toggle("signed-in", !!ACC);
+  try { var note = sessionStorage.getItem("ct_lock_note"); if (note) { sessionStorage.removeItem("ct_lock_note"); setTimeout(function () { toast(note); }, 600); } } catch (e) {}
+  if (!ACC) return;
+  // Kunci otomatis setelah 30 menit tanpa aktivitas.
+  var last = Date.now(); ["pointerdown", "keydown", "scroll"].forEach(function (ev) { document.addEventListener(ev, function () { last = Date.now(); }, { passive: true }); });
+  setInterval(function () { if (Date.now() - last > 30 * 60000) accLogout("Akun dikunci otomatis setelah 30 menit tanpa aktivitas."); }, 60000);
+  window.addEventListener("pagehide", function () { accFlush(); });
+})();
 /* ---- boot ---- */
 renderSources(); renderCmp();
 var draft = store("ct_draft");

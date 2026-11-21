@@ -36,6 +36,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Bangun CekTeks.html (memakai site.json terbaru)
+        env:
+          CEKTEKS_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          CEKTEKS_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
         run: python cekteks/web/build.py
       - name: Salin CekTeks.html ke proyek Android
         run: mkdir -p cekteks/app/mobile/www && cp cekteks/dist/CekTeks.html cekteks/app/mobile/www/index.html
@@ -99,6 +102,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Bangun CekTeks.html (memakai site.json terbaru)
+        env:
+          CEKTEKS_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          CEKTEKS_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
         run: python cekteks/web/build.py
       - name: Salin CekTeks.html ke aplikasi desktop
         run: mkdir -p cekteks/app/desktop/app && cp cekteks/dist/CekTeks.html cekteks/app/desktop/app/index.html

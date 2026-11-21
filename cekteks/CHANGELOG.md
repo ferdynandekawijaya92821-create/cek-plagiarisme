@@ -2,6 +2,23 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.7.0] - 2026-11-21
+### Ditambahkan
+- **Akun di perangkat (terenkripsi).**
+  - Tombol *Masuk* di bilah atas untuk membuat akun (nama dan kata sandi) atau masuk.
+  - Naskah, draf, riwayat, bank naskah, pengaturan, dan kunci API sebuah akun dienkripsi dengan AES-256-GCM.
+    Kuncinya diturunkan dari kata sandi lewat PBKDF2-SHA256 (250.000 putaran). Tiap akun punya basis data sendiri.
+  - Saat membuat akun, data tamu di perangkat bisa dipindahkan ke akun lalu dihapus dari mode tamu.
+  - Sesi hanya berlaku di tab itu. Akun terkunci otomatis setelah 30 menit tanpa aktivitas.
+  - Tanpa email dan tanpa server: naskah tetap tidak pernah dikirim ke mana pun. Mode tamu tetap tersedia.
+- FAQ "Apakah orang lain bisa melihat dokumen saya?" dan bagian Akun di Kebijakan Privasi.
+- `cekteks/pengalihan/` untuk meneruskan alamat lama ke alamat baru, agar QR laporan lama tetap bisa diverifikasi.
+
+### Diubah
+- Alamat situs dan tautan GitHub diambil otomatis dari nama repositori saat build di GitHub Actions. Mengganti nama
+  repositori langsung memperbarui alamat kanonis, sitemap, data terstruktur, dan QR laporan.
+- Skrip aplikasi diperkecil saat build (indentasi dibuang). Anggaran ukuran halaman dinaikkan ke 180 KB gzip.
+
 ## [4.6.1] - 2026-11-21
 ### Diubah
 - **Harga baru**: Cek Plagiasi Rp3.000/naskah, Cek Plagiasi + AI Rp5.000/naskah, Cek Kode Program Rp1.000/tugas,
