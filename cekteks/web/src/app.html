@@ -3,7 +3,7 @@
 <meta name="description" content="Cek plagiarisme dan deteksi teks buatan AI secara langsung di perangkat Anda.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Plus+Jakarta+Sans:ital,wght@0,400..700;1,400..600&family=IBM+Plex+Mono:wght@500;600&family=Caveat:wght@500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <style>
 /* Layout: alat dua kolom — editor naskah di kiri, panel hasil "laporan pemeriksaan" lengket di kanan; satu kolom + bilah skor bawah di HP */
 :root {
@@ -181,14 +181,7 @@ select { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; ba
 .prose h3 { font-size: 17px; margin-top: 22px; margin-bottom: 6px; }
 .prose ul { padding-left: 20px; margin: 6px 0; display: grid; gap: 4px; }
 .formula { font-family: var(--f-mono); font-size: 13px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto; white-space: nowrap; }
-
-/* mobile live bar */
-.livebar { display: none; }
 @media (max-width: 900px) {
-  .livebar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; gap: 10px; align-items: center;
-    background: var(--surface); border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(0,0,0,.08);
-    padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .lb { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
   .lb .num { font-size: 20px; font-weight: 600; }
   .lb small { font-size: 11px; color: var(--muted); line-height: 1.2; white-space: nowrap; }
@@ -382,12 +375,6 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
 
 /* ===== v3: kepala halaman satu baris, navigasi bawah di HP, halaman lain ===== */
 .top-in { display: flex; align-items: center; gap: 28px; min-height: 62px; }
-.top .tabs { flex: 1; align-self: stretch; margin: 0; gap: 4px; overflow: visible; }
-.top .tab { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; height: 100%; border-bottom: 2px solid transparent; border-top: 2px solid transparent; font-size: 14px; }
-.top .tab svg { width: 18px; height: 18px; flex: none; }
-.top .tab:hover { color: var(--ink); }
-.top .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
-.top .tab[aria-selected="true"] svg { color: var(--accent); }
 .top-r { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 .top-r .status { margin: 0; }
 .miniscore { display: none; }
@@ -484,16 +471,8 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
   .top-in { gap: 10px; min-height: 56px; }
   .top-r .status, .top-r .net .netlbl { display: none; }
   .miniscore { display: block; }
-  .top .tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
-    background: var(--surface); border-top: 1px solid var(--line); box-shadow: 0 -4px 18px rgba(15, 27, 42, .07);
-    padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
-  .top .tab { flex-direction: column; justify-content: center; gap: 3px; height: auto; min-height: 58px; padding: 7px 2px 8px; font-size: 11.5px; border-bottom: 0; border-top: 2px solid transparent; }
-  .top .tab svg { width: 22px; height: 22px; }
-  .top .tab[aria-selected="true"] { color: var(--accent); border-top-color: var(--accent); }
-  .top .tab .count { position: absolute; top: 5px; left: calc(50% + 7px); margin: 0; font-size: 10px; padding: 0 5px; }
   main { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
   .toast { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
-  .livebar { display: none !important; }
   .review .hl { max-height: none; }
   .editor { max-height: none; height: 60vh; }
   #panel, #docCard { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 66px); }
@@ -509,7 +488,7 @@ td a { color: var(--accent); text-decoration: none; } td a:hover { text-decorati
   .logo b { font-size: 18px; }
   .tip { font-size: 13px; align-items: flex-start; }
 }
-@media (max-width: 1000px) { .top .tab span:not(.count) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+
 @media (max-width: 440px) {
   .top-in { gap: 8px; } .top-r { gap: 6px; }
   .net { display: none; }
@@ -543,9 +522,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
 .top { background: transparent; }
 .top::before { content: ""; position: absolute; inset: 0; z-index: -1; background: color-mix(in srgb, var(--surface) 80%, transparent);
   -webkit-backdrop-filter: saturate(170%) blur(14px); backdrop-filter: saturate(170%) blur(14px); }
-@media (max-width: 1000px) {
-  .top .tabs { background: color-mix(in srgb, var(--surface) 86%, transparent); -webkit-backdrop-filter: saturate(170%) blur(14px); backdrop-filter: saturate(170%) blur(14px); }
-}
+
 
 /* meja & lembar naskah */
 .doc-b { background: var(--desk); }
@@ -715,7 +692,7 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
 .hrow [data-del] { grid-area: del; }
 .hnote { grid-area: note; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; background: var(--surface-2); font-size: 13px; min-width: 0; }
 @media (max-width: 760px) { .hrow { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "main del" "score score" "pay pay" "note note"; } }
-@media (max-width: 1000px) { .top .tabs { grid-template-columns: repeat(5, minmax(0, 1fr)); } .top .tab { font-size: 10.5px; } }
+
 /* ===== v9: pembayaran & tagihan ===== */
 #payCard { margin-bottom: 16px; }
 .paygrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 20px; }
@@ -803,23 +780,13 @@ body { background: radial-gradient(1100px 360px at 50% -140px, color-mix(in srgb
 /* Beranda */
 .hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; padding: 28px 30px; margin-bottom: 18px;
   background: linear-gradient(135deg, var(--surface) 0%, var(--surface) 55%, var(--accent-soft) 100%); }
-.hero h1 { font-family: var(--f-display); font-size: clamp(24px, 3.2vw, 34px); line-height: 1.15; letter-spacing: -.02em; margin: 8px 0 10px; text-wrap: balance; }
 .hero p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; max-width: 60ch; }
 .hero-a { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 20px; }
 .btn.lg { min-height: 46px; padding: 0 20px; font-size: 15px; border-radius: 12px; }
 .btn.lg svg { width: 18px; height: 18px; }
 .hero-n { margin-top: 10px !important; font-size: 12.5px !important; }
-.hero-art svg { display: block; max-width: 100%; height: auto; }
-@media (max-width: 700px) { .hero { grid-template-columns: minmax(0, 1fr); padding: 22px 18px; } .hero-art { display: none; } .hero-a .btn { flex: 1 1 auto; } }
+
 .sec-h { font-family: var(--f-display); font-size: 17px; margin: 22px 0 12px; }
-.toolgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.tool { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; gap: 4px 12px; align-items: start; text-align: left; padding: 16px;
-  border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); transition: border-color .15s, transform .15s, box-shadow .15s; }
-.tool:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 8px 22px rgba(15, 27, 42, .08); }
-.tool-ic { grid-row: span 2; width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
-.tool-ic svg { width: 20px; height: 20px; }
-.tool b { font-size: 14.5px; } .tool small { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
-.recent { display: grid; gap: 2px; }
 .recent-i { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px 14px; align-items: center; padding: 10px 2px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
 .recent-i:last-child { border-bottom: 0; }
 .recent-i b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
@@ -949,26 +916,29 @@ kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border
 .tocrow.l1 { font-weight: 700; margin-top: 6px; } .tocrow.l2 { padding-left: 24px; } .tocrow.l3 { padding-left: 48px; } .tocrow.l4 { padding-left: 72px; }
 
 /* ===== v4.2: warna tema (data-accent di <html>) ===== */
-:root[data-accent="biru"] { --accent: #1d4ed8; --accent-ink: #ffffff; --accent-soft: #e4ebfd; }
-:root[data-accent="ungu"] { --accent: #6d3fd1; --accent-ink: #ffffff; --accent-soft: #eee7fb; }
-:root[data-accent="hijau"] { --accent: #0f7a4f; --accent-ink: #ffffff; --accent-soft: #e0f3ea; }
-:root[data-accent="marun"] { --accent: #a5283a; --accent-ink: #ffffff; --accent-soft: #f9e4e7; }
-:root[data-accent="oranye"] { --accent: #b5530e; --accent-ink: #ffffff; --accent-soft: #fbeadc; }
-:root[data-accent="grafit"] { --accent: #334155; --accent-ink: #ffffff; --accent-soft: #e7eaf0; }
+:root[data-accent="teal"] { --accent: #0f5f6e; --accent-ink: #ffffff; --accent-soft: #e1ecec; }
+:root[data-accent="biru"] { --accent: #234a8c; --accent-ink: #ffffff; --accent-soft: #e5e9f1; }
+:root[data-accent="ungu"] { --accent: #5a3d8f; --accent-ink: #ffffff; --accent-soft: #ebe5f1; }
+:root[data-accent="hijau"] { --accent: #23704c; --accent-ink: #ffffff; --accent-soft: #e2ece4; }
+:root[data-accent="marun"] { --accent: #8e2c3b; --accent-ink: #ffffff; --accent-soft: #f1e3e2; }
+:root[data-accent="oranye"] { --accent: #a9501c; --accent-ink: #ffffff; --accent-soft: #f3e5d8; }
+:root[data-accent="grafit"] { --accent: #2f3338; --accent-ink: #ffffff; --accent-soft: #e7e5e0; }
 @media (prefers-color-scheme: dark) {
-  :root[data-accent="biru"]:not([data-theme="light"]) { --accent: #7ea6ff; --accent-ink: #0a1633; --accent-soft: #17244a; }
-  :root[data-accent="ungu"]:not([data-theme="light"]) { --accent: #b39bff; --accent-ink: #1c0f3a; --accent-soft: #261b45; }
-  :root[data-accent="hijau"]:not([data-theme="light"]) { --accent: #4fd09a; --accent-ink: #05261a; --accent-soft: #11301f; }
-  :root[data-accent="marun"]:not([data-theme="light"]) { --accent: #f38a9a; --accent-ink: #2e0a10; --accent-soft: #3a1a20; }
-  :root[data-accent="oranye"]:not([data-theme="light"]) { --accent: #f5a35c; --accent-ink: #2e1604; --accent-soft: #3a2412; }
-  :root[data-accent="grafit"]:not([data-theme="light"]) { --accent: #a9b6c9; --accent-ink: #0e1520; --accent-soft: #1e2733; }
+  :root[data-accent="teal"]:not([data-theme="light"]) { --accent: #6cc3cf; --accent-ink: #06222a; --accent-soft: #16292c; }
+  :root[data-accent="biru"]:not([data-theme="light"]) { --accent: #93b2ec; --accent-ink: #0b1730; --accent-soft: #1a2232; }
+  :root[data-accent="ungu"]:not([data-theme="light"]) { --accent: #bba5ec; --accent-ink: #1a1033; --accent-soft: #241d31; }
+  :root[data-accent="hijau"]:not([data-theme="light"]) { --accent: #82cfa5; --accent-ink: #06231a; --accent-soft: #18271f; }
+  :root[data-accent="marun"]:not([data-theme="light"]) { --accent: #ec98a5; --accent-ink: #2d0b12; --accent-soft: #2c1b1d; }
+  :root[data-accent="oranye"]:not([data-theme="light"]) { --accent: #f0a46d; --accent-ink: #2e1505; --accent-soft: #2d2118; }
+  :root[data-accent="grafit"]:not([data-theme="light"]) { --accent: #bcc2ca; --accent-ink: #111418; --accent-soft: #22242a; }
 }
-:root[data-theme="dark"][data-accent="biru"] { --accent: #7ea6ff; --accent-ink: #0a1633; --accent-soft: #17244a; }
-:root[data-theme="dark"][data-accent="ungu"] { --accent: #b39bff; --accent-ink: #1c0f3a; --accent-soft: #261b45; }
-:root[data-theme="dark"][data-accent="hijau"] { --accent: #4fd09a; --accent-ink: #05261a; --accent-soft: #11301f; }
-:root[data-theme="dark"][data-accent="marun"] { --accent: #f38a9a; --accent-ink: #2e0a10; --accent-soft: #3a1a20; }
-:root[data-theme="dark"][data-accent="oranye"] { --accent: #f5a35c; --accent-ink: #2e1604; --accent-soft: #3a2412; }
-:root[data-theme="dark"][data-accent="grafit"] { --accent: #a9b6c9; --accent-ink: #0e1520; --accent-soft: #1e2733; }
+:root[data-theme="dark"][data-accent="teal"] { --accent: #6cc3cf; --accent-ink: #06222a; --accent-soft: #16292c; }
+:root[data-theme="dark"][data-accent="biru"] { --accent: #93b2ec; --accent-ink: #0b1730; --accent-soft: #1a2232; }
+:root[data-theme="dark"][data-accent="ungu"] { --accent: #bba5ec; --accent-ink: #1a1033; --accent-soft: #241d31; }
+:root[data-theme="dark"][data-accent="hijau"] { --accent: #82cfa5; --accent-ink: #06231a; --accent-soft: #18271f; }
+:root[data-theme="dark"][data-accent="marun"] { --accent: #ec98a5; --accent-ink: #2d0b12; --accent-soft: #2c1b1d; }
+:root[data-theme="dark"][data-accent="oranye"] { --accent: #f0a46d; --accent-ink: #2e1505; --accent-soft: #2d2118; }
+:root[data-theme="dark"][data-accent="grafit"] { --accent: #bcc2ca; --accent-ink: #111418; --accent-soft: #22242a; }
 
 /* popover tampilan */
 .appear { position: fixed; z-index: 75; top: calc(env(safe-area-inset-top, 0px) + 62px); right: max(12px, env(safe-area-inset-right, 0px)); width: min(320px, calc(100vw - 24px));
@@ -1132,30 +1102,240 @@ a.tk-i { text-decoration: none; }
 /* v4.4: dibingkai situs lain */
 html.framed body > *:not(.framed-msg) { display: none !important; }
 .framed-msg { max-width: 460px; margin: 18vh auto; padding: 24px; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+
+/* =====================================================================
+   v4.5: identitas visual "meja penguji naskah"
+   Kertas hangat, judul serif, tinta dalam, garis tipis. Lapisan ini menimpa gaya lama.
+   ===================================================================== */
+:root {
+  --bg: #f3efe6; --surface: #fffdf8; --surface-2: #f7f3ea; --ink: #1d1b17; --muted: #645e55; --line: #e2dccf;
+  --accent: #0f5f6e; --accent-ink: #ffffff; --accent-soft: #e1ecec;
+  --ok: #2b7650; --warn: #94570a; --bad: #b0352b;
+  --shadow: 0 1px 0 rgba(29, 27, 23, .03);
+  --f-display: "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --f-body: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --f-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --r: 10px;
+  --paper: #fffefa; --desk: #ebe6db;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131210; --surface: #1b1a17; --surface-2: #181713; --ink: #ece6da; --muted: #a59d8f; --line: #2f2c26;
+    --ok: #6cc391; --warn: #e0a24a; --bad: #ec7f71; --shadow: none; --paper: #201e1a; --desk: #0f0e0c;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131210; --surface: #1b1a17; --surface-2: #181713; --ink: #ece6da; --muted: #a59d8f; --line: #2f2c26;
+  --ok: #6cc391; --warn: #e0a24a; --bad: #ec7f71; --shadow: none; --paper: #201e1a; --desk: #0f0e0c;
+}
+body { font-family: var(--f-body); font-size: 15px; letter-spacing: -.003em; font-feature-settings: "ss01"; }
+::selection { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-spacing: -.012em; font-weight: 600; }
+.num, .mono { font-family: var(--f-mono); font-feature-settings: "zero"; }
+.eyebrow { text-transform: none; letter-spacing: 0; font-weight: 600; font-size: 12.5px; color: var(--muted); }
+
+/* kartu & tombol: garis tipis, sudut tidak terlalu bulat, tanpa bayangan tebal */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); }
+.card-h { border-bottom-color: var(--line); }
+.card-h h2, .hic { font-size: 16.5px; font-weight: 600; }
+.ic { background: transparent !important; color: var(--accent) !important; width: auto !important; height: auto !important; }
+.ic svg { width: 19px; height: 19px; }
+.btn { border-radius: 8px; font-weight: 600; letter-spacing: 0; }
+.btn.primary { box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .14); }
+.btn.primary:hover { filter: brightness(.93); }
+.linkbtn { text-underline-offset: 3px; }
+.linkbtn:hover { text-decoration: underline; }
+.pagehead h1 { font-size: clamp(28px, 3.4vw, 38px); font-weight: 560; letter-spacing: -.02em; line-height: 1.1; }
+.pagehead p { font-size: 15.5px; max-width: 62ch; }
+.sec-h { font-family: var(--f-display); font-size: clamp(22px, 2.4vw, 28px); font-weight: 560; letter-spacing: -.015em; margin: 48px 0 6px; }
+
+/* menu samping: seperti daftar isi buku */
+.side { background: var(--bg); border-right: 1px solid var(--line); padding-inline: 14px; }
+.side-h { padding-bottom: 14px; }
+.logo b { font-family: var(--f-display); font-weight: 650; font-size: 22px; letter-spacing: -.02em; color: var(--ink); }
+.logo b span { color: var(--accent); font-style: italic; font-weight: 560; }
+.side-g { text-transform: none; letter-spacing: 0; font: italic 500 13.5px var(--f-display); color: var(--muted); padding: 18px 12px 6px; }
+.side .tab { font-weight: 500; font-size: 14px; min-height: 38px; border-radius: 7px; color: var(--ink); }
+.side .tab svg { width: 18px; height: 18px; }
+.side .tab:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.side .tab[aria-current="page"] { background: var(--surface); color: var(--ink); font-weight: 650; box-shadow: inset 3px 0 0 var(--accent), 0 0 0 1px var(--line); }
+.side .tab[aria-current="page"] svg { color: var(--accent); }
+.side .tab .count { background: transparent; border-color: var(--line); }
+.side-f { border-top-color: var(--line); }
+
+/* bilah atas */
+.top { background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: saturate(1.4) blur(10px); backdrop-filter: saturate(1.4) blur(10px); border-bottom-color: var(--line); }
+.toptitle { font-weight: 600; font-size: 18px; }
+.cmdbtn { background: var(--surface); border-color: var(--line); border-radius: 8px; }
+.themebtn, .menubtn { background: var(--surface); border-color: var(--line); border-radius: 8px; }
+.status, .net { background: transparent; }
+
+/* info berjalan: seperti baris kabar di koran */
+.ticker { background: transparent; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); border-radius: 0; min-height: 38px; margin: -8px 0 22px; padding: 0; }
+.tk-lbl { background: none; color: var(--accent); padding: 0 6px 0 0; margin: 0; border-radius: 0; text-transform: none; letter-spacing: 0; font: italic 600 14.5px var(--f-display); }
+.tk-lbl svg { display: none; }
+.tk-i { font-size: 13.5px; color: var(--ink); }
+.tk-i::before { content: "·"; width: auto; height: auto; background: none; color: var(--muted); margin: 0 18px 0 -22px; opacity: 1; font-weight: 700; }
+.tk-x:hover { background: var(--surface); }
+
+/* ---------- Beranda ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr); gap: 32px 56px; align-items: center; padding: 26px 4px 8px; margin: 0 0 28px;
+  background: none; border: 0; box-shadow: none; }
+.hero h1 { font-size: clamp(36px, 5vw, 64px); line-height: 1.02; font-weight: 520; letter-spacing: -.028em; margin: 0 0 18px; max-width: 15ch; }
+.hero h1 em { font-style: italic; font-weight: 480; color: var(--accent);
+  background: linear-gradient(transparent 70%, color-mix(in srgb, var(--accent) 18%, transparent) 70%, color-mix(in srgb, var(--accent) 18%, transparent) 92%, transparent 92%); padding: 0 .04em; }
+.hero .lede { font-size: 17px; line-height: 1.6; color: var(--muted); max-width: 52ch; margin: 0; }
+.hero-a { margin-top: 26px; gap: 12px 14px; }
+.hero-n { margin-top: 14px !important; font-size: 13px !important; color: var(--muted); }
+.btn.lg { min-height: 48px; padding: 0 22px; border-radius: 9px; }
+
+.hsheet { position: relative; margin: 0; justify-self: center; width: min(360px, 100%); aspect-ratio: 1 / 1.22; }
+.sheet-p { position: absolute; inset: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 3px; padding: 34px 30px; transform: rotate(-2.2deg);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 18px 40px -18px rgba(40, 30, 10, .35), 12px 14px 0 -6px color-mix(in srgb, var(--line) 70%, transparent); display: flex; flex-direction: column; gap: 11px; overflow: hidden; }
+.sheet-p::before { content: ""; position: absolute; left: 20px; top: 0; bottom: 0; border-left: 1px solid color-mix(in srgb, var(--bad) 30%, transparent); }
+.ln { display: block; height: 7px; border-radius: 4px; background: color-mix(in srgb, var(--ink) 11%, transparent); width: 100%; }
+.ln:first-child { height: 10px; background: color-mix(in srgb, var(--ink) 22%, transparent); margin-bottom: 8px; }
+.ln:has(.mk) { height: auto; background: none; }
+.mk { font: italic 400 13.5px/1.35 "Source Serif 4", Georgia, serif; color: var(--ink); background: linear-gradient(transparent 12%, #f6d66b 12%, #f6d66b 88%, transparent 88%); padding: 0 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.mk.b { background: linear-gradient(transparent 12%, #f4b7b0 12%, #f4b7b0 88%, transparent 88%); }
+:root[data-theme="dark"] .mk { color: #1d1b17; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mk { color: #1d1b17; } }
+.marginnote { position: absolute; font: 600 21px/1.1 var(--f-hand); color: var(--accent); white-space: nowrap; }
+.marginnote.n1 { right: -6px; top: 31%; transform: rotate(-6deg); }
+.marginnote.n1::before { content: ""; position: absolute; left: -26px; top: 12px; width: 22px; border-top: 1.5px solid currentColor; transform: rotate(14deg); }
+.marginnote.n2 { left: 34px; bottom: 25%; transform: rotate(-3deg); color: var(--bad); }
+.stamp { position: absolute; right: -10px; bottom: -14px; width: 104px; height: 104px; border-radius: 50%; border: 2.5px solid var(--bad); color: var(--bad);
+  display: grid; place-content: center; text-align: center; transform: rotate(-14deg); background: color-mix(in srgb, var(--paper) 70%, transparent);
+  box-shadow: inset 0 0 0 5px color-mix(in srgb, var(--paper) 70%, transparent), inset 0 0 0 6.5px var(--bad); opacity: .9; }
+.stamp b { font: 700 28px/1 var(--f-display); letter-spacing: -.02em; }
+.stamp small { font: 600 10.5px var(--f-body); letter-spacing: .14em; text-transform: uppercase; }
+
+.facts { list-style: none; margin: 8px 0 0; padding: 18px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1.5px solid var(--ink); }
+.facts li { padding: 2px 22px 0 0; display: grid; gap: 5px; align-content: start; }
+.facts li + li { padding-left: 22px; border-left: 1px solid var(--line); }
+.facts b { font: 600 17px/1.25 var(--f-display); letter-spacing: -.01em; }
+.facts span { color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+
+.stats { margin-top: 28px; }
+.stat.card { padding: 16px 18px; }
+
+.index { margin-top: 8px; }
+.index-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; margin-top: 18px; }
+.idx-g { font: italic 500 15px var(--f-display); color: var(--muted); margin: 0; padding: 0 0 10px; border-bottom: 1.5px solid var(--ink); letter-spacing: 0; }
+.index .tool { display: grid; grid-template-columns: 38px minmax(0, 1fr) 22px; grid-template-rows: auto; align-items: baseline; gap: 0 10px; width: 100%; padding: 16px 2px 17px; text-align: left;
+  background: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; box-shadow: none; transform: none; color: var(--ink); transition: background .15s; }
+.index .tool:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); transform: none; box-shadow: none; border-color: var(--line); }
+.index .tool .no { font: italic 500 15px var(--f-display); color: var(--muted); }
+.index .tool .tx { display: grid; gap: 3px; }
+.index .tool b { font-size: 16px; font-weight: 650; letter-spacing: -.005em; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 1.5px; transition: text-decoration-color .15s; }
+.index .tool:hover b { text-decoration-color: var(--accent); }
+.index .tool small { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+.index .tool .arr { width: 18px; height: 18px; color: var(--muted); align-self: center; transition: transform .2s, color .2s; }
+.index .tool:hover .arr { transform: translateX(3px); color: var(--accent); }
+
+/* iklan: kartu kertas dengan garis warna di kiri, tanpa gradasi */
+.adslot { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; margin: 26px 0 8px; }
+.ad { padding: 18px 22px 30px; gap: 6px 22px; }
+.ad-img { display: none !important; }
+.ad { grid-template-columns: minmax(0, 1fr) auto; }
+.ad-tag { text-transform: none; letter-spacing: 0; font: italic 500 13.5px var(--f-display); color: var(--muted); }
+.ad-t b { font: 600 20px/1.25 var(--f-display); letter-spacing: -.01em; }
+.ad-t p { font-size: 14px; }
+.adslot.compact .ad { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 640px) { .ad { grid-template-columns: minmax(0, 1fr); } }
+
+/* aplikasi & riwayat */
+.appcard, #homeRecent { }
+#view-beranda > .card { margin-top: 34px; }
+.appbtn { border-radius: 8px; background: transparent; border-color: var(--line); }
+.appbtn:hover { border-color: var(--accent); background: var(--surface-2); }
+.recent-i { border-bottom-color: var(--line); }
+
+/* catatan, petunjuk */
+.tip { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; }
+.empty { color: var(--muted); }
+
+/* kaki halaman */
+.foot { margin-top: 64px; padding-top: 22px; border-top: 1.5px solid var(--ink); font-size: 13.5px; align-items: flex-start; }
+.foot b { font-family: var(--f-display); font-size: 17px; font-weight: 650; }
+.foot .colo { display: block; max-width: 48ch; margin-top: 4px; color: var(--muted); }
+.foot-links { gap: 6px 18px; }
+.foot-links .linkbtn, .foot-links a { color: var(--ink); font-weight: 500; }
+
+/* tombol chat CS: pil berlabel, bukan gelembung bertitik hijau */
+.csfab { width: auto; height: 46px; padding: 0 18px 0 14px; border-radius: 999px; gap: 8px; display: inline-flex; align-items: center; font: 650 14px var(--f-body);
+  box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--ink) 55%, transparent), inset 0 -2px 0 rgba(0, 0, 0, .15); }
+.csfab svg { width: 20px; height: 20px; }
+.csfab .cs-dot { display: none; }
+.csfab .cs-lbl { white-space: nowrap; }
+.csfab[aria-expanded="true"] .cs-lbl { display: none; }
+.csfab[aria-expanded="true"] { padding: 0 13px; }
+.cshint { right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(72px + env(safe-area-inset-bottom, 0px)); border-radius: 10px; }
+.cspanel { border-radius: 14px; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+.cs-h { background: var(--ink); color: var(--bg); }
+.cs-h button:hover { background: color-mix(in srgb, var(--bg) 14%, transparent); }
+.cs-av { background: color-mix(in srgb, var(--bg) 16%, transparent); }
+.cs-av::after { border-color: var(--ink); }
+.cs-log { background: var(--bg); }
+.msg.bot { border-radius: 12px 12px 12px 4px; }
+.msg.me { border-radius: 12px 12px 4px 12px; }
+.cs-chips button { border-color: var(--line); color: var(--ink); background: var(--surface); }
+.cs-chips button:hover { border-color: var(--accent); background: var(--surface); color: var(--accent); }
+
+/* Layanan & Bantuan */
+.plan { border-radius: 10px; }
+.plan.top { box-shadow: none; }
+.plan-badge { border-radius: 4px; text-transform: none; letter-spacing: 0; font: italic 600 12.5px var(--f-display); }
+.plan h2 { font-size: 19px; font-weight: 600; }
+.plan .price { font-family: var(--f-display); font-weight: 600; }
+.faq summary { font-weight: 600; }
+.faq .cat { text-transform: none; letter-spacing: 0; font: italic 500 13px var(--f-display); }
+
+@media (max-width: 1000px) {
+  .hero { grid-template-columns: minmax(0, 1fr); padding-top: 12px; gap: 28px; }
+  .hsheet { width: min(300px, 78vw); order: 2; margin-top: 6px; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+  .facts li:nth-child(3) { padding-left: 0; border-left: 0; }
+  .index-cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+}
+@media (max-width: 560px) {
+  .hero h1 { font-size: clamp(33px, 10vw, 44px); }
+  .hero .lede { font-size: 16px; }
+  .hero-a .btn { flex: 1 1 auto; justify-content: center; }
+  .hero-a .linkbtn { flex-basis: 100%; text-align: left; }
+  .facts { grid-template-columns: minmax(0, 1fr); }
+  .facts li, .facts li + li { padding: 0 0 14px; border-left: 0; border-bottom: 1px solid var(--line); }
+  .facts li:last-child { border-bottom: 0; }
+  .csfab .cs-lbl { display: none; }
+  .csfab { padding: 0 13px; height: 50px; }
+  .marginnote { font-size: 18px; }
+  .marginnote.n2 { left: 26px; }
+}
 </style>
 
 <aside class="side" id="side" aria-label="Menu utama">
-  <div class="side-h"><button type="button" class="logo logobtn" data-nav="beranda" aria-label="CekTeks, ke Beranda"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="var(--surface)"/><path d="M11 14h8M11 17h6M11 20h4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="3.3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M23 23l2.6 2.6" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg><b>Cek<span>Teks</span></b></button><button type="button" class="side-x" id="sideClose" aria-label="Tutup menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="side-h"><button type="button" class="logo logobtn" data-nav="beranda" aria-label="CekTeks, ke Beranda"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M10 6.5h9l5 5V25a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5z" fill="var(--accent-ink)" opacity=".96"/><path d="M19 6.5v5h5" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linejoin="round"/><path d="M12.6 18.4l3 3 5.4-6.4" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Cek<span>Teks</span></b></button><button type="button" class="side-x" id="sideClose" aria-label="Tutup menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <nav class="side-nav">
       <button class="tab" type="button" id="tab-beranda" data-view="beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Beranda</span></button>
-      <button class="tab" type="button" id="tab-layanan" data-view="layanan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>Layanan &amp; Harga</span><span class="newtag">Baru</span></button>
+      <button class="tab" type="button" id="tab-layanan" data-view="layanan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>Layanan &amp; Harga</span></button>
       <span class="side-g">Pemeriksaan</span>
       <button class="tab" type="button" id="tab-periksa" data-view="periksa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg><span>Cek Plagiasi &amp; AI</span></button>
-      <button class="tab" type="button" id="tab-massal" data-view="massal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg><span>Periksa Banyak Dokumen</span><span class="newtag">Baru</span></button>
-      <button class="tab" type="button" id="tab-kode" data-view="kode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg><span>Cek Plagiasi Kode Program</span><span class="newtag">Baru</span></button>
+      <button class="tab" type="button" id="tab-massal" data-view="massal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg><span>Periksa Banyak Dokumen</span></button>
+      <button class="tab" type="button" id="tab-kode" data-view="kode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg><span>Cek Plagiasi Kode Program</span></button>
       <button class="tab" type="button" id="tab-bandingkan" data-view="bandingkan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg><span>Bandingkan Dokumen</span></button>
       <button class="tab" type="button" id="tab-sitasi" data-view="periksa" data-go="cite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg><span>Cek Sitasi</span></button>
       <button class="tab" type="button" id="tab-keterbacaan" data-view="periksa" data-go="read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg><span>Keterbacaan</span></button>
       <span class="side-g">Alat naskah</span>
-      <button class="tab" type="button" id="tab-tersembunyi" data-view="tersembunyi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg><span>Teks Tersembunyi &amp; Typo</span><span class="newtag">Baru</span></button>
-      <button class="tab" type="button" id="tab-pustaka" data-view="pustaka"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/><path d="M7 8h2M15 8h2"/></svg><span>Buat Sitasi &amp; Daftar Pustaka</span><span class="newtag">Baru</span></button>
-      <button class="tab" type="button" id="tab-daftarisi" data-view="daftarisi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Buat Daftar Isi</span><span class="newtag">Baru</span></button>
+      <button class="tab" type="button" id="tab-tersembunyi" data-view="tersembunyi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg><span>Teks Tersembunyi &amp; Typo</span></button>
+      <button class="tab" type="button" id="tab-pustaka" data-view="pustaka"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/><path d="M7 8h2M15 8h2"/></svg><span>Buat Sitasi &amp; Daftar Pustaka</span></button>
+      <button class="tab" type="button" id="tab-daftarisi" data-view="daftarisi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Buat Daftar Isi</span></button>
       <span class="side-g">Kelola</span>
       <button class="tab" type="button" id="tab-sumber" data-view="sumber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h12v14H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 0 2 2h12v-4"/><path d="M9 7h6M9 11h4"/></svg><span>Sumber &amp; Pengaturan</span><span class="count" id="srcBadge">0</span></button>
       <button class="tab" type="button" id="tab-riwayat" data-view="riwayat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Riwayat &amp; Pesanan</span></button>
       <button class="tab" type="button" id="sideVerify"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span>Verifikasi Laporan</span></button>
       <button class="tab" type="button" id="tab-metode" data-view="metode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.3 2-2.3 3.5"/><path d="M12 17.5h.01"/></svg><span>Panduan</span></button>
-      <button class="tab" type="button" id="tab-bantuan" data-view="bantuan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M19.5 19c0 1.5-2 2.5-5 2.5"/></svg><span>Bantuan &amp; Kontak</span><span class="newtag">Baru</span></button>
+      <button class="tab" type="button" id="tab-bantuan" data-view="bantuan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M19.5 19c0 1.5-2 2.5-5 2.5"/></svg><span>Bantuan &amp; Kontak</span></button>
   </nav>
   <button type="button" class="btn installbtn" id="installBtn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Pasang aplikasi</button>
   <div class="side-f"><span>Analisis di perangkat Anda</span><span class="num" id="sideVer"></span></div>
@@ -1166,7 +1346,7 @@ html.framed body > *:not(.framed-msg) { display: none !important; }
     <button type="button" class="menubtn" id="menuBtn" aria-label="Buka menu" aria-controls="side" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     <b class="toptitle" id="topTitle"></b>
     <div class="logo">
-      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M9 7h10l5 5v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="var(--surface)"/><path d="M11 14h8M11 17h6M11 20h4" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/><circle cx="20.5" cy="20.5" r="3.3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><path d="M23 23l2.6 2.6" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M10 6.5h9l5 5V25a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5z" fill="var(--accent-ink)" opacity=".96"/><path d="M19 6.5v5h5" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linejoin="round"/><path d="M12.6 18.4l3 3 5.4-6.4" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <b>Cek<span>Teks</span></b>
     </div>
     <button type="button" class="cmdbtn" id="cmdBtn" aria-keyshortcuts="Control+K"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>Cari menu &amp; perintah</span><kbd>Ctrl K</kbd></button>
@@ -1193,37 +1373,68 @@ html.framed body > *:not(.framed-msg) { display: none !important; }
 
 <main>
   <div class="ticker" id="ticker" role="region" aria-label="Info berjalan" hidden>
-    <span class="tk-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg>Info</span>
+    <span class="tk-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg>Kabar</span>
     <div class="tk-vp"><div class="tk-track" id="tkTrack"></div></div>
     <button type="button" class="tk-x" id="tkClose" aria-label="Tutup info berjalan">×</button>
   </div>
   <!-- ================= BERANDA ================= -->
   <section class="view" id="view-beranda">
-    <div class="hero card">
+    <div class="hero">
       <div class="hero-t">
-        <span class="eyebrow">Pemeriksa naskah</span>
-        <h1>Periksa kesamaan &amp; tulisan AI dalam hitungan detik</h1>
-        <p>Dibandingkan dengan lebih dari 20 sumber internet, jurnal, dan repositori kampus, termasuk teks lengkapnya. Laporan PDF lengkap dengan naskah bersorot, kode verifikasi, dan QR. Naskah diproses di perangkat Anda.</p>
+        <h1>Periksa naskah Anda <em>sebelum</em> dikumpulkan.</h1>
+        <p class="lede">CekTeks membandingkan tulisan Anda dengan jurnal, repositori kampus, dan halaman web, lalu menandai kalimat yang mirip beserta sumbernya. Gaya tulisan juga dinilai, untuk melihat apakah ada bagian yang terbaca seperti buatan AI.</p>
         <div class="hero-a">
-          <label class="btn primary lg" for="homeFile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Unggah dokumen</label>
+          <label class="btn primary lg" for="homeFile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Unggah naskah</label>
           <input type="file" id="homeFile" class="sr-only" accept=".pdf,.docx,.doc,.odt,.pptx,.rtf,.txt,.md,.html,.htm,.csv,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
           <button type="button" class="btn lg" id="homePaste">Tempel teks</button>
-          <button type="button" class="linkbtn" id="homeSample">Coba teks contoh</button>
+          <button type="button" class="linkbtn" id="homeSample">atau coba dengan teks contoh</button>
         </div>
-        <p class="hero-n">PDF, Word, ODT, PPTX, RTF, HTML, atau TXT, hingga 50 MB</p>
+        <p class="hero-n">PDF (termasuk hasil scan), Word, ODT, PPTX, RTF, atau TXT. Maksimal 50 MB.</p>
       </div>
-      <div class="hero-art" aria-hidden="true">
-        <svg viewBox="0 0 220 180" width="220" height="180"><rect x="38" y="14" width="120" height="152" rx="12" fill="var(--surface)" stroke="var(--line)" stroke-width="2"/>
-        <rect x="56" y="38" width="70" height="8" rx="4" fill="var(--line)"/><rect x="56" y="58" width="84" height="7" rx="3.5" fill="var(--accent-soft)"/><rect x="56" y="74" width="62" height="7" rx="3.5" fill="var(--line)"/>
-        <rect x="56" y="90" width="80" height="7" rx="3.5" fill="#f7d4dc"/><rect x="56" y="106" width="50" height="7" rx="3.5" fill="var(--line)"/><rect x="56" y="122" width="74" height="7" rx="3.5" fill="#d9e8fb"/>
-        <circle cx="150" cy="118" r="30" fill="var(--surface)" stroke="var(--accent)" stroke-width="6"/><path d="M171 140l22 22" stroke="var(--accent)" stroke-width="9" stroke-linecap="round"/>
-        <rect x="132" y="22" width="64" height="30" rx="15" fill="var(--accent)"/><text x="164" y="42" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="Inter, Arial, sans-serif">3%</text></svg>
-      </div>
+      <figure class="hsheet" aria-hidden="true">
+        <div class="sheet-p">
+          <span class="ln" style="width:42%"></span>
+          <span class="ln t" style="width:94%"></span><span class="ln t" style="width:88%"></span>
+          <span class="ln t"><i class="mk">kecerdasan buatan mengubah cara siswa belajar</i></span>
+          <span class="ln t" style="width:91%"></span><span class="ln t" style="width:64%"></span>
+          <span class="ln t" style="width:96%"></span>
+          <span class="ln t"><i class="mk b">data dikumpulkan melalui angket tertutup</i></span>
+          <span class="ln t" style="width:83%"></span><span class="ln t" style="width:72%"></span>
+        </div>
+        <span class="marginnote n1">mirip: Jurnal Pendidikan, 2021</span>
+        <span class="marginnote n2">tambahkan sitasi?</span>
+        <span class="stamp"><b>12%</b><small>kesamaan</small></span>
+      </figure>
     </div>
-    <div class="stats" id="homeStats"></div>
+    <ul class="facts" aria-label="Tentang CekTeks">
+      <li><b>Tanpa akun</b><span>Langsung pakai, tanpa daftar dan tanpa langganan.</span></li>
+      <li><b>Naskah tetap di perangkat</b><span>Teks dihitung di browser Anda, tidak disimpan di server kami.</span></li>
+      <li><b>Sumber terbuka</b><span>Wikipedia, OpenAlex, Crossref, DOAJ, repositori kampus, dan lainnya.</span></li>
+      <li><b>Laporan bisa dicek</b><span>Setiap PDF membawa kode dan QR untuk memastikan skornya asli.</span></li>
+    </ul>
+    <div class="stats" id="homeStats" hidden></div>
     <div class="adslot" id="adHome" hidden></div>
-    <h2 class="sec-h">Alat pemeriksaan</h2>
-    <div class="toolgrid"><button type="button" class="tool" data-nav="periksa"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><path d="M14 3l5 5h-5z"/><circle cx="16.5" cy="16.5" r="3"/><path d="M21 21l-2.3-2.3"/></svg></span><b>Cek Plagiasi &amp; AI</b><small>Bandingkan naskah dengan lebih dari 20 sumber internet, jurnal, dan repositori, lalu nilai kemungkinan tulisan AI.</small></button><button type="button" class="tool" data-nav="massal"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9l4 4v12"/><path d="M4 7h9l4 4v10H4z"/><path d="M7 15h7M7 18h5"/></svg></span><b>Periksa Banyak Dokumen</b><small>Puluhan naskah sekaligus, saling dibandingkan, laporan PDF dalam satu ZIP.</small></button><button type="button" class="tool" data-nav="kode"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg></span><b>Cek Plagiasi Kode Program</b><small>Python, Java, C/C++, JavaScript, PHP, dan lainnya. Tetap terdeteksi walau nama variabel diganti.</small></button><button type="button" class="tool" data-nav="bandingkan"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="14" y="4" width="7" height="16" rx="1.5"/><path d="M10 9h4M10 15h4"/></svg></span><b>Bandingkan Dokumen</b><small>Temukan tugas yang saling mirip di antara beberapa dokumen sekaligus.</small></button><button type="button" class="tool" data-nav="periksa" data-go="cite"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6"/><path d="M14 7h4v4c0 3-1.5 5-4 6"/></svg></span><b>Cek Sitasi</b><small>Cocokkan sitasi di naskah dengan daftar pustaka, temukan yang hilang atau tak dikutip.</small></button><button type="button" class="tool" data-nav="periksa" data-go="read"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15a2 2 0 0 0-2-2H3z"/><path d="M21 5a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v15a2 2 0 0 1 2-2h7z"/></svg></span><b>Keterbacaan</b><small>Waktu baca, kalimat terlalu panjang, dan kata yang terlalu sering diulang.</small></button><button type="button" class="tool" data-nav="tersembunyi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.1A9.5 9.5 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.3 6.3C4.2 7.7 2.7 9.8 2 12c1 2.5 5 7 10 7 1.6 0 3.1-.4 4.4-1.1"/></svg></span><b>Teks Tersembunyi &amp; Typo</b><small>Karakter tak terlihat, huruf aksara lain, teks putih, salah ketik, dan kata tidak baku.</small></button><button type="button" class="tool" data-nav="pustaka"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/><path d="M7 8h2M15 8h2"/></svg></span><b>Buat Sitasi &amp; Daftar Pustaka</b><small>DOI atau judul menjadi sitasi APA, IEEE, Harvard, MLA, atau Chicago.</small></button><button type="button" class="tool" data-nav="daftarisi"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></span><b>Buat Daftar Isi</b><small>Susun daftar isi otomatis dari judul bab dan subbab, siap disalin ke Word.</small></button><button type="button" class="tool" id="homeVerify"><span class="tool-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b>Verifikasi Laporan</b><small>Pindai QR laporan untuk memastikan naskah dan skor tidak diubah.</small></button></div>
+    <section class="index" aria-labelledby="idxH">
+      <h2 class="sec-h" id="idxH">Yang bisa Anda kerjakan di sini</h2>
+      <div class="index-cols">
+        <div>
+          <h3 class="idx-g">Memeriksa</h3>
+        <button type="button" class="tool" data-nav="periksa"><span class="no">01</span><span class="tx"><b>Cek plagiasi &amp; AI</b><small>Kalimat yang mirip ditandai beserta sumbernya, lalu jadi laporan PDF.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="tool" data-nav="massal"><span class="no">02</span><span class="tx"><b>Periksa banyak dokumen</b><small>Satu kelas sekaligus. Tugas yang saling contek ikut terlihat.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="tool" data-nav="kode"><span class="no">03</span><span class="tx"><b>Cek plagiasi kode program</b><small>Mengganti nama variabel tidak menolong. Python, Java, C/C++, dan lainnya.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="tool" data-nav="bandingkan"><span class="no">04</span><span class="tx"><b>Bandingkan dokumen</b><small>Dua naskah berdampingan, bagian yang sama diberi warna.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="tool" id="homeVerify"><span class="no">05</span><span class="tx"><b>Verifikasi laporan</b><small>Pindai QR di laporan untuk memastikan skornya tidak diubah.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+        <div>
+          <h3 class="idx-g">Merapikan naskah</h3>
+        <button type="button" class="tool" data-nav="periksa" data-go="cite"><span class="no">06</span><span class="tx"><b>Cek sitasi</b><small>Sitasi dicocokkan dengan daftar pustaka. Referensi fiktif ikut dicari.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="tool" data-nav="periksa" data-go="read"><span class="no">07</span><span class="tx"><b>Keterbacaan</b><small>Kalimat yang terlalu panjang dan kata yang diulang-ulang.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="tool" data-nav="tersembunyi"><span class="no">08</span><span class="tx"><b>Teks tersembunyi &amp; typo</b><small>Huruf putih, karakter tak terlihat, dan kata tidak baku.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="tool" data-nav="pustaka"><span class="no">09</span><span class="tx"><b>Sitasi &amp; daftar pustaka</b><small>Tempel DOI atau judul, keluar dalam APA, IEEE, Harvard, MLA, atau Chicago.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="tool" data-nav="daftarisi"><span class="no">10</span><span class="tx"><b>Daftar isi otomatis</b><small>Dari judul bab dan subbab, lengkap dengan titik dan nomor halaman.</small></span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </section>
     <div class="card appcard" id="appCard">
       <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span>Pasang CekTeks sebagai aplikasi</h2><span class="muted" style="font-size:12.5px">gratis · berjalan offline</span></div>
       <div class="card-b stack">
@@ -2086,7 +2297,7 @@ html.framed body > *:not(.framed-msg) { display: none !important; }
   </section>
 
   <footer class="foot">
-    <div><b>CekTeks</b> <span class="num" id="appVersion"></span> · Analisis berjalan di perangkat Anda. Naskah tidak dikirim ke server.</div>
+    <div><b>CekTeks</b> <span class="num muted" id="appVersion"></span><span class="colo">Dibuat di Indonesia untuk mahasiswa, dosen, dan siapa pun yang perlu memeriksa naskah. Naskah dihitung di perangkat Anda dan tidak dikirim ke server.</span></div>
     <nav class="foot-links" aria-label="Tautan bawah">
       <button class="linkbtn" type="button" data-goto="metode">Panduan</button>
       <button class="linkbtn" type="button" data-goto="bantuan">Bantuan</button>
@@ -2157,7 +2368,7 @@ html.framed body > *:not(.framed-msg) { display: none !important; }
   </div>
 </div>
 <div class="cshint" id="csHint" hidden></div>
-<button type="button" class="csfab" id="csFab" aria-label="Chat customer service" aria-expanded="false" aria-controls="csPanel"><svg class="cs-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg><svg class="cs-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span class="cs-dot" aria-hidden="true"></span></button>
+<button type="button" class="csfab" id="csFab" aria-label="Tanya kami lewat chat customer service" aria-expanded="false" aria-controls="csPanel"><svg class="cs-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg><span class="cs-lbl">Tanya kami</span><svg class="cs-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span class="cs-dot" aria-hidden="true"></span></button>
 <section class="cspanel" id="csPanel" role="dialog" aria-labelledby="csName" hidden>
   <header class="cs-h">
     <span class="cs-av" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M19.5 19c0 1.5-2 2.5-5 2.5"/></svg></span>
@@ -2633,7 +2844,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.4.0";
+var APP_VERSION = "4.5.0";
 // Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
 (function () {
   var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
@@ -3933,6 +4144,7 @@ $("#tocDoc").onclick = function () {
 function renderHome() {
   var month = HIST.filter(function (e) { return thisMonth(e.date); });
   var avg = function (k) { return HIST.length ? HIST.reduce(function (a, e) { return a + (+e[k] || 0); }, 0) / HIST.length : 0; };
+  $("#homeStats").hidden = !HIST.length;
   $("#homeStats").innerHTML = [
     ["Total pemeriksaan", fmtNum(HIST.length), "laporan yang diunduh"],
     ["Bulan ini", fmtNum(month.length), "naskah diperiksa"],
@@ -4207,8 +4419,7 @@ $("#tipClose").onclick = function () { $("#tipBar").hidden = true; store("ct_tip
 $("#tipGuide").onclick = function () { showView("metode"); };
 /* ===== v4.2: pengaturan situs (site.json), tampilan, iklan, chat CS, bantuan ===== */
 // Warna tema: [nama, aksen terang, aksen gelap]. Harus sama dengan ACCENTS di build.py dan CSS data-accent.
-var PRESET = { teal: ["Teal", "#0e6a86", "#4fc1de"], biru: ["Biru", "#1d4ed8", "#7ea6ff"], ungu: ["Ungu", "#6d3fd1", "#b39bff"], hijau: ["Hijau", "#0f7a4f", "#4fd09a"],
-  marun: ["Marun", "#a5283a", "#f38a9a"], oranye: ["Oranye", "#b5530e", "#f5a35c"], grafit: ["Grafit", "#334155", "#a9b6c9"] };
+var PRESET = { teal: ["Teal", "#0f5f6e", "#6cc3cf"], biru: ["Biru", "#234a8c", "#93b2ec"], ungu: ["Ungu", "#5a3d8f", "#bba5ec"], hijau: ["Hijau", "#23704c", "#82cfa5"], marun: ["Marun", "#8e2c3b", "#ec98a5"], oranye: ["Oranye", "#a9501c", "#f0a46d"], grafit: ["Grafit", "#2f3338", "#bcc2ca"] };
 var SITE_DEF = { warna: "teal", cs: { nama: "CS CekTeks", whatsapp: "", email: "", jam: "", sapaan: "Halo! Ada yang bisa kami bantu? Pilih pertanyaan di bawah atau ketik pertanyaan Anda." }, iklan: { aktif: false, teks_berjalan: [], banner: [] } };
 function storeDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
 function siteCfg() {
@@ -4399,7 +4610,7 @@ function csReply(q) {
   var t = q.toLowerCase(), f;
   csMsg("me", esc(q));
   if (/^(halo|hai|hi|hello|hallo|p|pagi|siang|sore|malam|selamat|assalam)/.test(t) && t.length < 30) return csMsg("bot", "Halo juga! Silakan tanyakan apa saja tentang CekTeks, misalnya cara memeriksa naskah atau membaca hasilnya.");
-  if (/(terima ?kasih|makasih|thanks|thx)/.test(t)) return csMsg("bot", "Sama-sama! Semoga lancar naskahnya. 🙏");
+  if (/(terima ?kasih|makasih|thanks|thx)/.test(t)) return csMsg("bot", "Sama-sama. Semoga lancar.");
   var human = /(cs|admin|operator|manusia|orang|hubungi|kontak|nomor|telepon|whatsapp|\bwa\b|email)/.test(t);
   f = human ? null : faqFind(q);
   if (f) {
@@ -4428,7 +4639,7 @@ function openCS() {
   }
   if (window.matchMedia && matchMedia("(pointer: fine)").matches) $("#csIn").focus();
 }
-function closeCS(focus) { if ($("#csPanel").hidden) return; $("#csPanel").hidden = true; $("#csFab").setAttribute("aria-expanded", "false"); $("#csFab").setAttribute("aria-label", "Chat customer service"); if (focus) $("#csFab").focus(); }
+function closeCS(focus) { if ($("#csPanel").hidden) return; $("#csPanel").hidden = true; $("#csFab").setAttribute("aria-expanded", "false"); $("#csFab").setAttribute("aria-label", "Tanya kami lewat chat customer service"); if (focus) $("#csFab").focus(); }
 $("#csFab").onclick = function () { if ($("#csPanel").hidden) openCS(); else closeCS(); };
 $("#csClose").onclick = function () { closeCS(true); };
 $("#csHelp").onclick = function () { closeCS(); showView("bantuan"); };
@@ -4438,7 +4649,7 @@ $("#csLog").addEventListener("click", function (e) { if (e.target.closest("[data
 document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#csPanel").hidden) closeCS(true); });
 if (!store("ct_cshint")) setTimeout(function () {
   if (!$("#csPanel").hidden || navigator.webdriver) return;
-  $("#csHint").textContent = "Ada pertanyaan? Chat dengan kami 👋"; $("#csHint").hidden = false; store("ct_cshint", "1");
+  $("#csHint").textContent = "Ada yang ingin ditanyakan? Kami di sini."; $("#csHint").hidden = false; store("ct_cshint", "1");
   setTimeout(function () { $("#csHint").hidden = true; }, 9000);
 }, 5000);
 

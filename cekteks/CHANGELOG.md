@@ -2,6 +2,26 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.5.0] - 2026-11-21
+### Diubah: tampilan baru
+- **Identitas visual baru bergaya editorial**, seperti meja penguji naskah:
+  - Latar kertas hangat dan garis tipis menggantikan kartu biru muda yang serba seragam.
+  - Huruf: Fraunces untuk judul, Plus Jakarta Sans (karya desainer Indonesia) untuk teks, IBM Plex Mono untuk angka,
+    dan Caveat untuk catatan pinggir.
+  - Warna tema diganti dengan nada tinta yang lebih dalam: biru tinta, teal, ungu, hijau, marun, terakota, dan grafit.
+- **Beranda ditulis ulang.**
+  - Judul "Periksa naskah Anda *sebelum* dikumpulkan", dengan ilustrasi lembar naskah bertanda stabilo, catatan
+    pinggir tulisan tangan, dan stempel skor.
+  - Empat keterangan singkat yang jujur, menggantikan kotak statistik kosong. Statistik baru tampil setelah ada
+    riwayat.
+  - Daftar alat bernomor, seperti daftar isi buku.
+- Menu samping tanpa label "Baru" di setiap baris, dan halaman aktif ditandai garis tepi.
+- Teks berjalan bergaya baris kabar koran. Banner iklan berupa kartu kertas tanpa gradasi.
+- Tombol chat menjadi pil berlabel "Tanya kami". Emoji di chat dihapus.
+- Kaki halaman memuat kolofon "Dibuat di Indonesia".
+- Logo baru: lembar naskah dengan tanda centang, dan wordmark Cek*Teks* berhuruf serif.
+- CSS diperkecil otomatis saat build.
+
 ## [4.4.0] - 2026-11-20
 ### Keamanan
 - **Content Security Policy** di situs, berkas mandiri, dan aplikasi. Skrip hanya jalan bila sidik SHA-256-nya sudah

@@ -6,7 +6,7 @@
   "scope": "./",
   "display": "standalone",
   "background_color": "#eef2f6",
-  "theme_color": "#1d4ed8",
+  "theme_color": "#234a8c",
   "description": "Cek plagiarisme dan deteksi tulisan AI gratis. Unggah PDF atau Word, lihat bagian yang mirip dengan sumbernya, lalu unduh laporan PDF. Bisa offline, naskah tetap privat.",
   "icons": [
     {

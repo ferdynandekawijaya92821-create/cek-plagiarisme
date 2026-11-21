@@ -585,7 +585,7 @@ async function download(page, selector) {
     await page.click("#themeBtn"); ok(await page.isVisible("#appear"), "panel Tampilan tidak terbuka");
     await page.click('#swatches [data-acc="hijau"]'); await page.click('#modeSegs [data-mode="dark"]');
     const r = await page.evaluate(() => [document.documentElement.dataset.accent, document.documentElement.dataset.theme, localStorage.ct_accent, accRGB().join(","), getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()]);
-    ok(r[0] === "hijau" && r[1] === "dark" && r[2] === "hijau" && r[3] === "15,122,79" && r[4] === "#4fd09a", "tema tidak diterapkan: " + r);
+    ok(r[0] === "hijau" && r[1] === "dark" && r[2] === "hijau" && r[3] === "35,112,76" && r[4] === "#82cfa5", "tema tidak diterapkan: " + r);
     await page.keyboard.press("Escape"); ok(!(await page.isVisible("#appear")), "Esc tidak menutup panel");
     await page.evaluate(() => { setThemeMode("auto"); setAccent(SITE.warna); });
     ok(await page.evaluate(() => !document.documentElement.dataset.theme && !localStorage.ct_accent && document.documentElement.dataset.accent === SITE.warna), "tema tidak kembali ke bawaan situs");
