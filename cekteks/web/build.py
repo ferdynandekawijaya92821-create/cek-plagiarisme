@@ -19,9 +19,9 @@ ROOT = os.path.dirname(HERE)  # folder cekteks/
 REPO = os.path.dirname(ROOT)
 # Alamat situs publik (GitHub Pages). Ganti bila situs dipindah ke alamat lain.
 SITE_URL = os.environ.get("CEKTEKS_SITE_URL", "https://ferdynandekawijaya92821-create.github.io/kalori-cli/")
-SITE_TITLE = "CekTeks - Cek Plagiarisme & Deteksi Tulisan AI"
-SITE_DESC = ("Cek plagiarisme dan deteksi tulisan AI gratis. Unggah PDF atau Word, lihat bagian yang mirip "
-             "dengan sumbernya, lalu unduh laporan PDF. Bisa offline, naskah tetap privat.")
+SITE_TITLE = "Cek Plagiarisme Online & Deteksi AI, Alternatif Turnitin | CekTeks"
+SITE_DESC = ("Cek plagiarisme online dan deteksi tulisan AI untuk skripsi, jurnal, dan tugas. Alternatif Turnitin "
+             "mulai Rp3.000, laporan PDF ber-QR, bisa dicoba gratis. Tidak berafiliasi dengan Turnitin.")
 # Pustaka pihak ketiga (versi tetap, diperbarui lewat cekteks/web/VENDOR.md). pdf.js berbentuk modul ES (.mjs).
 VENDOR = ["pdf.min.mjs", "pdf.worker.min.mjs", "mammoth.browser.min.js", "jszip.min.js", "jspdf.umd.min.js", "qrcode.js", "jsQR.js"]
 ICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0e6a86"/>'
@@ -80,6 +80,24 @@ CSP = ("default-src 'self'; script-src 'self' {hashes} https://cdn.jsdelivr.net 
        "img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
        "font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: data:; object-src 'none'; "
        "base-uri 'none'; form-action 'self'; frame-src 'none'; manifest-src 'self'; upgrade-insecure-requests")
+
+
+def jsonld(site):
+    """Data terstruktur untuk Google: aplikasi web, harga layanan, dan tanya-jawab utama."""
+    prices = [int(re.sub(r"\D", "", str(p.get("harga", "")))) for p in site.get("layanan", {}).get("paket", []) if re.sub(r"\D", "", str(p.get("harga", "")))]
+    app = {"@type": "WebApplication", "name": "CekTeks", "alternateName": ["CekTeks Cek Plagiarisme", "Cek Plagiasi Online CekTeks"],
+           "url": SITE_URL, "description": SITE_DESC, "inLanguage": "id", "applicationCategory": "EducationalApplication",
+           "operatingSystem": "Web, Android, Windows, macOS, Linux", "browserRequirements": "Requires JavaScript",
+           "offers": {"@type": "AggregateOffer", "priceCurrency": "IDR", "lowPrice": min(prices) if prices else 0, "highPrice": max(prices) if prices else 0,
+                      "offerCount": len(prices)} if prices else {"@type": "Offer", "price": 0, "priceCurrency": "IDR"}}
+    qa = [
+        ("Bagaimana cara cek plagiarisme online di CekTeks?", "Unggah PDF atau Word, atau tempel teks. CekTeks membandingkan naskah dengan jurnal, repositori kampus, dan halaman web, menandai kalimat yang mirip beserta sumbernya, lalu membuat laporan PDF."),
+        ("Apakah CekTeks sama dengan Turnitin?", "Tidak. CekTeks adalah alternatif untuk cek mandiri dan tidak berafiliasi dengan Turnitin. CekTeks memakai sumber terbuka seperti Wikipedia, OpenAlex, Crossref, DOAJ, dan repositori kampus, sehingga skornya bisa berbeda dengan Turnitin."),
+        ("Berapa biaya cek plagiarisme di CekTeks?", "Pemeriksaan mandiri bisa dicoba gratis. Jasa pemeriksaan dengan laporan dari kami mulai Rp3.000 per naskah, dibayar lewat QRIS."),
+        ("Apakah CekTeks bisa mendeteksi tulisan AI seperti ChatGPT?", "Bisa memperkirakan. CekTeks menilai gaya tulisan per bagian naskah dan menandai bagian yang terbaca seperti buatan AI. Hasilnya perkiraan, bukan bukti pasti."),
+    ]
+    faq = {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]}
+    return {"@context": "https://schema.org", "@graph": [app, faq]}
 
 
 def add_csp(html):
@@ -156,6 +174,7 @@ def build_standalone(app, pwa, site):
             '<meta property="og:image:height" content="630">\n'
             '<meta property="og:image:alt" content="CekTeks: cek plagiarisme dan deteksi tulisan AI">\n'
             '<meta name="twitter:card" content="summary_large_image">\n'
+            + '<script type="application/ld+json">' + json.dumps(jsonld(site), ensure_ascii=False).replace("</", "<\\/") + "</script>\n"
             f'<meta name="twitter:title" content="{SITE_TITLE}">\n'
             f'<meta name="twitter:description" content="{SITE_DESC}">\n'
             f'<meta name="twitter:image" content="{og}">\n'
@@ -175,7 +194,7 @@ def main():
     write(os.path.join(docs, "index.html"), build_standalone(app, pwa=True, site=site))
     write(os.path.join(docs, "icon.svg"), ICON.replace("#0e6a86", ACCENTS[site["warna"]]))
     write(os.path.join(docs, "manifest.webmanifest"), json.dumps({
-        "name": "CekTeks - Cek Plagiarisme & AI", "short_name": "CekTeks", "lang": "id",
+        "name": "CekTeks - Cek Plagiarisme Online & AI", "short_name": "CekTeks", "lang": "id",
         "start_url": "./", "scope": "./", "display": "standalone",
         "background_color": "#eef2f6", "theme_color": ACCENTS[site["warna"]],
         "description": SITE_DESC,

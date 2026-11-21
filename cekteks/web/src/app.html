@@ -1376,7 +1376,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
   <section class="view" id="view-beranda">
     <div class="hero">
       <div class="hero-t">
-        <h1>Periksa naskah Anda <em>sebelum</em> dikumpulkan.</h1>
+        <h1>Cek plagiarisme naskah Anda <em>sebelum</em> dikumpulkan.</h1>
         <p class="lede">CekTeks membandingkan tulisan Anda dengan jurnal, repositori kampus, dan halaman web, lalu menandai kalimat yang mirip beserta sumbernya. Gaya tulisan juga dinilai, untuk melihat apakah ada bagian yang terbaca seperti buatan AI.</p>
         <div class="hero-a">
           <label class="btn primary lg" for="homeFile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Unggah naskah</label>
@@ -1384,7 +1384,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
           <button type="button" class="btn lg" id="homePaste">Tempel teks</button>
           <button type="button" class="linkbtn" id="homeSample">atau coba dengan teks contoh</button>
         </div>
-        <p class="hero-n">PDF (termasuk hasil scan), Word, ODT, PPTX, RTF, atau TXT. Maksimal 50 MB.</p>
+        <p class="hero-n">PDF (termasuk hasil scan), Word, ODT, PPTX, RTF, atau TXT. Maksimal 50 MB. Alternatif Turnitin untuk cek mandiri; CekTeks tidak berafiliasi dengan Turnitin.</p>
       </div>
       <figure class="hsheet" aria-hidden="true">
         <svg viewBox="0 0 440 470" role="presentation" focusable="false">
@@ -2852,7 +2852,7 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.6.0";
+var APP_VERSION = "4.6.1";
 // Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
 (function () {
   var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
@@ -4551,6 +4551,7 @@ var FAQ = [
   { c: "Umum", q: "Bagaimana cara memeriksa naskah?", k: "cara cek periksa unggah upload mulai langkah pakai menggunakan", a: "Buka Cek Plagiasi & AI, lalu unggah PDF atau Word, atau tempel teks. Hasil langsung muncul. Tekan Cari untuk mencocokkan dengan sumber internet dan jurnal, lalu unduh laporan PDF.", go: ["#periksa", "Mulai periksa"] },
   { c: "Umum", q: "Apakah CekTeks gratis?", k: "gratis bayar harga biaya tarif jasa berbayar langganan premium", a: "Semua fitur CekTeks gratis, tanpa akun dan tanpa langganan. Bila Anda ingin naskah diperiksakan oleh kami beserta laporannya, lihat paket di halaman Layanan & Harga.", go: ["#layanan", "Lihat layanan & harga"] },
   { c: "Hasil", q: "Kenapa skor saya berbeda dengan Turnitin atau situs lain?", k: "beda berbeda turnitin mulfu skor hasil lain selisih", a: "Setiap layanan memakai basis data dan aturan berbeda. Turnitin juga membandingkan dengan basis data tugas dan jurnal tertutup yang tidak terbuka untuk umum, sedangkan CekTeks memakai sumber terbuka dan bank naskah Anda. Pengaturan seperti mengabaikan daftar pustaka, kutipan, dan sumber kecil juga mengubah skor." },
+  { c: "Umum", q: "Apakah CekTeks sama dengan Turnitin?", k: "turnitin sama resmi kampus alternatif", a: "Tidak. CekTeks adalah alternatif untuk cek mandiri sebelum naskah dikumpulkan dan tidak berafiliasi dengan Turnitin. CekTeks memakai sumber terbuka (jurnal, repositori kampus, Wikipedia, dan web) serta bank naskah Anda, jadi skornya bisa berbeda dengan Turnitin di kampus." },
   { c: "Hasil", q: "Kenapa kesamaan 0% padahal naskah panjang?", k: "nol 0 persen kosong tidak ada sumber rendah", a: "Pastikan cek internet sudah berjalan (tombol Cari) dan perangkat sedang online. Tanpa cek internet, naskah hanya dibandingkan dengan sumber di halaman Sumber dan bank naskah. Untuk naskah panjang, pilih kedalaman Mendalam.", go: ["#periksa", "Buka pemeriksaan"] },
   { c: "Hasil", q: "Seberapa akurat deteksi tulisan AI?", k: "ai akurat chatgpt gpt gemini deteksi buatan mesin", a: "Deteksi AI adalah perkiraan dari gaya tulisan, seperti keseragaman kalimat dan frasa khas AI. Tulisan manusia yang sangat formal bisa mendapat skor sedang, dan teks di bawah 80 kata kurang andal. Jangan jadikan skor AI satu-satunya dasar keputusan." },
   { c: "Hasil", q: "Bagaimana menurunkan skor kesamaan dengan benar?", k: "turun menurunkan parafrase skor tinggi memperbaiki", a: "Tulis ulang bagian yang sama dengan pemahaman dan kata-kata sendiri, lalu cantumkan sitasi. Buka panel Bandingkan untuk melihat bagian yang sama dengan sumber, lalu jadikan kutipan bersitasi. CekTeks tidak menyediakan jasa memanipulasi skor." },
@@ -6850,7 +6851,7 @@ renderSources(); renderCmp();
 var draft = store("ct_draft");
 if (draft && draft.trim()) setText(draft, false); else setText(SAMPLE, true);
 setMode("review");
-var h0 = location.hash.slice(1); if (/^[a-z]+$/.test(h0) && $("#view-" + h0)) showView(h0); else showView("periksa");
+var h0 = location.hash.slice(1); if (/^[a-z]+$/.test(h0) && $("#view-" + h0)) showView(h0); else showView("beranda");
 $("#sideVer").textContent = "v" + APP_VERSION;
 if (IS_APP) $("#installBtn").hidden = true;
 // QRIS didefinisikan sesudah modul Layanan; render ulang agar tombol Bayar dengan QRIS dan isian pemilik lengkap.
