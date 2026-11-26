@@ -2,6 +2,33 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.8.0] - 2026-11-26
+### Ditambahkan
+- **Login online dengan Google atau email + kata sandi** (backend Supabase, HTTPS).
+  - Daftar, masuk, keluar, dan lupa kata sandi (tautan reset lewat email).
+  - Kata sandi disimpan sebagai hash bcrypt oleh Supabase Auth.
+  - Riwayat pemeriksaan (ringkasan, bukan isi naskah) dan pesanan layanan tersimpan di akun dan bisa dibuka dari
+    perangkat lain.
+- **Skema basis data** `cekteks/supabase/skema.sql`:
+  - Tabel `profil`, `riwayat`, dan `pesanan` dengan Row Level Security, sehingga setiap pengguna hanya bisa membaca
+    dan mengubah barisnya sendiri.
+  - Kunci publik (anon) tidak punya akses ke tabel.
+  - Pengguna tidak bisa menandai pesanannya sendiri sebagai dibayar.
+  - Profil dibuat otomatis saat mendaftar.
+- **Uji RLS** `cekteks/supabase/uji.sh` di PostgreSQL sungguhan, ikut dijalankan di CI. Uji ini terbukti gagal bila
+  RLS dimatikan.
+- **Panduan pemasangan** `cekteks/supabase/PANDUAN.md`: proyek Supabase, login email, Google OAuth, dan kunci yang
+  aman.
+- **Pengaman kunci**: situs menolak kunci rahasia Supabase (`service_role` / `sb_secret_`) bila tidak sengaja
+  dipasang.
+- Formulir Pengaturan situs dilengkapi kolom Supabase. Akun offline terenkripsi tetap tersedia lewat
+  "Pakai akun offline di perangkat ini".
+
+### Diubah
+- **Warna dikunci biru dongker (#1f3363)**. Pilihan warna dihapus dari panel Tampilan, perintah, dan Pengaturan
+  situs. Panel Tampilan kini hanya mengatur mode terang/gelap, dengan ikon baru.
+- Kebijakan Privasi: bagian Akun menjelaskan data yang disimpan di akun online.
+
 ## [4.7.2] - 2026-11-21
 ### Diubah
 - **Kaki halaman ditulis ulang.** Tiga kolom (Layanan, Bantuan, Legal) dan baris "© 2026 CekTeks · Dibuat di

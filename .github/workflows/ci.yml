@@ -36,6 +36,9 @@ jobs:
             exit 1
           fi
 
+      - name: Uji keamanan basis data login (Row Level Security)
+        run: bash cekteks/supabase/uji.sh
+
       - uses: actions/setup-node@v7
         with:
           node-version: "22"
