@@ -49,7 +49,7 @@ def write(path, data):
 
 
 # Warna tema yang bisa dipilih di site.json (warna aksen terang). Harus sama dengan PRESET di app.html.
-ACCENTS = {"teal": "#0f5f6e", "biru": "#234a8c", "ungu": "#5a3d8f", "hijau": "#23704c", "marun": "#8e2c3b", "oranye": "#a9501c", "grafit": "#2f3338"}
+ACCENTS = {"teal": "#0f5f6e", "biru": "#1f3363", "ungu": "#5a3d8f", "hijau": "#23704c", "marun": "#8e2c3b", "oranye": "#a9501c", "grafit": "#2f3338"}
 
 
 def load_site():

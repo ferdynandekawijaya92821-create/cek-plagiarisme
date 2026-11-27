@@ -594,14 +594,16 @@ async function download(page, selector) {
     });
     ok(!r[0] && /99%/.test(r[1]) && /turun 87/.test(r[1]) && r[2], "jejak pemeriksaan sebelumnya salah: " + r[1]);
   });
-  await test("tampilan: mode & warna tema disimpan, laporan PDF ikut warna tema", async () => {
+  await test("tampilan: warna dikunci biru dongker (tanpa pilihan warna), mode gelap disimpan, PDF ikut biru dongker", async () => {
+    await page.evaluate(() => { localStorage.setItem("ct_accent", "hijau"); applyTheme(); });
     await page.click("#themeBtn"); ok(await page.isVisible("#appear"), "panel Tampilan tidak terbuka");
-    await page.click('#swatches [data-acc="hijau"]'); await page.click('#modeSegs [data-mode="dark"]');
-    const r = await page.evaluate(() => [document.documentElement.dataset.accent, document.documentElement.dataset.theme, localStorage.ct_accent, accRGB().join(","), getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()]);
-    ok(r[0] === "hijau" && r[1] === "dark" && r[2] === "hijau" && r[3] === "35,112,76" && r[4] === "#82cfa5", "tema tidak diterapkan: " + r);
+    ok((await page.$$("#appear [data-acc]")).length === 0, "pilihan warna masih ada");
+    await page.click('#modeSegs [data-mode="dark"]');
+    const r = await page.evaluate(() => [document.documentElement.dataset.accent, document.documentElement.dataset.theme, accRGB().join(","), getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()]);
+    ok(r[0] === "biru" && r[1] === "dark" && r[2] === "31,51,99" && r[3] === "#93b2ec", "tema tidak diterapkan: " + r);
     await page.keyboard.press("Escape"); ok(!(await page.isVisible("#appear")), "Esc tidak menutup panel");
-    await page.evaluate(() => { setThemeMode("auto"); setAccent(SITE.warna); });
-    ok(await page.evaluate(() => !document.documentElement.dataset.theme && !localStorage.ct_accent && document.documentElement.dataset.accent === SITE.warna), "tema tidak kembali ke bawaan situs");
+    await page.evaluate(() => setThemeMode("auto"));
+    ok(await page.evaluate(() => !document.documentElement.dataset.theme && getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() === "#1f3363"), "warna terang bukan biru dongker");
   });
   await test("site.json: warna bawaan, teks berjalan, dan banner iklan tampil; tautan iklan membuka halaman", async () => {
     const r = await page.evaluate(() => [!!window.CEKTEKS_SITE, document.documentElement.dataset.accent === CEKTEKS_SITE.warna, document.querySelectorAll("#tkTrack .tk-set").length, document.querySelectorAll("#adHome .ad").length]);
@@ -883,6 +885,73 @@ async function download(page, selector) {
       r = await p6.evaluate(() => [ACC && ACC.name, S.text.indexOf("lele") >= 0, BANK[0].name]);
       ok(r[0] === "Rina" && r[1] && r[2] === "Skripsi Rina", "masuk ulang tidak membuka data: " + JSON.stringify(r));
       await c6.close();
+    });
+    await test("login online: daftar email, Google, keluar, akun lain tidak melihat riwayat, kata sandi salah ditolak, kunci rahasia ditolak", async () => {
+      const { ctx: c7, page: p7 } = await newPage(browser, { viewport: { width: 1280, height: 860 } });
+      await c7.addInitScript(() => {
+        localStorage.setItem("ct_site_preview", JSON.stringify({ warna: "biru", cs: { nama: "CS CekTeks", whatsapp: "", email: "" }, iklan: { aktif: false },
+          login: { supabase_url: "https://abcdefgh.supabase.co", supabase_anon_key: "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.tanda-tangan" } }));
+        // Supabase tiruan: akun & baris data per pengguna (RLS sungguhan diuji terpisah di cekteks/supabase/uji.sh).
+        window.supabase = { createClient: () => {
+          const L = [], J = (k, d) => JSON.parse(localStorage.getItem(k) || d), W = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+          let sess = J("ct_sb_auth", "null");
+          const emit = (ev) => L.forEach((f) => f(ev, sess));
+          const pub = (u) => ({ id: u.id, email: u.email, user_metadata: u.user_metadata, app_metadata: u.app_metadata });
+          const start = (u) => { sess = { user: pub(u) }; W("ct_sb_auth", sess); emit("SIGNED_IN"); return { data: { session: sess, user: sess.user }, error: null }; };
+          const auth = {
+            getSession: async () => ({ data: { session: sess } }),
+            onAuthStateChange: (f) => { L.push(f); return { data: { subscription: { unsubscribe() {} } } }; },
+            signUp: async ({ email, password, options }) => { const us = J("__users", "{}"); if (us[email]) return { data: {}, error: { message: "User already registered" } };
+              us[email] = { id: "u" + Object.keys(us).length, email, password, user_metadata: options.data, app_metadata: { provider: "email" } }; W("__users", us); return start(us[email]); },
+            signInWithPassword: async ({ email, password }) => { const u = J("__users", "{}")[email]; return u && u.password === password ? start(u) : { data: {}, error: { message: "Invalid login credentials" } }; },
+            signOut: async () => { sess = null; localStorage.removeItem("ct_sb_auth"); emit("SIGNED_OUT"); return { error: null }; },
+            signInWithOAuth: async (o) => { window.__oauth = o; return { data: {}, error: null }; },
+            resetPasswordForEmail: async (e, o) => { window.__reset = [e, o]; return { data: {}, error: null }; },
+            updateUser: async () => ({ data: {}, error: null }),
+          };
+          const from = (t) => {
+            const uid = sess && sess.user.id, all = J("__rows", "{}"), mine = (all[t] || {})[uid] || {};
+            const save = (m) => { all[t] = all[t] || {}; all[t][uid] = m; W("__rows", all); };
+            return {
+              select() { const q = { order: () => q, limit: () => q, then: (a, b) => Promise.resolve({ data: uid ? Object.values(mine) : [], error: null }).then(a, b) }; return q; },
+              upsert(r) { save(Object.assign({}, mine, { [r.id]: r })); return Promise.resolve({ error: null }); },
+              insert(r) { save(Object.assign({}, mine, { [r.id]: r })); return Promise.resolve({ error: null }); },
+              delete() { return { eq: (k, v) => { const m = Object.assign({}, mine); delete m[v]; save(m); return Promise.resolve({ error: null }); } }; },
+            };
+          };
+          return { auth, from };
+        } };
+      });
+      await p7.goto(SITE + "#riwayat"); await ready(p7);
+      await p7.click("#accBtn"); await p7.waitForSelector("#cloudGoogle");
+      await p7.click('[data-cloud="daftar"]');
+      await p7.fill("#cpNm", "Sari"); await p7.fill("#cpEm", "sari@gmail.com"); await p7.fill("#cpPw", "kuatsekali1"); await p7.fill("#cpPw2", "kuatsekali1");
+      await p7.check("#cpOk", { force: true }); await p7.click('#cloudUpF [type="submit"]');
+      await p7.waitForFunction(() => document.querySelector("#accLbl").textContent === "Sari");
+      await p7.evaluate(() => histPut({ id: "h1", date: new Date().toISOString(), client: "", doc: "skripsi-sari.pdf", words: 1200, score: 12, exact: 10, para: 2, ai: 30, sources: [], price: 0, paid: false, note: "" }));
+      await p7.waitForFunction(() => HIST.length === 1);
+      ok(await p7.evaluate(() => /skripsi-sari/.test(localStorage.getItem("__rows"))), "riwayat tidak tersimpan di akun online");
+      await p7.click("#accBtn"); await p7.click("#cloudOut");
+      await p7.waitForFunction(() => document.querySelector("#accLbl").textContent === "Masuk");
+      ok(await p7.evaluate(() => HIST.every((e) => e.doc !== "skripsi-sari.pdf")), "riwayat Sari masih terlihat setelah keluar");
+      await p7.click("#accBtn"); await p7.click("#cloudGoogle");
+      const oa = await p7.evaluate(() => window.__oauth);
+      ok(oa && oa.provider === "google" && /^http:\/\/127\.0\.0\.1:\d+\/$/.test(oa.options.redirectTo), "login Google salah: " + JSON.stringify(oa));
+      await p7.click('[data-cloud="daftar"]');
+      await p7.fill("#cpNm", "Budi"); await p7.fill("#cpEm", "budi@contoh.id"); await p7.fill("#cpPw", "rahasiabudi9"); await p7.fill("#cpPw2", "rahasiabudi9");
+      await p7.check("#cpOk", { force: true }); await p7.click('#cloudUpF [type="submit"]');
+      await p7.waitForFunction(() => document.querySelector("#accLbl").textContent === "Budi"); await p7.waitForTimeout(300);
+      ok(await p7.evaluate(() => HIST.length === 0), "Budi melihat riwayat Sari");
+      await p7.click("#accBtn"); await p7.click("#cloudOut"); await p7.waitForFunction(() => document.querySelector("#accLbl").textContent === "Masuk");
+      await p7.click("#accBtn"); await p7.fill("#cpEm", "sari@gmail.com"); await p7.fill("#cpPw", "salah123"); await p7.click('#cloudInF [type="submit"]');
+      await p7.waitForFunction(() => /Email atau kata sandi salah/.test(document.querySelector("#toast").textContent));
+      await p7.fill("#cpPw", "kuatsekali1"); await p7.click('#cloudInF [type="submit"]');
+      await p7.waitForFunction(() => document.querySelector("#accLbl").textContent === "Sari");
+      await p7.waitForFunction(() => HIST.length === 1 && HIST[0].doc === "skripsi-sari.pdf");
+      const sec = await p7.evaluate(() => { const keep = localStorage.getItem("ct_site_preview"), v = JSON.parse(keep);
+        v.login.supabase_anon_key = "sb_secret_abcdefghijklmnopqrstuvwxyz"; localStorage.setItem("ct_site_preview", JSON.stringify(v)); const r = cloudCfg(); localStorage.setItem("ct_site_preview", keep); return r; });
+      ok(sec === null, "kunci rahasia Supabase tidak ditolak");
+      await c7.close();
     });
     await c3.close();
   }

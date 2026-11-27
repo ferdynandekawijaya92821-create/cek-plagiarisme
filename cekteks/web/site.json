@@ -1,6 +1,11 @@
 {
-  "_petunjuk": "Pengaturan situs CekTeks. Ubah berkas ini lewat GitHub (ikon pensil), lalu Commit. Situs diperbarui otomatis dalam 1-2 menit. Pilihan warna: teal, biru, ungu, hijau, marun, oranye, grafit. Nomor WhatsApp ditulis dengan kode negara, mis. 6281234567890. Tautan bisa alamat web (https://...), halaman CekTeks (#kode, #massal, #bantuan), atau 'cs' untuk membuka chat CS. Paket layanan: harga diisi angka rupiah tanpa titik (mis. 20000) atau dikosongkan (tampil 'Tanya harga'); 'unggulan': true menandai paket yang disarankan. Pembayaran: isi 'qris' dengan kode QRIS statis toko Anda (dibaca otomatis dari formulir Pengaturan situs). 'google_verifikasi': kode dari Google Search Console (opsional).",
+  "_petunjuk": "Pengaturan situs CekTeks. Ubah berkas ini lewat GitHub (ikon pensil), lalu Commit. Situs diperbarui otomatis dalam 1-2 menit. Nomor WhatsApp ditulis dengan kode negara, mis. 6281234567890. Tautan bisa alamat web (https://...), halaman CekTeks (#kode, #massal, #bantuan), atau 'cs' untuk membuka chat CS. Paket layanan: harga diisi angka rupiah tanpa titik (mis. 20000) atau dikosongkan (tampil 'Tanya harga'); 'unggulan': true menandai paket yang disarankan. Pembayaran: isi 'qris' dengan kode QRIS statis toko Anda (dibaca otomatis dari formulir Pengaturan situs). 'google_verifikasi': kode dari Google Search Console (opsional). Login online: isi login.supabase_url dan login.supabase_anon_key (kunci anon/publishable, BUKAN kunci rahasia) dari Supabase → Project Settings → API; panduan di cekteks/supabase/PANDUAN.md.",
   "warna": "biru",
+  "login": {
+    "supabase_url": "",
+    "supabase_anon_key": "",
+    "google": true
+  },
   "cs": {
     "nama": "CS CekTeks",
     "whatsapp": "62859106977360",

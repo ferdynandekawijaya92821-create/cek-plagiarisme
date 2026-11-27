@@ -905,7 +905,7 @@ kbd { font: 600 11px var(--f-mono); padding: 2px 6px; border-radius: 6px; border
 
 /* ===== v4.2: warna tema (data-accent di <html>) ===== */
 :root[data-accent="teal"] { --accent: #0f5f6e; --accent-ink: #ffffff; --accent-soft: #e1ecec; }
-:root[data-accent="biru"] { --accent: #234a8c; --accent-ink: #ffffff; --accent-soft: #e5e9f1; }
+:root[data-accent="biru"] { --accent: #1f3363; --accent-ink: #ffffff; --accent-soft: #e4e8f1; }
 :root[data-accent="ungu"] { --accent: #5a3d8f; --accent-ink: #ffffff; --accent-soft: #ebe5f1; }
 :root[data-accent="hijau"] { --accent: #23704c; --accent-ink: #ffffff; --accent-soft: #e2ece4; }
 :root[data-accent="marun"] { --accent: #8e2c3b; --accent-ink: #ffffff; --accent-soft: #f1e3e2; }
@@ -1329,6 +1329,13 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 .foot-base { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 20px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
 .foot-base .num { margin-left: auto; }
 @media (max-width: 760px) { .foot { grid-template-columns: minmax(0, 1fr); } .foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-base .num { margin-left: 0; } }
+
+/* v4.8: login online */
+.gbtn { width: 100%; justify-content: center; gap: 10px; min-height: 46px; background: #fff; color: #1f1f1f; border: 1px solid #dadce0; font-weight: 600; }
+.gbtn:hover { background: #f7f8fa; }
+.gbtn svg { width: 18px; height: 18px; }
+.ordiv { display: flex; align-items: center; gap: 12px; margin: 14px 0; color: var(--muted); font-size: 12.5px; }
+.ordiv::before, .ordiv::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
 </style>
 
 <aside class="side" id="side" aria-label="Menu utama">
@@ -1377,16 +1384,13 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
       </div>
       <span class="net" id="net" title="Status koneksi"><i></i><span id="netText">Online</span></span>
       <button class="accbtn" id="accBtn" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span id="accLbl">Masuk</span></button>
-      <button class="themebtn" id="themeBtn" type="button" aria-label="Tampilan: tema dan warna" title="Tampilan: tema &amp; warna" aria-haspopup="dialog" aria-expanded="false" aria-controls="appear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.8-.5-1.2 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10.5" cy="7.5" r="1.2" fill="currentColor"/><circle cx="15" cy="7.8" r="1.2" fill="currentColor"/></svg></button>
+      <button class="themebtn" id="themeBtn" type="button" aria-label="Tampilan: terang atau gelap" title="Tampilan: terang atau gelap" aria-haspopup="dialog" aria-expanded="false" aria-controls="appear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg></button>
     </div>
   </div>
 </header>
 <div class="appear" id="appear" role="dialog" aria-label="Tampilan" hidden>
   <h2>Mode</h2>
   <div class="segs" id="modeSegs"><button type="button" data-mode="auto" aria-pressed="false">Otomatis</button><button type="button" data-mode="light" aria-pressed="false">Terang</button><button type="button" data-mode="dark" aria-pressed="false">Gelap</button></div>
-  <h2>Warna</h2>
-  <div class="swatches" id="swatches"></div>
-  <p class="muted">Pilihan ini hanya untuk perangkat Anda. Warna laporan PDF ikut menyesuaikan.</p>
 </div>
 
 <main>
@@ -2003,7 +2007,6 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
               <p class="hint" style="margin:0">CekTeks tidak punya server, jadi pengaturan yang terlihat oleh <b>semua pengunjung</b> disimpan di berkas <code>cekteks/web/site.json</code> di GitHub. Isi formulir ini, tekan <b>Pratinjau</b> untuk melihat hasilnya di perangkat ini, lalu <b>Salin site.json</b> dan tempel ke editor GitHub. Situs dan aplikasi diperbarui otomatis 1–2 menit setelah disimpan.</p>
               <div class="ownerform" id="ownerForm">
                 <div class="two">
-                  <label for="oWarna">Warna bawaan<select id="oWarna"></select></label>
                   <label for="oNama">Nama CS<input type="text" id="oNama" autocomplete="off"></label>
                 </div>
                 <div class="two">
@@ -2014,6 +2017,8 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
                 <label for="oSapa">Sapaan chat<input type="text" id="oSapa" autocomplete="off"></label>
                 <label for="oQris"><span>Kode QRIS toko <span class="muted" style="font-weight:400">· untuk tombol Bayar dengan QRIS</span></span><textarea id="oQris" spellcheck="false" style="min-height:64px" placeholder="000201010211…"></textarea></label>
                 <div class="btnrow"><label class="btn sm" for="oQrisImg">Baca dari gambar QRIS</label><input type="file" id="oQrisImg" class="sr-only" accept="image/*"><span class="hint" id="oQrisInfo" style="margin:0;align-self:center"></span></div>
+                <label for="oSbUrl"><span>Login online: Supabase URL <span class="muted" style="font-weight:400">· opsional</span></span><input type="url" id="oSbUrl" autocomplete="off" spellcheck="false" placeholder="https://xxxx.supabase.co"></label>
+                <label for="oSbKey"><span>Supabase anon / publishable key <span class="muted" style="font-weight:400">· JANGAN isi kunci rahasia</span></span><input type="text" id="oSbKey" autocomplete="off" spellcheck="false"></label>
                 <label for="oGoogle"><span>Kode verifikasi Google <span class="muted" style="font-weight:400">· opsional, dari Google Search Console</span></span><input type="text" id="oGoogle" autocomplete="off" spellcheck="false" placeholder="mis. AbCdEf123…"></label>
                 <label class="toggle" for="oLyOn"><input type="checkbox" id="oLyOn"><span class="tr" aria-hidden="true"></span>Tampilkan halaman Layanan &amp; Harga</label>
                 <label for="oPaket"><span>Paket layanan <span class="muted" style="font-weight:400">· satu per baris: nama | harga | satuan | fitur1; fitur2 | unggulan (ya/kosong)</span></span><textarea id="oPaket" spellcheck="false" placeholder="Cek Plagiasi | 15000 | per dokumen | Laporan PDF; Kode verifikasi |"></textarea></label>
@@ -2295,7 +2300,8 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
         <h3>2. Cek di internet</h3>
         <p>Untuk mencari kemiripan di internet, potongan kalimat dan kata kunci dari naskah dikirim ke layanan pencarian yang Anda aktifkan, seperti Wikipedia, OpenAlex, Crossref, DOAJ, atau Google lewat Serper. Naskah utuh tidak pernah dikirim. Bila naskah sangat rahasia, matikan cek internet dan periksa dengan sumber yang Anda tambahkan sendiri.</p>
         <h3>3. Akun</h3>
-        <p>Akun CekTeks dibuat di perangkat Anda, tanpa email dan tanpa server. Naskah, riwayat, bank naskah, dan pengaturan sebuah akun dienkripsi dengan kata sandinya (AES-256), sehingga orang lain yang memakai perangkat yang sama tidak bisa membukanya. Kami tidak menyimpan kata sandi Anda, jadi kata sandi yang lupa tidak bisa dipulihkan.</p>
+        <p>Bila Anda masuk dengan Google atau email, akun dikelola oleh Supabase (penyedia basis data dan login). Yang disimpan hanya email, nama, riwayat ringkas pemeriksaan (nama dokumen, skor, tanggal), dan pesanan layanan. Isi naskah tidak diunggah. Kata sandi disimpan dalam bentuk hash bcrypt, bukan teks aslinya, dan aturan keamanan basis data (Row Level Security) membuat setiap akun hanya bisa membaca datanya sendiri. Anda dapat meminta penghapusan akun lewat CS.</p>
+        <p>Akun offline juga tersedia: dibuat di perangkat Anda, tanpa email dan tanpa server. Naskah, riwayat, bank naskah, dan pengaturan sebuah akun dienkripsi dengan kata sandinya (AES-256), sehingga orang lain yang memakai perangkat yang sama tidak bisa membukanya. Kami tidak menyimpan kata sandi Anda, jadi kata sandi yang lupa tidak bisa dipulihkan.</p>
         <h3>4. Layanan pemeriksaan berbayar</h3>
         <p>Saat memesan, nama, nomor WhatsApp, dan naskah yang Anda kirim kepada CS hanya dipakai untuk mengerjakan pesanan itu dan menghubungi Anda tentangnya. Naskah pesanan tidak dimasukkan ke bank naskah tanpa izin Anda, tidak dibagikan ke pihak lain, dan bisa Anda minta dihapus kapan saja. Pembayaran QRIS diproses oleh aplikasi bank atau e-wallet Anda; kami hanya menerima nama pengirim dan nominal pembayaran.</p>
         <h3>5. Penyimpanan di perangkat</h3>
@@ -2395,7 +2401,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
   <section class="drawer-panel billpanel" role="dialog" aria-modal="true" aria-labelledby="accTitle">
     <header class="drawer-h">
       <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
-      <div class="drawer-t"><b id="accTitle">Akun</b><span class="muted">Terenkripsi di perangkat ini</span></div>
+      <div class="drawer-t"><b id="accTitle">Akun</b><span class="muted" id="accSub">Masuk atau daftar</span></div>
       <button type="button" class="btn sm icon-only" data-close="1" aria-label="Tutup akun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </header>
     <div class="drawer-b" id="accBody"></div>
@@ -2988,7 +2994,7 @@ function recDec(list) {
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.7.2";
+var APP_VERSION = "4.8.0";
 // Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
 (function () {
   var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
@@ -4083,7 +4089,6 @@ function cmdList() {
     { t: "Cek di internet", k: "Perintah", ic: IC('<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>'), run: function () { showView("periksa"); runWebSearch(); } },
     { t: "Unduh laporan PDF", k: "Perintah", ic: IC('<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>'), run: function () { showView("periksa"); $("#dlPdf").click(); } },
     { t: "Ganti tema terang/gelap", k: "Perintah", ic: IC('<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>'), run: function () { var dark = document.documentElement.getAttribute("data-theme") === "dark" || (curMode() === "auto" && matchMedia("(prefers-color-scheme: dark)").matches); setThemeMode(dark ? "light" : "dark"); } },
-    { t: "Ganti warna tema", k: "Perintah", ic: IC('<circle cx="12" cy="12" r="9"/><path d="M12 3v18"/>'), run: function () { setTimeout(openAppear, 0); } },
     { t: "Chat customer service", k: "Perintah", ic: IC('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/>'), run: function () { openCS(); } },
     { t: "Coba teks contoh", k: "Perintah", ic: IC('<path d="M6 3h9l4 4v14H6z"/>'), run: function () { showView("periksa"); $("#sampleBtn").click(); } }
   ]);
@@ -4567,7 +4572,7 @@ $("#tipClose").onclick = function () { $("#tipBar").hidden = true; store("ct_tip
 $("#tipGuide").onclick = function () { showView("metode"); };
 /* ===== v4.2: pengaturan situs (site.json), tampilan, iklan, chat CS, bantuan ===== */
 // Warna tema: [nama, aksen terang, aksen gelap]. Harus sama dengan ACCENTS di build.py dan CSS data-accent.
-var PRESET = { teal: ["Teal", "#0f5f6e", "#6cc3cf"], biru: ["Biru", "#234a8c", "#93b2ec"], ungu: ["Ungu", "#5a3d8f", "#bba5ec"], hijau: ["Hijau", "#23704c", "#82cfa5"], marun: ["Marun", "#8e2c3b", "#ec98a5"], oranye: ["Oranye", "#a9501c", "#f0a46d"], grafit: ["Grafit", "#2f3338", "#bcc2ca"] };
+var PRESET = { teal: ["Teal", "#0f5f6e", "#6cc3cf"], biru: ["Biru dongker", "#1f3363", "#93b2ec"], ungu: ["Ungu", "#5a3d8f", "#bba5ec"], hijau: ["Hijau", "#23704c", "#82cfa5"], marun: ["Marun", "#8e2c3b", "#ec98a5"], oranye: ["Oranye", "#a9501c", "#f0a46d"], grafit: ["Grafit", "#2f3338", "#bcc2ca"] };
 var SITE_DEF = { warna: "teal", cs: { nama: "CS CekTeks", whatsapp: "", email: "", jam: "", sapaan: "Halo! Ada yang bisa kami bantu? Pilih pertanyaan di bawah atau ketik pertanyaan Anda." }, iklan: { aktif: false, teks_berjalan: [], banner: [] } };
 function siteCfg() {
   // Bawaan dari site.json (disisipkan saat build). Pemilik bisa mencoba perubahan di perangkatnya lewat "Pratinjau".
@@ -4582,7 +4587,7 @@ var SITE = siteCfg();
 
 /* ---- tampilan: mode terang/gelap + warna ---- */
 function curMode() { var t = store("ct_theme"); return t === "light" || t === "dark" ? t : "auto"; }
-function curAccent() { var a = store("ct_accent"); return PRESET[a] ? a : SITE.warna; }
+function curAccent() { return "biru"; }   // warna dikunci: biru dongker
 function accRGB() { var h = PRESET[curAccent()][1]; return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
 function accHex() { return PRESET[curAccent()][1]; }
 function applyTheme() {
@@ -4594,13 +4599,9 @@ function applyTheme() {
   document.querySelectorAll("#swatches [data-acc]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.acc === a); });
 }
 function setThemeMode(m) { if (m === "auto") storeDel("ct_theme"); else store("ct_theme", m); applyTheme(); }
-function setAccent(a) { if (a === SITE.warna) storeDel("ct_accent"); else store("ct_accent", a); applyTheme(); }
-$("#swatches").innerHTML = Object.keys(PRESET).map(function (k) {
-  return '<button type="button" class="sw" data-acc="' + k + '" aria-pressed="false" style="--c:' + PRESET[k][1] + '"><i aria-hidden="true"></i>' + PRESET[k][0] + (k === SITE.warna ? '<span class="sr-only"> (bawaan situs)</span>' : "") + "</button>";
-}).join("");
+function setAccent() { storeDel("ct_accent"); applyTheme(); }
 $("#modeSegs").addEventListener("click", function (e) { var b = e.target.closest("[data-mode]"); if (b) setThemeMode(b.dataset.mode); });
-$("#swatches").addEventListener("click", function (e) { var b = e.target.closest("[data-acc]"); if (b) setAccent(b.dataset.acc); });
-function openAppear() { $("#appear").hidden = false; $("#themeBtn").setAttribute("aria-expanded", "true"); var b = $('#swatches [aria-pressed="true"]'); if (b) b.focus(); }
+function openAppear() { $("#appear").hidden = false; $("#themeBtn").setAttribute("aria-expanded", "true"); var b = $('#modeSegs [aria-pressed="true"]'); if (b) b.focus(); }
 function closeAppear(focus) { if ($("#appear").hidden) return; $("#appear").hidden = true; $("#themeBtn").setAttribute("aria-expanded", "false"); if (focus) $("#themeBtn").focus(); }
 $("#themeBtn").onclick = function (e) { e.stopPropagation(); if ($("#appear").hidden) openAppear(); else closeAppear(); };
 document.addEventListener("click", function (e) { if (!$("#appear").hidden && !e.target.closest("#appear")) closeAppear(); });
@@ -4838,8 +4839,8 @@ function renderPrev(pv, nWords) {
 
 /* ---- pengaturan situs untuk pemilik ---- */
 function ownerFill() {
-  $("#oWarna").innerHTML = Object.keys(PRESET).map(function (k) { return '<option value="' + k + '">' + PRESET[k][0] + "</option>"; }).join("");
-  $("#oWarna").value = SITE.warna; $("#oNama").value = SITE.cs.nama; $("#oWa").value = SITE.cs.whatsapp; $("#oEmail").value = SITE.cs.email;
+  var LG = (window.CEKTEKS_SITE || {}).login || {}; $("#oSbUrl").value = LG.supabase_url || ""; $("#oSbKey").value = LG.supabase_anon_key || "";
+  $("#oNama").value = SITE.cs.nama; $("#oWa").value = SITE.cs.whatsapp; $("#oEmail").value = SITE.cs.email;
   $("#oJam").value = SITE.cs.jam; $("#oSapa").value = SITE.cs.sapaan; $("#oAds").checked = SITE.iklan.aktif;
   var src = SITE.iklan.aktif ? null : (window.CEKTEKS_SITE || SITE_DEF).iklan || {};
   var tk = SITE.iklan.aktif ? tickerItems() : (src.teks_berjalan || []).map(function (x) { return typeof x === "string" ? { teks: splitBar(x)[0], tautan: splitBar(x)[1] || "" } : x; });
@@ -4853,7 +4854,7 @@ function ownerFill() {
 }
 function ownerCfg() {
   var lines = function (v) { return v.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean); };
-  return { warna: $("#oWarna").value, cs: { nama: $("#oNama").value.trim() || "CS CekTeks", whatsapp: $("#oWa").value.replace(/[^\d]/g, ""), email: $("#oEmail").value.trim(), jam: $("#oJam").value.trim(), sapaan: $("#oSapa").value.trim() || SITE_DEF.cs.sapaan },
+  return { warna: "biru", login: { supabase_url: $("#oSbUrl").value.trim(), supabase_anon_key: $("#oSbKey").value.trim(), google: true }, cs: { nama: $("#oNama").value.trim() || "CS CekTeks", whatsapp: $("#oWa").value.replace(/[^\d]/g, ""), email: $("#oEmail").value.trim(), jam: $("#oJam").value.trim(), sapaan: $("#oSapa").value.trim() || SITE_DEF.cs.sapaan },
     layanan: { aktif: $("#oLyOn").checked, judul: lyCfg().judul, catatan: lyCfg().catatan,
       paket: lines($("#oPaket").value).map(function (l) { var p = splitBar(l); return { nama: p[0] || "", harga: p[1] || "", satuan: p[2] || "", fitur: (p[3] || "").split(";").map(function (f) { return f.trim(); }).filter(Boolean), unggulan: /^(ya|y|true|1)$/i.test(p[4] || "") }; }).filter(function (x) { return x.nama; }) },
     pembayaran: { qris: $("#oQris").value.trim(), kode_unik: true },
@@ -4961,7 +4962,7 @@ function openPay() {
   var pay = payCfg(), p = lyPick(), n = lyNum(p.harga), q = lyQty();
   if (!pay.qris || !n) return toast("Pembayaran QRIS belum tersedia untuk paket ini. Tanyakan lewat WhatsApp.");
   var kode = pay.kodeUnik ? 1 + Math.floor(Math.random() * 299) : 0, o = { id: newOrderId(), paket: p.nama, unit: lyUnit(p), qty: q, harga: n, subtotal: n * q, kode: kode, total: n * q + kode };
-  PAYST.order = o; PAYST.canvas = null;
+  PAYST.order = o; PAYST.canvas = null; cloudOrder(o);
   try { store("ct_order_last", JSON.stringify(Object.assign({ date: new Date().toISOString() }, o))); } catch (e) {}
   $("#paySub").textContent = "Pesanan " + o.id;
   var waBtn = waNum() ? '<a class="btn wa" id="payWa" target="_blank" rel="noopener" href="' + esc(waLink(lyMsg(o))) + '">' + WA_IC + "Saya sudah bayar, kirim bukti</a>" : "";
@@ -5193,8 +5194,10 @@ document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$
 var HIST = [];
 var RP = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
 function histReq(mode, fn) { return bankReq(mode, fn, "history"); }
-function loadHist() { return histReq("readonly", function (st) { return st.getAll(); }).then(recDec).then(function (all) { HIST = (all || []).sort(function (a, b) { return a.date < b.date ? 1 : -1; }); renderHist(); if (S.lastPv != null) renderPrev(S.lastPv, S.lastN); }, function () { HIST = []; renderHist(); }); }
-function histPut(e) { return recEnc(e).then(function (r) { return histReq("readwrite", function (st) { st.put(r); return null; }); }).then(loadHist); }
+function loadHist() {
+  if (CLOUD_USER) return cloudHistLoad().then(function (all) { HIST = all.sort(function (a, b) { return a.date < b.date ? 1 : -1; }); renderHist(); if (S.lastPv != null) renderPrev(S.lastPv, S.lastN); }, function (e) { toast(cloudErr(e)); });
+  return histReq("readonly", function (st) { return st.getAll(); }).then(recDec).then(function (all) { HIST = (all || []).sort(function (a, b) { return a.date < b.date ? 1 : -1; }); renderHist(); if (S.lastPv != null) renderPrev(S.lastPv, S.lastN); }, function () { HIST = []; renderHist(); }); }
+function histPut(e) { if (CLOUD_USER) return cloudHistPut(e).then(loadHist, function (err) { toast(cloudErr(err)); }); return recEnc(e).then(function (r) { return histReq("readwrite", function (st) { st.put(r); return null; }); }).then(loadHist); }
 function recordHistory(r) {
   var e = { id: r.id, date: new Date().toISOString(), client: r.client, doc: r.doc, words: r.words, score: r.plag.score, exact: r.plag.exactScore, para: r.plag.paraScore,
     ai: r.ai.score, sources: r.plag.matched.slice(0, 3).map(function (s) { return s.domain; }), price: +($("#svcPrice").value || 0) || 0, paid: false, note: "",
@@ -5243,7 +5246,7 @@ $("#hList").addEventListener("click", function (e) {
   if (bill) { openBill(bill.closest(".hrow").dataset.id); return; }
   var b = e.target.closest("[data-del]"); if (!b) return;
   var id = b.closest(".hrow").dataset.id;
-  histReq("readwrite", function (st) { st.delete(id); return null; }).then(loadHist).then(function () { toast("Dihapus dari riwayat."); });
+  (CLOUD_USER ? cloudHistDel(id) : histReq("readwrite", function (st) { st.delete(id); return null; })).then(loadHist).then(function () { toast("Dihapus dari riwayat."); }, function (err) { toast(cloudErr(err)); });
 });
 $("#hSearch").oninput = renderHist; $("#hFilter").onchange = renderHist;
 $("#hExport").onclick = function () {
@@ -6988,6 +6991,135 @@ updJbSum();
 updGHint(); setNet();
 if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol) && !IN_FRAME) navigator.serviceWorker.register("sw.js").catch(function () {});
 
+/* ---- login online (Supabase): Google & email + kata sandi; riwayat & pesanan tersimpan di akun ---- */
+// Kata sandi di-hash (bcrypt) oleh Supabase Auth; Row Level Security di basis data memastikan setiap pengguna
+// hanya bisa membaca datanya sendiri. Isi naskah tetap diperiksa di perangkat dan tidak diunggah.
+var SUPA_LIB = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js", SUPA_SRI = "sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O";
+var CLOUD = null, CLOUD_USER = null, CLOUD_P = null;
+function jwtRole(k) { try { return JSON.parse(atob(k.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).role || ""; } catch (e) { return ""; } }
+function cloudCfg() {
+  var c = (window.CEKTEKS_SITE || {}).login, prev = null;
+  try { prev = JSON.parse(store("ct_site_preview") || "null"); } catch (e) {}
+  if (prev && prev.login) c = prev.login;
+  c = c || {};
+  var url = String(c.supabase_url || "").trim().replace(/\/+$/, ""), key = String(c.supabase_anon_key || "").trim();
+  if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url) || key.length < 20) return null;
+  // Kunci rahasia (service_role / sb_secret_) melewati semua pengaman basis data dan TIDAK boleh ada di situs.
+  if (/^sb_secret_/.test(key) || jwtRole(key) === "service_role") { if (!cloudCfg.warned) { cloudCfg.warned = 1; console.error("CekTeks: kunci Supabase di site.json adalah kunci RAHASIA. Login dimatikan; ganti dengan kunci anon/publishable."); } return null; }
+  return { url: url, key: key, google: c.google !== false };
+}
+function cloudInit() {
+  if (CLOUD_P) return CLOUD_P;
+  var c = cloudCfg(); if (!c) return Promise.resolve(null);
+  return (CLOUD_P = (window.supabase ? Promise.resolve() : loadScript(SUPA_LIB, SUPA_SRI)).then(function () {
+    CLOUD = window.supabase.createClient(c.url, c.key, { auth: { flowType: "pkce", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: "ct_sb_auth" } });
+    CLOUD.auth.onAuthStateChange(function (ev, session) { setTimeout(function () { cloudSet(session && session.user, ev); }, 0); });
+    return CLOUD.auth.getSession().then(function (r) { cloudSet(r && r.data && r.data.session && r.data.session.user, "INITIAL"); return CLOUD; });
+  }, function (e) { CLOUD_P = null; throw new Error("Layanan login gagal dimuat. Periksa koneksi internet."); }));
+}
+function cloudName(u) { var m = (u && u.user_metadata) || {}; return String(m.nama || m.full_name || m.name || (u && u.email) || "Akun").slice(0, 40); }
+function cloudSet(u, ev) {
+  var prev = CLOUD_USER && CLOUD_USER.id; CLOUD_USER = u || null;
+  accLabel();
+  if (/[?&]code=/.test(location.search) && ev !== "INITIAL") { try { history.replaceState(null, "", location.pathname + location.hash); } catch (e) {} }
+  if (ev === "PASSWORD_RECOVERY") return openAcc("reset");
+  if ((CLOUD_USER && CLOUD_USER.id) !== prev) {
+    loadHist();
+    if (CLOUD_USER && !$("#lyNama").value) $("#lyNama").value = cloudName(CLOUD_USER);
+    if (!$("#accDrawer").hidden) renderAcc();
+    if (ev === "SIGNED_IN") toast("Masuk sebagai " + cloudName(CLOUD_USER) + ".");
+  }
+}
+function cloudErr(e) {
+  var m = String((e && e.message) || e || "");
+  if (/invalid login credentials/i.test(m)) return "Email atau kata sandi salah.";
+  if (/already registered|already exists/i.test(m)) return "Email ini sudah terdaftar. Silakan masuk.";
+  if (/not confirmed/i.test(m)) return "Email belum dikonfirmasi. Buka tautan di email dari kami, lalu masuk lagi.";
+  if (/rate limit|too many|security purposes/i.test(m)) return "Terlalu banyak percobaan. Tunggu beberapa menit lalu coba lagi.";
+  if (/password/i.test(m) && /least|short|weak/i.test(m)) return "Kata sandi terlalu lemah. Pakai minimal 8 karakter campuran huruf dan angka.";
+  if (/failed to fetch|network/i.test(m)) return "Tidak tersambung ke server login. Periksa koneksi internet.";
+  return m || "Terjadi kesalahan. Coba lagi.";
+}
+function cloudBack() { return location.origin + location.pathname; }
+var G_IC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.3a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.7 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.8 3.6-4.9 6.7-4.9z"/></svg>';
+function renderCloud(mode) {
+  var c = cloudCfg(), b = $("#accBody"), u = CLOUD_USER, h;
+  $("#accSub").textContent = u ? "Masuk" : "Masuk dengan Google atau email";
+  if (mode === "reset") {
+    h = '<form class="ownerform card billcard" id="cloudResetF" novalidate><b>Buat kata sandi baru</b>' +
+      '<label for="cpN1"><span>Kata sandi baru <span class="muted" style="font-weight:400">· minimal 8 karakter</span></span><input type="password" id="cpN1" autocomplete="new-password" minlength="8" required></label>' +
+      '<label for="cpN2"><span>Ulangi kata sandi</span><input type="password" id="cpN2" autocomplete="new-password" minlength="8" required></label>' +
+      '<button type="submit" class="btn primary">Simpan kata sandi</button></form>';
+  } else if (u) {
+    var prov = ((u.app_metadata || {}).provider || "email") === "google" ? "Google" : "email";
+    h = '<div class="card billcard"><div class="accme"><span class="accav" aria-hidden="true">' + esc(cloudName(u).slice(0, 1).toUpperCase()) + "</span><div><b>" + esc(cloudName(u)) + '</b><small class="muted">' + esc(u.email || "") + " · masuk dengan " + prov + "</small></div></div>" +
+      '<p class="hint" style="margin:0">Riwayat pemeriksaan dan pesanan tersimpan di akun ini dan bisa dibuka dari perangkat lain. Akun lain tidak bisa melihatnya. Isi naskah tetap diperiksa di perangkat dan tidak diunggah.</p>' +
+      '<button type="button" class="btn primary" id="cloudOut">Keluar</button></div>';
+  } else {
+    var up = mode === "daftar", lupa = mode === "lupa";
+    h = (c.google && !IS_APP ? '<button type="button" class="btn gbtn" id="cloudGoogle">' + G_IC + "Masuk dengan Google</button>" + '<div class="ordiv"><span>atau dengan email</span></div>' : "") +
+      (lupa ? '<form class="ownerform card billcard" id="cloudLupaF" novalidate><p class="hint" style="margin:0">Masukkan email akun Anda. Kami kirim tautan untuk membuat kata sandi baru.</p>' +
+          '<label for="cpEm"><span>Email</span><input type="email" id="cpEm" autocomplete="email" required></label>' +
+          '<button type="submit" class="btn primary">Kirim tautan</button><button type="button" class="linkbtn" data-cloud="masuk">Kembali ke Masuk</button></form>'
+      : '<div class="segs" style="grid-template-columns:1fr 1fr;margin-bottom:12px"><button type="button" data-cloud="masuk" aria-pressed="' + !up + '">Masuk</button><button type="button" data-cloud="daftar" aria-pressed="' + up + '">Daftar</button></div>' +
+        '<form class="ownerform card billcard" id="' + (up ? "cloudUpF" : "cloudInF") + '" novalidate>' +
+          (up ? '<label for="cpNm"><span>Nama</span><input type="text" id="cpNm" autocomplete="name" maxlength="80" required></label>' : "") +
+          '<label for="cpEm"><span>Email</span><input type="email" id="cpEm" autocomplete="email" required></label>' +
+          '<label for="cpPw"><span>Kata sandi' + (up ? ' <span class="muted" style="font-weight:400">· minimal 8 karakter</span>' : "") + '</span><input type="password" id="cpPw" autocomplete="' + (up ? "new-password" : "current-password") + '" minlength="' + (up ? 8 : 1) + '" required></label>' +
+          (up ? '<label for="cpPw2"><span>Ulangi kata sandi</span><input type="password" id="cpPw2" autocomplete="new-password" required></label>' +
+                '<label class="toggle" for="cpOk"><input type="checkbox" id="cpOk"><span class="tr" aria-hidden="true"></span><span>Saya setuju dengan Syarat &amp; Ketentuan dan Kebijakan Privasi</span></label>' : "") +
+          '<button type="submit" class="btn primary">' + (up ? "Daftar" : "Masuk") + "</button>" +
+          (up ? "" : '<button type="button" class="linkbtn" data-cloud="lupa">Lupa kata sandi?</button>') + "</form>") +
+      '<p class="hint">Kata sandi disimpan dalam bentuk hash, bukan teks aslinya, dan setiap akun hanya bisa membuka datanya sendiri. <button type="button" class="linkbtn" data-accmode="lokal">Pakai akun offline di perangkat ini</button></p>';
+  }
+  b.innerHTML = h;
+}
+function cloudSubmit(f) {
+  var btn = f.querySelector('[type="submit"]'), lbl = btn.textContent, v = function (id) { var e = $(id); return e ? e.value.trim() : ""; };
+  var busy = function (on) { btn.disabled = on; btn.textContent = on ? "Memproses…" : lbl; };
+  var done = function (p, ok) { busy(true); return cloudInit().then(function () { return p(); }).then(function (r) { if (r && r.error) throw r.error; busy(false); if (ok) ok(r); }).catch(function (e) { busy(false); toast(cloudErr(e)); }); };
+  if (f.id === "cloudInF") {
+    if (!/^\S+@\S+\.\S+$/.test(v("#cpEm"))) return toast("Isi email yang benar."), $("#cpEm").focus();
+    return done(function () { return CLOUD.auth.signInWithPassword({ email: v("#cpEm"), password: $("#cpPw").value }); }, function () { closeAcc(); });
+  }
+  if (f.id === "cloudUpF") {
+    if (!v("#cpNm")) return toast("Isi nama Anda."), $("#cpNm").focus();
+    if (!/^\S+@\S+\.\S+$/.test(v("#cpEm"))) return toast("Isi email yang benar."), $("#cpEm").focus();
+    if ($("#cpPw").value.length < 8) return toast("Kata sandi minimal 8 karakter."), $("#cpPw").focus();
+    if ($("#cpPw").value !== $("#cpPw2").value) return toast("Ulangan kata sandi tidak sama."), $("#cpPw2").focus();
+    if (!$("#cpOk").checked) return toast("Centang persetujuan Syarat & Ketentuan dulu."), $("#cpOk").focus();
+    return done(function () { return CLOUD.auth.signUp({ email: v("#cpEm"), password: $("#cpPw").value, options: { data: { nama: v("#cpNm") }, emailRedirectTo: cloudBack() } }); },
+      function (r) { if (r && r.data && r.data.session) closeAcc(); else { renderCloud("masuk"); toast("Akun dibuat. Buka email dari kami lalu tekan tautan konfirmasi, kemudian masuk."); } });
+  }
+  if (f.id === "cloudLupaF") {
+    if (!/^\S+@\S+\.\S+$/.test(v("#cpEm"))) return toast("Isi email yang benar."), $("#cpEm").focus();
+    return done(function () { return CLOUD.auth.resetPasswordForEmail(v("#cpEm"), { redirectTo: cloudBack() }); }, function () { renderCloud("masuk"); toast("Bila email terdaftar, tautan untuk membuat kata sandi baru sudah kami kirim."); });
+  }
+  if (f.id === "cloudResetF") {
+    if ($("#cpN1").value.length < 8) return toast("Kata sandi minimal 8 karakter."), $("#cpN1").focus();
+    if ($("#cpN1").value !== $("#cpN2").value) return toast("Ulangan kata sandi tidak sama."), $("#cpN2").focus();
+    return done(function () { return CLOUD.auth.updateUser({ password: $("#cpN1").value }); }, function () { closeAcc(); toast("Kata sandi baru tersimpan."); });
+  }
+}
+function cloudOut() {
+  return cloudInit().then(function () { return CLOUD.auth.signOut(); }).then(function () {
+    storeDel("ct_draft"); S.doc = null; setText(SAMPLE, true); closeAcc(); toast("Anda sudah keluar.");
+  }, function (e) { toast(cloudErr(e)); });
+}
+// Riwayat: di akun online disimpan di tabel "riwayat" (hanya ringkasan: nama dokumen, skor, tanggal).
+function cloudHistLoad() {
+  return CLOUD.from("riwayat").select("id,data").order("dibuat", { ascending: false }).limit(500).then(function (r) {
+    if (r.error) throw r.error; return (r.data || []).map(function (x) { return x.data; });
+  });
+}
+function cloudHistPut(e) { return CLOUD.from("riwayat").upsert({ id: e.id, data: e }).then(function (r) { if (r.error) throw r.error; }); }
+function cloudHistDel(id) { return CLOUD.from("riwayat").delete().eq("id", id).then(function (r) { if (r.error) throw r.error; }); }
+function cloudOrder(o) {
+  if (!CLOUD_USER) return;
+  var v = function (id) { return ($(id).value || "").trim().slice(0, 600); };
+  CLOUD.from("pesanan").insert({ id: o.id, paket: o.paket, jumlah: o.qty, total: o.total, nama: v("#lyNama").slice(0, 80), tenggat: v("#lyDl").slice(0, 40), kampus: v("#lyKampus").slice(0, 120), catatan: v("#lyNote2") })
+    .then(function (r) { if (r.error) console.warn("Pesanan tidak tersimpan di akun:", r.error.message); });
+}
 /* ---- akun: masuk, buat, keluar, hapus ---- */
 function accList() { try { var a = JSON.parse(localStorage.getItem("ct_accounts") || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
 function accSaveList(a) { localStorage.setItem("ct_accounts", JSON.stringify(a)); }
@@ -7068,7 +7200,10 @@ function accDelete(pass) {
     location.hash = "beranda"; location.reload();
   }, function () { throw new Error("Kata sandi salah."); });
 }
+var ACC_LOCAL_UI = false;
 function renderAcc(mode) {
+  if (cloudCfg() && !ACC && !ACC_LOCAL_UI) return renderCloud(mode === "new" ? "daftar" : mode);
+  $("#accSub").textContent = "Akun offline, terenkripsi di perangkat ini";
   var list = accList(), b = $("#accBody"), h;
   if (ACC) {
     h = '<div class="card billcard"><div class="accme"><span class="accav" aria-hidden="true">' + esc(ACC.name.slice(0, 1).toUpperCase()) + "</span><div><b>" + esc(ACC.name) + '</b><small class="muted">Masuk di tab ini</small></div></div>' +
@@ -7099,17 +7234,26 @@ function renderAcc(mode) {
 }
 function openAcc(mode) {
   if (!window.crypto || !crypto.subtle) return toast("Browser ini tidak mendukung akun terenkripsi. Buka CekTeks lewat https di browser terbaru.");
+  ACC_LOCAL_UI = false;
+  if (cloudCfg() && !ACC) cloudInit().then(function () { if (!$("#accDrawer").hidden && !ACC_LOCAL_UI && mode !== "reset") renderAcc(mode); }, function (e) { toast(e.message); });
   renderAcc(mode); lastFocus = document.activeElement; $("#accDrawer").hidden = false; document.body.classList.add("noscroll");
   var f = $("#accDrawer input:not([type=checkbox]), #accDrawer select, #accOut"); if (f) f.focus();
 }
 function closeAcc() { $("#accDrawer").hidden = true; document.body.classList.remove("noscroll"); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
 $("#accDrawer").addEventListener("click", function (e) {
   if (e.target.closest("[data-close]")) return closeAcc();
-  var m = e.target.closest("[data-accmode]"); if (m) return renderAcc(m.dataset.accmode);
+  var m = e.target.closest("[data-accmode]"); if (m) { if (m.dataset.accmode === "lokal") { ACC_LOCAL_UI = true; return renderAcc("in"); } return renderAcc(m.dataset.accmode); }
+  var cm = e.target.closest("[data-cloud]"); if (cm) return renderCloud(cm.dataset.cloud);
+  if (e.target.closest("#cloudOut")) return cloudOut();
+  if (e.target.closest("#cloudGoogle")) {
+    return cloudInit().then(function () { return CLOUD.auth.signInWithOAuth({ provider: "google", options: { redirectTo: cloudBack() } }); })
+      .then(function (r) { if (r && r.error) throw r.error; }).catch(function (err) { toast(cloudErr(err)); });
+  }
   if (e.target.closest("#accOut")) accLogout();
 });
 $("#accDrawer").addEventListener("submit", function (e) {
   e.preventDefault();
+  if (/^cloud/.test(e.target.id)) return cloudSubmit(e.target);
   var f = e.target, btn = f.querySelector('[type="submit"]'), busy = function (on, t) { btn.disabled = on; if (t) btn.textContent = t; };
   if (f.id === "accNewF") {
     var n = $("#accName").value.trim(), p1 = $("#accP1").value, p2 = $("#accP2").value;
@@ -7126,11 +7270,15 @@ $("#accDrawer").addEventListener("submit", function (e) {
 });
 document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#accDrawer").hidden) closeAcc(); });
 $("#accBtn").onclick = function () { openAcc(); };
+function accLabel() {
+  var name = CLOUD_USER ? cloudName(CLOUD_USER) : ACC ? ACC.name : "";
+  $("#accLbl").textContent = name || "Masuk";
+  $("#accBtn").setAttribute("aria-label", name ? "Akun: " + name : "Masuk atau daftar");
+  document.documentElement.classList.toggle("signed-in", !!name);
+}
 (function () {
-  var lbl = $("#accLbl");
-  lbl.textContent = ACC ? ACC.name : "Masuk";
-  $("#accBtn").setAttribute("aria-label", ACC ? "Akun: " + ACC.name : "Masuk atau buat akun");
-  document.documentElement.classList.toggle("signed-in", !!ACC);
+  accLabel();
+  try { if (cloudCfg() && !ACC && (localStorage.getItem("ct_sb_auth") || /[?&]code=/.test(location.search) || /access_token|type=recovery/.test(location.hash))) cloudInit().catch(function () {}); } catch (e) {}
   try { var note = sessionStorage.getItem("ct_lock_note"); if (note) { sessionStorage.removeItem("ct_lock_note"); setTimeout(function () { toast(note); }, 600); } } catch (e) {}
   if (!ACC) return;
   // Kunci otomatis setelah 30 menit tanpa aktivitas.
