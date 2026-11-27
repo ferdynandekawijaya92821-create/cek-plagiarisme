@@ -2,6 +2,36 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.9.0] - 2026-11-27
+### Ditambahkan
+- **Kartu "Analisis model AI"** di hasil pemeriksaan, dengan grafik dan tabel hasil.
+  - **Kemiripan makna, model di perangkat.** Model bahasa multibahasa `paraphrase-multilingual-MiniLM-L12-v2`
+    (transformers.js 4.3.2, ONNX q8) mengubah tiap kalimat menjadi vektor makna, lalu mencari kalimat sumber yang
+    maknanya sama.
+    - Menemukan **parafrase** dan **terjemahan** (misalnya artikel bahasa Inggris yang diterjemahkan ke bahasa
+      Indonesia) yang lolos dari pencocokan kata.
+    - Menampilkan skor kemiripan makna, grafik sebaran kemiripan, dan pasangan kalimat dengan tombol "Lihat di naskah".
+    - Naskah tidak dikirim ke mana pun. Model diunduh sekali (±120 MB), lalu jalan tanpa internet.
+    - Uji manual dengan model sungguhan di Chromium: kalimat terjemahan dari sumber bahasa Inggris dikenali dengan
+      kemiripan 97% dan 88%, kalimat yang tidak berhubungan tidak ditandai, dan model tetap jalan setelah internet
+      diputus.
+  - **Gaya tulisan oleh Claude (online, opsional).** Fungsi server Supabase `analisis-ai` memakai SDK Anthropic resmi
+    dengan model `claude-opus-5-5` dan keluaran JSON terstruktur. Hasilnya: perkiraan kemungkinan AI per paragraf,
+    ciri tulisan AI dan manusia, serta saran perbaikan.
+    - Kunci API hanya ada di server.
+    - Hanya pengguna yang sudah masuk yang bisa memakainya, dengan batas harian per akun (tabel `pemakaian_ai` dan
+      fungsi `pakai_ai`, diuji RLS).
+    - Hanya situs yang diizinkan (`ASAL`) yang bisa memanggilnya.
+    - Daftar pustaka tidak dikirim.
+- **Domain sendiri.** `site.json` punya kunci `domain`. Bila diisi, tautan kanonis, sitemap, dan QR laporan memakai
+  domain itu. Panduan lengkap untuk `cekplagiarismeteks.id` (DNS GitHub Pages, HTTPS, Supabase, Search Console) dan
+  cara akses online/offline/lokal ada di `cekteks/HOSTING.md`.
+- Uji fungsi server tanpa biaya (`cekteks/supabase/uji-ai.mjs`): memakai SDK sungguhan dengan jaringan tiruan, dan
+  ikut dijalankan di CI.
+
+### Diubah
+- Service worker menyimpan mesin model AI dari jsDelivr (versi dipatok) agar model jalan offline.
+
 ## [4.8.1] - 2026-11-27
 ### Diubah
 - **Riwayat pemeriksaan kini pribadi untuk setiap akun.**

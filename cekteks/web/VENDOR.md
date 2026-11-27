@@ -14,6 +14,11 @@ diganti pihak lain. Versi dipatok. Dependabot tidak memantau folder ini, jadi pe
 
 Dimuat dari CDN saat dibutuhkan (OCR): tesseract.js 7.0.0, dengan sidik SRI di `TESS_LIB`/`TESS_SRI` di `src/app.html`.
 
+Model AI di perangkat: transformers.js 4.3.2 (`TF_VER` di `src/app.html`) dan mesin WebAssembly onnxruntime-web
+(versinya dipatok oleh transformers.js) dimuat dari jsDelivr dan disimpan service worker. transformers.js tidak
+disimpan di `vendor/` karena pemindai rahasia GitHub salah mengira nama kelas model di dalamnya sebagai kunci API; berkas model `Xenova/paraphrase-multilingual-MiniLM-L12-v2` (q8, ±120 MB)
+diambil dari Hugging Face dan disimpan di Cache Storage browser.
+
 ## Memperbarui
 
 1. Unduh berkas versi baru ke `vendor/` dengan nama yang sama, lalu ubah alamat CDN cadangan di `src/app.html`.

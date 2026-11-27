@@ -17,6 +17,7 @@ try { AXE = AXE || require.resolve("axe-core/axe.min.js"); } catch (e) { AXE = n
 
 let passed = 0, failed = 0;
 async function test(name, fn) {
+  if (process.env.ONLY && !name.includes(process.env.ONLY)) return;  // mis. ONLY="model AI" npm test
   try { await fn(); passed++; console.log("  ✓ " + name); }
   catch (e) { failed++; console.log("  ✗ " + name + "\n      " + (e && e.message ? e.message.split("\n")[0] : e)); }
 }
@@ -978,6 +979,74 @@ async function download(page, selector) {
         v.login.supabase_anon_key = "sb_secret_abcdefghijklmnopqrstuvwxyz"; localStorage.setItem("ct_site_preview", JSON.stringify(v)); const r = cloudCfg(); localStorage.setItem("ct_site_preview", keep); return r; });
       ok(sec === null, "kunci rahasia Supabase tidak ditolak");
       await c7.close();
+    });
+    await test("model AI di perangkat: parafrase & terjemahan ditemukan, grafik dan pasangan kalimat tampil, hasil dihapus saat naskah berubah", async () => {
+      const { ctx: c8, page: p8 } = await newPage(browser, { viewport: { width: 1280, height: 900 } });
+      // Model tiruan (CI tidak mengunduh model 120 MB): vektor dari kata, dengan kamus kecil Inggris -> Indonesia
+      // supaya kalimat terjemahan bermakna sama. Model sungguhan diuji manual (lihat CHANGELOG 4.9.0).
+      await c8.route("https://cdn.jsdelivr.net/npm/@huggingface/transformers@*/dist/transformers.min.js", (r) => r.fulfill({ contentType: "text/javascript", body: `
+        export const env = { backends: { onnx: { wasm: {} } } };
+        const KAMUS = { photosynthesis: "fotosintesis", green: "hijau", plants: "tumbuhan", sunlight: "matahari", water: "air", glucose: "glukosa", oxygen: "oksigen", process: "proses", convert: "mengubah", carbon: "karbon", dioxide: "dioksida", which: "ketika", into: "menjadi" };
+        const vek = (t) => { const v = new Float32Array(384); for (let w of t.toLowerCase().match(/[a-z]+/g) || []) { w = KAMUS[w] || w; if (w.length < 4) continue; let h = 7; for (const c of w) h = (h * 31 + c.charCodeAt(0)) >>> 0; v[h % 384] += 1; } const n = Math.hypot(...v) || 1; return v.map((x) => x / n); };
+        export async function pipeline(task, model, o) {
+          window.__tf = { task, model, dtype: o.dtype };
+          o.progress_callback({ status: "progress", file: "onnx/model_quantized.onnx", loaded: 60, total: 120 });
+          return async (list) => { const out = new Float32Array(list.length * 384); list.forEach((t, i) => out.set(vek(t), i * 384)); return { data: out }; };
+        }` }));
+      await p8.goto(SITE + "#periksa"); await ready(p8);
+      const EN = "Photosynthesis is the process by which green plants use sunlight to convert water and carbon dioxide into glucose and oxygen.";
+      const DOC = "Fotosintesis merupakan proses ketika tumbuhan hijau memakai matahari untuk mengubah air dan karbon dioksida menjadi glukosa dan oksigen. " +
+        "Kemarin sore saya membeli sayur bayam dan tempe goreng di pasar dekat rumah nenek untuk makan malam keluarga besar kami semua.";
+      await p8.evaluate(([en, doc]) => { $("#useCorpus").checked = false; S.userSources.push({ name: "Artikel Inggris", text: en }); renderSources(); S.doc = null; setText(doc); }, [EN, DOC]);
+      await p8.waitForTimeout(600);
+      ok(await p8.isVisible("#mlCard") && await p8.isHidden("#clSec"), "kartu model AI tidak tampil, atau bagian Claude tampil tanpa login online");
+      await p8.click("#mlRun");
+      await p8.waitForSelector("#mlOut .mlstats", { timeout: 15000 });
+      const r = await p8.evaluate(() => [window.__tf, ML.res.same, ML.res.trans, ML.res.pairs[0].kind, document.querySelectorAll("#mlOut svg rect").length, document.querySelector("#mlOut .mlpair").textContent]);
+      ok(r[0].task === "feature-extraction" && r[0].model === "Xenova/paraphrase-multilingual-MiniLM-L12-v2" && r[0].dtype === "q8", "model yang dimuat salah: " + JSON.stringify(r[0]));
+      ok(r[1] === 1 && r[2] === 1 && r[3] === "terjemahan", "terjemahan tidak ditemukan: " + JSON.stringify(r.slice(1, 4)));
+      ok(r[4] === 10 && /Terjemahan/.test(r[5]) && /Artikel Inggris|Photosynthesis/.test(r[5]), "grafik/pasangan kalimat tidak tampil");
+      await p8.click("#mlOut [data-mlgo]"); await p8.waitForSelector("#hl .jump", { timeout: 3000 });
+      await p8.evaluate(() => setText(S.text + " Kalimat tambahan."));
+      await p8.waitForFunction(() => !ML.res && !document.querySelector("#mlOut .mlstats") && /berubah/.test(document.querySelector("#mlStatus").textContent));
+      await c8.close();
+    });
+    await test("analisis Claude: tombol muncul setelah login online, hasil per paragraf tampil, kuota habis dijelaskan", async () => {
+      const { ctx: c9, page: p9 } = await newPage(browser, { viewport: { width: 1280, height: 900 } });
+      await c9.addInitScript(() => {
+        localStorage.setItem("ct_site_preview", JSON.stringify({ warna: "biru", cs: { nama: "CS", whatsapp: "", email: "" }, iklan: { aktif: false },
+          login: { supabase_url: "https://abcdefgh.supabase.co", supabase_anon_key: "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiJ9.tanda-tangan" } }));
+        const user = { id: "u9", email: "dosen@kampus.ac.id", user_metadata: { nama: "Dosen" }, app_metadata: { provider: "email" } };
+        window.__calls = []; window.__sisa = 1;
+        localStorage.setItem("ct_sb_auth", JSON.stringify({ user }));
+        window.supabase = { createClient: () => ({
+          auth: { getSession: async () => ({ data: { session: { user } } }), onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }), signOut: async () => ({}) },
+          from: () => { const q = { select: () => q, order: () => q, limit: () => q, upsert: async () => ({}), insert: async () => ({}), delete: () => ({ eq: async () => ({}) }), then: (a) => Promise.resolve({ data: [], error: null }).then(a) }; return q; },
+          functions: { invoke: async (name, o) => {
+            window.__calls.push([name, o.body]);
+            if (window.__sisa < 0) return { data: null, error: { context: { status: 429, json: async () => ({ pesan: "Batas 10 analisis per hari untuk akun ini sudah habis. Coba lagi besok." }) } } };
+            const n = o.body.paragraf.length;
+            return { data: { sisa: window.__sisa--, hasil: { skor_ai: 72, keyakinan: "sedang", ringkasan: "Paragraf pertama sangat seragam.", ciri_ai: ["Frasa penutup klise"], ciri_manusia: ["Ada data lapangan"],
+              paragraf: Array.from({ length: n }, (_, i) => ({ nomor: i + 1, skor_ai: i ? 20 : 85, catatan: i ? "Spesifik." : "Pembuka umum." })), saran: ["Tambahkan pengalaman pribadi."] } }, error: null };
+          } },
+        }) };
+      });
+      await p9.goto(SITE + "#periksa"); await ready(p9);
+      await p9.waitForFunction(() => document.querySelector("#accLbl").textContent === "Dosen");
+      const P1 = "Pendidikan karakter merupakan aspek yang sangat penting dalam membentuk generasi muda yang berkualitas di era globalisasi.";
+      const P2 = "Di SDN 3 Cibeber, 18 dari 25 siswa kelas lima mengaku jarang membaca buku di rumah menurut survei kami bulan Maret lalu.";
+      await p9.evaluate((t) => { S.doc = null; setText(t); }, P1 + "\n\n" + P2 + "\n\nDaftar Pustaka\nAhmad, B. (2020). Buku. Jakarta: Penerbit.");
+      await p9.waitForTimeout(600);
+      ok(await p9.isVisible("#clSec #clRun"), "tombol Claude tidak muncul setelah login online");
+      await p9.click("#clRun");
+      await p9.waitForSelector("#clOut .mlstats", { timeout: 10000 });
+      const r = await p9.evaluate(() => [window.__calls[0], document.querySelector("#clOut").textContent, document.querySelectorAll("#clOut svg rect").length]);
+      ok(r[0][0] === "analisis-ai" && r[0][1].paragraf.length === 2 && !/Daftar Pustaka|Ahmad/.test(JSON.stringify(r[0][1])), "naskah yang dikirim salah: " + JSON.stringify(r[0]));
+      ok(/72%/.test(r[1]) && /Paragraf 1/.test(r[1]) && /Tambahkan pengalaman pribadi/.test(r[1]) && /Sisa analisis hari ini: 1/.test(r[1]) && r[2] === 2, "hasil Claude tidak tampil lengkap: " + r[1].slice(0, 200));
+      await p9.evaluate(() => { window.__sisa = -1; });
+      await p9.click("#clRun");
+      await p9.waitForFunction(() => /sudah habis/.test(document.querySelector("#clStatus").textContent));
+      await c9.close();
     });
     await c3.close();
   }

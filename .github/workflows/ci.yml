@@ -44,6 +44,11 @@ jobs:
           node-version: "22"
       - name: Uji jembatan (Cloudflare Worker)
         run: node cekteks/jembatan/test.mjs
+      - name: Uji fungsi server analisis Claude (tanpa panggilan API berbayar)
+        working-directory: cekteks/supabase
+        run: |
+          npm ci --no-audit --no-fund
+          npm test
       - name: Pasang Playwright dan axe-core
         working-directory: cekteks/web
         run: |
