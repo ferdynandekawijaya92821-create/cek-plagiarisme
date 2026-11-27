@@ -1336,6 +1336,11 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 .gbtn svg { width: 18px; height: 18px; }
 .ordiv { display: flex; align-items: center; gap: 12px; margin: 14px 0; color: var(--muted); font-size: 12.5px; }
 .ordiv::before, .ordiv::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+
+/* v4.8.1: riwayat per akun */
+.acclock { text-align: left; line-height: 1.6; }
+.acclock b { display: block; color: var(--ink); margin-bottom: 4px; font-family: var(--f-display); font-size: 15.5px; }
+#hMigrate { align-items: center; flex-wrap: wrap; }
 </style>
 
 <aside class="side" id="side" aria-label="Menu utama">
@@ -2084,6 +2089,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
       <div class="pagehead-row"><h1>Riwayat &amp; pesanan</h1><button type="button" class="btn" id="verOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Verifikasi laporan</button></div>
       <p>Setiap laporan PDF yang diunduh tercatat di sini. Atur tarif dan status pembayaran untuk jasa pengecekan Anda. Hanya ringkasan yang disimpan, bukan isi naskah.</p>
     </div>
+    <div class="tip" id="hMigrate" hidden></div>
     <div class="stats" id="hStats"></div>
     <div class="card" id="payCard">
       <details class="acc" id="payAcc">
@@ -2994,7 +3000,7 @@ function recDec(list) {
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.8.0";
+var APP_VERSION = "4.8.1";
 // Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
 (function () {
   var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
@@ -4291,6 +4297,7 @@ $("#tocDoc").onclick = function () {
 };
 /* ---- Beranda ---- */
 function renderHome() {
+  if (!signedIn()) { $("#homeStats").hidden = true; $("#homeStats").innerHTML = ""; $("#homeRecent").innerHTML = '<div class="empty acclock"><b>Riwayat bersifat pribadi untuk setiap akun.</b> <button type="button" class="linkbtn" data-acc-open>Masuk atau daftar</button> untuk menyimpan dan melihat pemeriksaan Anda. Pemeriksaan tanpa akun tidak dicatat, sehingga orang lain yang memakai perangkat ini tidak bisa melihatnya.</div>'; return; }
   var month = HIST.filter(function (e) { return thisMonth(e.date); });
   var avg = function (k) { return HIST.length ? HIST.reduce(function (a, e) { return a + (+e[k] || 0); }, 0) / HIST.length : 0; };
   $("#homeStats").hidden = !HIST.length;
@@ -5039,7 +5046,7 @@ var BANK = [];
 function bankDB() {
   return new Promise(function (res, rej) {
     if (!window.indexedDB) return rej(new Error("Browser ini tidak mendukung bank naskah."));
-    var r = indexedDB.open(ACC ? "cekteks-" + ACC.id : "cekteks", 2);
+    var r = indexedDB.open(ACC ? "cekteks-" + ACC.id : CLOUD_USER ? "cekteks-g-" + CLOUD_USER.id : "cekteks", 2);
     r.onupgradeneeded = function () {
       var db = r.result;
       if (!db.objectStoreNames.contains("bank")) db.createObjectStore("bank", { keyPath: "id" });
@@ -5194,18 +5201,54 @@ document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$
 var HIST = [];
 var RP = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
 function histReq(mode, fn) { return bankReq(mode, fn, "history"); }
+// Riwayat hanya ada di dalam akun (online atau offline). Tanpa akun tidak ada yang dicatat atau ditampilkan.
+function signedIn() { return !!(ACC || CLOUD_USER); }
 function loadHist() {
+  if (!signedIn()) { HIST = []; renderHist(); $("#hMigrate").hidden = true; return Promise.resolve(); }
+  guestHistCheck();
   if (CLOUD_USER) return cloudHistLoad().then(function (all) { HIST = all.sort(function (a, b) { return a.date < b.date ? 1 : -1; }); renderHist(); if (S.lastPv != null) renderPrev(S.lastPv, S.lastN); }, function (e) { toast(cloudErr(e)); });
   return histReq("readonly", function (st) { return st.getAll(); }).then(recDec).then(function (all) { HIST = (all || []).sort(function (a, b) { return a.date < b.date ? 1 : -1; }); renderHist(); if (S.lastPv != null) renderPrev(S.lastPv, S.lastN); }, function () { HIST = []; renderHist(); }); }
 function histPut(e) { if (CLOUD_USER) return cloudHistPut(e).then(loadHist, function (err) { toast(cloudErr(err)); }); return recEnc(e).then(function (r) { return histReq("readwrite", function (st) { st.put(r); return null; }); }).then(loadHist); }
+function guestHistCheck() {
+  if (!window.indexedDB || !signedIn()) return;
+  idbAll("cekteks", "history").then(function (recs) {
+    var n = recs.filter(function (r) { return r && !r.enc; }).length, el = $("#hMigrate");
+    el.hidden = !n; if (!n) return;
+    el.innerHTML = '<div>Ada <b>' + fmtNum(n) + ' riwayat lama</b> di perangkat ini yang tercatat sebelum memakai akun. Pindahkan ke akun Anda bila itu milik Anda; setelah dipindah, riwayat itu hilang dari perangkat tanpa akun.</div>' +
+      '<button type="button" class="btn sm" id="hMigrateBtn">Pindahkan ke akun saya</button>';
+  });
+}
+function migrateGuestHist() {
+  return idbAll("cekteks", "history").then(function (recs) {
+    recs = recs.filter(function (r) { return r && r.id && !r.enc; });
+    var put = CLOUD_USER ? function (e) { return cloudHistPut(e); }
+      : function (e) { return recEnc(e).then(function (r) { return histReq("readwrite", function (st) { st.put(r); return null; }); }); };
+    return recs.reduce(function (p, e) { return p.then(function () { return put(e); }); }, Promise.resolve()).then(function () {
+      return idbPutAll("cekteks", "history", [], true);
+    }).then(function () { return recs.length; });
+  });
+}
+document.addEventListener("click", function (e) {
+  if (e.target.closest("[data-acc-open]")) return openAcc();
+  if (e.target.closest("#hMigrateBtn")) {
+    e.target.disabled = true;
+    migrateGuestHist().then(function (n) { $("#hMigrate").hidden = true; loadHist(); toast(fmtNum(n) + " riwayat dipindahkan ke akun Anda."); }, function (err) { e.target.disabled = false; toast("Gagal memindahkan: " + (err.message || err)); });
+  }
+});
 function recordHistory(r) {
   var e = { id: r.id, date: new Date().toISOString(), client: r.client, doc: r.doc, words: r.words, score: r.plag.score, exact: r.plag.exactScore, para: r.plag.paraScore,
     ai: r.ai.score, sources: r.plag.matched.slice(0, 3).map(function (s) { return s.domain; }), price: +($("#svcPrice").value || 0) || 0, paid: false, note: "",
     verify: r.seal ? r.seal.code : "", signed: !!(r.seal && r.seal.signed) };
-  return histPut(e).then(function () { toast("Laporan diunduh dan tercatat di Riwayat."); }, function () {});
+  if (!signedIn()) { toast("Laporan diunduh. Masuk ke akun agar pemeriksaan tercatat di riwayat Anda."); return Promise.resolve(); }
+  return histPut(e).then(function () { toast("Laporan diunduh dan tercatat di riwayat akun Anda."); }, function () {});
 }
 function thisMonth(iso) { var d = new Date(iso), n = new Date(); return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth(); }
 function renderHist() {
+  if (!signedIn()) {
+    $("#hStats").innerHTML = ""; $("#hList").innerHTML = '<div class="empty acclock"><b>Riwayat bersifat pribadi untuk setiap akun.</b> <button type="button" class="linkbtn" data-acc-open>Masuk atau daftar</button> untuk menyimpan dan melihat pemeriksaan Anda. Pemeriksaan tanpa akun tidak dicatat, sehingga orang lain yang memakai perangkat ini tidak bisa melihatnya.</div>';
+    if (typeof renderHome === "function" && $("#view-beranda").classList.contains("on")) setTimeout(renderHome, 0);
+    return;
+  }
   var month = HIST.filter(function (e) { return thisMonth(e.date); });
   var earned = month.filter(function (e) { return e.paid; }).reduce(function (a, e) { return a + amountDue(e); }, 0);
   var unpaid = HIST.filter(function (e) { return !e.paid && e.price > 0; });
@@ -7024,7 +7067,7 @@ function cloudSet(u, ev) {
   if (/[?&]code=/.test(location.search) && ev !== "INITIAL") { try { history.replaceState(null, "", location.pathname + location.hash); } catch (e) {} }
   if (ev === "PASSWORD_RECOVERY") return openAcc("reset");
   if ((CLOUD_USER && CLOUD_USER.id) !== prev) {
-    loadHist();
+    loadHist(); loadBank();
     if (CLOUD_USER && !$("#lyNama").value) $("#lyNama").value = cloudName(CLOUD_USER);
     if (!$("#accDrawer").hidden) renderAcc();
     if (ev === "SIGNED_IN") toast("Masuk sebagai " + cloudName(CLOUD_USER) + ".");
