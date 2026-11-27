@@ -2,6 +2,19 @@
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan [Semantic Versioning](https://semver.org/lang/id/).
 
+## [4.8.1] - 2026-11-27
+### Diubah
+- **Riwayat pemeriksaan kini pribadi untuk setiap akun.**
+  - Tanpa masuk, Beranda ("Pemeriksaan terakhir") dan halaman Riwayat tidak menampilkan riwayat siapa pun. Keduanya
+    hanya menampilkan ajakan masuk atau daftar.
+  - Pemeriksaan tanpa akun tidak dicatat, jadi orang lain yang memakai perangkat yang sama tidak bisa melihatnya.
+  - Setelah masuk (akun online maupun offline), setiap akun hanya melihat riwayatnya sendiri.
+- Bank naskah untuk akun online kini terpisah per akun di perangkat.
+
+### Ditambahkan
+- Tombol **Pindahkan ke akun saya** untuk riwayat lama di perangkat yang tercatat sebelum pembaruan ini. Setelah
+  dipindah, riwayat itu terhapus dari bagian tanpa akun.
+
 ## [4.8.0] - 2026-11-26
 ### Ditambahkan
 - **Login online dengan Google atau email + kata sandi** (backend Supabase, HTTPS).

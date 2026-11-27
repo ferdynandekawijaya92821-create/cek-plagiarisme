@@ -632,6 +632,32 @@ async function download(page, selector) {
     ok(await page.isVisible("#kebijakan") && await page.isVisible("#syarat") && await page.isVisible("#helpContact .btn"), "bagian Bantuan tidak lengkap");
     await page.evaluate(() => showView("periksa"));
   });
+  await test("riwayat pribadi: tanpa akun pemeriksaan tidak dicatat dan tidak ada riwayat yang terlihat", async () => {
+    await page.fill("#clientName", "Klien Tamu");
+    await download(page, "#dlPdf");
+    await page.waitForFunction(() => /Masuk ke akun/.test(document.querySelector("#toast").textContent));
+    const g = await page.evaluate(() => idbAll("cekteks", "history").then((r) => [HIST.length, r.length]));
+    ok(g[0] === 0 && g[1] === 0, "pemeriksaan tamu tercatat: " + g);
+    await page.evaluate(() => showView("beranda"));
+    ok(await page.isVisible("#homeRecent [data-acc-open]") && await page.isHidden("#homeStats"), "Beranda tanpa akun tidak mengajak masuk");
+    await page.click("#tab-riwayat");
+    ok(await page.isVisible("#hList [data-acc-open]") && !(await page.textContent("#hStats")).trim(), "Riwayat tanpa akun tidak terkunci");
+    // Riwayat lama (dari versi sebelum akun wajib) bisa dipindah ke akun pemiliknya.
+    await page.evaluate(() => idbPutAll("cekteks", "history", [{ id: "lama-1", date: new Date().toISOString(), client: "Lama", doc: "lama.pdf", words: 10, score: 5, exact: 5, para: 0, ai: 0, sources: [], price: 0, paid: false, note: "" }], true));
+    await page.click("#hList [data-acc-open]");
+    await page.fill("#accName", "Pemilik"); await page.fill("#accP1", "rahasia123"); await page.fill("#accP2", "rahasia123");
+    await Promise.all([page.waitForEvent("load", { timeout: 30000 }), page.click('#accNewF [type="submit"]')]); await ready(page);
+    await page.waitForFunction(() => ACC && ACC.name === "Pemilik" && HIST.some((e) => e.id === "lama-1"), null, { timeout: 10000 });
+    await page.evaluate(() => { const e = HIST.find((x) => x.id === "lama-1"); return histReq("readwrite", (st) => { st.delete(e.id); return null; }).then(loadHist); });
+    await page.evaluate(() => idbPutAll("cekteks", "history", [{ id: "lama-2", date: new Date().toISOString(), client: "Lama", doc: "lama2.pdf", words: 10, score: 5, exact: 5, para: 0, ai: 0, sources: [], price: 0, paid: false, note: "" }], true).then(loadHist));
+    await page.click("#tab-riwayat"); await page.waitForSelector("#hMigrateBtn");
+    await page.click("#hMigrateBtn");
+    await page.waitForFunction(() => HIST.some((e) => e.id === "lama-2"));
+    ok(await page.evaluate(() => idbAll("cekteks", "history").then((r) => r.length === 0)), "riwayat lama tidak dihapus dari perangkat tamu");
+    await page.evaluate(() => histReq("readwrite", (st) => { st.delete("lama-2"); return null; }).then(loadHist));
+    await page.waitForFunction(() => HIST.length === 0);
+    await page.click("#tab-periksa");
+  });
   await test("riwayat & pesanan: unduhan PDF tercatat, tarif dan status lunas dihitung, ekspor Excel", async () => {
     await page.click("#tab-sumber"); await page.fill("#svcPrice", "15000"); await page.click("#tab-periksa");
     await page.fill("#clientName", "Klien Riwayat");
