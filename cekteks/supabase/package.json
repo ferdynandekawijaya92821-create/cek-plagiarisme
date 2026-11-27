@@ -1,0 +1,7 @@
+{
+  "name": "cekteks-supabase-uji",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --experimental-strip-types --no-warnings uji-ai.mjs" },
+  "devDependencies": { "@anthropic-ai/sdk": "1.14.0" }
+}

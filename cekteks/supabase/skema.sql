@@ -79,3 +79,31 @@ end $$;
 revoke all on function public.buat_profil() from anon, authenticated, public;
 drop trigger if exists cekteks_buat_profil on auth.users;
 create trigger cekteks_buat_profil after insert on auth.users for each row execute function public.buat_profil();
+
+-- Kuota analisis Claude (fungsi server analisis-ai): dihitung per akun per hari. Tabelnya tertutup untuk pengguna;
+-- hanya bisa diubah lewat fungsi pakai_ai, yang memakai akun pemanggil (auth.uid()) dan tidak bisa diakali.
+create table if not exists public.pemakaian_ai (
+  user_id uuid not null references auth.users (id) on delete cascade,
+  hari date not null default (now() at time zone 'Asia/Jakarta')::date,
+  jumlah integer not null default 0,
+  primary key (user_id, hari)
+);
+alter table public.pemakaian_ai enable row level security;
+alter table public.pemakaian_ai force row level security;
+revoke all on public.pemakaian_ai from anon, authenticated, public;
+
+create or replace function public.pakai_ai(batas integer) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare uid uuid := auth.uid(); n integer; hari_ini date := (now() at time zone 'Asia/Jakarta')::date;
+begin
+  if uid is null then raise exception 'harus_login' using errcode = '42501'; end if;
+  insert into public.pemakaian_ai as p (user_id, hari, jumlah) values (uid, hari_ini, 1)
+  on conflict (user_id, hari) do update set jumlah = p.jumlah + 1
+  returning jumlah into n;
+  if n > greatest(batas, 1) then
+    raise exception 'batas_harian' using errcode = 'P0001';  -- galat membatalkan penambahan di atas
+  end if;
+  return greatest(batas, 1) - n;
+end $$;
+revoke all on function public.pakai_ai(integer) from anon, public;
+grant execute on function public.pakai_ai(integer) to authenticated;

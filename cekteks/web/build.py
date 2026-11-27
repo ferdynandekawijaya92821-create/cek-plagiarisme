@@ -56,6 +56,13 @@ def load_site():
     """Pengaturan situs milik pemilik: warna, kontak CS, dan iklan (cekteks/web/site.json)."""
     site = json.loads(read(os.path.join(HERE, "site.json")))
     site.pop("_petunjuk", None)
+    # Domain sendiri (mis. cekplagiarismeteks.id): dipakai untuk tautan kanonis, sitemap, dan QR laporan.
+    dom = str(site.get("domain") or "").strip().lower().removeprefix("https://").removeprefix("http://").strip("/")
+    if dom:
+        assert re.fullmatch(r"(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}", dom), "domain di site.json tidak valid: " + dom
+        global SITE_URL
+        SITE_URL = f"https://{dom}/"
+    site["domain"] = dom
     if site.get("warna") not in ACCENTS:
         site["warna"] = "teal"
     return site

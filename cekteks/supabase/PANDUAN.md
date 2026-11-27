@@ -22,7 +22,8 @@ Selama `login` di `cekteks/web/site.json` masih kosong, CekTeks tetap memakai ak
 2. Biarkan **Confirm email** menyala, agar pendaftar harus mengonfirmasi lewat email.
 3. Buka **Authentication → URL Configuration** dan isi:
    - **Site URL**: `https://ferdynandekawijaya92821-create.github.io/cek-plagiarisme/`
-   - **Redirect URLs**: tambahkan alamat yang sama. Bila nanti memakai domain sendiri, tambahkan juga alamat domain itu.
+   - **Redirect URLs**: tambahkan alamat yang sama. Bila memakai domain sendiri (mis. `https://cekplagiarismeteks.id/`),
+     jadikan domain itu Site URL dan tambahkan juga ke Redirect URLs.
 4. Opsional: buka **Authentication → Policies / Passwords** dan atur panjang minimal kata sandi ke 8. Aktifkan juga
    **Leaked password protection**, yang menolak kata sandi yang pernah bocor.
 
@@ -61,6 +62,37 @@ Selama `login` di `cekteks/web/site.json` masih kosong, CekTeks tetap memakai ak
 
 Kunci *anon/publishable* memang dirancang untuk dipasang di situs publik. Keamanannya dijaga oleh Row Level Security
 di basis data, bukan oleh rahasia kunci.
+
+## 5. Analisis gaya tulisan dengan Claude (opsional, berbayar per pemakaian)
+
+Kartu **Analisis model AI** di hasil pemeriksaan punya dua bagian:
+
+- **Kemiripan makna (model di perangkat)**: selalu aktif, gratis, dan berjalan offline setelah unduhan pertama.
+- **Gaya tulisan oleh Claude (online)**: aktif setelah langkah di bawah. Hanya pengguna yang sudah masuk yang bisa
+  memakainya, dengan batas harian per akun. Kunci API hanya disimpan di server Supabase, tidak pernah dikirim ke browser.
+
+Langkah memasang:
+
+1. Buat kunci API di **https://console.anthropic.com** → **API Keys**. Isi saldo (pay-as-you-go). Satu analisis
+   naskah 2.000 kata kira-kira US$0,03–0,08 (sekitar Rp500–1.300).
+2. Jalankan ulang [`skema.sql`](skema.sql) di **SQL Editor**. Langkah ini menambah tabel kuota `pemakaian_ai` dan
+   fungsi `pakai_ai`, dan aman dijalankan berulang.
+3. Buat fungsinya. Pilih salah satu cara:
+   - **Lewat dasbor**: buka **Edge Functions → Deploy a new function → Via Editor**, lalu beri nama
+     `analisis-ai`. Buat tiga berkas dengan isi yang sama persis seperti di folder
+     [`functions/analisis-ai/`](functions/analisis-ai/): `index.ts`, `inti.ts`, dan `deno.json`. Tekan **Deploy**.
+   - **Lewat Supabase CLI** di komputer: `cd cekteks && npx supabase functions deploy analisis-ai --project-ref <ID proyek>`.
+4. Buka **Edge Functions → Secrets**, lalu tambahkan:
+   - `ANTHROPIC_API_KEY`: kunci dari langkah 1.
+   - `ASAL`: alamat situs, dipisah koma bila lebih dari satu. Contoh:
+     `https://cekplagiarismeteks.id,https://ferdynandekawijaya92821-create.github.io`.
+   - `BATAS_HARIAN` (opsional): jumlah analisis per akun per hari. Bawaannya 10.
+5. Selesai. Setelah pengguna masuk, tombol **Analisis dengan Claude** muncul di kartu Analisis model AI. Untuk
+   menyembunyikannya, isi `"ai_online": { "aktif": false }` di `site.json`.
+
+Model yang dipakai adalah `claude-opus-5-5`. Bila pengaman model menolak sebuah naskah, API otomatis mencoba model
+cadangan. Fungsi ini diuji tanpa biaya dengan `cd cekteks/supabase && npm ci && npm test`, memakai SDK Anthropic
+sungguhan dengan jaringan tiruan.
 
 ## Melihat pesanan
 

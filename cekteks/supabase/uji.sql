@@ -54,11 +54,28 @@ end $$;
 select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
 select pg_temp.harus((select data ->> 'doc' from public.riwayat where id = 'r1') = 'skripsi-rina.pdf', 'riwayat Rina tidak bisa diubah/dihapus Budi');
 
+-- Kuota analisis AI: dihitung per akun, tabelnya tidak bisa dibaca atau diubah langsung
+select pg_temp.harus(public.pakai_ai(2) = 1, 'kuota AI: pemakaian pertama tersisa 1');
+select pg_temp.harus(public.pakai_ai(2) = 0, 'kuota AI: pemakaian kedua tersisa 0');
+do $$ begin
+  begin perform public.pakai_ai(2); raise exception 'GAGAL: kuota AI bisa dilewati';
+  exception when raise_exception then raise notice 'lolos: kuota AI harian ditegakkan'; end;
+  begin perform 1 from public.pemakaian_ai; raise exception 'GAGAL: pengguna bisa membaca tabel kuota';
+  exception when insufficient_privilege then raise notice 'lolos: tabel kuota tertutup bagi pengguna'; end;
+  begin update public.pemakaian_ai set jumlah = 0; raise exception 'GAGAL: pengguna bisa mengatur ulang kuota';
+  exception when insufficient_privilege then raise notice 'lolos: pengguna tidak bisa mengatur ulang kuota'; end;
+end $$;
+select set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', false);
+select pg_temp.harus(public.pakai_ai(2) = 1, 'kuota AI Budi terpisah dari Rina');
+select set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', false);
+
 -- Tanpa login (kunci publik anon): tidak ada akses sama sekali
 reset role; set role anon; select set_config('request.jwt.claim.sub', '', false);
 do $$ begin
   begin perform 1 from public.riwayat; raise exception 'GAGAL: anon bisa membaca riwayat';
   exception when insufficient_privilege then raise notice 'lolos: tanpa login tidak bisa membaca riwayat'; end;
+  begin perform public.pakai_ai(5); raise exception 'GAGAL: anon bisa memakai kuota AI';
+  exception when insufficient_privilege then raise notice 'lolos: tanpa login tidak bisa memakai analisis AI'; end;
   begin perform 1 from public.profil; raise exception 'GAGAL: anon bisa membaca profil';
   exception when insufficient_privilege then raise notice 'lolos: tanpa login tidak bisa melihat daftar akun'; end;
 end $$;

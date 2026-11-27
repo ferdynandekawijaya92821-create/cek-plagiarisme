@@ -1341,6 +1341,36 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
 .acclock { text-align: left; line-height: 1.6; }
 .acclock b { display: block; color: var(--ink); margin-bottom: 4px; font-family: var(--f-display); font-size: 15.5px; }
 #hMigrate { align-items: center; flex-wrap: wrap; }
+
+/* v4.9.0: analisis model AI */
+.mlsec { display: grid; gap: 10px; }
+.mlsec + .mlsec { border-top: 1px solid var(--line); padding-top: 14px; }
+.mlh { display: grid; gap: 3px; }
+.mlh .muted { font-size: 13px; line-height: 1.5; }
+.mlsec .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mlsec .row .muted { font-size: 13px; }
+.mlstats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+.mlstats > div { border: 1px solid var(--line); border-radius: var(--r); padding: 8px 10px; display: grid; gap: 2px; background: var(--surface-2); }
+.mlstats b { font: 600 20px var(--f-display); }
+.mlstats span { font-size: 12px; color: var(--muted); line-height: 1.35; }
+.mlfig { margin: 0; display: grid; gap: 4px; }
+.mlhist { width: 100%; max-width: 420px; height: auto; }
+.mlhist text { font: 10px var(--f-mono); fill: var(--muted); }
+.mlhist .hb { fill: color-mix(in srgb, var(--accent) 45%, transparent); }
+.mlhist .hb-near { fill: #d99a2b; }
+.mlhist .hb-hot { fill: #c2412d; }
+.mlfig figcaption, .mlnote { font-size: 12px; color: var(--muted); }
+.mlpairs { display: grid; gap: 8px; }
+.mlpair { border: 1px solid var(--line); border-radius: var(--r); padding: 8px 10px; font-size: 13.5px; line-height: 1.5; display: grid; gap: 4px; }
+.mlpair p { margin: 0; overflow-wrap: anywhere; }
+.mlp-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mlp-h .linkbtn { margin-left: auto; font-size: 12.5px; }
+.mlk { font: 600 11px var(--f-mono); padding: 1px 7px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--line); }
+.mlk-terjemahan { background: #fde7e3; color: #8f2a1b; border-color: #f3c3b9; }
+.mlk-parafrase { background: #fdf1dc; color: #7a4c06; border-color: #f0d39c; }
+.clsum { margin: 0; font-size: 14px; line-height: 1.55; }
+.cllists { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 13.5px; }
+.cllists ul { margin: 4px 0 0; padding-left: 18px; }
 </style>
 
 <aside class="side" id="side" aria-label="Menu utama">
@@ -1670,6 +1700,25 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
         <div class="card">
           <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg></span>Sumber yang cocok</h2><button class="linkbtn" type="button" id="goSources">Kelola sumber</button></div>
           <div class="card-b srclist" id="srcRows"></div>
+        </div>
+
+        <div class="card" id="mlCard">
+          <div class="card-h"><h2 class="hic"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="3"/><path d="M9 9h6v6H9zM9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></span>Analisis model AI</h2></div>
+          <div class="card-b stack">
+            <section class="mlsec" aria-labelledby="mlH">
+              <div class="mlh"><b id="mlH">Kemiripan makna · model di perangkat</b>
+                <span class="muted">Model bahasa multibahasa (paraphrase-multilingual-MiniLM) membaca makna tiap kalimat, sehingga parafrase dan terjemahan dari sumber berbahasa lain ikut ketahuan. Berjalan di perangkat Anda: naskah tidak dikirim. Unduhan pertama ±120 MB, setelah itu bisa dipakai tanpa internet.</span></div>
+              <div class="row"><button class="btn sm" id="mlRun" type="button">Jalankan model</button><span class="muted" id="mlStatus" role="status"></span></div>
+              <div class="progress" id="mlProg" hidden><i></i></div>
+              <div id="mlOut"></div>
+            </section>
+            <section class="mlsec" id="clSec" aria-labelledby="clH" hidden>
+              <div class="mlh"><b id="clH">Gaya tulisan · Claude (online)</b>
+                <span class="muted">Model bahasa Claude dari Anthropic menilai ciri tulisan AI per paragraf dan memberi saran perbaikan. Perlu internet dan akun; naskah (tanpa daftar pustaka) dikirim ke server untuk dianalisis dan tidak disimpan.</span></div>
+              <div class="row"><button class="btn sm" id="clRun" type="button">Analisis dengan Claude</button><span class="muted" id="clStatus" role="status"></span></div>
+              <div id="clOut"></div>
+            </section>
+          </div>
         </div>
 
         <div class="card" id="citeCard">
@@ -2024,6 +2073,7 @@ h1, h2, h3 { font-family: var(--f-display); font-optical-sizing: auto; letter-sp
                 <div class="btnrow"><label class="btn sm" for="oQrisImg">Baca dari gambar QRIS</label><input type="file" id="oQrisImg" class="sr-only" accept="image/*"><span class="hint" id="oQrisInfo" style="margin:0;align-self:center"></span></div>
                 <label for="oSbUrl"><span>Login online: Supabase URL <span class="muted" style="font-weight:400">· opsional</span></span><input type="url" id="oSbUrl" autocomplete="off" spellcheck="false" placeholder="https://xxxx.supabase.co"></label>
                 <label for="oSbKey"><span>Supabase anon / publishable key <span class="muted" style="font-weight:400">· JANGAN isi kunci rahasia</span></span><input type="text" id="oSbKey" autocomplete="off" spellcheck="false"></label>
+                <label for="oDomain"><span>Domain sendiri <span class="muted" style="font-weight:400">· isi setelah domain dibeli &amp; DNS diarahkan (lihat cekteks/HOSTING.md)</span></span><input type="text" id="oDomain" autocomplete="off" spellcheck="false" placeholder="mis. cekplagiarismeteks.id"></label>
                 <label for="oGoogle"><span>Kode verifikasi Google <span class="muted" style="font-weight:400">· opsional, dari Google Search Console</span></span><input type="text" id="oGoogle" autocomplete="off" spellcheck="false" placeholder="mis. AbCdEf123…"></label>
                 <label class="toggle" for="oLyOn"><input type="checkbox" id="oLyOn"><span class="tr" aria-hidden="true"></span>Tampilkan halaman Layanan &amp; Harga</label>
                 <label for="oPaket"><span>Paket layanan <span class="muted" style="font-weight:400">· satu per baris: nama | harga | satuan | fitur1; fitur2 | unggulan (ya/kosong)</span></span><textarea id="oPaket" spellcheck="false" placeholder="Cek Plagiasi | 15000 | per dokumen | Laporan PDF; Kode verifikasi |"></textarea></label>
@@ -3000,7 +3050,7 @@ function recDec(list) {
 function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 3200); }
 
 CORPUS.forEach(function (c) { c.corpus = true; });
-var APP_VERSION = "4.8.1";
+var APP_VERSION = "4.9.0";
 // Anti clickjacking: CekTeks tidak boleh dibingkai (iframe) oleh situs lain yang bisa menipu pengguna untuk mengeklik.
 (function () {
   var framed = false; try { framed = window.self !== window.top; } catch (e) { framed = true; }
@@ -3467,6 +3517,7 @@ function run() {
   }
   S.plag.smallExcluded = smallN; S.plag.blockedN = nAll - srcs.length;
   S.ai = nWords ? detectAI(text) : null;
+  setTimeout(function () { if (window.ML) mlSync(); }, 0);
   var p = S.plag, a = S.ai;
 
   // plagiarism
@@ -4855,7 +4906,7 @@ function ownerFill() {
   $("#oTicker").value = tk.map(function (x) { return x.teks + (x.tautan ? " | " + x.tautan : ""); }).join("\n");
   $("#oBanner").value = bn.map(function (x) { return typeof x === "string" ? x : [x.label || "", x.judul || "", x.teks || "", x.tombol || "", x.tautan || ""].concat(x.gambar ? [x.gambar] : []).join(" | "); }).join("\n");
   var L = lyCfg(), P = payCfg(); $("#oLyOn").checked = L.aktif; $("#oQris").value = P.qris; $("#oQrisInfo").textContent = P.merchant ? "Penerima: " + P.merchant : "";
-  $("#oGoogle").value = String(((window.CEKTEKS_SITE || {}).google_verifikasi) || "");
+  $("#oGoogle").value = String(((window.CEKTEKS_SITE || {}).google_verifikasi) || ""); $("#oDomain").value = String(((window.CEKTEKS_SITE || {}).domain) || "");
   $("#oPaket").value = L.paket.map(function (x) { return [x.nama, x.harga, x.satuan, x.fitur.join("; "), x.unggulan ? "ya" : ""].join(" | "); }).join("\n");
   $("#oReset").hidden = !SITE.preview;
 }
@@ -4866,6 +4917,8 @@ function ownerCfg() {
       paket: lines($("#oPaket").value).map(function (l) { var p = splitBar(l); return { nama: p[0] || "", harga: p[1] || "", satuan: p[2] || "", fitur: (p[3] || "").split(";").map(function (f) { return f.trim(); }).filter(Boolean), unggulan: /^(ya|y|true|1)$/i.test(p[4] || "") }; }).filter(function (x) { return x.nama; }) },
     pembayaran: { qris: $("#oQris").value.trim(), kode_unik: true },
     google_verifikasi: $("#oGoogle").value.trim(),
+    domain: $("#oDomain").value.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, ""),
+    ai_online: { aktif: !((window.CEKTEKS_SITE || {}).ai_online && window.CEKTEKS_SITE.ai_online.aktif === false) },
     iklan: { aktif: $("#oAds").checked,
       teks_berjalan: lines($("#oTicker").value).map(function (l) { var p = splitBar(l); return { teks: p[0], tautan: p[1] || "" }; }),
       banner: lines($("#oBanner").value).map(function (l) { var p = splitBar(l), o = { label: p[0] || "Info", judul: p[1] || "", teks: p[2] || "", tombol: p[3] || "", tautan: p[4] || "" }; if (p[5]) o.gambar = p[5]; return o; }) } };
@@ -5209,6 +5262,221 @@ function loadHist() {
   if (CLOUD_USER) return cloudHistLoad().then(function (all) { HIST = all.sort(function (a, b) { return a.date < b.date ? 1 : -1; }); renderHist(); if (S.lastPv != null) renderPrev(S.lastPv, S.lastN); }, function (e) { toast(cloudErr(e)); });
   return histReq("readonly", function (st) { return st.getAll(); }).then(recDec).then(function (all) { HIST = (all || []).sort(function (a, b) { return a.date < b.date ? 1 : -1; }); renderHist(); if (S.lastPv != null) renderPrev(S.lastPv, S.lastN); }, function () { HIST = []; renderHist(); }); }
 function histPut(e) { if (CLOUD_USER) return cloudHistPut(e).then(loadHist, function (err) { toast(cloudErr(err)); }); return recEnc(e).then(function (r) { return histReq("readwrite", function (st) { st.put(r); return null; }); }).then(loadHist); }
+// ===== Analisis model AI =====
+// 1) Model di perangkat (transformers.js + paraphrase-multilingual-MiniLM-L12-v2): mengubah tiap kalimat menjadi vektor
+//    makna, lalu mencari kalimat sumber dengan makna sama. Menangkap parafrase dan terjemahan (mis. Inggris -> Indonesia)
+//    yang lolos dari pencocokan kata. Naskah tidak dikirim ke mana pun; setelah unduhan pertama model tetap jalan offline.
+// 2) Analisis gaya tulisan oleh Claude (online): lewat fungsi server "analisis-ai" di Supabase milik pemilik situs.
+//    Kunci API Anthropic hanya ada di server; hanya pengguna yang sudah masuk yang bisa memakainya, dengan batas harian.
+var TF_VER = "4.3.2", TF_CDN = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@" + TF_VER + "/dist/";
+var ML_MODEL = "Xenova/paraphrase-multilingual-MiniLM-L12-v2", ML_SAME = 0.8, ML_NEAR = 0.7;
+var ML_MAX_DOC = 1200, ML_MAX_SRC = 6000, CL_MAX_CHARS = 30000;
+var ML = { pipe: null, p: null, res: null, text: "" }, CL = { res: null, text: "", busy: false };
+function loadTf() {
+  if (loadTf.p) return loadTf.p;
+  // Dari jsDelivr dengan versi dipatok (berkas versi npm tidak bisa diubah); service worker menyimpannya untuk offline.
+  return (loadTf.p = import(TF_CDN + "transformers.min.js").then(function (m) {
+    m.env.allowLocalModels = false; m.env.useBrowserCache = true;
+    // Mesin WebAssembly diambil langsung dari CDN (bukan lewat blob:, yang ditolak CSP); service worker menyimpannya
+    // agar model tetap jalan offline.
+    m.env.useWasmCache = false;
+    try { m.env.backends.onnx.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1; } catch (e) {}
+    return m;
+  }, function (e) { loadTf.p = null; throw new Error("Pustaka model AI gagal dimuat. Sambungkan ke internet untuk unduhan pertama."); }));
+}
+function mlPipe(onProg) {
+  if (ML.pipe) return Promise.resolve(ML.pipe);
+  if (ML.p) return ML.p;
+  var files = {};
+  return (ML.p = loadTf().then(function (m) {
+    return m.pipeline("feature-extraction", ML_MODEL, { dtype: "q8", progress_callback: function (ev) {
+      if (ev.status !== "progress" || !ev.total) return;
+      files[ev.file] = [ev.loaded, ev.total];
+      var l = 0, t = 0; Object.keys(files).forEach(function (k) { l += files[k][0]; t += files[k][1]; });
+      onProg(l / t, t);
+    } });
+  }).then(function (p) { ML.pipe = p; return p; }, function (e) {
+    ML.p = null;
+    throw new Error(navigator.onLine === false ? "Model belum pernah diunduh di perangkat ini. Sambungkan ke internet sekali untuk mengunduhnya (±120 MB)." : "Model AI gagal dimuat: " + (e.message || e));
+  }));
+}
+function mlEmbed(pipe, list, onStep) {
+  var out = new Float32Array(list.length * 384), i = 0;
+  function next() {
+    if (i >= list.length) return Promise.resolve(out);
+    var batch = list.slice(i, i + 32);
+    return pipe(batch, { pooling: "mean", normalize: true }).then(function (t) {
+      out.set(t.data, i * 384); i += batch.length; onStep(i / list.length);
+      return new Promise(function (r) { setTimeout(r, 0); }).then(next);   // beri waktu layar memperbarui diri
+    });
+  }
+  return next();
+}
+// Perkiraan bahasa kalimat dari kata tugas yang paling sering (cukup untuk membedakan Indonesia / Inggris).
+var ML_ID = new Set("yang dan di ke dari ini itu untuk dengan pada adalah dalam tidak akan juga atau oleh karena sebagai bahwa".split(" "));
+var ML_EN = new Set("the and of to in is that for with are as by this be was on from it an which".split(" "));
+function mlLang(s) {
+  var id = 0, en = 0; words(s).forEach(function (w) { if (ML_ID.has(w)) id++; else if (ML_EN.has(w)) en++; });
+  return en > id ? "en" : id > en ? "id" : "";
+}
+function mlOverlap(a, b) {
+  var A = new Set(contentWords(a)), B = new Set(contentWords(b)), n = 0;
+  A.forEach(function (w) { if (B.has(w)) n++; });
+  return A.size && B.size ? n / Math.min(A.size, B.size) : 0;
+}
+function mlSentences(text, minWords) {
+  var bs = findBibStart(text), be = findBibEnd(text, bs);
+  return splitSentences(text).filter(function (s) {
+    return words(s[0]).length >= minWords && !(bs >= 0 && s[1] >= bs && s[1] < be);
+  });
+}
+function mlAnalyze() {
+  var text = S.text, srcs = (S.plag && S.plag.srcs) || [];
+  if (words(text).length < 15) return Promise.reject(new Error("Naskah terlalu pendek untuk dianalisis model."));
+  if (!srcs.length) return Promise.reject(new Error("Belum ada sumber pembanding. Cek internet atau tambahkan sumber dulu."));
+  var docs = mlSentences(text, 6), notes = [];
+  if (docs.length > ML_MAX_DOC) { notes.push(fmtNum(ML_MAX_DOC) + " dari " + fmtNum(docs.length) + " kalimat pertama dianalisis"); docs = docs.slice(0, ML_MAX_DOC); }
+  // Sumber yang sudah cocok didahulukan, lalu sumber lain, sampai batas jumlah kalimat.
+  var order = (S.plag.matched || []).map(function (m) { return m.si; }), seen = new Set(order);
+  srcs.forEach(function (s, i) { if (!seen.has(i)) order.push(i); });
+  var ss = [], total = 0;
+  order.forEach(function (si) {
+    var src = srcs[si]; if (!src || !src.text) return;
+    mlSentences(normalize(src.text), 6).forEach(function (s) { total++; if (ss.length < ML_MAX_SRC) ss.push({ t: s[0], si: si }); });
+  });
+  if (!ss.length) return Promise.reject(new Error("Sumber pembanding tidak berisi kalimat yang cukup panjang."));
+  if (total > ss.length) notes.push(fmtNum(ss.length) + " dari " + fmtNum(total) + " kalimat sumber dipakai (sumber yang paling mirip didahulukan)");
+  var prog = $("#mlProg"), bar = prog.querySelector("i"), st = $("#mlStatus");
+  prog.hidden = false; bar.style.width = "0%";
+  st.textContent = ML.pipe ? "Menyiapkan model…" : "Mengunduh model AI (sekali saja, lalu tersimpan di perangkat)…";
+  return mlPipe(function (f, t) { bar.style.width = Math.round(f * 40) + "%"; st.textContent = "Mengunduh model AI: " + Math.round(f * 100) + "% dari " + fmtSize(t) + " (sekali saja)"; }).then(function (pipe) {
+    st.textContent = "Model membaca " + fmtNum(docs.length) + " kalimat naskah…";
+    return mlEmbed(pipe, docs.map(function (d) { return d[0]; }), function (f) { bar.style.width = 40 + Math.round(f * 20) + "%"; }).then(function (dv) {
+      st.textContent = "Model membaca " + fmtNum(ss.length) + " kalimat sumber…";
+      return mlEmbed(pipe, ss.map(function (s) { return s.t; }), function (f) { bar.style.width = 60 + Math.round(f * 38) + "%"; }).then(function (sv) { return [dv, sv]; });
+    });
+  }).then(function (v) {
+    var dv = v[0], sv = v[1], D = 384, pairs = [], hist = new Array(10).fill(0), sameW = 0, allW = 0, fresh = 0, trans = 0;
+    docs.forEach(function (d, i) {
+      var best = -1, bj = -1, o = i * D;
+      for (var j = 0; j < ss.length; j++) {
+        var s = 0, p = j * D; for (var k = 0; k < D; k++) s += dv[o + k] * sv[p + k];
+        if (s > best) { best = s; bj = j; }
+      }
+      var nw = words(d[0]).length; allW += nw;
+      hist[Math.max(0, Math.min(9, Math.floor(best * 10)))]++;
+      if (best < ML_NEAR) return;
+      var src = ss[bj], lex = mlOverlap(d[0], src.t), la = mlLang(d[0]), lb = mlLang(src.t);
+      var kind = la && lb && la !== lb ? "terjemahan" : lex >= 0.6 ? "sama" : "parafrase";
+      if (best >= ML_SAME) { sameW += nw; if (kind !== "sama") fresh++; if (kind === "terjemahan") trans++; }
+      pairs.push({ sim: best, doc: d[0], pos: d[1], src: src.t, si: src.si, kind: kind });
+    });
+    pairs.sort(function (a, b) { return b.sim - a.sim; });
+    prog.hidden = true;
+    return { n: docs.length, nSrc: ss.length, score: allW ? sameW / allW * 100 : 0, fresh: fresh, trans: trans, hist: hist,
+      pairs: pairs, same: pairs.filter(function (p) { return p.sim >= ML_SAME; }).length, notes: notes };
+  }, function (e) { prog.hidden = true; throw e; });
+}
+var ML_KIND = { sama: "Hampir sama persis", parafrase: "Parafrase", terjemahan: "Terjemahan" };
+function mlHistSvg(hist) {
+  var max = Math.max.apply(null, hist.concat(1)), W = 300, H = 120, bw = W / 10;
+  var bars = hist.map(function (n, i) {
+    var h = Math.round(n / max * (H - 36)), x = i * bw + 3, y = H - 18 - h, hot = i >= ML_SAME * 10, near = i >= ML_NEAR * 10;
+    return '<rect x="' + x + '" y="' + y + '" width="' + (bw - 6) + '" height="' + Math.max(h, n ? 2 : 0) + '" rx="2" class="' + (hot ? "hb-hot" : near ? "hb-near" : "hb") + '"><title>' + (i * 10) + "–" + (i * 10 + 10) + "% kemiripan: " + n + " kalimat</title></rect>" +
+      (n ? '<text x="' + (x + (bw - 6) / 2) + '" y="' + (y - 3) + '" text-anchor="middle">' + n + "</text>" : "");
+  }).join("");
+  var ticks = [0, 50, 100].map(function (t) { return '<text x="' + (t === 0 ? 2 : t === 100 ? W - 2 : W / 2) + '" y="' + (H - 4) + '" text-anchor="' + (t === 0 ? "start" : t === 100 ? "end" : "middle") + '">' + t + "%</text>"; }).join("");
+  return '<svg class="mlhist" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Sebaran kemiripan makna tiap kalimat naskah dengan sumber terdekat">' + bars + ticks + "</svg>";
+}
+function renderMl() {
+  var r = ML.res, out = $("#mlOut");
+  if (!r) { out.innerHTML = ""; return; }
+  var srcs = S.plag.srcs;
+  out.innerHTML = '<div class="mlstats">' +
+    '<div><b>' + pctLabel(r.score) + '</b><span>naskah bermakna sama dengan sumber</span></div>' +
+    '<div><b>' + fmtNum(r.same) + '</b><span>kalimat dengan kemiripan makna ≥ ' + Math.round(ML_SAME * 100) + '%</span></div>' +
+    '<div><b>' + fmtNum(r.fresh) + '</b><span>parafrase/terjemahan yang lolos pencocokan kata' + (r.trans ? " (" + r.trans + " terjemahan)" : "") + '</span></div>' +
+    '<div><b>' + fmtNum(r.n) + '</b><span>kalimat naskah dibandingkan dengan ' + fmtNum(r.nSrc) + ' kalimat sumber</span></div></div>' +
+    '<figure class="mlfig">' + mlHistSvg(r.hist) + '<figcaption>Sebaran kemiripan makna tiap kalimat naskah dengan kalimat sumber terdekat. Batang merah: makna sama (≥ ' + Math.round(ML_SAME * 100) + '%).</figcaption></figure>' +
+    (r.notes.length ? '<p class="muted mlnote">' + esc(r.notes.join(" · ")) + ".</p>" : "") +
+    (r.pairs.length ? '<div class="mlpairs">' + r.pairs.slice(0, 12).map(function (p) {
+      var s = srcs[p.si] || {};
+      return '<div class="mlpair"><div class="mlp-h"><span class="mlk mlk-' + p.kind + '">' + ML_KIND[p.kind] + '</span><b>' + Math.round(p.sim * 100) + '%</b>' +
+        '<button type="button" class="linkbtn" data-mlgo="' + p.pos + '">Lihat di naskah</button></div>' +
+        '<p><span class="muted">Naskah:</span> ' + esc(p.doc) + '</p><p><span class="muted">' + esc(s.domain || s.name || "Sumber") + ':</span> ' + esc(p.src) + "</p></div>";
+    }).join("") + "</div>" : '<p class="muted">Tidak ada kalimat yang maknanya mirip dengan sumber (di atas ' + Math.round(ML_NEAR * 100) + '%).</p>');
+}
+// ---- Claude (online) ----
+function clEnabled() { var s = window.CEKTEKS_SITE || {}; return !!cloudCfg() && !(s.ai_online && s.ai_online.aktif === false); }
+function clParagraphs(text) {
+  var bs = findBibStart(text), body = bs >= 0 ? text.slice(0, bs) : text;
+  var paras = body.split(/\n\s*\n|\n(?=\s{2,}|\t)/).map(function (p) { return p.replace(/\s+/g, " ").trim(); }).filter(function (p) { return words(p).length >= 8; });
+  if (paras.length < 2) paras = body.split(/\n/).map(function (p) { return p.trim(); }).filter(function (p) { return words(p).length >= 8; });
+  var sent = [], used = 0;
+  for (var i = 0; i < paras.length && i < 60; i++) { if (used + paras[i].length > CL_MAX_CHARS) break; sent.push(paras[i]); used += paras[i].length; }
+  return { sent: sent, total: paras.length };
+}
+function clAnalyze() {
+  var c = clParagraphs(S.text);
+  if (!c.sent.length) return Promise.reject(new Error("Naskah terlalu pendek untuk dianalisis."));
+  return cloudInit().then(function (cl) {
+    if (!cl || !CLOUD_USER) { openAcc(); throw new Error("Masuk dulu untuk memakai analisis Claude."); }
+    return cl.functions.invoke("analisis-ai", { body: { paragraf: c.sent } });
+  }).then(function (r) {
+    if (r.error) {
+      var st = r.error.context && r.error.context.status;
+      return (r.error.context && r.error.context.json ? r.error.context.json().catch(function () { return {}; }) : Promise.resolve({})).then(function (j) {
+        throw new Error(j.pesan || (st === 429 ? "Batas analisis harian akun Anda sudah habis. Coba lagi besok." : "Analisis Claude gagal. Coba lagi beberapa saat lagi."));
+      });
+    }
+    var d = r.data || {};
+    if (!d.hasil) throw new Error(d.pesan || "Analisis Claude tidak memberi hasil.");
+    return { h: d.hasil, sisa: d.sisa, sent: c.sent, total: c.total };
+  });
+}
+function clBarsSvg(par) {
+  var n = par.length, W = 300, H = 110, bw = Math.max(4, Math.min(28, (W - 4) / Math.max(n, 1)));
+  return '<svg class="mlhist" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Perkiraan kemungkinan AI per paragraf">' + par.map(function (p, i) {
+    var h = Math.round(Math.max(0, Math.min(100, p.skor_ai)) / 100 * (H - 22)), x = 2 + i * bw;
+    return '<rect x="' + x + '" y="' + (H - 16 - h) + '" width="' + (bw - 3) + '" height="' + Math.max(h, 1) + '" rx="2" class="' + (p.skor_ai >= 60 ? "hb-hot" : p.skor_ai >= 35 ? "hb-near" : "hb") + '"><title>Paragraf ' + p.nomor + ": " + p.skor_ai + "%</title></rect>";
+  }).join("") + '<text x="2" y="' + (H - 3) + '">Paragraf 1</text><text x="' + (W - 2) + '" y="' + (H - 3) + '" text-anchor="end">' + n + "</text></svg>";
+}
+function renderCl() {
+  var r = CL.res, out = $("#clOut");
+  if (!r) { out.innerHTML = ""; return; }
+  var h = r.h, par = (h.paragraf || []).filter(function (p) { return p && p.nomor >= 1 && p.nomor <= r.sent.length; });
+  function list(t, a) { return a && a.length ? "<div><b>" + t + "</b><ul>" + a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div>" : ""; }
+  out.innerHTML = '<div class="mlstats"><div><b>' + Math.round(h.skor_ai) + '%</b><span>perkiraan kemungkinan dibuat AI</span></div>' +
+    '<div><b>' + esc(h.keyakinan) + '</b><span>tingkat keyakinan model</span></div>' +
+    '<div><b>' + fmtNum(r.sent.length) + '</b><span>paragraf dianalisis' + (r.total > r.sent.length ? " dari " + fmtNum(r.total) : "") + '</span></div></div>' +
+    '<p class="clsum">' + esc(h.ringkasan) + "</p>" +
+    (par.length ? '<figure class="mlfig">' + clBarsSvg(par) + "<figcaption>Perkiraan kemungkinan AI tiap paragraf menurut Claude.</figcaption></figure>" : "") +
+    '<div class="cllists">' + list("Ciri tulisan AI", h.ciri_ai) + list("Ciri tulisan manusia", h.ciri_manusia) + list("Saran perbaikan", h.saran) + "</div>" +
+    (par.filter(function (p) { return p.skor_ai >= 60; }).length ? '<div class="mlpairs">' + par.filter(function (p) { return p.skor_ai >= 60; }).slice(0, 8).map(function (p) {
+      return '<div class="mlpair"><div class="mlp-h"><span class="mlk mlk-parafrase">Paragraf ' + p.nomor + "</span><b>" + p.skor_ai + "%</b></div><p>" + esc(r.sent[p.nomor - 1].slice(0, 260)) + (r.sent[p.nomor - 1].length > 260 ? "…" : "") + '</p><p class="muted">' + esc(p.catatan) + "</p></div>";
+    }).join("") + "</div>" : "") +
+    '<p class="muted mlnote">Analisis model bahasa adalah perkiraan, bukan bukti. Tulisan resmi buatan manusia bisa dinilai mirip AI.' + (r.sisa != null ? " Sisa analisis hari ini: " + r.sisa + "." : "") + "</p>";
+}
+function mlSync() {
+  // Hasil lama dihapus bila naskah berubah, supaya angka di layar selalu milik naskah yang sedang dibuka.
+  if (ML.res && ML.text !== S.text) { ML.res = null; renderMl(); $("#mlStatus").textContent = "Naskah berubah. Jalankan model lagi untuk hasil terbaru."; }
+  if (CL.res && CL.text !== S.text) { CL.res = null; renderCl(); $("#clStatus").textContent = "Naskah berubah. Jalankan analisis lagi."; }
+  $("#clSec").hidden = !clEnabled();
+}
+document.addEventListener("click", function (e) {
+  var go = e.target.closest("[data-mlgo]");
+  if (go) return jumpTo(+go.dataset.mlgo);
+  if (e.target.closest("#mlRun")) {
+    var b = $("#mlRun"); b.disabled = true;
+    mlAnalyze().then(function (r) { ML.res = r; ML.text = S.text; renderMl(); $("#mlStatus").textContent = "Selesai. Model tersimpan di perangkat dan bisa dipakai tanpa internet."; },
+      function (err) { $("#mlStatus").textContent = err.message || String(err); }).then(function () { b.disabled = false; });
+  }
+  if (e.target.closest("#clRun")) {
+    if (CL.busy) return; CL.busy = true; var c = $("#clRun"); c.disabled = true; $("#clStatus").textContent = "Claude sedang membaca naskah…";
+    clAnalyze().then(function (r) { CL.res = r; CL.text = S.text; renderCl(); $("#clStatus").textContent = "Selesai."; },
+      function (err) { $("#clStatus").textContent = err.message || String(err); }).then(function () { CL.busy = false; c.disabled = false; });
+  }
+});
 function guestHistCheck() {
   if (!window.indexedDB || !signedIn()) return;
   idbAll("cekteks", "history").then(function (recs) {
